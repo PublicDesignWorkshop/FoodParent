@@ -12,13 +12,16 @@
   </settings>
   <!--The order of the <file> elements determines the order of the files in the bundle.-->
   <files>
-    
     <!-- Libraries -->
     <file>/core/lib/leaflet/leaflet.css</file>
     <file>/core/lib/backgrid/backgrid.css</file>
     <file>/core/lib/backgrid-moment-cell/backgrid-moment-cell.css</file>
+    <file>/core/lib/bootstrap/css/bootstrap.css</file>
 
     
     <file>/core/css/app.css</file>
+    <file>/core/css/view.css</file>
+    <file>/core/css/base.css</file>
+    <file>/core/css/header.css</file>
   </files>
 </bundle>

@@ -1,4 +1,4 @@
-﻿module FruitParent {
+﻿module FoodParent {
     export class Setting {
         private static _instance: Setting = new Setting();
         private baseUrl: string;
@@ -11,11 +11,25 @@
         public static getInstance(): Setting {
             return Setting._instance;
         }
-        public static setBaseUrl(url: string) {
-            Setting._instance.baseUrl = url;
+        public setBaseUrl(url: string) {
+            return this.baseUrl = url;
         }
-        public static getBaseUrl(): string {
-            return Setting._instance.baseUrl;
+        public getBaseUrl(): string {
+            return this.baseUrl;
+        }
+        public getTileMapAddress(): string {
+            //return 'http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png';
+            //return 'http://{s}.tile.stamen.com/watercolor/{z}/{x}/{y}.jpg'
+            return 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+        }
+        public getDefaultMapZoomLevel(): number {
+            return 18;
+        }
+        public getMapMinZoomLevel(): number {
+            return 17;
+        }
+        public getMapMaxZoomLevel(): number {
+            return 19;
         }
     }
 }

@@ -361,6 +361,8 @@ declare module Backbone {
         undelegateEvents(): any;
 
         _ensureElement(): void;
+
+        destroy(): any;
     }
 
     // SYNC

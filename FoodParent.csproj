@@ -26,11 +26,20 @@
     <Content Include="core\css\font\bonvenocf-light\specimen_files\grid_12-825-55-15.css" />
     <Content Include="core\css\font\bonvenocf-light\specimen_files\specimen_stylesheet.css" />
     <Content Include="core\css\font\bonvenocf-light\stylesheet.css" />
-    <Content Include="core\css\fruitparent.css">
+    <Content Include="core\css\foodparent.css">
       <DependentUpon>foodparent.css.bundle</DependentUpon>
     </Content>
-    <Content Include="core\css\fruitparent.min.css">
-      <DependentUpon>fruitparent.css</DependentUpon>
+    <Content Include="core\css\foodparent.min.css">
+      <DependentUpon>foodparent.css</DependentUpon>
+    </Content>
+    <Content Include="core\css\base.css" />
+    <Content Include="core\css\header.css" />
+    <Content Include="core\css\view.css" />
+    <Content Include="core\js\foodparent.js">
+      <DependentUpon>foodparent.js.bundle</DependentUpon>
+    </Content>
+    <Content Include="core\js\foodparent.min.js">
+      <DependentUpon>foodparent.js</DependentUpon>
     </Content>
     <Content Include="core\js\fruitparent.js">
       <DependentUpon>foodparent.js.bundle</DependentUpon>
@@ -43,6 +52,34 @@
     <Content Include="core\lib\backgrid-moment-cell\backgrid-moment-cell.js" />
     <Content Include="core\lib\backgrid\backgrid.css" />
     <Content Include="core\lib\backgrid\backgrid.js" />
+    <Content Include="core\lib\bootstrap\css\bootstrap-theme.css" />
+    <Content Include="core\lib\bootstrap\css\bootstrap-theme.min.css" />
+    <Content Include="core\lib\bootstrap\css\bootstrap.css" />
+    <Content Include="core\lib\bootstrap\css\bootstrap.min.css" />
+    <Content Include="core\lib\bootstrap\fonts\glyphicons-halflings-regular.svg" />
+    <Content Include="core\lib\bootstrap\js\bootstrap.js" />
+    <Content Include="core\lib\bootstrap\js\bootstrap.min.js" />
+    <Content Include="core\lib\bootstrap\js\npm.js" />
+    <Content Include="core\lib\vis\img\network\acceptDeleteIcon.png" />
+    <Content Include="core\lib\vis\img\network\addNodeIcon.png" />
+    <Content Include="core\lib\vis\img\network\backIcon.png" />
+    <Content Include="core\lib\vis\img\network\connectIcon.png" />
+    <Content Include="core\lib\vis\img\network\cross.png" />
+    <Content Include="core\lib\vis\img\network\cross2.png" />
+    <Content Include="core\lib\vis\img\network\deleteIcon.png" />
+    <Content Include="core\lib\vis\img\network\downArrow.png" />
+    <Content Include="core\lib\vis\img\network\editIcon.png" />
+    <Content Include="core\lib\vis\img\network\leftArrow.png" />
+    <Content Include="core\lib\vis\img\network\minus.png" />
+    <Content Include="core\lib\vis\img\network\plus.png" />
+    <Content Include="core\lib\vis\img\network\rightArrow.png" />
+    <Content Include="core\lib\vis\img\network\upArrow.png" />
+    <Content Include="core\lib\vis\img\network\zoomExtends.png" />
+    <Content Include="core\lib\vis\img\timeline\delete.png" />
+    <Content Include="core\lib\vis\vis.css" />
+    <Content Include="core\lib\vis\vis.js" />
+    <Content Include="core\lib\vis\vis.min.css" />
+    <Content Include="core\lib\vis\vis.min.js" />
     <Content Include="core\lib\jquery\jquery-2.1.4.js" />
     <Content Include="core\lib\leaflet\images\layers-2x.png" />
     <Content Include="core\lib\leaflet\images\layers.png" />
@@ -59,8 +96,17 @@
   <ItemGroup>
     <TypeScriptCompile Include="core\js\app.ts" />
     <TypeScriptCompile Include="core\js\controller\controller.ts" />
+    <TypeScriptCompile Include="core\js\controller\headerviewfactory.ts" />
+    <TypeScriptCompile Include="core\js\controller\mapviewfactory.ts" />
     <TypeScriptCompile Include="core\js\controller\setting.ts" />
+    <TypeScriptCompile Include="core\js\controller\treesviewfactory.ts" />
     <TypeScriptCompile Include="core\js\model\model.ts" />
+    <TypeScriptCompile Include="core\js\view\headerview.ts" />
+    <TypeScriptCompile Include="core\js\view\localization.ts" />
+    <TypeScriptCompile Include="core\js\view\mapview.ts" />
+    <TypeScriptCompile Include="core\js\view\sideinfoview.ts" />
+    <TypeScriptCompile Include="core\js\view\template.ts" />
+    <TypeScriptCompile Include="core\js\view\treesview.ts" />
     <TypeScriptCompile Include="core\js\view\view.ts" />
     <TypeScriptCompile Include="Scripts\typings\backbone\backbone.d.ts" />
     <TypeScriptCompile Include="Scripts\typings\backgrid\backgrid.d.ts" />
@@ -77,10 +123,20 @@
     <Content Include="core\js\fruitparent.min.js.map">
       <DependentUpon>fruitparent.min.js</DependentUpon>
     </Content>
-    <Content Include="core\css\foodparent.css.bundle" />
     <Content Include="core\css\font\bonvenocf-light\BonvenoCF-Light-webfont.eot" />
     <Content Include="core\css\font\bonvenocf-light\BonvenoCF-Light-webfont.ttf" />
     <Content Include="core\css\font\bonvenocf-light\BonvenoCF-Light-webfont.woff" />
+    <Content Include="core\js\foodparent.min.js.map">
+      <DependentUpon>foodparent.min.js</DependentUpon>
+    </Content>
+    <Content Include="core\css\foodparent.css.bundle" />
+    <Content Include="core\lib\bootstrap\css\bootstrap-theme.css.map" />
+    <Content Include="core\lib\bootstrap\css\bootstrap.css.map" />
+    <Content Include="core\lib\bootstrap\fonts\glyphicons-halflings-regular.eot" />
+    <Content Include="core\lib\bootstrap\fonts\glyphicons-halflings-regular.ttf" />
+    <Content Include="core\lib\bootstrap\fonts\glyphicons-halflings-regular.woff" />
+    <Content Include="core\lib\bootstrap\fonts\glyphicons-halflings-regular.woff2" />
+    <Content Include="core\lib\vis\vis.map" />
     <None Include="web.Debug.config">
       <DependentUpon>web.config</DependentUpon>
     </None>

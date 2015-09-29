@@ -19,12 +19,18 @@
     <file>/core/lib/backbone/backbone.js</file>
     <file>/core/lib/backgrid/backgrid.js</file>
     <file>/core/lib/backgrid-moment-cell/backgrid-moment-cell.js</file>
+    <file>/core/lib/bootstrap/js/bootstrap.js</file>
 
     <!-- Main -->
     <file>/core/js/app.js</file>
     
     <!-- View -->
     <file>/core/js/view/view.js</file>
+    <file>/core/js/view/template.js</file>
+    <file>/core/js/view/headerview.js</file>
+    <file>/core/js/view/localization.js</file>
+    <file>/core/js/view/treesview.js</file>
+    <file>/core/js/view/mapview.js</file>
 
     <!-- Model -->
     <file>/core/js/model/model.js</file>
@@ -32,6 +38,9 @@
     <!-- Controller -->
     <file>/core/js/controller/controller.js</file>
     <file>/core/js/controller/setting.js</file>
+    <file>/core/js/controller/headerviewfactory.js</file>
+    <file>/core/js/controller/treesviewfactory.js</file>
+    <file>/core/js/controller/mapviewfactory.js</file>
     
     
     

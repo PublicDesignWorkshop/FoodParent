@@ -1,6 +1,7 @@
-﻿module FruitParent {
+﻿module FoodParent {
     export class Controller {
         private static _instance: Controller = new Controller();
+        private bDebug: boolean = true;
         constructor(args?: any) {
             if (Controller._instance) {
                 throw new Error("Error: Instantiation failed: Use Controller.getInstance() instead of new.");
@@ -9,6 +10,23 @@
         }
         public static getInstance(): Controller {
             return Controller._instance;
+        }
+
+        public loadTreesPage(): void {
+            if (this.bDebug) console.log("loadTreesPage()");
+            View.getInstance().SetViewType(MainViewType.TREES);
+            View.getInstance().render();
+        }
+        public loadNotePage(): void {
+            if (this.bDebug) console.log("loadNotePage()");
+            View.getInstance().SetViewType(MainViewType.NOTE);
+            View.getInstance().render();
+        }
+
+        public updateGeoLocation(callback?: PositionCallback) {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(callback);
+            }
         }
     }
     export class Router extends Backbone.Router {
@@ -23,13 +41,14 @@
             this.routes = {
                 "": "home",
                 "trees": "trees",
-                "donations": "donations",
                 "tree/:id": "tree",
-                "donation/:id": "donation",
+                "note": "note",
+                "about": "about",
+                //"donations": "donations",
+                //"donation/:id": "donation",
             }
             super(options);
-            // Start Router
-            Backbone.history.start();
+            
 
         }
         public static getInstance(): Router {
@@ -42,15 +61,26 @@
         }
         trees() {
             console.log("we have loaded the trees");
-        }
-        donations() {
-            console.log("we have loaded the donations");
+            Controller.getInstance().loadTreesPage();
         }
         tree(id: number) {
             console.log("we have loaded the tree id: " + id);
         }
+        note() {
+            console.log("we have loaded the note");
+            Controller.getInstance().loadNotePage();
+        }
+        about() {
+            console.log("we have loaded the note");
+        }
+        /*
+        donations() {
+            console.log("we have loaded the donations");
+        }
+        
         donation(id: number) {
             console.log("we have loaded the donation id: " + id);
         }
+        */
     }
 }  
