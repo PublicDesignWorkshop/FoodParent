@@ -359,6 +359,7 @@ declare module Backbone {
         make(tagName: any, attributes?: any, content?: any): any;
         delegateEvents(events?: any): any;
         undelegateEvents(): any;
+        getViews(): any;
 
         _ensureElement(): void;
 

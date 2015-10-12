@@ -10,14 +10,21 @@
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <DebugType>full</DebugType>
     <DebugSymbols>true</DebugSymbols>
-    <TypeScriptToolsVersion>1.4</TypeScriptToolsVersion>
     <UseIISExpress>true</UseIISExpress>
+    <TypeScriptToolsVersion>1.4</TypeScriptToolsVersion>
     <IISExpressSSLPort />
     <IISExpressAnonymousAuthentication />
     <IISExpressWindowsAuthentication />
     <IISExpressUseClassicPipelineMode />
   </PropertyGroup>
   <ItemGroup>
+    <Content Include="assets\marker-blackberry.png" />
+    <Content Include="assets\marker-crabapples.png" />
+    <Content Include="assets\marker-mulberries.png" />
+    <Content Include="assets\marker-pear.png" />
+    <Content Include="contents\image\blackberry1.jpg" />
+    <Content Include="contents\image\blackberry2.jpg" />
+    <Content Include="contents\image\blackberry3.jpg" />
     <Content Include="core\css\app.css" />
     <Content Include="core\css\font\bonvenocf-light\BonvenoCF-Light-demo.html" />
     <Content Include="core\css\font\bonvenocf-light\BonvenoCF-Light-webfont.svg" />
@@ -34,7 +41,16 @@
     </Content>
     <Content Include="core\css\base.css" />
     <Content Include="core\css\header.css" />
+    <Content Include="core\css\sideinfo.css" />
+    <Content Include="core\css\table.css" />
+    <Content Include="core\css\tree.css" />
     <Content Include="core\css\view.css" />
+    <Content Include="core\image\marker-blackberry.png" />
+    <Content Include="core\image\marker-crabapples.png" />
+    <Content Include="core\image\marker-mulberries.png" />
+    <Content Include="core\image\marker-pear.png" />
+    <Content Include="core\image\marker-shadow.png" />
+    <Content Include="core\image\placeholder-image.jpg" />
     <Content Include="core\js\foodparent.js">
       <DependentUpon>foodparent.js.bundle</DependentUpon>
     </Content>
@@ -52,6 +68,18 @@
     <Content Include="core\lib\backgrid-moment-cell\backgrid-moment-cell.js" />
     <Content Include="core\lib\backgrid\backgrid.css" />
     <Content Include="core\lib\backgrid\backgrid.js" />
+    <Content Include="core\lib\bootstrap-datetimepicker\css\bootstrap-datetimepicker.css" />
+    <Content Include="core\lib\bootstrap-datetimepicker\js\bootstrap-datetimepicker.min.js" />
+    <Content Include="core\lib\bootstrap-select\css\bootstrap-select.css" />
+    <Content Include="core\lib\bootstrap-select\js\bootstrap-select.js" />
+    <Content Include="core\lib\bootstrap-toggle\css\bootstrap-toggle.css" />
+    <Content Include="core\lib\bootstrap-toggle\css\bootstrap-toggle.min.css" />
+    <Content Include="core\lib\bootstrap-toggle\css\bootstrap2-toggle.css" />
+    <Content Include="core\lib\bootstrap-toggle\css\bootstrap2-toggle.min.css" />
+    <Content Include="core\lib\bootstrap-toggle\js\bootstrap-toggle.js" />
+    <Content Include="core\lib\bootstrap-toggle\js\bootstrap-toggle.min.js" />
+    <Content Include="core\lib\bootstrap-toggle\js\bootstrap2-toggle.js" />
+    <Content Include="core\lib\bootstrap-toggle\js\bootstrap2-toggle.min.js" />
     <Content Include="core\lib\bootstrap\css\bootstrap-theme.css" />
     <Content Include="core\lib\bootstrap\css\bootstrap-theme.min.css" />
     <Content Include="core\lib\bootstrap\css\bootstrap.css" />
@@ -60,6 +88,11 @@
     <Content Include="core\lib\bootstrap\js\bootstrap.js" />
     <Content Include="core\lib\bootstrap\js\bootstrap.min.js" />
     <Content Include="core\lib\bootstrap\js\npm.js" />
+    <Content Include="core\lib\circle-progress\circle-progress.js" />
+    <Content Include="core\lib\coverflow\coverflow.css" />
+    <Content Include="core\lib\coverflow\coverflow.js" />
+    <Content Include="core\lib\hammer\hammer.min.js" />
+    <Content Include="core\lib\leaflet\leaflet.js" />
     <Content Include="core\lib\vis\img\network\acceptDeleteIcon.png" />
     <Content Include="core\lib\vis\img\network\addNodeIcon.png" />
     <Content Include="core\lib\vis\img\network\backIcon.png" />
@@ -96,17 +129,32 @@
   <ItemGroup>
     <TypeScriptCompile Include="core\js\app.ts" />
     <TypeScriptCompile Include="core\js\controller\controller.ts" />
+    <TypeScriptCompile Include="core\js\controller\coverflowviewfactory.ts" />
     <TypeScriptCompile Include="core\js\controller\headerviewfactory.ts" />
     <TypeScriptCompile Include="core\js\controller\mapviewfactory.ts" />
+    <TypeScriptCompile Include="core\js\controller\markerviewfactory.ts" />
     <TypeScriptCompile Include="core\js\controller\setting.ts" />
+    <TypeScriptCompile Include="core\js\controller\sideviewfactory.ts" />
+    <TypeScriptCompile Include="core\js\controller\treeinfoviewfactory.ts" />
     <TypeScriptCompile Include="core\js\controller\treesviewfactory.ts" />
+    <TypeScriptCompile Include="core\js\controller\treeviewfactory.ts" />
+    <TypeScriptCompile Include="core\js\model\flag.ts" />
+    <TypeScriptCompile Include="core\js\model\food.ts" />
     <TypeScriptCompile Include="core\js\model\model.ts" />
+    <TypeScriptCompile Include="core\js\model\note.ts" />
+    <TypeScriptCompile Include="core\js\model\tree.ts" />
+    <TypeScriptCompile Include="core\js\model\type.ts" />
+    <TypeScriptCompile Include="core\js\view\coverflowview.ts" />
+    <TypeScriptCompile Include="core\js\view\gridformat.ts" />
     <TypeScriptCompile Include="core\js\view\headerview.ts" />
     <TypeScriptCompile Include="core\js\view\localization.ts" />
     <TypeScriptCompile Include="core\js\view\mapview.ts" />
+    <TypeScriptCompile Include="core\js\view\markerview.ts" />
     <TypeScriptCompile Include="core\js\view\sideinfoview.ts" />
     <TypeScriptCompile Include="core\js\view\template.ts" />
+    <TypeScriptCompile Include="core\js\view\treeinfoview.ts" />
     <TypeScriptCompile Include="core\js\view\treesview.ts" />
+    <TypeScriptCompile Include="core\js\view\treeview.ts" />
     <TypeScriptCompile Include="core\js\view\view.ts" />
     <TypeScriptCompile Include="Scripts\typings\backbone\backbone.d.ts" />
     <TypeScriptCompile Include="Scripts\typings\backgrid\backgrid.d.ts" />
@@ -119,7 +167,9 @@
     <TypeScriptCompile Include="Scripts\typings\underscore\underscore.d.ts" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="core\js\foodparent.js.bundle" />
+    <Content Include="core\js\foodparent.js.bundle">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="core\js\fruitparent.min.js.map">
       <DependentUpon>fruitparent.min.js</DependentUpon>
     </Content>
@@ -137,6 +187,20 @@
     <Content Include="core\lib\bootstrap\fonts\glyphicons-halflings-regular.woff" />
     <Content Include="core\lib\bootstrap\fonts\glyphicons-halflings-regular.woff2" />
     <Content Include="core\lib\vis\vis.map" />
+    <Content Include="assets\marker.psd" />
+    <Content Include="core\php\database.php" />
+    <Content Include="core\php\food.php" />
+    <Content Include="core\php\tree.php" />
+    <Content Include="core\php\trees.php" />
+    <Content Include="core\php\foods.php" />
+    <Content Include="core\php\flag.php" />
+    <Content Include="core\php\flags.php" />
+    <Content Include="core\php\ownership.php" />
+    <Content Include="core\php\ownerships.php" />
+    <Content Include="core\php\note.php" />
+    <Content Include="core\php\notes.php" />
+    <Content Include="core\lib\bootstrap-toggle\js\bootstrap-toggle.min.js.map" />
+    <Content Include="core\lib\bootstrap-toggle\js\bootstrap2-toggle.min.js.map" />
     <None Include="web.Debug.config">
       <DependentUpon>web.config</DependentUpon>
     </None>
@@ -145,9 +209,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="core\image\" />
     <Folder Include="core\json\" />
-    <Folder Include="core\php\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">12.0</VisualStudioVersion>
@@ -176,8 +238,16 @@
     </VisualStudio>
   </ProjectExtensions>
   <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
-    <TypeScriptRemoveComments>false</TypeScriptRemoveComments>
-    <TypeScriptSourceMap>true</TypeScriptSourceMap>
+    <TypeScriptRemoveComments>True</TypeScriptRemoveComments>
+    <TypeScriptSourceMap>False</TypeScriptSourceMap>
+    <TypeScriptCompileOnSaveEnabled>True</TypeScriptCompileOnSaveEnabled>
+    <TypeScriptModuleKind>none</TypeScriptModuleKind>
+    <TypeScriptNoImplicitAny>False</TypeScriptNoImplicitAny>
+    <TypeScriptJsxEmit>
+    </TypeScriptJsxEmit>
+    <TypeScriptTarget>ES5</TypeScriptTarget>
+    <TypeScriptGeneratesDeclarations>False</TypeScriptGeneratesDeclarations>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)' == 'Release'">
     <TypeScriptRemoveComments>true</TypeScriptRemoveComments>

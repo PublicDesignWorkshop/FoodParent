@@ -1,0 +1,41 @@
+﻿@media all {
+    .panel-sideinfo {
+        padding-top: 12px !important;
+        border-left: 1px dashed #878787;
+        overflow-y: scroll;
+        overflow-x: hidden;
+    }
+    .panel-sideinfo .split {
+        height: 30px;
+        text-align: left;
+    }
+
+    .panel-sideinfo .split-rect {
+        height: 6px;
+        background-color: #ffffff;
+        margin-top: 12px;
+    }
+
+    .panel-sideinfo h1 {
+        font-size: x-large;
+        font-weight: 700;
+        margin-top: 0;
+    }
+    .panel-sideinfo h2 {
+        font-weight: 700;
+        font-size: large;
+        margin: 8px;
+        margin-left: 0;
+    }
+    .panel-sideinfo div {
+        font-size: medium;
+    }
+    .group-radio {
+        text-align: left;
+    }
+    .label-radio {
+        font-size: medium;
+        font-weight: 400;
+    }
+
+}

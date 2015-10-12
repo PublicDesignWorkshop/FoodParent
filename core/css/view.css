@@ -5,5 +5,16 @@
         height: 100%;
         overflow: hidden;
     }
+    #map-trees {
+        background-color: #fefefe;
+    }
+    #map-trees .leaflet-popup-content {
+        height: 16px;
+        margin: 8px;
+	}
+
+    #map-trees .leaflet-popup-content span {
+        cursor: pointer;
+	}
 }
 

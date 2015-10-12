@@ -2351,6 +2351,8 @@ declare module L {
         clearAllEventListeners(): Map;
         on(eventMap: any, context?: any): Map;
         off(eventMap?: any, context?: any): Map;
+
+        _layers: any;
     }
 }
  
@@ -2782,6 +2784,8 @@ declare module L {
         on(eventMap: any, context?: any): Marker;
         off(eventMap?: any, context?: any): Marker;
         bounce(option?: any, callbackFunction?: any): any;
+
+        options: any;
     }
 }
  

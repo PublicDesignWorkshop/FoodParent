@@ -19,9 +19,17 @@
             var data = {}
             that.$el.html(template(data));
 
-            that.views.push(MapViewFactory.getInstance().create(that.$('.panel-map')).render());
-
+            var view1: MapView = <MapView> MapViewFactory.getInstance().create(that.$('.panel-map'), true).render();
+            that.views.push(view1);
+            var view2: SideInfoView = <SideInfoView> SideViewFactory.getInstance().create(that.$('.panel-sideinfo')).render();
+            view2.setMapView(view1);
+            that.views.push(view2);
             return that;
+        }
+
+        getViews(): Array<Backbone.View<Backbone.Model>> {
+            var that: TreesView = this;
+            return that.views;
         }
 
         /*

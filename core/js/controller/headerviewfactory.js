@@ -18,4 +18,3 @@ var FoodParent;
     })();
     FoodParent.HeaderFactory = HeaderFactory;
 })(FoodParent || (FoodParent = {}));
-//# sourceMappingURL=headerviewfactory.js.map

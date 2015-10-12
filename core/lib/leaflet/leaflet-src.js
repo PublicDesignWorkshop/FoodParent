@@ -2144,7 +2144,6 @@ L.Map = L.Class.extend({
 		onOff = onOff || 'on';
 
 		L.DomEvent[onOff](this._container, 'click', this._onMouseClick, this);
-
 		var events = ['dblclick', 'mousedown', 'mouseup', 'mouseenter',
 		              'mouseleave', 'mousemove', 'contextmenu'],
 		    i, len;

@@ -22,11 +22,7 @@
         overflow: hidden;
         font-family: 'Open Sans', sans-serif;
         text-align: center;
-        color: #000000;
-        -webkit-user-select: none;
-        -moz-user-select: none;
-        -ms-user-select: none;
-        user-select: none;
+        color: rgb(51, 51, 51);
     }
 
     img, div {
@@ -48,12 +44,19 @@
         font-weight: normal;
     }
 
-    img { 
-        pointer-events: none;
-    }
-
     .hidden {
         visibility: hidden;
+    }
+
+    .clear {
+        clear: both;
+    }
+    .center {
+        text-align: center;
+    }
+
+    .left {
+        text-align: right;
     }
 
 }

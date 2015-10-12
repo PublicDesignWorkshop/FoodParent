@@ -9,6 +9,9 @@ var FoodParent;
     var Controller = (function () {
         function Controller(args) {
             this.bDebug = true;
+            this.fetchTypes = function (callback, callback2) {
+                FoodParent.Model.getInstance().fetchTypes(callback, callback2);
+            };
             if (Controller._instance) {
                 throw new Error("Error: Instantiation failed: Use Controller.getInstance() instead of new.");
             }
@@ -18,21 +21,54 @@ var FoodParent;
             return Controller._instance;
         };
         Controller.prototype.loadTreesPage = function () {
+            var that = this;
             if (this.bDebug)
                 console.log("loadTreesPage()");
-            FoodParent.View.getInstance().SetViewType(FoodParent.MainViewType.TREES);
+            FoodParent.View.getInstance().SetViewType(1 /* TREES */);
+            FoodParent.View.getInstance().render();
+        };
+        Controller.prototype.loadTreePage = function (id) {
+            var that = this;
+            that.current = id;
+            if (this.bDebug)
+                console.log("loadTreePage(" + id + ")");
+            FoodParent.View.getInstance().SetViewType(2 /* TREE */);
             FoodParent.View.getInstance().render();
         };
         Controller.prototype.loadNotePage = function () {
             if (this.bDebug)
                 console.log("loadNotePage()");
-            FoodParent.View.getInstance().SetViewType(FoodParent.MainViewType.NOTE);
+            FoodParent.View.getInstance().SetViewType(3 /* NOTE */);
             FoodParent.View.getInstance().render();
         };
         Controller.prototype.updateGeoLocation = function (callback) {
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(callback);
             }
+        };
+        Controller.prototype.fetchFood = function (id) {
+            FoodParent.Model.getInstance().fetchFood(id);
+        };
+        Controller.prototype.fetchTree = function (id, callback) {
+            FoodParent.Model.getInstance().fetchTree(id, callback);
+        };
+        Controller.prototype.fetchTrees = function (bounds) {
+            FoodParent.Model.getInstance().fetchTrees(bounds);
+        };
+        Controller.prototype.fetchFlags = function (callback, callback2) {
+            FoodParent.Model.getInstance().fetchFlags(callback, callback2);
+        };
+        Controller.prototype.fetchNotes = function (trees, size, offset, callback) {
+            FoodParent.Model.getInstance().fetchNotes(trees, size, offset, callback);
+        };
+        Controller.prototype.setMapView = function (view) {
+            FoodParent.View.getInstance().setMapView(view);
+        };
+        Controller.prototype.renderTreesOnMap = function () {
+            FoodParent.View.getInstance().renderTreesOnMap(FoodParent.Model.getInstance().getTrees());
+        };
+        Controller.prototype.getCurrent = function () {
+            return Math.floor(this.current);
         };
         Controller._instance = new Controller();
         return Controller;
@@ -45,7 +81,6 @@ var FoodParent;
                 throw new Error("Error: Instantiation failed: Use Router.getInstance() instead of new.");
             }
             Router._instance = this;
-            // Setup Router parameters
             this.routes = {
                 "": "home",
                 "trees": "trees",
@@ -59,7 +94,6 @@ var FoodParent;
             return Router._instance;
         };
         Router.prototype.home = function () {
-            //console.log("we have loaded the home page");
             this.navigate("trees", { trigger: true, replace: true });
         };
         Router.prototype.trees = function () {
@@ -68,6 +102,7 @@ var FoodParent;
         };
         Router.prototype.tree = function (id) {
             console.log("we have loaded the tree id: " + id);
+            Controller.getInstance().loadTreePage(id);
         };
         Router.prototype.note = function () {
             console.log("we have loaded the note");
@@ -81,4 +116,3 @@ var FoodParent;
     })(Backbone.Router);
     FoodParent.Router = Router;
 })(FoodParent || (FoodParent = {}));
-//# sourceMappingURL=controller.js.map

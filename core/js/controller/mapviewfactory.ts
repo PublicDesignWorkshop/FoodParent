@@ -11,8 +11,15 @@
         public static getInstance(): MapViewFactory {
             return MapViewFactory._instance;
         }
-        public create(el: JQuery): Backbone.View<Backbone.Model> {
-            return new MapView({ el: el });
+        public create(el: JQuery, bCentered: boolean): Backbone.View<Backbone.Model> {
+            var view: MapView = new MapView({ el: el });
+            view.setIsCentered(true);
+            return view;
+        }
+        public create2(el: JQuery, bCentered: boolean): Backbone.View<Backbone.Model> {
+            var view: MapView = new MapView({ el: el });
+            view.setIsCentered(false);
+            return view;
         }
     }
-} 
+}

@@ -17,11 +17,18 @@
     <file>/core/lib/backgrid/backgrid.css</file>
     <file>/core/lib/backgrid-moment-cell/backgrid-moment-cell.css</file>
     <file>/core/lib/bootstrap/css/bootstrap.css</file>
+    <file>/core/lib/coverflow/coverflow.css</file>
+    <file>/core/lib/bootstrap-toggle/css/bootstrap-toggle.css</file>
+    <file>/core/lib/bootstrap-datetimepicker/css/bootstrap-datetimepicker.css</file>
+    <file>/core/lib/bootstrap-select/css/bootstrap-select.css</file>
 
     
     <file>/core/css/app.css</file>
     <file>/core/css/view.css</file>
     <file>/core/css/base.css</file>
     <file>/core/css/header.css</file>
+    <file>/core/css/sideinfo.css</file>
+    <file>/core/css/tree.css</file>
+    <file>/core/css/table.css</file>
   </files>
 </bundle>

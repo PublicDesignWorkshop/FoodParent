@@ -24,5 +24,26 @@
         public getAboutText(): string {
             return "About";
         }
+        public getFlagText(): string {
+            return "Flag";
+        }
+        public getTypeText(): string {
+            return "Ownership";
+        }
+        public getRecentText(): string {
+            return "Recent Activities";
+        }
+        public getRipeningText(): string {
+            return "Ripnening";
+        }
+        public getTreeListText(): string {
+            return "Tree List";
+        }
+        public getDeleteConfirmText(): string {
+            return "Are you sure to delete this item?";
+        }
+        public getNoDataText(): string {
+            return "No Data";
+        }
     }
 }

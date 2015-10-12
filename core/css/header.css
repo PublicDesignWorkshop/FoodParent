@@ -6,13 +6,17 @@
         top: 0;
         left: 0;
         overflow: hidden;
-        background-color: #dedede;
+        background-color: #eeeeee;
         border-top: none;
         border-bottom: solid;
         border-left: none;
         border-right: none;
         border-color: #878787;
         border-width: 2px;
+    }
+
+    #wrapper-main-header div {
+        cursor: pointer;
     }
 
     #wrapper-main-header .row {

@@ -1,0 +1,33 @@
+﻿@media all {
+    .list {
+        padding: 20px;
+        font-size: small;
+    }
+    .list h1 {
+        font-size: x-large;
+        font-weight: 700;
+        margin-top: 0;
+    }
+
+    .btn-table {
+        width: 100%;
+        height: 24px;
+        padding-top: 2px;
+    }
+
+    .backgrid .food {
+        width: 15%;
+    }
+    .backgrid .lat {
+        width: 10%;
+    }
+    .backgrid .lng {
+        width: 10%;
+    }
+    .backgrid .address {
+        width: 40%;
+    }
+    .backgrid .updated {
+        width: 15%;
+    }
+}

@@ -11357,7 +11357,6 @@ L.Map = L.Class.extend({
 		onOff = onOff || 'on';
 
 		L.DomEvent[onOff](this._container, 'click', this._onMouseClick, this);
-
 		var events = ['dblclick', 'mousedown', 'mouseup', 'mouseenter',
 		              'mouseleave', 'mousemove', 'contextmenu'],
 		    i, len;
@@ -25144,7 +25143,7 @@ _.extend(NumberFormatter.prototype, {
      separator thousands. May be an empty string.
    */
   defaults: {
-    decimals: 2,
+    decimals: 4,
     decimalSeparator: '.',
     orderSeparator: ','
   },
@@ -30332,28 +30331,5195 @@ if (typeof jQuery === 'undefined') {
 
 }(jQuery);
 
+///#source 1 1 /core/lib/circle-progress/circle-progress.js
+/*
+jquery-circle-progress - jQuery Plugin to draw animated circular progress bars
+
+URL: http://kottenator.github.io/jquery-circle-progress/
+Author: Rostyslav Bryzgunov <kottenator@gmail.com>
+Version: 1.1.3
+License: MIT
+*/
+(function($) {
+    function CircleProgress(config) {
+        this.init(config);
+    }
+
+    CircleProgress.prototype = {
+        //----------------------------------------------- public options -----------------------------------------------
+        /**
+         * This is the only required option. It should be from 0.0 to 1.0
+         * @type {number}
+         */
+        value: 0.0,
+
+        /**
+         * Size of the circle / canvas in pixels
+         * @type {number}
+         */
+        size: 100.0,
+
+        /**
+         * Initial angle for 0.0 value in radians
+         * @type {number}
+         */
+        startAngle: -Math.PI,
+
+        /**
+         * Width of the arc. By default it's auto-calculated as 1/14 of size, but you may set it explicitly in pixels
+         * @type {number|string}
+         */
+        thickness: 'auto',
+
+        /**
+         * Fill of the arc. You may set it to:
+         *   - solid color:
+         *     - { color: '#3aeabb' }
+         *     - { color: 'rgba(255, 255, 255, .3)' }
+         *   - linear gradient (left to right):
+         *     - { gradient: ['#3aeabb', '#fdd250'], gradientAngle: Math.PI / 4 }
+         *     - { gradient: ['red', 'green', 'blue'], gradientDirection: [x0, y0, x1, y1] }
+         *   - image:
+         *     - { image: 'http://i.imgur.com/pT0i89v.png' }
+         *     - { image: imageObject }
+         *     - { color: 'lime', image: 'http://i.imgur.com/pT0i89v.png' } - color displayed until the image is loaded
+         */
+        fill: {
+            gradient: ['#3aeabb', '#fdd250']
+        },
+
+        /**
+         * Color of the "empty" arc. Only a color fill supported by now
+         * @type {string}
+         */
+        emptyFill: 'rgba(0, 0, 0, .1)',
+
+        /**
+         * Animation config (see jQuery animations: http://api.jquery.com/animate/)
+         */
+        animation: {
+            duration: 1200,
+            easing: 'circleProgressEasing'
+        },
+
+        /**
+         * Default animation starts at 0.0 and ends at specified `value`. Let's call this direct animation.
+         * If you want to make reversed animation then you should set `animationStartValue` to 1.0.
+         * Also you may specify any other value from 0.0 to 1.0
+         * @type {number}
+         */
+        animationStartValue: 0.0,
+
+        /**
+         * Reverse animation and arc draw
+         * @type {boolean}
+         */
+        reverse: false,
+
+        /**
+         * Arc line cap ('butt', 'round' or 'square')
+         * Read more: https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D.lineCap
+         * @type {string}
+         */
+        lineCap: 'butt',
+
+        //-------------------------------------- protected properties and methods --------------------------------------
+        /**
+         * @protected
+         */
+        constructor: CircleProgress,
+
+        /**
+         * Container element. Should be passed into constructor config
+         * @protected
+         * @type {jQuery}
+         */
+        el: null,
+
+        /**
+         * Canvas element. Automatically generated and prepended to the {@link CircleProgress.el container}
+         * @protected
+         * @type {HTMLCanvasElement}
+         */
+        canvas: null,
+
+        /**
+         * 2D-context of the {@link CircleProgress.canvas canvas}
+         * @protected
+         * @type {CanvasRenderingContext2D}
+         */
+        ctx: null,
+
+        /**
+         * Radius of the outer circle. Automatically calculated as {@link CircleProgress.size} / 2
+         * @protected
+         * @type {number}
+         */
+        radius: 0.0,
+
+        /**
+         * Fill of the main arc. Automatically calculated, depending on {@link CircleProgress.fill} option
+         * @protected
+         * @type {string|CanvasGradient|CanvasPattern}
+         */
+        arcFill: null,
+
+        /**
+         * Last rendered frame value
+         * @protected
+         * @type {number}
+         */
+        lastFrameValue: 0.0,
+
+        /**
+         * Init/re-init the widget
+         * @param {object} config - Config
+         */
+        init: function(config) {
+            $.extend(this, config);
+            this.radius = this.size / 2;
+            this.initWidget();
+            this.initFill();
+            this.draw();
+        },
+
+        /**
+         * @protected
+         */
+        initWidget: function() {
+            var canvas = this.canvas = this.canvas || $('<canvas>').prependTo(this.el)[0];
+            canvas.width = this.size;
+            canvas.height = this.size;
+            this.ctx = canvas.getContext('2d');
+        },
+
+        /**
+         * This method sets {@link CircleProgress.arcFill}
+         * It could do this async (on image load)
+         * @protected
+         */
+        initFill: function() {
+            var self = this,
+                fill = this.fill,
+                ctx = this.ctx,
+                size = this.size;
+
+            if (!fill)
+                throw Error("The fill is not specified!");
+
+            if (fill.color)
+                this.arcFill = fill.color;
+
+            if (fill.gradient) {
+                var gr = fill.gradient;
+
+                if (gr.length == 1) {
+                    this.arcFill = gr[0];
+                } else if (gr.length > 1) {
+                    var ga = fill.gradientAngle || 0, // gradient direction angle; 0 by default
+                        gd = fill.gradientDirection || [
+                            size / 2 * (1 - Math.cos(ga)), // x0
+                            size / 2 * (1 + Math.sin(ga)), // y0
+                            size / 2 * (1 + Math.cos(ga)), // x1
+                            size / 2 * (1 - Math.sin(ga))  // y1
+                        ];
+
+                    var lg = ctx.createLinearGradient.apply(ctx, gd);
+
+                    for (var i = 0; i < gr.length; i++) {
+                        var color = gr[i],
+                            pos = i / (gr.length - 1);
+
+                        if ($.isArray(color)) {
+                            pos = color[1];
+                            color = color[0];
+                        }
+
+                        lg.addColorStop(pos, color);
+                    }
+
+                    this.arcFill = lg;
+                }
+            }
+
+            if (fill.image) {
+                var img;
+
+                if (fill.image instanceof Image) {
+                    img = fill.image;
+                } else {
+                    img = new Image();
+                    img.src = fill.image;
+                }
+
+                if (img.complete)
+                    setImageFill();
+                else
+                    img.onload = setImageFill;
+            }
+
+            function setImageFill() {
+                var bg = $('<canvas>')[0];
+                bg.width = self.size;
+                bg.height = self.size;
+                bg.getContext('2d').drawImage(img, 0, 0, size, size);
+                self.arcFill = self.ctx.createPattern(bg, 'no-repeat');
+                self.drawFrame(self.lastFrameValue);
+            }
+        },
+
+        draw: function() {
+            if (this.animation)
+                this.drawAnimated(this.value);
+            else
+                this.drawFrame(this.value);
+        },
+
+        /**
+         * @protected
+         * @param {number} v - Frame value
+         */
+        drawFrame: function(v) {
+            this.lastFrameValue = v;
+            this.ctx.clearRect(0, 0, this.size, this.size);
+            this.drawEmptyArc(v);
+            this.drawArc(v);
+        },
+
+        /**
+         * @protected
+         * @param {number} v - Frame value
+         */
+        drawArc: function(v) {
+            var ctx = this.ctx,
+                r = this.radius,
+                t = this.getThickness(),
+                a = this.startAngle;
+
+            ctx.save();
+            ctx.beginPath();
+
+            if (!this.reverse) {
+                ctx.arc(r, r, r - t / 2, a, a + Math.PI * 2 * v);
+            } else {
+                ctx.arc(r, r, r - t / 2, a - Math.PI * 2 * v, a);
+            }
+
+            ctx.lineWidth = t;
+            ctx.lineCap = this.lineCap;
+            ctx.strokeStyle = this.arcFill;
+            ctx.stroke();
+            ctx.restore();
+        },
+
+        /**
+         * @protected
+         * @param {number} v - Frame value
+         */
+        drawEmptyArc: function(v) {
+            var ctx = this.ctx,
+                r = this.radius,
+                t = this.getThickness(),
+                a = this.startAngle;
+
+            if (v < 1) {
+                ctx.save();
+                ctx.beginPath();
+
+                if (v <= 0) {
+                    ctx.arc(r, r, r - t / 2, 0, Math.PI * 2);
+                } else {
+                    if (!this.reverse) {
+                        ctx.arc(r, r, r - t / 2, a + Math.PI * 2 * v, a);
+                    } else {
+                        ctx.arc(r, r, r - t / 2, a, a - Math.PI * 2 * v);
+                    }
+                }
+
+                ctx.lineWidth = t;
+                ctx.strokeStyle = this.emptyFill;
+                ctx.stroke();
+                ctx.restore();
+            }
+        },
+
+        /**
+         * @protected
+         * @param {number} v - Value
+         */
+        drawAnimated: function(v) {
+            var self = this,
+                el = this.el,
+                canvas = $(this.canvas);
+
+            // stop previous animation before new "start" event is triggered
+            canvas.stop(true, false);
+            el.trigger('circle-animation-start');
+
+            canvas
+                .css({ animationProgress: 0 })
+                .animate({ animationProgress: 1 }, $.extend({}, this.animation, {
+                    step: function (animationProgress) {
+                        var stepValue = self.animationStartValue * (1 - animationProgress) + v * animationProgress;
+                        self.drawFrame(stepValue);
+                        el.trigger('circle-animation-progress', [animationProgress, stepValue]);
+                    }
+                }))
+                .promise()
+                .always(function() {
+                    // trigger on both successful & failure animation end
+                    el.trigger('circle-animation-end');
+                });
+        },
+
+        /**
+         * @protected
+         * @returns {number}
+         */
+        getThickness: function() {
+            return $.isNumeric(this.thickness) ? this.thickness : this.size / 14;
+        },
+
+        getValue: function() {
+            return this.value;
+        },
+
+        setValue: function(newValue) {
+            if (this.animation)
+                this.animationStartValue = this.lastFrameValue;
+            this.value = newValue;
+            this.draw();
+        }
+    };
+
+    //-------------------------------------------- Initiating jQuery plugin --------------------------------------------
+    $.circleProgress = {
+        // Default options (you may override them)
+        defaults: CircleProgress.prototype
+    };
+
+    // ease-in-out-cubic
+    $.easing.circleProgressEasing = function(x, t, b, c, d) {
+        if ((t /= d / 2) < 1)
+            return c / 2 * t * t * t + b;
+        return c / 2 * ((t -= 2) * t * t + 2) + b;
+    };
+
+    /**
+     * Draw animated circular progress bar.
+     *
+     * Appends <canvas> to the element or updates already appended one.
+     *
+     * If animated, throws 3 events:
+     *
+     *   - circle-animation-start(jqEvent)
+     *   - circle-animation-progress(jqEvent, animationProgress, stepValue) - multiple event;
+     *                                                                        animationProgress: from 0.0 to 1.0;
+     *                                                                        stepValue: from 0.0 to value
+     *   - circle-animation-end(jqEvent)
+     *
+     * @param configOrCommand - Config object or command name
+     *     Example: { value: 0.75, size: 50, animation: false };
+     *     you may set any public property (see above);
+     *     `animation` may be set to false;
+     *     you may use .circleProgress('widget') to get the canvas
+     *     you may use .circleProgress('value', newValue) to dynamically update the value
+     *
+     * @param commandArgument - Some commands (like 'value') may require an argument
+     */
+    $.fn.circleProgress = function(configOrCommand, commandArgument) {
+        var dataName = 'circle-progress',
+            firstInstance = this.data(dataName);
+
+        if (configOrCommand == 'widget') {
+            if (!firstInstance)
+                throw Error('Calling "widget" method on not initialized instance is forbidden');
+            return firstInstance.canvas;
+        }
+
+        if (configOrCommand == 'value') {
+            if (!firstInstance)
+                throw Error('Calling "value" method on not initialized instance is forbidden');
+            if (typeof commandArgument == 'undefined') {
+                return firstInstance.getValue();
+            } else {
+                var newValue = arguments[1];
+                return this.each(function() {
+                    $(this).data(dataName).setValue(newValue);
+                });
+            }
+        }
+
+        return this.each(function() {
+            var el = $(this),
+                instance = el.data(dataName),
+                config = $.isPlainObject(configOrCommand) ? configOrCommand : {};
+
+            if (instance) {
+                instance.init(config);
+            } else {
+                var initialConfig = $.extend({}, el.data());
+                if (typeof initialConfig.fill == 'string')
+                    initialConfig.fill = JSON.parse(initialConfig.fill);
+                if (typeof initialConfig.animation == 'string')
+                    initialConfig.animation = JSON.parse(initialConfig.animation);
+                config = $.extend(initialConfig, config);
+                config.el = el;
+                instance = new CircleProgress(config);
+                el.data(dataName, instance);
+            }
+        });
+    };
+})(jQuery);
+
+///#source 1 1 /core/lib/hammer/hammer.min.js
+/*! Hammer.JS - v2.0.4 - 2014-09-28
+ * http://hammerjs.github.io/
+ *
+ * Copyright (c) 2014 Jorik Tangelder;
+ * Licensed under the MIT license */
+!function(a,b,c,d){"use strict";function e(a,b,c){return setTimeout(k(a,c),b)}function f(a,b,c){return Array.isArray(a)?(g(a,c[b],c),!0):!1}function g(a,b,c){var e;if(a)if(a.forEach)a.forEach(b,c);else if(a.length!==d)for(e=0;e<a.length;)b.call(c,a[e],e,a),e++;else for(e in a)a.hasOwnProperty(e)&&b.call(c,a[e],e,a)}function h(a,b,c){for(var e=Object.keys(b),f=0;f<e.length;)(!c||c&&a[e[f]]===d)&&(a[e[f]]=b[e[f]]),f++;return a}function i(a,b){return h(a,b,!0)}function j(a,b,c){var d,e=b.prototype;d=a.prototype=Object.create(e),d.constructor=a,d._super=e,c&&h(d,c)}function k(a,b){return function(){return a.apply(b,arguments)}}function l(a,b){return typeof a==kb?a.apply(b?b[0]||d:d,b):a}function m(a,b){return a===d?b:a}function n(a,b,c){g(r(b),function(b){a.addEventListener(b,c,!1)})}function o(a,b,c){g(r(b),function(b){a.removeEventListener(b,c,!1)})}function p(a,b){for(;a;){if(a==b)return!0;a=a.parentNode}return!1}function q(a,b){return a.indexOf(b)>-1}function r(a){return a.trim().split(/\s+/g)}function s(a,b,c){if(a.indexOf&&!c)return a.indexOf(b);for(var d=0;d<a.length;){if(c&&a[d][c]==b||!c&&a[d]===b)return d;d++}return-1}function t(a){return Array.prototype.slice.call(a,0)}function u(a,b,c){for(var d=[],e=[],f=0;f<a.length;){var g=b?a[f][b]:a[f];s(e,g)<0&&d.push(a[f]),e[f]=g,f++}return c&&(d=b?d.sort(function(a,c){return a[b]>c[b]}):d.sort()),d}function v(a,b){for(var c,e,f=b[0].toUpperCase()+b.slice(1),g=0;g<ib.length;){if(c=ib[g],e=c?c+f:b,e in a)return e;g++}return d}function w(){return ob++}function x(a){var b=a.ownerDocument;return b.defaultView||b.parentWindow}function y(a,b){var c=this;this.manager=a,this.callback=b,this.element=a.element,this.target=a.options.inputTarget,this.domHandler=function(b){l(a.options.enable,[a])&&c.handler(b)},this.init()}function z(a){var b,c=a.options.inputClass;return new(b=c?c:rb?N:sb?Q:qb?S:M)(a,A)}function A(a,b,c){var d=c.pointers.length,e=c.changedPointers.length,f=b&yb&&d-e===0,g=b&(Ab|Bb)&&d-e===0;c.isFirst=!!f,c.isFinal=!!g,f&&(a.session={}),c.eventType=b,B(a,c),a.emit("hammer.input",c),a.recognize(c),a.session.prevInput=c}function B(a,b){var c=a.session,d=b.pointers,e=d.length;c.firstInput||(c.firstInput=E(b)),e>1&&!c.firstMultiple?c.firstMultiple=E(b):1===e&&(c.firstMultiple=!1);var f=c.firstInput,g=c.firstMultiple,h=g?g.center:f.center,i=b.center=F(d);b.timeStamp=nb(),b.deltaTime=b.timeStamp-f.timeStamp,b.angle=J(h,i),b.distance=I(h,i),C(c,b),b.offsetDirection=H(b.deltaX,b.deltaY),b.scale=g?L(g.pointers,d):1,b.rotation=g?K(g.pointers,d):0,D(c,b);var j=a.element;p(b.srcEvent.target,j)&&(j=b.srcEvent.target),b.target=j}function C(a,b){var c=b.center,d=a.offsetDelta||{},e=a.prevDelta||{},f=a.prevInput||{};(b.eventType===yb||f.eventType===Ab)&&(e=a.prevDelta={x:f.deltaX||0,y:f.deltaY||0},d=a.offsetDelta={x:c.x,y:c.y}),b.deltaX=e.x+(c.x-d.x),b.deltaY=e.y+(c.y-d.y)}function D(a,b){var c,e,f,g,h=a.lastInterval||b,i=b.timeStamp-h.timeStamp;if(b.eventType!=Bb&&(i>xb||h.velocity===d)){var j=h.deltaX-b.deltaX,k=h.deltaY-b.deltaY,l=G(i,j,k);e=l.x,f=l.y,c=mb(l.x)>mb(l.y)?l.x:l.y,g=H(j,k),a.lastInterval=b}else c=h.velocity,e=h.velocityX,f=h.velocityY,g=h.direction;b.velocity=c,b.velocityX=e,b.velocityY=f,b.direction=g}function E(a){for(var b=[],c=0;c<a.pointers.length;)b[c]={clientX:lb(a.pointers[c].clientX),clientY:lb(a.pointers[c].clientY)},c++;return{timeStamp:nb(),pointers:b,center:F(b),deltaX:a.deltaX,deltaY:a.deltaY}}function F(a){var b=a.length;if(1===b)return{x:lb(a[0].clientX),y:lb(a[0].clientY)};for(var c=0,d=0,e=0;b>e;)c+=a[e].clientX,d+=a[e].clientY,e++;return{x:lb(c/b),y:lb(d/b)}}function G(a,b,c){return{x:b/a||0,y:c/a||0}}function H(a,b){return a===b?Cb:mb(a)>=mb(b)?a>0?Db:Eb:b>0?Fb:Gb}function I(a,b,c){c||(c=Kb);var d=b[c[0]]-a[c[0]],e=b[c[1]]-a[c[1]];return Math.sqrt(d*d+e*e)}function J(a,b,c){c||(c=Kb);var d=b[c[0]]-a[c[0]],e=b[c[1]]-a[c[1]];return 180*Math.atan2(e,d)/Math.PI}function K(a,b){return J(b[1],b[0],Lb)-J(a[1],a[0],Lb)}function L(a,b){return I(b[0],b[1],Lb)/I(a[0],a[1],Lb)}function M(){this.evEl=Nb,this.evWin=Ob,this.allow=!0,this.pressed=!1,y.apply(this,arguments)}function N(){this.evEl=Rb,this.evWin=Sb,y.apply(this,arguments),this.store=this.manager.session.pointerEvents=[]}function O(){this.evTarget=Ub,this.evWin=Vb,this.started=!1,y.apply(this,arguments)}function P(a,b){var c=t(a.touches),d=t(a.changedTouches);return b&(Ab|Bb)&&(c=u(c.concat(d),"identifier",!0)),[c,d]}function Q(){this.evTarget=Xb,this.targetIds={},y.apply(this,arguments)}function R(a,b){var c=t(a.touches),d=this.targetIds;if(b&(yb|zb)&&1===c.length)return d[c[0].identifier]=!0,[c,c];var e,f,g=t(a.changedTouches),h=[],i=this.target;if(f=c.filter(function(a){return p(a.target,i)}),b===yb)for(e=0;e<f.length;)d[f[e].identifier]=!0,e++;for(e=0;e<g.length;)d[g[e].identifier]&&h.push(g[e]),b&(Ab|Bb)&&delete d[g[e].identifier],e++;return h.length?[u(f.concat(h),"identifier",!0),h]:void 0}function S(){y.apply(this,arguments);var a=k(this.handler,this);this.touch=new Q(this.manager,a),this.mouse=new M(this.manager,a)}function T(a,b){this.manager=a,this.set(b)}function U(a){if(q(a,bc))return bc;var b=q(a,cc),c=q(a,dc);return b&&c?cc+" "+dc:b||c?b?cc:dc:q(a,ac)?ac:_b}function V(a){this.id=w(),this.manager=null,this.options=i(a||{},this.defaults),this.options.enable=m(this.options.enable,!0),this.state=ec,this.simultaneous={},this.requireFail=[]}function W(a){return a&jc?"cancel":a&hc?"end":a&gc?"move":a&fc?"start":""}function X(a){return a==Gb?"down":a==Fb?"up":a==Db?"left":a==Eb?"right":""}function Y(a,b){var c=b.manager;return c?c.get(a):a}function Z(){V.apply(this,arguments)}function $(){Z.apply(this,arguments),this.pX=null,this.pY=null}function _(){Z.apply(this,arguments)}function ab(){V.apply(this,arguments),this._timer=null,this._input=null}function bb(){Z.apply(this,arguments)}function cb(){Z.apply(this,arguments)}function db(){V.apply(this,arguments),this.pTime=!1,this.pCenter=!1,this._timer=null,this._input=null,this.count=0}function eb(a,b){return b=b||{},b.recognizers=m(b.recognizers,eb.defaults.preset),new fb(a,b)}function fb(a,b){b=b||{},this.options=i(b,eb.defaults),this.options.inputTarget=this.options.inputTarget||a,this.handlers={},this.session={},this.recognizers=[],this.element=a,this.input=z(this),this.touchAction=new T(this,this.options.touchAction),gb(this,!0),g(b.recognizers,function(a){var b=this.add(new a[0](a[1]));a[2]&&b.recognizeWith(a[2]),a[3]&&b.requireFailure(a[3])},this)}function gb(a,b){var c=a.element;g(a.options.cssProps,function(a,d){c.style[v(c.style,d)]=b?a:""})}function hb(a,c){var d=b.createEvent("Event");d.initEvent(a,!0,!0),d.gesture=c,c.target.dispatchEvent(d)}var ib=["","webkit","moz","MS","ms","o"],jb=b.createElement("div"),kb="function",lb=Math.round,mb=Math.abs,nb=Date.now,ob=1,pb=/mobile|tablet|ip(ad|hone|od)|android/i,qb="ontouchstart"in a,rb=v(a,"PointerEvent")!==d,sb=qb&&pb.test(navigator.userAgent),tb="touch",ub="pen",vb="mouse",wb="kinect",xb=25,yb=1,zb=2,Ab=4,Bb=8,Cb=1,Db=2,Eb=4,Fb=8,Gb=16,Hb=Db|Eb,Ib=Fb|Gb,Jb=Hb|Ib,Kb=["x","y"],Lb=["clientX","clientY"];y.prototype={handler:function(){},init:function(){this.evEl&&n(this.element,this.evEl,this.domHandler),this.evTarget&&n(this.target,this.evTarget,this.domHandler),this.evWin&&n(x(this.element),this.evWin,this.domHandler)},destroy:function(){this.evEl&&o(this.element,this.evEl,this.domHandler),this.evTarget&&o(this.target,this.evTarget,this.domHandler),this.evWin&&o(x(this.element),this.evWin,this.domHandler)}};var Mb={mousedown:yb,mousemove:zb,mouseup:Ab},Nb="mousedown",Ob="mousemove mouseup";j(M,y,{handler:function(a){var b=Mb[a.type];b&yb&&0===a.button&&(this.pressed=!0),b&zb&&1!==a.which&&(b=Ab),this.pressed&&this.allow&&(b&Ab&&(this.pressed=!1),this.callback(this.manager,b,{pointers:[a],changedPointers:[a],pointerType:vb,srcEvent:a}))}});var Pb={pointerdown:yb,pointermove:zb,pointerup:Ab,pointercancel:Bb,pointerout:Bb},Qb={2:tb,3:ub,4:vb,5:wb},Rb="pointerdown",Sb="pointermove pointerup pointercancel";a.MSPointerEvent&&(Rb="MSPointerDown",Sb="MSPointerMove MSPointerUp MSPointerCancel"),j(N,y,{handler:function(a){var b=this.store,c=!1,d=a.type.toLowerCase().replace("ms",""),e=Pb[d],f=Qb[a.pointerType]||a.pointerType,g=f==tb,h=s(b,a.pointerId,"pointerId");e&yb&&(0===a.button||g)?0>h&&(b.push(a),h=b.length-1):e&(Ab|Bb)&&(c=!0),0>h||(b[h]=a,this.callback(this.manager,e,{pointers:b,changedPointers:[a],pointerType:f,srcEvent:a}),c&&b.splice(h,1))}});var Tb={touchstart:yb,touchmove:zb,touchend:Ab,touchcancel:Bb},Ub="touchstart",Vb="touchstart touchmove touchend touchcancel";j(O,y,{handler:function(a){var b=Tb[a.type];if(b===yb&&(this.started=!0),this.started){var c=P.call(this,a,b);b&(Ab|Bb)&&c[0].length-c[1].length===0&&(this.started=!1),this.callback(this.manager,b,{pointers:c[0],changedPointers:c[1],pointerType:tb,srcEvent:a})}}});var Wb={touchstart:yb,touchmove:zb,touchend:Ab,touchcancel:Bb},Xb="touchstart touchmove touchend touchcancel";j(Q,y,{handler:function(a){var b=Wb[a.type],c=R.call(this,a,b);c&&this.callback(this.manager,b,{pointers:c[0],changedPointers:c[1],pointerType:tb,srcEvent:a})}}),j(S,y,{handler:function(a,b,c){var d=c.pointerType==tb,e=c.pointerType==vb;if(d)this.mouse.allow=!1;else if(e&&!this.mouse.allow)return;b&(Ab|Bb)&&(this.mouse.allow=!0),this.callback(a,b,c)},destroy:function(){this.touch.destroy(),this.mouse.destroy()}});var Yb=v(jb.style,"touchAction"),Zb=Yb!==d,$b="compute",_b="auto",ac="manipulation",bc="none",cc="pan-x",dc="pan-y";T.prototype={set:function(a){a==$b&&(a=this.compute()),Zb&&(this.manager.element.style[Yb]=a),this.actions=a.toLowerCase().trim()},update:function(){this.set(this.manager.options.touchAction)},compute:function(){var a=[];return g(this.manager.recognizers,function(b){l(b.options.enable,[b])&&(a=a.concat(b.getTouchAction()))}),U(a.join(" "))},preventDefaults:function(a){if(!Zb){var b=a.srcEvent,c=a.offsetDirection;if(this.manager.session.prevented)return void b.preventDefault();var d=this.actions,e=q(d,bc),f=q(d,dc),g=q(d,cc);return e||f&&c&Hb||g&&c&Ib?this.preventSrc(b):void 0}},preventSrc:function(a){this.manager.session.prevented=!0,a.preventDefault()}};var ec=1,fc=2,gc=4,hc=8,ic=hc,jc=16,kc=32;V.prototype={defaults:{},set:function(a){return h(this.options,a),this.manager&&this.manager.touchAction.update(),this},recognizeWith:function(a){if(f(a,"recognizeWith",this))return this;var b=this.simultaneous;return a=Y(a,this),b[a.id]||(b[a.id]=a,a.recognizeWith(this)),this},dropRecognizeWith:function(a){return f(a,"dropRecognizeWith",this)?this:(a=Y(a,this),delete this.simultaneous[a.id],this)},requireFailure:function(a){if(f(a,"requireFailure",this))return this;var b=this.requireFail;return a=Y(a,this),-1===s(b,a)&&(b.push(a),a.requireFailure(this)),this},dropRequireFailure:function(a){if(f(a,"dropRequireFailure",this))return this;a=Y(a,this);var b=s(this.requireFail,a);return b>-1&&this.requireFail.splice(b,1),this},hasRequireFailures:function(){return this.requireFail.length>0},canRecognizeWith:function(a){return!!this.simultaneous[a.id]},emit:function(a){function b(b){c.manager.emit(c.options.event+(b?W(d):""),a)}var c=this,d=this.state;hc>d&&b(!0),b(),d>=hc&&b(!0)},tryEmit:function(a){return this.canEmit()?this.emit(a):void(this.state=kc)},canEmit:function(){for(var a=0;a<this.requireFail.length;){if(!(this.requireFail[a].state&(kc|ec)))return!1;a++}return!0},recognize:function(a){var b=h({},a);return l(this.options.enable,[this,b])?(this.state&(ic|jc|kc)&&(this.state=ec),this.state=this.process(b),void(this.state&(fc|gc|hc|jc)&&this.tryEmit(b))):(this.reset(),void(this.state=kc))},process:function(){},getTouchAction:function(){},reset:function(){}},j(Z,V,{defaults:{pointers:1},attrTest:function(a){var b=this.options.pointers;return 0===b||a.pointers.length===b},process:function(a){var b=this.state,c=a.eventType,d=b&(fc|gc),e=this.attrTest(a);return d&&(c&Bb||!e)?b|jc:d||e?c&Ab?b|hc:b&fc?b|gc:fc:kc}}),j($,Z,{defaults:{event:"pan",threshold:10,pointers:1,direction:Jb},getTouchAction:function(){var a=this.options.direction,b=[];return a&Hb&&b.push(dc),a&Ib&&b.push(cc),b},directionTest:function(a){var b=this.options,c=!0,d=a.distance,e=a.direction,f=a.deltaX,g=a.deltaY;return e&b.direction||(b.direction&Hb?(e=0===f?Cb:0>f?Db:Eb,c=f!=this.pX,d=Math.abs(a.deltaX)):(e=0===g?Cb:0>g?Fb:Gb,c=g!=this.pY,d=Math.abs(a.deltaY))),a.direction=e,c&&d>b.threshold&&e&b.direction},attrTest:function(a){return Z.prototype.attrTest.call(this,a)&&(this.state&fc||!(this.state&fc)&&this.directionTest(a))},emit:function(a){this.pX=a.deltaX,this.pY=a.deltaY;var b=X(a.direction);b&&this.manager.emit(this.options.event+b,a),this._super.emit.call(this,a)}}),j(_,Z,{defaults:{event:"pinch",threshold:0,pointers:2},getTouchAction:function(){return[bc]},attrTest:function(a){return this._super.attrTest.call(this,a)&&(Math.abs(a.scale-1)>this.options.threshold||this.state&fc)},emit:function(a){if(this._super.emit.call(this,a),1!==a.scale){var b=a.scale<1?"in":"out";this.manager.emit(this.options.event+b,a)}}}),j(ab,V,{defaults:{event:"press",pointers:1,time:500,threshold:5},getTouchAction:function(){return[_b]},process:function(a){var b=this.options,c=a.pointers.length===b.pointers,d=a.distance<b.threshold,f=a.deltaTime>b.time;if(this._input=a,!d||!c||a.eventType&(Ab|Bb)&&!f)this.reset();else if(a.eventType&yb)this.reset(),this._timer=e(function(){this.state=ic,this.tryEmit()},b.time,this);else if(a.eventType&Ab)return ic;return kc},reset:function(){clearTimeout(this._timer)},emit:function(a){this.state===ic&&(a&&a.eventType&Ab?this.manager.emit(this.options.event+"up",a):(this._input.timeStamp=nb(),this.manager.emit(this.options.event,this._input)))}}),j(bb,Z,{defaults:{event:"rotate",threshold:0,pointers:2},getTouchAction:function(){return[bc]},attrTest:function(a){return this._super.attrTest.call(this,a)&&(Math.abs(a.rotation)>this.options.threshold||this.state&fc)}}),j(cb,Z,{defaults:{event:"swipe",threshold:10,velocity:.65,direction:Hb|Ib,pointers:1},getTouchAction:function(){return $.prototype.getTouchAction.call(this)},attrTest:function(a){var b,c=this.options.direction;return c&(Hb|Ib)?b=a.velocity:c&Hb?b=a.velocityX:c&Ib&&(b=a.velocityY),this._super.attrTest.call(this,a)&&c&a.direction&&a.distance>this.options.threshold&&mb(b)>this.options.velocity&&a.eventType&Ab},emit:function(a){var b=X(a.direction);b&&this.manager.emit(this.options.event+b,a),this.manager.emit(this.options.event,a)}}),j(db,V,{defaults:{event:"tap",pointers:1,taps:1,interval:300,time:250,threshold:2,posThreshold:10},getTouchAction:function(){return[ac]},process:function(a){var b=this.options,c=a.pointers.length===b.pointers,d=a.distance<b.threshold,f=a.deltaTime<b.time;if(this.reset(),a.eventType&yb&&0===this.count)return this.failTimeout();if(d&&f&&c){if(a.eventType!=Ab)return this.failTimeout();var g=this.pTime?a.timeStamp-this.pTime<b.interval:!0,h=!this.pCenter||I(this.pCenter,a.center)<b.posThreshold;this.pTime=a.timeStamp,this.pCenter=a.center,h&&g?this.count+=1:this.count=1,this._input=a;var i=this.count%b.taps;if(0===i)return this.hasRequireFailures()?(this._timer=e(function(){this.state=ic,this.tryEmit()},b.interval,this),fc):ic}return kc},failTimeout:function(){return this._timer=e(function(){this.state=kc},this.options.interval,this),kc},reset:function(){clearTimeout(this._timer)},emit:function(){this.state==ic&&(this._input.tapCount=this.count,this.manager.emit(this.options.event,this._input))}}),eb.VERSION="2.0.4",eb.defaults={domEvents:!1,touchAction:$b,enable:!0,inputTarget:null,inputClass:null,preset:[[bb,{enable:!1}],[_,{enable:!1},["rotate"]],[cb,{direction:Hb}],[$,{direction:Hb},["swipe"]],[db],[db,{event:"doubletap",taps:2},["tap"]],[ab]],cssProps:{userSelect:"none",touchSelect:"none",touchCallout:"none",contentZooming:"none",userDrag:"none",tapHighlightColor:"rgba(0,0,0,0)"}};var lc=1,mc=2;fb.prototype={set:function(a){return h(this.options,a),a.touchAction&&this.touchAction.update(),a.inputTarget&&(this.input.destroy(),this.input.target=a.inputTarget,this.input.init()),this},stop:function(a){this.session.stopped=a?mc:lc},recognize:function(a){var b=this.session;if(!b.stopped){this.touchAction.preventDefaults(a);var c,d=this.recognizers,e=b.curRecognizer;(!e||e&&e.state&ic)&&(e=b.curRecognizer=null);for(var f=0;f<d.length;)c=d[f],b.stopped===mc||e&&c!=e&&!c.canRecognizeWith(e)?c.reset():c.recognize(a),!e&&c.state&(fc|gc|hc)&&(e=b.curRecognizer=c),f++}},get:function(a){if(a instanceof V)return a;for(var b=this.recognizers,c=0;c<b.length;c++)if(b[c].options.event==a)return b[c];return null},add:function(a){if(f(a,"add",this))return this;var b=this.get(a.options.event);return b&&this.remove(b),this.recognizers.push(a),a.manager=this,this.touchAction.update(),a},remove:function(a){if(f(a,"remove",this))return this;var b=this.recognizers;return a=this.get(a),b.splice(s(b,a),1),this.touchAction.update(),this},on:function(a,b){var c=this.handlers;return g(r(a),function(a){c[a]=c[a]||[],c[a].push(b)}),this},off:function(a,b){var c=this.handlers;return g(r(a),function(a){b?c[a].splice(s(c[a],b),1):delete c[a]}),this},emit:function(a,b){this.options.domEvents&&hb(a,b);var c=this.handlers[a]&&this.handlers[a].slice();if(c&&c.length){b.type=a,b.preventDefault=function(){b.srcEvent.preventDefault()};for(var d=0;d<c.length;)c[d](b),d++}},destroy:function(){this.element&&gb(this,!1),this.handlers={},this.session={},this.input.destroy(),this.element=null}},h(eb,{INPUT_START:yb,INPUT_MOVE:zb,INPUT_END:Ab,INPUT_CANCEL:Bb,STATE_POSSIBLE:ec,STATE_BEGAN:fc,STATE_CHANGED:gc,STATE_ENDED:hc,STATE_RECOGNIZED:ic,STATE_CANCELLED:jc,STATE_FAILED:kc,DIRECTION_NONE:Cb,DIRECTION_LEFT:Db,DIRECTION_RIGHT:Eb,DIRECTION_UP:Fb,DIRECTION_DOWN:Gb,DIRECTION_HORIZONTAL:Hb,DIRECTION_VERTICAL:Ib,DIRECTION_ALL:Jb,Manager:fb,Input:y,TouchAction:T,TouchInput:Q,MouseInput:M,PointerEventInput:N,TouchMouseInput:S,SingleTouchInput:O,Recognizer:V,AttrRecognizer:Z,Tap:db,Pan:$,Swipe:cb,Pinch:_,Rotate:bb,Press:ab,on:n,off:o,each:g,merge:i,extend:h,inherit:j,bindFn:k,prefixed:v}),typeof define==kb&&define.amd?define(function(){return eb}):"undefined"!=typeof module&&module.exports?module.exports=eb:a[c]=eb}(window,document,"Hammer");
+//# sourceMappingURL=hammer.min.map
+///#source 1 1 /core/lib/coverflow/coverflow.js
+/*! CoverflowJS - v3.0.1 - 2014-03-06
+* Copyright (c) 2014 Paul Baukus, Addy Osmani, Sebastian Sauer, Brandon Belvin, April Barrett; Licensed MIT */
+/*! jQuery UI - v1.10.4 - 2014-01-17
+* http://jqueryui.com
+* Includes: jquery.ui.core.js, jquery.ui.widget.js, jquery.ui.effect.js
+* Copyright 2014 jQuery Foundation and other contributors; Licensed MIT */
+(function( $, undefined ) {
+
+var uuid = 0,
+	runiqueId = /^ui-id-\d+$/;
+
+// $.ui might exist from components with no dependencies, e.g., $.ui.position
+$.ui = $.ui || {};
+
+$.extend( $.ui, {
+	version: "@VERSION",
+
+	keyCode: {
+		BACKSPACE: 8,
+		COMMA: 188,
+		DELETE: 46,
+		DOWN: 40,
+		END: 35,
+		ENTER: 13,
+		ESCAPE: 27,
+		HOME: 36,
+		LEFT: 37,
+		NUMPAD_ADD: 107,
+		NUMPAD_DECIMAL: 110,
+		NUMPAD_DIVIDE: 111,
+		NUMPAD_ENTER: 108,
+		NUMPAD_MULTIPLY: 106,
+		NUMPAD_SUBTRACT: 109,
+		PAGE_DOWN: 34,
+		PAGE_UP: 33,
+		PERIOD: 190,
+		RIGHT: 39,
+		SPACE: 32,
+		TAB: 9,
+		UP: 38
+	}
+});
+
+// plugins
+$.fn.extend({
+	focus: (function( orig ) {
+		return function( delay, fn ) {
+			return typeof delay === "number" ?
+				this.each(function() {
+					var elem = this;
+					setTimeout(function() {
+						$( elem ).focus();
+						if ( fn ) {
+							fn.call( elem );
+						}
+					}, delay );
+				}) :
+				orig.apply( this, arguments );
+		};
+	})( $.fn.focus ),
+
+	scrollParent: function() {
+		var scrollParent;
+		if (($.ui.ie && (/(static|relative)/).test(this.css("position"))) || (/absolute/).test(this.css("position"))) {
+			scrollParent = this.parents().filter(function() {
+				return (/(relative|absolute|fixed)/).test($.css(this,"position")) && (/(auto|scroll)/).test($.css(this,"overflow")+$.css(this,"overflow-y")+$.css(this,"overflow-x"));
+			}).eq(0);
+		} else {
+			scrollParent = this.parents().filter(function() {
+				return (/(auto|scroll)/).test($.css(this,"overflow")+$.css(this,"overflow-y")+$.css(this,"overflow-x"));
+			}).eq(0);
+		}
+
+		return (/fixed/).test(this.css("position")) || !scrollParent.length ? $(document) : scrollParent;
+	},
+
+	zIndex: function( zIndex ) {
+		if ( zIndex !== undefined ) {
+			return this.css( "zIndex", zIndex );
+		}
+
+		if ( this.length ) {
+			var elem = $( this[ 0 ] ), position, value;
+			while ( elem.length && elem[ 0 ] !== document ) {
+				// Ignore z-index if position is set to a value where z-index is ignored by the browser
+				// This makes behavior of this function consistent across browsers
+				// WebKit always returns auto if the element is positioned
+				position = elem.css( "position" );
+				if ( position === "absolute" || position === "relative" || position === "fixed" ) {
+					// IE returns 0 when zIndex is not specified
+					// other browsers return a string
+					// we ignore the case of nested elements with an explicit value of 0
+					// <div style="z-index: -10;"><div style="z-index: 0;"></div></div>
+					value = parseInt( elem.css( "zIndex" ), 10 );
+					if ( !isNaN( value ) && value !== 0 ) {
+						return value;
+					}
+				}
+				elem = elem.parent();
+			}
+		}
+
+		return 0;
+	},
+
+	uniqueId: function() {
+		return this.each(function() {
+			if ( !this.id ) {
+				this.id = "ui-id-" + (++uuid);
+			}
+		});
+	},
+
+	removeUniqueId: function() {
+		return this.each(function() {
+			if ( runiqueId.test( this.id ) ) {
+				$( this ).removeAttr( "id" );
+			}
+		});
+	}
+});
+
+// selectors
+function focusable( element, isTabIndexNotNaN ) {
+	var map, mapName, img,
+		nodeName = element.nodeName.toLowerCase();
+	if ( "area" === nodeName ) {
+		map = element.parentNode;
+		mapName = map.name;
+		if ( !element.href || !mapName || map.nodeName.toLowerCase() !== "map" ) {
+			return false;
+		}
+		img = $( "img[usemap=#" + mapName + "]" )[0];
+		return !!img && visible( img );
+	}
+	return ( /input|select|textarea|button|object/.test( nodeName ) ?
+		!element.disabled :
+		"a" === nodeName ?
+			element.href || isTabIndexNotNaN :
+			isTabIndexNotNaN) &&
+		// the element and all of its ancestors must be visible
+		visible( element );
+}
+
+function visible( element ) {
+	return $.expr.filters.visible( element ) &&
+		!$( element ).parents().addBack().filter(function() {
+			return $.css( this, "visibility" ) === "hidden";
+		}).length;
+}
+
+$.extend( $.expr[ ":" ], {
+	data: $.expr.createPseudo ?
+		$.expr.createPseudo(function( dataName ) {
+			return function( elem ) {
+				return !!$.data( elem, dataName );
+			};
+		}) :
+		// support: jQuery <1.8
+		function( elem, i, match ) {
+			return !!$.data( elem, match[ 3 ] );
+		},
+
+	focusable: function( element ) {
+		return focusable( element, !isNaN( $.attr( element, "tabindex" ) ) );
+	},
+
+	tabbable: function( element ) {
+		var tabIndex = $.attr( element, "tabindex" ),
+			isTabIndexNaN = isNaN( tabIndex );
+		return ( isTabIndexNaN || tabIndex >= 0 ) && focusable( element, !isTabIndexNaN );
+	}
+});
+
+// support: jQuery <1.8
+if ( !$( "<a>" ).outerWidth( 1 ).jquery ) {
+	$.each( [ "Width", "Height" ], function( i, name ) {
+		var side = name === "Width" ? [ "Left", "Right" ] : [ "Top", "Bottom" ],
+			type = name.toLowerCase(),
+			orig = {
+				innerWidth: $.fn.innerWidth,
+				innerHeight: $.fn.innerHeight,
+				outerWidth: $.fn.outerWidth,
+				outerHeight: $.fn.outerHeight
+			};
+
+		function reduce( elem, size, border, margin ) {
+			$.each( side, function() {
+				size -= parseFloat( $.css( elem, "padding" + this ) ) || 0;
+				if ( border ) {
+					size -= parseFloat( $.css( elem, "border" + this + "Width" ) ) || 0;
+				}
+				if ( margin ) {
+					size -= parseFloat( $.css( elem, "margin" + this ) ) || 0;
+				}
+			});
+			return size;
+		}
+
+		$.fn[ "inner" + name ] = function( size ) {
+			if ( size === undefined ) {
+				return orig[ "inner" + name ].call( this );
+			}
+
+			return this.each(function() {
+				$( this ).css( type, reduce( this, size ) + "px" );
+			});
+		};
+
+		$.fn[ "outer" + name] = function( size, margin ) {
+			if ( typeof size !== "number" ) {
+				return orig[ "outer" + name ].call( this, size );
+			}
+
+			return this.each(function() {
+				$( this).css( type, reduce( this, size, true, margin ) + "px" );
+			});
+		};
+	});
+}
+
+// support: jQuery <1.8
+if ( !$.fn.addBack ) {
+	$.fn.addBack = function( selector ) {
+		return this.add( selector == null ?
+			this.prevObject : this.prevObject.filter( selector )
+		);
+	};
+}
+
+// support: jQuery 1.6.1, 1.6.2 (http://bugs.jquery.com/ticket/9413)
+if ( $( "<a>" ).data( "a-b", "a" ).removeData( "a-b" ).data( "a-b" ) ) {
+	$.fn.removeData = (function( removeData ) {
+		return function( key ) {
+			if ( arguments.length ) {
+				return removeData.call( this, $.camelCase( key ) );
+			} else {
+				return removeData.call( this );
+			}
+		};
+	})( $.fn.removeData );
+}
+
+
+
+
+
+// deprecated
+$.ui.ie = !!/msie [\w.]+/.exec( navigator.userAgent.toLowerCase() );
+
+$.support.selectstart = "onselectstart" in document.createElement( "div" );
+$.fn.extend({
+	disableSelection: function() {
+		return this.bind( ( $.support.selectstart ? "selectstart" : "mousedown" ) +
+			".ui-disableSelection", function( event ) {
+				event.preventDefault();
+			});
+	},
+
+	enableSelection: function() {
+		return this.unbind( ".ui-disableSelection" );
+	}
+});
+
+$.extend( $.ui, {
+	// $.ui.plugin is deprecated. Use $.widget() extensions instead.
+	plugin: {
+		add: function( module, option, set ) {
+			var i,
+				proto = $.ui[ module ].prototype;
+			for ( i in set ) {
+				proto.plugins[ i ] = proto.plugins[ i ] || [];
+				proto.plugins[ i ].push( [ option, set[ i ] ] );
+			}
+		},
+		call: function( instance, name, args ) {
+			var i,
+				set = instance.plugins[ name ];
+			if ( !set || !instance.element[ 0 ].parentNode || instance.element[ 0 ].parentNode.nodeType === 11 ) {
+				return;
+			}
+
+			for ( i = 0; i < set.length; i++ ) {
+				if ( instance.options[ set[ i ][ 0 ] ] ) {
+					set[ i ][ 1 ].apply( instance.element, args );
+				}
+			}
+		}
+	},
+
+	// only used by resizable
+	hasScroll: function( el, a ) {
+
+		//If overflow is hidden, the element might have extra content, but the user wants to hide it
+		if ( $( el ).css( "overflow" ) === "hidden") {
+			return false;
+		}
+
+		var scroll = ( a && a === "left" ) ? "scrollLeft" : "scrollTop",
+			has = false;
+
+		if ( el[ scroll ] > 0 ) {
+			return true;
+		}
+
+		// TODO: determine which cases actually cause this to happen
+		// if the element doesn't have the scroll set, see if it's possible to
+		// set the scroll
+		el[ scroll ] = 1;
+		has = ( el[ scroll ] > 0 );
+		el[ scroll ] = 0;
+		return has;
+	}
+});
+
+})( jQuery );
+
+(function( $, undefined ) {
+
+var uuid = 0,
+	slice = Array.prototype.slice,
+	_cleanData = $.cleanData;
+$.cleanData = function( elems ) {
+	for ( var i = 0, elem; (elem = elems[i]) != null; i++ ) {
+		try {
+			$( elem ).triggerHandler( "remove" );
+		// http://bugs.jquery.com/ticket/8235
+		} catch( e ) {}
+	}
+	_cleanData( elems );
+};
+
+$.widget = function( name, base, prototype ) {
+	var fullName, existingConstructor, constructor, basePrototype,
+		// proxiedPrototype allows the provided prototype to remain unmodified
+		// so that it can be used as a mixin for multiple widgets (#8876)
+		proxiedPrototype = {},
+		namespace = name.split( "." )[ 0 ];
+
+	name = name.split( "." )[ 1 ];
+	fullName = namespace + "-" + name;
+
+	if ( !prototype ) {
+		prototype = base;
+		base = $.Widget;
+	}
+
+	// create selector for plugin
+	$.expr[ ":" ][ fullName.toLowerCase() ] = function( elem ) {
+		return !!$.data( elem, fullName );
+	};
+
+	$[ namespace ] = $[ namespace ] || {};
+	existingConstructor = $[ namespace ][ name ];
+	constructor = $[ namespace ][ name ] = function( options, element ) {
+		// allow instantiation without "new" keyword
+		if ( !this._createWidget ) {
+			return new constructor( options, element );
+		}
+
+		// allow instantiation without initializing for simple inheritance
+		// must use "new" keyword (the code above always passes args)
+		if ( arguments.length ) {
+			this._createWidget( options, element );
+		}
+	};
+	// extend with the existing constructor to carry over any static properties
+	$.extend( constructor, existingConstructor, {
+		version: prototype.version,
+		// copy the object used to create the prototype in case we need to
+		// redefine the widget later
+		_proto: $.extend( {}, prototype ),
+		// track widgets that inherit from this widget in case this widget is
+		// redefined after a widget inherits from it
+		_childConstructors: []
+	});
+
+	basePrototype = new base();
+	// we need to make the options hash a property directly on the new instance
+	// otherwise we'll modify the options hash on the prototype that we're
+	// inheriting from
+	basePrototype.options = $.widget.extend( {}, basePrototype.options );
+	$.each( prototype, function( prop, value ) {
+		if ( !$.isFunction( value ) ) {
+			proxiedPrototype[ prop ] = value;
+			return;
+		}
+		proxiedPrototype[ prop ] = (function() {
+			var _super = function() {
+					return base.prototype[ prop ].apply( this, arguments );
+				},
+				_superApply = function( args ) {
+					return base.prototype[ prop ].apply( this, args );
+				};
+			return function() {
+				var __super = this._super,
+					__superApply = this._superApply,
+					returnValue;
+
+				this._super = _super;
+				this._superApply = _superApply;
+
+				returnValue = value.apply( this, arguments );
+
+				this._super = __super;
+				this._superApply = __superApply;
+
+				return returnValue;
+			};
+		})();
+	});
+	constructor.prototype = $.widget.extend( basePrototype, {
+		// TODO: remove support for widgetEventPrefix
+		// always use the name + a colon as the prefix, e.g., draggable:start
+		// don't prefix for widgets that aren't DOM-based
+		widgetEventPrefix: existingConstructor ? (basePrototype.widgetEventPrefix || name) : name
+	}, proxiedPrototype, {
+		constructor: constructor,
+		namespace: namespace,
+		widgetName: name,
+		widgetFullName: fullName
+	});
+
+	// If this widget is being redefined then we need to find all widgets that
+	// are inheriting from it and redefine all of them so that they inherit from
+	// the new version of this widget. We're essentially trying to replace one
+	// level in the prototype chain.
+	if ( existingConstructor ) {
+		$.each( existingConstructor._childConstructors, function( i, child ) {
+			var childPrototype = child.prototype;
+
+			// redefine the child widget using the same prototype that was
+			// originally used, but inherit from the new version of the base
+			$.widget( childPrototype.namespace + "." + childPrototype.widgetName, constructor, child._proto );
+		});
+		// remove the list of existing child constructors from the old constructor
+		// so the old child constructors can be garbage collected
+		delete existingConstructor._childConstructors;
+	} else {
+		base._childConstructors.push( constructor );
+	}
+
+	$.widget.bridge( name, constructor );
+};
+
+$.widget.extend = function( target ) {
+	var input = slice.call( arguments, 1 ),
+		inputIndex = 0,
+		inputLength = input.length,
+		key,
+		value;
+	for ( ; inputIndex < inputLength; inputIndex++ ) {
+		for ( key in input[ inputIndex ] ) {
+			value = input[ inputIndex ][ key ];
+			if ( input[ inputIndex ].hasOwnProperty( key ) && value !== undefined ) {
+				// Clone objects
+				if ( $.isPlainObject( value ) ) {
+					target[ key ] = $.isPlainObject( target[ key ] ) ?
+						$.widget.extend( {}, target[ key ], value ) :
+						// Don't extend strings, arrays, etc. with objects
+						$.widget.extend( {}, value );
+				// Copy everything else by reference
+				} else {
+					target[ key ] = value;
+				}
+			}
+		}
+	}
+	return target;
+};
+
+$.widget.bridge = function( name, object ) {
+	var fullName = object.prototype.widgetFullName || name;
+	$.fn[ name ] = function( options ) {
+		var isMethodCall = typeof options === "string",
+			args = slice.call( arguments, 1 ),
+			returnValue = this;
+
+		// allow multiple hashes to be passed on init
+		options = !isMethodCall && args.length ?
+			$.widget.extend.apply( null, [ options ].concat(args) ) :
+			options;
+
+		if ( isMethodCall ) {
+			this.each(function() {
+				var methodValue,
+					instance = $.data( this, fullName );
+				if ( !instance ) {
+					return $.error( "cannot call methods on " + name + " prior to initialization; " +
+						"attempted to call method '" + options + "'" );
+				}
+				if ( !$.isFunction( instance[options] ) || options.charAt( 0 ) === "_" ) {
+					return $.error( "no such method '" + options + "' for " + name + " widget instance" );
+				}
+				methodValue = instance[ options ].apply( instance, args );
+				if ( methodValue !== instance && methodValue !== undefined ) {
+					returnValue = methodValue && methodValue.jquery ?
+						returnValue.pushStack( methodValue.get() ) :
+						methodValue;
+					return false;
+				}
+			});
+		} else {
+			this.each(function() {
+				var instance = $.data( this, fullName );
+				if ( instance ) {
+					instance.option( options || {} )._init();
+				} else {
+					$.data( this, fullName, new object( options, this ) );
+				}
+			});
+		}
+
+		return returnValue;
+	};
+};
+
+$.Widget = function( /* options, element */ ) {};
+$.Widget._childConstructors = [];
+
+$.Widget.prototype = {
+	widgetName: "widget",
+	widgetEventPrefix: "",
+	defaultElement: "<div>",
+	options: {
+		disabled: false,
+
+		// callbacks
+		create: null
+	},
+	_createWidget: function( options, element ) {
+		element = $( element || this.defaultElement || this )[ 0 ];
+		this.element = $( element );
+		this.uuid = uuid++;
+		this.eventNamespace = "." + this.widgetName + this.uuid;
+		this.options = $.widget.extend( {},
+			this.options,
+			this._getCreateOptions(),
+			options );
+
+		this.bindings = $();
+		this.hoverable = $();
+		this.focusable = $();
+
+		if ( element !== this ) {
+			$.data( element, this.widgetFullName, this );
+			this._on( true, this.element, {
+				remove: function( event ) {
+					if ( event.target === element ) {
+						this.destroy();
+					}
+				}
+			});
+			this.document = $( element.style ?
+				// element within the document
+				element.ownerDocument :
+				// element is window or document
+				element.document || element );
+			this.window = $( this.document[0].defaultView || this.document[0].parentWindow );
+		}
+
+		this._create();
+		this._trigger( "create", null, this._getCreateEventData() );
+		this._init();
+	},
+	_getCreateOptions: $.noop,
+	_getCreateEventData: $.noop,
+	_create: $.noop,
+	_init: $.noop,
+
+	destroy: function() {
+		this._destroy();
+		// we can probably remove the unbind calls in 2.0
+		// all event bindings should go through this._on()
+		this.element
+			.unbind( this.eventNamespace )
+			// 1.9 BC for #7810
+			// TODO remove dual storage
+			.removeData( this.widgetName )
+			.removeData( this.widgetFullName )
+			// support: jquery <1.6.3
+			// http://bugs.jquery.com/ticket/9413
+			.removeData( $.camelCase( this.widgetFullName ) );
+		this.widget()
+			.unbind( this.eventNamespace )
+			.removeAttr( "aria-disabled" )
+			.removeClass(
+				this.widgetFullName + "-disabled " +
+				"ui-state-disabled" );
+
+		// clean up events and states
+		this.bindings.unbind( this.eventNamespace );
+		this.hoverable.removeClass( "ui-state-hover" );
+		this.focusable.removeClass( "ui-state-focus" );
+	},
+	_destroy: $.noop,
+
+	widget: function() {
+		return this.element;
+	},
+
+	option: function( key, value ) {
+		var options = key,
+			parts,
+			curOption,
+			i;
+
+		if ( arguments.length === 0 ) {
+			// don't return a reference to the internal hash
+			return $.widget.extend( {}, this.options );
+		}
+
+		if ( typeof key === "string" ) {
+			// handle nested keys, e.g., "foo.bar" => { foo: { bar: ___ } }
+			options = {};
+			parts = key.split( "." );
+			key = parts.shift();
+			if ( parts.length ) {
+				curOption = options[ key ] = $.widget.extend( {}, this.options[ key ] );
+				for ( i = 0; i < parts.length - 1; i++ ) {
+					curOption[ parts[ i ] ] = curOption[ parts[ i ] ] || {};
+					curOption = curOption[ parts[ i ] ];
+				}
+				key = parts.pop();
+				if ( arguments.length === 1 ) {
+					return curOption[ key ] === undefined ? null : curOption[ key ];
+				}
+				curOption[ key ] = value;
+			} else {
+				if ( arguments.length === 1 ) {
+					return this.options[ key ] === undefined ? null : this.options[ key ];
+				}
+				options[ key ] = value;
+			}
+		}
+
+		this._setOptions( options );
+
+		return this;
+	},
+	_setOptions: function( options ) {
+		var key;
+
+		for ( key in options ) {
+			this._setOption( key, options[ key ] );
+		}
+
+		return this;
+	},
+	_setOption: function( key, value ) {
+		this.options[ key ] = value;
+
+		if ( key === "disabled" ) {
+			this.widget()
+				.toggleClass( this.widgetFullName + "-disabled ui-state-disabled", !!value )
+				.attr( "aria-disabled", value );
+			this.hoverable.removeClass( "ui-state-hover" );
+			this.focusable.removeClass( "ui-state-focus" );
+		}
+
+		return this;
+	},
+
+	enable: function() {
+		return this._setOption( "disabled", false );
+	},
+	disable: function() {
+		return this._setOption( "disabled", true );
+	},
+
+	_on: function( suppressDisabledCheck, element, handlers ) {
+		var delegateElement,
+			instance = this;
+
+		// no suppressDisabledCheck flag, shuffle arguments
+		if ( typeof suppressDisabledCheck !== "boolean" ) {
+			handlers = element;
+			element = suppressDisabledCheck;
+			suppressDisabledCheck = false;
+		}
+
+		// no element argument, shuffle and use this.element
+		if ( !handlers ) {
+			handlers = element;
+			element = this.element;
+			delegateElement = this.widget();
+		} else {
+			// accept selectors, DOM elements
+			element = delegateElement = $( element );
+			this.bindings = this.bindings.add( element );
+		}
+
+		$.each( handlers, function( event, handler ) {
+			function handlerProxy() {
+				// allow widgets to customize the disabled handling
+				// - disabled as an array instead of boolean
+				// - disabled class as method for disabling individual parts
+				if ( !suppressDisabledCheck &&
+						( instance.options.disabled === true ||
+							$( this ).hasClass( "ui-state-disabled" ) ) ) {
+					return;
+				}
+				return ( typeof handler === "string" ? instance[ handler ] : handler )
+					.apply( instance, arguments );
+			}
+
+			// copy the guid so direct unbinding works
+			if ( typeof handler !== "string" ) {
+				handlerProxy.guid = handler.guid =
+					handler.guid || handlerProxy.guid || $.guid++;
+			}
+
+			var match = event.match( /^(\w+)\s*(.*)$/ ),
+				eventName = match[1] + instance.eventNamespace,
+				selector = match[2];
+			if ( selector ) {
+				delegateElement.delegate( selector, eventName, handlerProxy );
+			} else {
+				element.bind( eventName, handlerProxy );
+			}
+		});
+	},
+
+	_off: function( element, eventName ) {
+		eventName = (eventName || "").split( " " ).join( this.eventNamespace + " " ) + this.eventNamespace;
+		element.unbind( eventName ).undelegate( eventName );
+	},
+
+	_delay: function( handler, delay ) {
+		function handlerProxy() {
+			return ( typeof handler === "string" ? instance[ handler ] : handler )
+				.apply( instance, arguments );
+		}
+		var instance = this;
+		return setTimeout( handlerProxy, delay || 0 );
+	},
+
+	_hoverable: function( element ) {
+		this.hoverable = this.hoverable.add( element );
+		this._on( element, {
+			mouseenter: function( event ) {
+				$( event.currentTarget ).addClass( "ui-state-hover" );
+			},
+			mouseleave: function( event ) {
+				$( event.currentTarget ).removeClass( "ui-state-hover" );
+			}
+		});
+	},
+
+	_focusable: function( element ) {
+		this.focusable = this.focusable.add( element );
+		this._on( element, {
+			focusin: function( event ) {
+				$( event.currentTarget ).addClass( "ui-state-focus" );
+			},
+			focusout: function( event ) {
+				$( event.currentTarget ).removeClass( "ui-state-focus" );
+			}
+		});
+	},
+
+	_trigger: function( type, event, data ) {
+		var prop, orig,
+			callback = this.options[ type ];
+
+		data = data || {};
+		event = $.Event( event );
+		event.type = ( type === this.widgetEventPrefix ?
+			type :
+			this.widgetEventPrefix + type ).toLowerCase();
+		// the original event may come from any element
+		// so we need to reset the target on the new event
+		event.target = this.element[ 0 ];
+
+		// copy original event properties over to the new event
+		orig = event.originalEvent;
+		if ( orig ) {
+			for ( prop in orig ) {
+				if ( !( prop in event ) ) {
+					event[ prop ] = orig[ prop ];
+				}
+			}
+		}
+
+		this.element.trigger( event, data );
+		return !( $.isFunction( callback ) &&
+			callback.apply( this.element[0], [ event ].concat( data ) ) === false ||
+			event.isDefaultPrevented() );
+	}
+};
+
+$.each( { show: "fadeIn", hide: "fadeOut" }, function( method, defaultEffect ) {
+	$.Widget.prototype[ "_" + method ] = function( element, options, callback ) {
+		if ( typeof options === "string" ) {
+			options = { effect: options };
+		}
+		var hasOptions,
+			effectName = !options ?
+				method :
+				options === true || typeof options === "number" ?
+					defaultEffect :
+					options.effect || defaultEffect;
+		options = options || {};
+		if ( typeof options === "number" ) {
+			options = { duration: options };
+		}
+		hasOptions = !$.isEmptyObject( options );
+		options.complete = callback;
+		if ( options.delay ) {
+			element.delay( options.delay );
+		}
+		if ( hasOptions && $.effects && $.effects.effect[ effectName ] ) {
+			element[ method ]( options );
+		} else if ( effectName !== method && element[ effectName ] ) {
+			element[ effectName ]( options.duration, options.easing, callback );
+		} else {
+			element.queue(function( next ) {
+				$( this )[ method ]();
+				if ( callback ) {
+					callback.call( element[ 0 ] );
+				}
+				next();
+			});
+		}
+	};
+});
+
+})( jQuery );
+
+(function($, undefined) {
+
+var dataSpace = "ui-effects-";
+
+$.effects = {
+	effect: {}
+};
+
+/*!
+ * jQuery Color Animations v2.1.2
+ * https://github.com/jquery/jquery-color
+ *
+ * Copyright 2013 jQuery Foundation and other contributors
+ * Released under the MIT license.
+ * http://jquery.org/license
+ *
+ * Date: Wed Jan 16 08:47:09 2013 -0600
+ */
+(function( jQuery, undefined ) {
+
+	var stepHooks = "backgroundColor borderBottomColor borderLeftColor borderRightColor borderTopColor color columnRuleColor outlineColor textDecorationColor textEmphasisColor",
+
+	// plusequals test for += 100 -= 100
+	rplusequals = /^([\-+])=\s*(\d+\.?\d*)/,
+	// a set of RE's that can match strings and generate color tuples.
+	stringParsers = [{
+			re: /rgba?\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*(?:,\s*(\d?(?:\.\d+)?)\s*)?\)/,
+			parse: function( execResult ) {
+				return [
+					execResult[ 1 ],
+					execResult[ 2 ],
+					execResult[ 3 ],
+					execResult[ 4 ]
+				];
+			}
+		}, {
+			re: /rgba?\(\s*(\d+(?:\.\d+)?)\%\s*,\s*(\d+(?:\.\d+)?)\%\s*,\s*(\d+(?:\.\d+)?)\%\s*(?:,\s*(\d?(?:\.\d+)?)\s*)?\)/,
+			parse: function( execResult ) {
+				return [
+					execResult[ 1 ] * 2.55,
+					execResult[ 2 ] * 2.55,
+					execResult[ 3 ] * 2.55,
+					execResult[ 4 ]
+				];
+			}
+		}, {
+			// this regex ignores A-F because it's compared against an already lowercased string
+			re: /#([a-f0-9]{2})([a-f0-9]{2})([a-f0-9]{2})/,
+			parse: function( execResult ) {
+				return [
+					parseInt( execResult[ 1 ], 16 ),
+					parseInt( execResult[ 2 ], 16 ),
+					parseInt( execResult[ 3 ], 16 )
+				];
+			}
+		}, {
+			// this regex ignores A-F because it's compared against an already lowercased string
+			re: /#([a-f0-9])([a-f0-9])([a-f0-9])/,
+			parse: function( execResult ) {
+				return [
+					parseInt( execResult[ 1 ] + execResult[ 1 ], 16 ),
+					parseInt( execResult[ 2 ] + execResult[ 2 ], 16 ),
+					parseInt( execResult[ 3 ] + execResult[ 3 ], 16 )
+				];
+			}
+		}, {
+			re: /hsla?\(\s*(\d+(?:\.\d+)?)\s*,\s*(\d+(?:\.\d+)?)\%\s*,\s*(\d+(?:\.\d+)?)\%\s*(?:,\s*(\d?(?:\.\d+)?)\s*)?\)/,
+			space: "hsla",
+			parse: function( execResult ) {
+				return [
+					execResult[ 1 ],
+					execResult[ 2 ] / 100,
+					execResult[ 3 ] / 100,
+					execResult[ 4 ]
+				];
+			}
+		}],
+
+	// jQuery.Color( )
+	color = jQuery.Color = function( color, green, blue, alpha ) {
+		return new jQuery.Color.fn.parse( color, green, blue, alpha );
+	},
+	spaces = {
+		rgba: {
+			props: {
+				red: {
+					idx: 0,
+					type: "byte"
+				},
+				green: {
+					idx: 1,
+					type: "byte"
+				},
+				blue: {
+					idx: 2,
+					type: "byte"
+				}
+			}
+		},
+
+		hsla: {
+			props: {
+				hue: {
+					idx: 0,
+					type: "degrees"
+				},
+				saturation: {
+					idx: 1,
+					type: "percent"
+				},
+				lightness: {
+					idx: 2,
+					type: "percent"
+				}
+			}
+		}
+	},
+	propTypes = {
+		"byte": {
+			floor: true,
+			max: 255
+		},
+		"percent": {
+			max: 1
+		},
+		"degrees": {
+			mod: 360,
+			floor: true
+		}
+	},
+	support = color.support = {},
+
+	// element for support tests
+	supportElem = jQuery( "<p>" )[ 0 ],
+
+	// colors = jQuery.Color.names
+	colors,
+
+	// local aliases of functions called often
+	each = jQuery.each;
+
+// determine rgba support immediately
+supportElem.style.cssText = "background-color:rgba(1,1,1,.5)";
+support.rgba = supportElem.style.backgroundColor.indexOf( "rgba" ) > -1;
+
+// define cache name and alpha properties
+// for rgba and hsla spaces
+each( spaces, function( spaceName, space ) {
+	space.cache = "_" + spaceName;
+	space.props.alpha = {
+		idx: 3,
+		type: "percent",
+		def: 1
+	};
+});
+
+function clamp( value, prop, allowEmpty ) {
+	var type = propTypes[ prop.type ] || {};
+
+	if ( value == null ) {
+		return (allowEmpty || !prop.def) ? null : prop.def;
+	}
+
+	// ~~ is an short way of doing floor for positive numbers
+	value = type.floor ? ~~value : parseFloat( value );
+
+	// IE will pass in empty strings as value for alpha,
+	// which will hit this case
+	if ( isNaN( value ) ) {
+		return prop.def;
+	}
+
+	if ( type.mod ) {
+		// we add mod before modding to make sure that negatives values
+		// get converted properly: -10 -> 350
+		return (value + type.mod) % type.mod;
+	}
+
+	// for now all property types without mod have min and max
+	return 0 > value ? 0 : type.max < value ? type.max : value;
+}
+
+function stringParse( string ) {
+	var inst = color(),
+		rgba = inst._rgba = [];
+
+	string = string.toLowerCase();
+
+	each( stringParsers, function( i, parser ) {
+		var parsed,
+			match = parser.re.exec( string ),
+			values = match && parser.parse( match ),
+			spaceName = parser.space || "rgba";
+
+		if ( values ) {
+			parsed = inst[ spaceName ]( values );
+
+			// if this was an rgba parse the assignment might happen twice
+			// oh well....
+			inst[ spaces[ spaceName ].cache ] = parsed[ spaces[ spaceName ].cache ];
+			rgba = inst._rgba = parsed._rgba;
+
+			// exit each( stringParsers ) here because we matched
+			return false;
+		}
+	});
+
+	// Found a stringParser that handled it
+	if ( rgba.length ) {
+
+		// if this came from a parsed string, force "transparent" when alpha is 0
+		// chrome, (and maybe others) return "transparent" as rgba(0,0,0,0)
+		if ( rgba.join() === "0,0,0,0" ) {
+			jQuery.extend( rgba, colors.transparent );
+		}
+		return inst;
+	}
+
+	// named colors
+	return colors[ string ];
+}
+
+color.fn = jQuery.extend( color.prototype, {
+	parse: function( red, green, blue, alpha ) {
+		if ( red === undefined ) {
+			this._rgba = [ null, null, null, null ];
+			return this;
+		}
+		if ( red.jquery || red.nodeType ) {
+			red = jQuery( red ).css( green );
+			green = undefined;
+		}
+
+		var inst = this,
+			type = jQuery.type( red ),
+			rgba = this._rgba = [];
+
+		// more than 1 argument specified - assume ( red, green, blue, alpha )
+		if ( green !== undefined ) {
+			red = [ red, green, blue, alpha ];
+			type = "array";
+		}
+
+		if ( type === "string" ) {
+			return this.parse( stringParse( red ) || colors._default );
+		}
+
+		if ( type === "array" ) {
+			each( spaces.rgba.props, function( key, prop ) {
+				rgba[ prop.idx ] = clamp( red[ prop.idx ], prop );
+			});
+			return this;
+		}
+
+		if ( type === "object" ) {
+			if ( red instanceof color ) {
+				each( spaces, function( spaceName, space ) {
+					if ( red[ space.cache ] ) {
+						inst[ space.cache ] = red[ space.cache ].slice();
+					}
+				});
+			} else {
+				each( spaces, function( spaceName, space ) {
+					var cache = space.cache;
+					each( space.props, function( key, prop ) {
+
+						// if the cache doesn't exist, and we know how to convert
+						if ( !inst[ cache ] && space.to ) {
+
+							// if the value was null, we don't need to copy it
+							// if the key was alpha, we don't need to copy it either
+							if ( key === "alpha" || red[ key ] == null ) {
+								return;
+							}
+							inst[ cache ] = space.to( inst._rgba );
+						}
+
+						// this is the only case where we allow nulls for ALL properties.
+						// call clamp with alwaysAllowEmpty
+						inst[ cache ][ prop.idx ] = clamp( red[ key ], prop, true );
+					});
+
+					// everything defined but alpha?
+					if ( inst[ cache ] && jQuery.inArray( null, inst[ cache ].slice( 0, 3 ) ) < 0 ) {
+						// use the default of 1
+						inst[ cache ][ 3 ] = 1;
+						if ( space.from ) {
+							inst._rgba = space.from( inst[ cache ] );
+						}
+					}
+				});
+			}
+			return this;
+		}
+	},
+	is: function( compare ) {
+		var is = color( compare ),
+			same = true,
+			inst = this;
+
+		each( spaces, function( _, space ) {
+			var localCache,
+				isCache = is[ space.cache ];
+			if (isCache) {
+				localCache = inst[ space.cache ] || space.to && space.to( inst._rgba ) || [];
+				each( space.props, function( _, prop ) {
+					if ( isCache[ prop.idx ] != null ) {
+						same = ( isCache[ prop.idx ] === localCache[ prop.idx ] );
+						return same;
+					}
+				});
+			}
+			return same;
+		});
+		return same;
+	},
+	_space: function() {
+		var used = [],
+			inst = this;
+		each( spaces, function( spaceName, space ) {
+			if ( inst[ space.cache ] ) {
+				used.push( spaceName );
+			}
+		});
+		return used.pop();
+	},
+	transition: function( other, distance ) {
+		var end = color( other ),
+			spaceName = end._space(),
+			space = spaces[ spaceName ],
+			startColor = this.alpha() === 0 ? color( "transparent" ) : this,
+			start = startColor[ space.cache ] || space.to( startColor._rgba ),
+			result = start.slice();
+
+		end = end[ space.cache ];
+		each( space.props, function( key, prop ) {
+			var index = prop.idx,
+				startValue = start[ index ],
+				endValue = end[ index ],
+				type = propTypes[ prop.type ] || {};
+
+			// if null, don't override start value
+			if ( endValue === null ) {
+				return;
+			}
+			// if null - use end
+			if ( startValue === null ) {
+				result[ index ] = endValue;
+			} else {
+				if ( type.mod ) {
+					if ( endValue - startValue > type.mod / 2 ) {
+						startValue += type.mod;
+					} else if ( startValue - endValue > type.mod / 2 ) {
+						startValue -= type.mod;
+					}
+				}
+				result[ index ] = clamp( ( endValue - startValue ) * distance + startValue, prop );
+			}
+		});
+		return this[ spaceName ]( result );
+	},
+	blend: function( opaque ) {
+		// if we are already opaque - return ourself
+		if ( this._rgba[ 3 ] === 1 ) {
+			return this;
+		}
+
+		var rgb = this._rgba.slice(),
+			a = rgb.pop(),
+			blend = color( opaque )._rgba;
+
+		return color( jQuery.map( rgb, function( v, i ) {
+			return ( 1 - a ) * blend[ i ] + a * v;
+		}));
+	},
+	toRgbaString: function() {
+		var prefix = "rgba(",
+			rgba = jQuery.map( this._rgba, function( v, i ) {
+				return v == null ? ( i > 2 ? 1 : 0 ) : v;
+			});
+
+		if ( rgba[ 3 ] === 1 ) {
+			rgba.pop();
+			prefix = "rgb(";
+		}
+
+		return prefix + rgba.join() + ")";
+	},
+	toHslaString: function() {
+		var prefix = "hsla(",
+			hsla = jQuery.map( this.hsla(), function( v, i ) {
+				if ( v == null ) {
+					v = i > 2 ? 1 : 0;
+				}
+
+				// catch 1 and 2
+				if ( i && i < 3 ) {
+					v = Math.round( v * 100 ) + "%";
+				}
+				return v;
+			});
+
+		if ( hsla[ 3 ] === 1 ) {
+			hsla.pop();
+			prefix = "hsl(";
+		}
+		return prefix + hsla.join() + ")";
+	},
+	toHexString: function( includeAlpha ) {
+		var rgba = this._rgba.slice(),
+			alpha = rgba.pop();
+
+		if ( includeAlpha ) {
+			rgba.push( ~~( alpha * 255 ) );
+		}
+
+		return "#" + jQuery.map( rgba, function( v ) {
+
+			// default to 0 when nulls exist
+			v = ( v || 0 ).toString( 16 );
+			return v.length === 1 ? "0" + v : v;
+		}).join("");
+	},
+	toString: function() {
+		return this._rgba[ 3 ] === 0 ? "transparent" : this.toRgbaString();
+	}
+});
+color.fn.parse.prototype = color.fn;
+
+// hsla conversions adapted from:
+// https://code.google.com/p/maashaack/source/browse/packages/graphics/trunk/src/graphics/colors/HUE2RGB.as?r=5021
+
+function hue2rgb( p, q, h ) {
+	h = ( h + 1 ) % 1;
+	if ( h * 6 < 1 ) {
+		return p + (q - p) * h * 6;
+	}
+	if ( h * 2 < 1) {
+		return q;
+	}
+	if ( h * 3 < 2 ) {
+		return p + (q - p) * ((2/3) - h) * 6;
+	}
+	return p;
+}
+
+spaces.hsla.to = function ( rgba ) {
+	if ( rgba[ 0 ] == null || rgba[ 1 ] == null || rgba[ 2 ] == null ) {
+		return [ null, null, null, rgba[ 3 ] ];
+	}
+	var r = rgba[ 0 ] / 255,
+		g = rgba[ 1 ] / 255,
+		b = rgba[ 2 ] / 255,
+		a = rgba[ 3 ],
+		max = Math.max( r, g, b ),
+		min = Math.min( r, g, b ),
+		diff = max - min,
+		add = max + min,
+		l = add * 0.5,
+		h, s;
+
+	if ( min === max ) {
+		h = 0;
+	} else if ( r === max ) {
+		h = ( 60 * ( g - b ) / diff ) + 360;
+	} else if ( g === max ) {
+		h = ( 60 * ( b - r ) / diff ) + 120;
+	} else {
+		h = ( 60 * ( r - g ) / diff ) + 240;
+	}
+
+	// chroma (diff) == 0 means greyscale which, by definition, saturation = 0%
+	// otherwise, saturation is based on the ratio of chroma (diff) to lightness (add)
+	if ( diff === 0 ) {
+		s = 0;
+	} else if ( l <= 0.5 ) {
+		s = diff / add;
+	} else {
+		s = diff / ( 2 - add );
+	}
+	return [ Math.round(h) % 360, s, l, a == null ? 1 : a ];
+};
+
+spaces.hsla.from = function ( hsla ) {
+	if ( hsla[ 0 ] == null || hsla[ 1 ] == null || hsla[ 2 ] == null ) {
+		return [ null, null, null, hsla[ 3 ] ];
+	}
+	var h = hsla[ 0 ] / 360,
+		s = hsla[ 1 ],
+		l = hsla[ 2 ],
+		a = hsla[ 3 ],
+		q = l <= 0.5 ? l * ( 1 + s ) : l + s - l * s,
+		p = 2 * l - q;
+
+	return [
+		Math.round( hue2rgb( p, q, h + ( 1 / 3 ) ) * 255 ),
+		Math.round( hue2rgb( p, q, h ) * 255 ),
+		Math.round( hue2rgb( p, q, h - ( 1 / 3 ) ) * 255 ),
+		a
+	];
+};
+
+
+each( spaces, function( spaceName, space ) {
+	var props = space.props,
+		cache = space.cache,
+		to = space.to,
+		from = space.from;
+
+	// makes rgba() and hsla()
+	color.fn[ spaceName ] = function( value ) {
+
+		// generate a cache for this space if it doesn't exist
+		if ( to && !this[ cache ] ) {
+			this[ cache ] = to( this._rgba );
+		}
+		if ( value === undefined ) {
+			return this[ cache ].slice();
+		}
+
+		var ret,
+			type = jQuery.type( value ),
+			arr = ( type === "array" || type === "object" ) ? value : arguments,
+			local = this[ cache ].slice();
+
+		each( props, function( key, prop ) {
+			var val = arr[ type === "object" ? key : prop.idx ];
+			if ( val == null ) {
+				val = local[ prop.idx ];
+			}
+			local[ prop.idx ] = clamp( val, prop );
+		});
+
+		if ( from ) {
+			ret = color( from( local ) );
+			ret[ cache ] = local;
+			return ret;
+		} else {
+			return color( local );
+		}
+	};
+
+	// makes red() green() blue() alpha() hue() saturation() lightness()
+	each( props, function( key, prop ) {
+		// alpha is included in more than one space
+		if ( color.fn[ key ] ) {
+			return;
+		}
+		color.fn[ key ] = function( value ) {
+			var vtype = jQuery.type( value ),
+				fn = ( key === "alpha" ? ( this._hsla ? "hsla" : "rgba" ) : spaceName ),
+				local = this[ fn ](),
+				cur = local[ prop.idx ],
+				match;
+
+			if ( vtype === "undefined" ) {
+				return cur;
+			}
+
+			if ( vtype === "function" ) {
+				value = value.call( this, cur );
+				vtype = jQuery.type( value );
+			}
+			if ( value == null && prop.empty ) {
+				return this;
+			}
+			if ( vtype === "string" ) {
+				match = rplusequals.exec( value );
+				if ( match ) {
+					value = cur + parseFloat( match[ 2 ] ) * ( match[ 1 ] === "+" ? 1 : -1 );
+				}
+			}
+			local[ prop.idx ] = value;
+			return this[ fn ]( local );
+		};
+	});
+});
+
+// add cssHook and .fx.step function for each named hook.
+// accept a space separated string of properties
+color.hook = function( hook ) {
+	var hooks = hook.split( " " );
+	each( hooks, function( i, hook ) {
+		jQuery.cssHooks[ hook ] = {
+			set: function( elem, value ) {
+				var parsed, curElem,
+					backgroundColor = "";
+
+				if ( value !== "transparent" && ( jQuery.type( value ) !== "string" || ( parsed = stringParse( value ) ) ) ) {
+					value = color( parsed || value );
+					if ( !support.rgba && value._rgba[ 3 ] !== 1 ) {
+						curElem = hook === "backgroundColor" ? elem.parentNode : elem;
+						while (
+							(backgroundColor === "" || backgroundColor === "transparent") &&
+							curElem && curElem.style
+						) {
+							try {
+								backgroundColor = jQuery.css( curElem, "backgroundColor" );
+								curElem = curElem.parentNode;
+							} catch ( e ) {
+							}
+						}
+
+						value = value.blend( backgroundColor && backgroundColor !== "transparent" ?
+							backgroundColor :
+							"_default" );
+					}
+
+					value = value.toRgbaString();
+				}
+				try {
+					elem.style[ hook ] = value;
+				} catch( e ) {
+					// wrapped to prevent IE from throwing errors on "invalid" values like 'auto' or 'inherit'
+				}
+			}
+		};
+		jQuery.fx.step[ hook ] = function( fx ) {
+			if ( !fx.colorInit ) {
+				fx.start = color( fx.elem, hook );
+				fx.end = color( fx.end );
+				fx.colorInit = true;
+			}
+			jQuery.cssHooks[ hook ].set( fx.elem, fx.start.transition( fx.end, fx.pos ) );
+		};
+	});
+
+};
+
+color.hook( stepHooks );
+
+jQuery.cssHooks.borderColor = {
+	expand: function( value ) {
+		var expanded = {};
+
+		each( [ "Top", "Right", "Bottom", "Left" ], function( i, part ) {
+			expanded[ "border" + part + "Color" ] = value;
+		});
+		return expanded;
+	}
+};
+
+// Basic color names only.
+// Usage of any of the other color names requires adding yourself or including
+// jquery.color.svg-names.js.
+colors = jQuery.Color.names = {
+	// 4.1. Basic color keywords
+	aqua: "#00ffff",
+	black: "#000000",
+	blue: "#0000ff",
+	fuchsia: "#ff00ff",
+	gray: "#808080",
+	green: "#008000",
+	lime: "#00ff00",
+	maroon: "#800000",
+	navy: "#000080",
+	olive: "#808000",
+	purple: "#800080",
+	red: "#ff0000",
+	silver: "#c0c0c0",
+	teal: "#008080",
+	white: "#ffffff",
+	yellow: "#ffff00",
+
+	// 4.2.3. "transparent" color keyword
+	transparent: [ null, null, null, 0 ],
+
+	_default: "#ffffff"
+};
+
+})( jQuery );
+
+
+/******************************************************************************/
+/****************************** CLASS ANIMATIONS ******************************/
+/******************************************************************************/
+(function() {
+
+var classAnimationActions = [ "add", "remove", "toggle" ],
+	shorthandStyles = {
+		border: 1,
+		borderBottom: 1,
+		borderColor: 1,
+		borderLeft: 1,
+		borderRight: 1,
+		borderTop: 1,
+		borderWidth: 1,
+		margin: 1,
+		padding: 1
+	};
+
+$.each([ "borderLeftStyle", "borderRightStyle", "borderBottomStyle", "borderTopStyle" ], function( _, prop ) {
+	$.fx.step[ prop ] = function( fx ) {
+		if ( fx.end !== "none" && !fx.setAttr || fx.pos === 1 && !fx.setAttr ) {
+			jQuery.style( fx.elem, prop, fx.end );
+			fx.setAttr = true;
+		}
+	};
+});
+
+function getElementStyles( elem ) {
+	var key, len,
+		style = elem.ownerDocument.defaultView ?
+			elem.ownerDocument.defaultView.getComputedStyle( elem, null ) :
+			elem.currentStyle,
+		styles = {};
+
+	if ( style && style.length && style[ 0 ] && style[ style[ 0 ] ] ) {
+		len = style.length;
+		while ( len-- ) {
+			key = style[ len ];
+			if ( typeof style[ key ] === "string" ) {
+				styles[ $.camelCase( key ) ] = style[ key ];
+			}
+		}
+	// support: Opera, IE <9
+	} else {
+		for ( key in style ) {
+			if ( typeof style[ key ] === "string" ) {
+				styles[ key ] = style[ key ];
+			}
+		}
+	}
+
+	return styles;
+}
+
+
+function styleDifference( oldStyle, newStyle ) {
+	var diff = {},
+		name, value;
+
+	for ( name in newStyle ) {
+		value = newStyle[ name ];
+		if ( oldStyle[ name ] !== value ) {
+			if ( !shorthandStyles[ name ] ) {
+				if ( $.fx.step[ name ] || !isNaN( parseFloat( value ) ) ) {
+					diff[ name ] = value;
+				}
+			}
+		}
+	}
+
+	return diff;
+}
+
+// support: jQuery <1.8
+if ( !$.fn.addBack ) {
+	$.fn.addBack = function( selector ) {
+		return this.add( selector == null ?
+			this.prevObject : this.prevObject.filter( selector )
+		);
+	};
+}
+
+$.effects.animateClass = function( value, duration, easing, callback ) {
+	var o = $.speed( duration, easing, callback );
+
+	return this.queue( function() {
+		var animated = $( this ),
+			baseClass = animated.attr( "class" ) || "",
+			applyClassChange,
+			allAnimations = o.children ? animated.find( "*" ).addBack() : animated;
+
+		// map the animated objects to store the original styles.
+		allAnimations = allAnimations.map(function() {
+			var el = $( this );
+			return {
+				el: el,
+				start: getElementStyles( this )
+			};
+		});
+
+		// apply class change
+		applyClassChange = function() {
+			$.each( classAnimationActions, function(i, action) {
+				if ( value[ action ] ) {
+					animated[ action + "Class" ]( value[ action ] );
+				}
+			});
+		};
+		applyClassChange();
+
+		// map all animated objects again - calculate new styles and diff
+		allAnimations = allAnimations.map(function() {
+			this.end = getElementStyles( this.el[ 0 ] );
+			this.diff = styleDifference( this.start, this.end );
+			return this;
+		});
+
+		// apply original class
+		animated.attr( "class", baseClass );
+
+		// map all animated objects again - this time collecting a promise
+		allAnimations = allAnimations.map(function() {
+			var styleInfo = this,
+				dfd = $.Deferred(),
+				opts = $.extend({}, o, {
+					queue: false,
+					complete: function() {
+						dfd.resolve( styleInfo );
+					}
+				});
+
+			this.el.animate( this.diff, opts );
+			return dfd.promise();
+		});
+
+		// once all animations have completed:
+		$.when.apply( $, allAnimations.get() ).done(function() {
+
+			// set the final class
+			applyClassChange();
+
+			// for each animated element,
+			// clear all css properties that were animated
+			$.each( arguments, function() {
+				var el = this.el;
+				$.each( this.diff, function(key) {
+					el.css( key, "" );
+				});
+			});
+
+			// this is guarnteed to be there if you use jQuery.speed()
+			// it also handles dequeuing the next anim...
+			o.complete.call( animated[ 0 ] );
+		});
+	});
+};
+
+$.fn.extend({
+	addClass: (function( orig ) {
+		return function( classNames, speed, easing, callback ) {
+			return speed ?
+				$.effects.animateClass.call( this,
+					{ add: classNames }, speed, easing, callback ) :
+				orig.apply( this, arguments );
+		};
+	})( $.fn.addClass ),
+
+	removeClass: (function( orig ) {
+		return function( classNames, speed, easing, callback ) {
+			return arguments.length > 1 ?
+				$.effects.animateClass.call( this,
+					{ remove: classNames }, speed, easing, callback ) :
+				orig.apply( this, arguments );
+		};
+	})( $.fn.removeClass ),
+
+	toggleClass: (function( orig ) {
+		return function( classNames, force, speed, easing, callback ) {
+			if ( typeof force === "boolean" || force === undefined ) {
+				if ( !speed ) {
+					// without speed parameter
+					return orig.apply( this, arguments );
+				} else {
+					return $.effects.animateClass.call( this,
+						(force ? { add: classNames } : { remove: classNames }),
+						speed, easing, callback );
+				}
+			} else {
+				// without force parameter
+				return $.effects.animateClass.call( this,
+					{ toggle: classNames }, force, speed, easing );
+			}
+		};
+	})( $.fn.toggleClass ),
+
+	switchClass: function( remove, add, speed, easing, callback) {
+		return $.effects.animateClass.call( this, {
+			add: add,
+			remove: remove
+		}, speed, easing, callback );
+	}
+});
+
+})();
+
+/******************************************************************************/
+/*********************************** EFFECTS **********************************/
+/******************************************************************************/
+
+(function() {
+
+$.extend( $.effects, {
+	version: "@VERSION",
+
+	// Saves a set of properties in a data storage
+	save: function( element, set ) {
+		for( var i=0; i < set.length; i++ ) {
+			if ( set[ i ] !== null ) {
+				element.data( dataSpace + set[ i ], element[ 0 ].style[ set[ i ] ] );
+			}
+		}
+	},
+
+	// Restores a set of previously saved properties from a data storage
+	restore: function( element, set ) {
+		var val, i;
+		for( i=0; i < set.length; i++ ) {
+			if ( set[ i ] !== null ) {
+				val = element.data( dataSpace + set[ i ] );
+				// support: jQuery 1.6.2
+				// http://bugs.jquery.com/ticket/9917
+				// jQuery 1.6.2 incorrectly returns undefined for any falsy value.
+				// We can't differentiate between "" and 0 here, so we just assume
+				// empty string since it's likely to be a more common value...
+				if ( val === undefined ) {
+					val = "";
+				}
+				element.css( set[ i ], val );
+			}
+		}
+	},
+
+	setMode: function( el, mode ) {
+		if (mode === "toggle") {
+			mode = el.is( ":hidden" ) ? "show" : "hide";
+		}
+		return mode;
+	},
+
+	// Translates a [top,left] array into a baseline value
+	// this should be a little more flexible in the future to handle a string & hash
+	getBaseline: function( origin, original ) {
+		var y, x;
+		switch ( origin[ 0 ] ) {
+			case "top": y = 0; break;
+			case "middle": y = 0.5; break;
+			case "bottom": y = 1; break;
+			default: y = origin[ 0 ] / original.height;
+		}
+		switch ( origin[ 1 ] ) {
+			case "left": x = 0; break;
+			case "center": x = 0.5; break;
+			case "right": x = 1; break;
+			default: x = origin[ 1 ] / original.width;
+		}
+		return {
+			x: x,
+			y: y
+		};
+	},
+
+	// Wraps the element around a wrapper that copies position properties
+	createWrapper: function( element ) {
+
+		// if the element is already wrapped, return it
+		if ( element.parent().is( ".ui-effects-wrapper" )) {
+			return element.parent();
+		}
+
+		// wrap the element
+		var props = {
+				width: element.outerWidth(true),
+				height: element.outerHeight(true),
+				"float": element.css( "float" )
+			},
+			wrapper = $( "<div></div>" )
+				.addClass( "ui-effects-wrapper" )
+				.css({
+					fontSize: "100%",
+					background: "transparent",
+					border: "none",
+					margin: 0,
+					padding: 0
+				}),
+			// Store the size in case width/height are defined in % - Fixes #5245
+			size = {
+				width: element.width(),
+				height: element.height()
+			},
+			active = document.activeElement;
+
+		// support: Firefox
+		// Firefox incorrectly exposes anonymous content
+		// https://bugzilla.mozilla.org/show_bug.cgi?id=561664
+		try {
+			active.id;
+		} catch( e ) {
+			active = document.body;
+		}
+
+		element.wrap( wrapper );
+
+		// Fixes #7595 - Elements lose focus when wrapped.
+		if ( element[ 0 ] === active || $.contains( element[ 0 ], active ) ) {
+			$( active ).focus();
+		}
+
+		wrapper = element.parent(); //Hotfix for jQuery 1.4 since some change in wrap() seems to actually lose the reference to the wrapped element
+
+		// transfer positioning properties to the wrapper
+		if ( element.css( "position" ) === "static" ) {
+			wrapper.css({ position: "relative" });
+			element.css({ position: "relative" });
+		} else {
+			$.extend( props, {
+				position: element.css( "position" ),
+				zIndex: element.css( "z-index" )
+			});
+			$.each([ "top", "left", "bottom", "right" ], function(i, pos) {
+				props[ pos ] = element.css( pos );
+				if ( isNaN( parseInt( props[ pos ], 10 ) ) ) {
+					props[ pos ] = "auto";
+				}
+			});
+			element.css({
+				position: "relative",
+				top: 0,
+				left: 0,
+				right: "auto",
+				bottom: "auto"
+			});
+		}
+		element.css(size);
+
+		return wrapper.css( props ).show();
+	},
+
+	removeWrapper: function( element ) {
+		var active = document.activeElement;
+
+		if ( element.parent().is( ".ui-effects-wrapper" ) ) {
+			element.parent().replaceWith( element );
+
+			// Fixes #7595 - Elements lose focus when wrapped.
+			if ( element[ 0 ] === active || $.contains( element[ 0 ], active ) ) {
+				$( active ).focus();
+			}
+		}
+
+
+		return element;
+	},
+
+	setTransition: function( element, list, factor, value ) {
+		value = value || {};
+		$.each( list, function( i, x ) {
+			var unit = element.cssUnit( x );
+			if ( unit[ 0 ] > 0 ) {
+				value[ x ] = unit[ 0 ] * factor + unit[ 1 ];
+			}
+		});
+		return value;
+	}
+});
+
+// return an effect options object for the given parameters:
+function _normalizeArguments( effect, options, speed, callback ) {
+
+	// allow passing all options as the first parameter
+	if ( $.isPlainObject( effect ) ) {
+		options = effect;
+		effect = effect.effect;
+	}
+
+	// convert to an object
+	effect = { effect: effect };
+
+	// catch (effect, null, ...)
+	if ( options == null ) {
+		options = {};
+	}
+
+	// catch (effect, callback)
+	if ( $.isFunction( options ) ) {
+		callback = options;
+		speed = null;
+		options = {};
+	}
+
+	// catch (effect, speed, ?)
+	if ( typeof options === "number" || $.fx.speeds[ options ] ) {
+		callback = speed;
+		speed = options;
+		options = {};
+	}
+
+	// catch (effect, options, callback)
+	if ( $.isFunction( speed ) ) {
+		callback = speed;
+		speed = null;
+	}
+
+	// add options to effect
+	if ( options ) {
+		$.extend( effect, options );
+	}
+
+	speed = speed || options.duration;
+	effect.duration = $.fx.off ? 0 :
+		typeof speed === "number" ? speed :
+		speed in $.fx.speeds ? $.fx.speeds[ speed ] :
+		$.fx.speeds._default;
+
+	effect.complete = callback || options.complete;
+
+	return effect;
+}
+
+function standardAnimationOption( option ) {
+	// Valid standard speeds (nothing, number, named speed)
+	if ( !option || typeof option === "number" || $.fx.speeds[ option ] ) {
+		return true;
+	}
+
+	// Invalid strings - treat as "normal" speed
+	if ( typeof option === "string" && !$.effects.effect[ option ] ) {
+		return true;
+	}
+
+	// Complete callback
+	if ( $.isFunction( option ) ) {
+		return true;
+	}
+
+	// Options hash (but not naming an effect)
+	if ( typeof option === "object" && !option.effect ) {
+		return true;
+	}
+
+	// Didn't match any standard API
+	return false;
+}
+
+$.fn.extend({
+	effect: function( /* effect, options, speed, callback */ ) {
+		var args = _normalizeArguments.apply( this, arguments ),
+			mode = args.mode,
+			queue = args.queue,
+			effectMethod = $.effects.effect[ args.effect ];
+
+		if ( $.fx.off || !effectMethod ) {
+			// delegate to the original method (e.g., .show()) if possible
+			if ( mode ) {
+				return this[ mode ]( args.duration, args.complete );
+			} else {
+				return this.each( function() {
+					if ( args.complete ) {
+						args.complete.call( this );
+					}
+				});
+			}
+		}
+
+		function run( next ) {
+			var elem = $( this ),
+				complete = args.complete,
+				mode = args.mode;
+
+			function done() {
+				if ( $.isFunction( complete ) ) {
+					complete.call( elem[0] );
+				}
+				if ( $.isFunction( next ) ) {
+					next();
+				}
+			}
+
+			// If the element already has the correct final state, delegate to
+			// the core methods so the internal tracking of "olddisplay" works.
+			if ( elem.is( ":hidden" ) ? mode === "hide" : mode === "show" ) {
+				elem[ mode ]();
+				done();
+			} else {
+				effectMethod.call( elem[0], args, done );
+			}
+		}
+
+		return queue === false ? this.each( run ) : this.queue( queue || "fx", run );
+	},
+
+	show: (function( orig ) {
+		return function( option ) {
+			if ( standardAnimationOption( option ) ) {
+				return orig.apply( this, arguments );
+			} else {
+				var args = _normalizeArguments.apply( this, arguments );
+				args.mode = "show";
+				return this.effect.call( this, args );
+			}
+		};
+	})( $.fn.show ),
+
+	hide: (function( orig ) {
+		return function( option ) {
+			if ( standardAnimationOption( option ) ) {
+				return orig.apply( this, arguments );
+			} else {
+				var args = _normalizeArguments.apply( this, arguments );
+				args.mode = "hide";
+				return this.effect.call( this, args );
+			}
+		};
+	})( $.fn.hide ),
+
+	toggle: (function( orig ) {
+		return function( option ) {
+			if ( standardAnimationOption( option ) || typeof option === "boolean" ) {
+				return orig.apply( this, arguments );
+			} else {
+				var args = _normalizeArguments.apply( this, arguments );
+				args.mode = "toggle";
+				return this.effect.call( this, args );
+			}
+		};
+	})( $.fn.toggle ),
+
+	// helper functions
+	cssUnit: function(key) {
+		var style = this.css( key ),
+			val = [];
+
+		$.each( [ "em", "px", "%", "pt" ], function( i, unit ) {
+			if ( style.indexOf( unit ) > 0 ) {
+				val = [ parseFloat( style ), unit ];
+			}
+		});
+		return val;
+	}
+});
+
+})();
+
+/******************************************************************************/
+/*********************************** EASING ***********************************/
+/******************************************************************************/
+
+(function() {
+
+// based on easing equations from Robert Penner (http://www.robertpenner.com/easing)
+
+var baseEasings = {};
+
+$.each( [ "Quad", "Cubic", "Quart", "Quint", "Expo" ], function( i, name ) {
+	baseEasings[ name ] = function( p ) {
+		return Math.pow( p, i + 2 );
+	};
+});
+
+$.extend( baseEasings, {
+	Sine: function ( p ) {
+		return 1 - Math.cos( p * Math.PI / 2 );
+	},
+	Circ: function ( p ) {
+		return 1 - Math.sqrt( 1 - p * p );
+	},
+	Elastic: function( p ) {
+		return p === 0 || p === 1 ? p :
+			-Math.pow( 2, 8 * (p - 1) ) * Math.sin( ( (p - 1) * 80 - 7.5 ) * Math.PI / 15 );
+	},
+	Back: function( p ) {
+		return p * p * ( 3 * p - 2 );
+	},
+	Bounce: function ( p ) {
+		var pow2,
+			bounce = 4;
+
+		while ( p < ( ( pow2 = Math.pow( 2, --bounce ) ) - 1 ) / 11 ) {}
+		return 1 / Math.pow( 4, 3 - bounce ) - 7.5625 * Math.pow( ( pow2 * 3 - 2 ) / 22 - p, 2 );
+	}
+});
+
+$.each( baseEasings, function( name, easeIn ) {
+	$.easing[ "easeIn" + name ] = easeIn;
+	$.easing[ "easeOut" + name ] = function( p ) {
+		return 1 - easeIn( 1 - p );
+	};
+	$.easing[ "easeInOut" + name ] = function( p ) {
+		return p < 0.5 ?
+			easeIn( p * 2 ) / 2 :
+			1 - easeIn( p * -2 + 2 ) / 2;
+	};
+});
+
+})();
+
+})(jQuery);
+
+(function( $, window, document, undefined ) {
+
+$.coverflow = {
+	renderer : {},
+	support : {}
+};
+
+function ClassicRenderer( widget, element, items, options ) {
+
+	var me = this;
+
+	me.widget = widget;
+
+	me.element = element;
+
+	me.items = items;
+
+	me.options = options;
+
+}
+
+ClassicRenderer.prototype = {
+
+	cssClass : "classic",
+
+	itemMargin : 0,
+
+	initialize : function() {
+
+		var me = this,
+			o = me.options,
+			css = {},
+			$activeItem = me.items
+				.eq( me.widget.currentIndex );
+
+		me.itemSize = $activeItem.width();
+
+		me.outerWidth = me.element.parent().outerWidth( false );
+
+		me.itemMargin = - Math.floor( o.overlap / 2 * $activeItem.innerWidth() );
+
+		me.items
+			// apply a negative margin so items overlap
+			.css({
+				marginLeft : me.itemMargin,
+				marginRight : me.itemMargin
+			});
+
+		// make sure there's enough space
+		css.width = me.items.width() * me.items.length;
+
+		// Center the actual parent's left side within its parent
+		$.extend( css, me._getCenterPosition() );
+		me.element.css( css );
+	},
+	_getCenterPosition : function () {
+		var me = this,
+			pos,
+			itemSize = me.itemSize,
+			index = me.widget.currentIndex;
+
+		pos = ( me.outerWidth - itemSize ) / 2;
+		pos -= index * me.itemSize / 2;
+		pos += parseInt( me.element.css( "paddingLeft" ), 10 ) || 0;
+		pos -= index * me.itemMargin * 2;
+
+		pos -= me.itemMargin;
+		pos = Math.round( pos );
+
+		return { left : pos };
+	},
+	select : function () {
+		return this._getCenterPosition();
+	},
+	getElementTransitionStyles : function( o ) {
+
+		var transitionFn = $.coverflow.transition[ o.easing ] || $.coverflow.transition.easeOutQuint;
+		return $.extend( this._getCenterPosition(), {
+					"transition" : "left " + o.duration + "ms " + transitionFn
+				});
+	},
+	refresh : function ( state, from, to ) {
+		var me = this,
+			o = me.options,
+			itemLength = me.items.length,
+			itemSize = me.itemSize,
+			itemMargin = me.itemMargin;
+
+		this.items.each( function ( i ) {
+
+			var side = ( ( i === to && from - to < 0 ) || i - to  > 0 )
+					? "left"
+					: "right",
+				mod = ( i === to )
+					? ( 1 - state )
+					: ( i === from ? state : 1 ),
+				css = {
+					zIndex: itemLength + ( side === "left" ? to - i : i - to ) + 10
+				},
+				scale = ( 1 - mod * ( 1 - o.scale )  ),
+				matrixT = [
+					scale, ( mod * ( side === "right" ? -0.15 : 0.15 ) ),
+					0, scale,
+					0, 0
+				];
+
+			css.left = (
+				( -i * ( itemSize / 2 ) )
+				+ ( side === "right"
+					? - itemSize / 2 + ( itemSize / 2 * o.overlap )
+					: itemSize / 2 - ( itemSize / 2 * o.overlap )
+				) * mod
+			);
+
+			if( $.coverflow.isOldie ) {
+				if( i === to ) {
+					css.left += itemMargin;
+					css.top = 0;
+				} else {
+					css.top = Math.ceil( -itemMargin / 2 );
+				}
+			}
+
+			me._transform( this, css, matrixT );
+
+			$( this ).css( css );
+		});
+	},
+	_transform : function() {
+
+		var me = this;
+
+		if( $.coverflow.support.transform ) {
+			me._matrixTransform.apply( me, arguments );
+			return;
+		}
+		if( $.coverflow.isOldie ) {
+			me._fallbackTransform.apply( me, arguments );
+		}
+	},
+	_matrixTransform : function ( el, css, matrixT ) {
+		css.transform = "matrix(" + matrixT.join( "," ) + ")";
+	},
+	_fallbackTransform : function ( el, css, matrixT ) {
+		// Adapted from Paul Baukus transformie lib
+		if( ! el.filters[ "DXImageTransform.Microsoft.Matrix" ] ) {
+			el.style.filter = (el.style.filter ? "" : " " ) + "progid:DXImageTransform.Microsoft.Matrix(sizingMethod=\"auto expand\")";
+		}
+		var filters = el.filters[ "DXImageTransform.Microsoft.Matrix" ];
+		filters.M11 = matrixT[ 0 ];
+		filters.M12 = matrixT[ 2 ];
+		filters.M21 = matrixT[ 1 ];
+		filters.M22 = matrixT[ 3 ];
+	}
+};
+
+$.extend( $.coverflow.renderer, {
+	Classic : ClassicRenderer
+});
+
+
+function toRadian ( angle ) {
+	return parseFloat( ( angle * 0.017453 ) .toFixed( 6 ) );
+}
+
+function ThreeDRenderer() {
+	$.coverflow.renderer.Classic.apply( this, arguments );
+}
+
+ThreeDRenderer.prototype = {
+
+	cssClass : "3d",
+
+	initialize : function() {
+		var me = this,
+			css = {};
+
+		me.itemSize = me.items
+				.eq( me.widget.currentIndex )
+				.outerWidth( true );
+
+		me.outerWidth = me.element.parent().outerWidth( false );
+
+		// make sure there's enough space
+		css.width = me.itemSize * me.items.length;
+
+		// Center the actual parents' left side within its parent
+		$.extend(
+			css,
+			me._getCenterPosition(),
+			me._getPerspectiveOrigin()
+		);
+
+		me.element
+			.css( css );
+	},
+	getItemRenderedWidth : function () {
+
+		var o = this.options;
+
+		// Estimate the rendered width (not taking perspective into account)
+		return Math.cos( toRadian( o.angle ) ) * this.itemSize * o.scale;
+	},
+	_getPerspectiveOrigin : function () {
+
+		var me = this,
+			o = me.options;
+
+		// Center the perspective on the visual center of the container
+		return {
+			perspectiveOrigin : Math.round( me.itemSize / 2 +
+				( me.widget.currentIndex *
+					me.getItemRenderedWidth() *
+					( 1 - o.overlap )
+				) ) + "px " +
+				o.perspectiveY + "%"
+		};
+	},
+	_getCenterPosition : function () {
+		var me = this,
+			pos,
+			renderedWidth = me.getItemRenderedWidth(),
+			index = me.widget.currentIndex;
+
+		// Get default center
+		pos = ( me.outerWidth - me.itemSize ) / 2;
+
+		// Shift left based on the number of elements before selection
+		pos -= index * renderedWidth;
+
+		// Adjust back right for the overlap of the elements
+		pos += index * renderedWidth * me.options.overlap;
+
+		// Adjust for the padding
+		pos -= parseInt( me.element.css( "paddingLeft" ), 10 ) || 0;
+
+		pos = Math.round( pos );
+
+		return { left : pos };
+	},
+	select : function () {
+
+		return $.extend(
+			{},
+			this._getCenterPosition(),
+			this._getPerspectiveOrigin()
+		);
+	},
+	getElementTransitionStyles : function ( o ) {
+
+		var me = this,
+			transitionFn = $.coverflow.transition[ o.easing ] || $.coverflow.transition.easeOutQuint,
+			css = {
+				transitionProperty : "left",
+				transitionDuration : o.duration + "ms",
+				transitionTimingFunction : transitionFn,
+				transitionDelay : "initial"
+			};
+
+		return $.extend(
+				css,
+				me._getCenterPosition(),
+				me._getPerspectiveOrigin()
+			);
+	},
+	refresh : function ( state, from, to ) {
+		var me = this,
+			o = me.options,
+			itemLength = me.items.length,
+			itemSize = me.itemSize,
+			renderedWidth = me.getItemRenderedWidth();
+
+		this.items.each( function ( i ) {
+
+			var side = ( ( i === to && from - to < 0 ) || i - to  > 0 )
+					? "left"
+					: "right",
+				mod = ( i === to )
+					? ( 1 - state )
+					: ( i === from ? state : 1 ),
+				css = {
+					zIndex: itemLength + ( side === "left" ? to - i : i - to ) + 10
+				},
+				scale = 1 - ( mod * ( 1 - o.scale ) ),
+				angle = side === "right" ? o.angle : - o.angle,
+				matrixT;
+
+			angle = toRadian( mod * angle );
+
+			// Adjust left to center active item in display window
+			css.left = Math.round(
+				-i * itemSize +
+				( mod * i * renderedWidth * ( 1 - o.overlap ) ) +
+				( ( 1 - mod ) * i * renderedWidth * ( 1 - o.overlap ) )
+			);
+
+			// transponed matrix
+			matrixT = [
+				( scale * Math.cos( angle ) ).toFixed( 6 ), 0,     Math.sin( -angle ).toFixed( 6 ),           0,
+				0,                                          scale, 0,                                         0,
+				Math.sin( angle ).toFixed( 6 ),             0,     ( scale * Math.cos( angle )).toFixed( 6 ), 0,
+				0,                                          0,     0,                                         1
+			];
+
+			css.transform = "matrix3d(" + matrixT.join( ", ") + ")";
+			css.transformOrigin = side === "right" ? "left center" : "right center";
+
+			$( this ).css( css );
+		});
+	}
+};
+
+$.extend( $.coverflow.renderer, {
+	ThreeD : ThreeDRenderer
+});
+
+/**
+ * extends jQuery.support by the following properties:
+ *
+ * - transform
+ * - transition
+ *
+ * polyfills requestAnimationFrame/cancelAnimationFrame
+ *
+ * extends jQuery.cssProps:
+ * - transitionProperty
+ * - transitionDuration
+ * - transitionTimingFunction
+ * - transitionDelay
+ * - perspectiveOrigin
+ *
+ */
+
+	
+
+	/**
+	 * http://paulirish.com/2011/requestanimationframe-for-smart-animating/
+	 * http://my.opera.com/emoller/blog/2011/12/20/requestanimationframe-for-smart-er-animating
+	 *
+	 * requestAnimationFrame polyfill by Erik Möller. fixes from Paul Irish and Tino Zijdel
+	 * MIT license
+	 *
+	 * @see https://gist.github.com/paulirish/1579671
+	 */
+
+	var el = document.createElement( "div" ),
+		style = el.style,
+		lastTime = 0,
+		vendors = [ "ms", "moz", "webkit", "o" ],
+		vendorsLength = vendors.length,
+		vendorPrefix = "",
+		x = 0,
+		support = $.coverflow.support,
+		capitalize = function( string ) {
+			return string.charAt( 0 ).toUpperCase() + string.slice( 1 );
+		};
+
+	for( ; x < vendorsLength && ! window.requestAnimationFrame; x++ ) {
+		window.requestAnimationFrame = window[ vendors[ x ] + "RequestAnimationFrame" ];
+		window.cancelAnimationFrame = window[ vendors[ x ] + "CancelAnimationFrame" ] ||
+			window[ vendors[ x ] + "CancelRequestAnimationFrame" ];
+	}
+
+	if ( ! window.requestAnimationFrame ) {
+		window.requestAnimationFrame = function( callback ) {
+			var currTime = new Date().getTime(),
+				timeToCall = Math.max( 0, 16 - ( currTime - lastTime ) ),
+				id = window.setTimeout( function() {
+					callback( currTime + timeToCall );
+				}, timeToCall );
+
+			lastTime = currTime + timeToCall;
+
+			return id;
+		};
+	}
+
+	if ( ! window.cancelAnimationFrame ) {
+		window.cancelAnimationFrame = function( id ) {
+			clearTimeout( id );
+		};
+	}
+
+	// Check for vendor prefixed support of transition events first
+	// Some Webkit browsers on Android are providing false positives
+	// on non-prefixed transition event handlers
+	// e.g. Webkit on Galaxy Tab II
+	$.each( vendors, function( i, p ) {
+
+		if( p !== "ms" ) {
+			p = capitalize( p );
+		}
+		if( ! support.transform  && p + "Transform" in style ) {
+			support.transform = p + "Transform";
+		}
+		if( ! support.transition && p + "Transition" in style ) {
+			support.transition = p + "Transition";
+		}
+
+		if( support.transform && support.transition ) {
+			vendorPrefix = p;
+			return false;
+		}
+		return true;
+	});
+
+	if( ! support.transform || ! support.transition ) {
+
+		support.transform = "transform" in style ? "transform" : false;
+		support.transition = "transition" in style ? "transition" : false;
+	}
+
+	// expose feature support if not already set
+	if( $.support.transform == null ) {
+		$.support.transform = support.transform;
+	}
+	if( $.support.transition == null ) {
+		$.support.transition = support.transition;
+	}
+
+	if( $.cssProps == null ) {
+		throw new Error( "Your jQuery version is too old. Please upgrade." );
+	}
+
+	if( !! vendorPrefix ) {
+
+		$.each([
+				"transitionProperty",
+				"transitionDuration",
+				"transitionTimingFunction",
+				"transitionDelay",
+				"perspectiveOrigin"
+			], function( i, cssProperty ) {
+
+				if( $.cssProps[ cssProperty ] != null ) {
+					return;
+				}
+
+				$.cssProps[ cssProperty ] = vendorPrefix + capitalize( cssProperty );
+			});
+	}
+
+	el = null;
+
+
+/*
+ * Detect support for 3d css transformations
+ * Based on Modernizr 2.7.1 (Custom Build) | MIT & BSD
+ * Build: http://modernizr.com/download/#-csstransforms3d-addtest-prefixed-teststyles-testprop-testallprops-hasevent-prefixes-domprefixes
+ */
+
+    var docElement = document.documentElement,
+
+        mod = "coverflowjsfeaturedetection",
+        modElem = document.createElement( mod ),
+        mStyle = modElem.style,
+
+        omPrefixes = "Webkit Moz O ms",
+
+        cssomPrefixes = omPrefixes.split( " " ),
+
+        domPrefixes = omPrefixes.toLowerCase().split( " " ),
+
+        injectElementWithStyles = function( rule, callback, nodes, testnames ) {
+
+            var style, ret, node, docOverflow,
+                div = document.createElement( "div" ),
+                body = document.body,
+                fakeBody = body || document.createElement( "body" );
+
+            if( parseInt( nodes, 10 ) ) {
+                while( nodes-- ) {
+                    node = document.createElement( "div" );
+                    node.id = testnames ? testnames[ nodes ] : mod + ( nodes + 1 );
+                    div.appendChild(node);
+                }
+            }
+
+            style = [ "&#173;", "<style id='s", mod, "'>", rule, "</style>" ].join( "" );
+            div.id = mod;
+            ( body ? div : fakeBody ).innerHTML += style;
+            fakeBody.appendChild(div);
+            if( ! body ) {
+                fakeBody.style.background = "";
+                fakeBody.style.overflow = "hidden";
+                docOverflow = docElement.style.overflow;
+                docElement.style.overflow = "hidden";
+                docElement.appendChild( fakeBody );
+            }
+
+            ret = callback( div, rule );
+            if( ! body ) {
+                fakeBody.parentNode.removeChild( fakeBody );
+                docElement.style.overflow = docOverflow;
+            } else {
+                div.parentNode.removeChild(div);
+            }
+
+            return !!ret;
+
+        },
+
+        _hasOwnProperty = ({}).hasOwnProperty,
+        hasOwnProp;
+
+	function is( obj, type ) {
+        return typeof obj === type;
+    }
+
+    if( ! is( _hasOwnProperty, "undefined" ) && ! is( _hasOwnProperty.call, "undefined" ) ) {
+        hasOwnProp = function( object, property ) {
+            return _hasOwnProperty.call(object, property);
+        };
+    } else {
+        hasOwnProp = function( object, property ) {
+            return ( ( property in object ) && is( object.constructor.prototype[ property ], "undefined"));
+        };
+    }
+
+    function contains( str, substr ) {
+        return !!~( "" + str ).indexOf( substr );
+    }
+
+    function testProps( props, prefixed ) {
+
+		var i, prop;
+
+		for( i in props ) {
+            prop = props[ i ];
+            if( ! contains( prop, "-" ) && mStyle[ prop ] !== undefined) {
+                return prefixed === "pfx" ? prop : true;
+            }
+        }
+        return false;
+    }
+
+    function testDOMProps( props, obj, elem ) {
+
+		var i, item;
+
+		for( i in props ) {
+            item = obj[ props[ i ] ];
+            if( item !== undefined) {
+
+                if( elem === false) {
+					return props[ i ];
+                }
+
+                if( is( item, "function" ) ) {
+                    return $.proxy( item, elem || obj );
+                }
+
+                return item;
+            }
+        }
+        return false;
+    }
+
+    function testPropsAll(prop, prefixed, elem) {
+
+        var ucProp = prop.charAt( 0 ).toUpperCase() + prop.slice( 1 ),
+            props = ( prop + " " + cssomPrefixes.join( ucProp + " " ) + ucProp).split( " " );
+
+        if( is( prefixed, "string" ) || is( prefixed, "undefined" ) ) {
+            return testProps( props, prefixed );
+
+        } else {
+            props = ( prop + " " + ( domPrefixes ).join( ucProp + " " ) + ucProp ).split( " " );
+            return testDOMProps( props, prefixed, elem );
+        }
+    }
+
+    $.coverflow.support.transform3d = (function() {
+
+        var ret = !! testPropsAll( "perspective" );
+
+        if( ret && "webkitPerspective" in docElement.style ) {
+
+            injectElementWithStyles(
+				"@media (transform-3d),(-webkit-transform-3d){#coverflowjsfeaturedetection{left:9px;position:absolute;height:3px;}}",
+				function( node )
+			{
+                ret = node.offsetLeft === 9 && node.offsetHeight === 3;
+            });
+        }
+        return ret;
+    })();
+
+	// expose feature support if not already set
+    if( $.support.transform3d == null ) {
+	    $.support.transform3d = $.coverflow.support.transform3d;
+    }
+
+
+/**
+ * @license Released under the MIT license.
+ *
+ * CoverflowJS
+ *
+ * 3D transformations: Brandon Belvin
+ * Refactored for jQuery 1.8 / jQueryUI 1.9 Sebastian Sauer
+ * Re-written for jQueryUI 1.8.6/jQuery core 1.4.4+ by Addy Osmani with adjustments
+ * Maintenance updates for 1.8.9/jQuery core 1.5, 1.6.2 made.
+ * Original Component: Paul Bakaus for jQueryUI 1.7
+ *
+ *
+ * Depends:
+ *  jquery.ui.core.js
+ *  jquery.ui.widget.js
+ *
+ * In case you want swipe support and you don't use jQuery mobile yet:
+ * jquery-mobile.custom.js
+ *
+ * $.animate support for older browsers depends on:
+ *  jquery.ui.effect.js
+ *
+ * Events:
+ *  beforeselect
+ *  select
+ */
+
+
+	
+
+	function debounce( func, threshold ) {
+
+		var timeout;
+
+		return function() {
+			var obj = this,
+				args = arguments;
+
+			if( timeout ) {
+				clearTimeout( timeout );
+			}
+
+			timeout = setTimeout(function() {
+						func.apply( obj, args );
+						timeout = null;
+					}, threshold
+				);
+		};
+	}
+
+	var eventsMap = {
+			"transition":     "transitionend",
+			"MozTransition":  "transitionend",
+			"OTransition":    "oTransitionEnd",
+			"WebkitTransition": "webkitTransitionEnd",
+			"msTransition":   "transitionend"
+		},
+		userAgent = navigator.userAgent.toLowerCase(),
+		isOldie = (function() {
+
+			var match = /(msie) ([\w.]+)/.exec( userAgent );
+
+			return match !== null && match[ 1 ] && ( ~~ match[ 2 ] ) < 10;
+		})();
+
+	$.coverflow = $.extend( true, {}, $.coverflow, {
+
+		isAndroid : (/android/).test( userAgent ),
+
+		isOldie : isOldie,
+
+		transition : {
+
+			/**
+			 * @see http://matthewlein.com/ceaser/
+			 *
+			 * easing not available as css timing functions:
+			 *
+			 * easeInElastic
+			 * easeOutElastic
+			 * easeInOutElastic
+			 *
+			 * easeInBounce
+			 * easeOutBounce
+			 * easeInOutBounce
+			 */
+
+			// ease-in
+			"easeInQuad" : "cubic-bezier( .55,.085,.68,.53 )",
+			"easeInCubic": "cubic-bezier( .550, .055, .675, .190 )",
+			"easeInQuart": "cubic-bezier( .895, .03, .685, .22 )",
+			"easeInQuint": "cubic-bezier( .755, .05, .855, .06 )",
+			"easeInSine" : "cubic-bezier( .47, 0, .745, .715 )",
+			"easeInExpo" : "cubic-bezier( .95, .05, .795, .035 )",
+			"easeInCirc" : "cubic-bezier( .6, .04, .98, .335 )",
+			"easeInBack" : "cubic-bezier( .6, -.28, .735, .045 )",
+
+			// ease-out
+			"easeOutQuad" : "cubic-bezier( .25,.46,.45,.94 )",
+			"easeOutCubic": "cubic-bezier( .215,.61,.355,1 )",
+			"easeOutQuart": "cubic-bezier( .165, .84, .44, 1 )",
+			"easeOutQuint": "cubic-bezier( .23, 1, .32, 1 )",
+			"easeOutSine" : "cubic-bezier( .39, .575, .565, 1 )",
+			"easeOutExpo" : "cubic-bezier( .19,1,.22,1 )",
+			"easeOutCirc" : "cubic-bezier( .075, .82, .165, 1 )",
+			"easeOutBack" : "cubic-bezier( .175, .885, .32, 1.275 )",
+
+			// ease-in-out
+			"easeInOutQuad" : "cubic-bezier( .455, .03, .515, .955 )",
+			"easeInOutCubic": "cubic-bezier( .645, .045, .355, 1 )",
+			"easeInOutQuart": "cubic-bezier( .77, 0, .175, 1 )",
+			"easeInOutQuint": "cubic-bezier( .86, 0, .07, 1 )",
+			"easeInOutSine" : "cubic-bezier( .445, .05, .55, .95 )",
+			"easeInOutExpo" : "cubic-bezier( 1, 0, 0, 1 )",
+			"easeInOutCirc" : "cubic-bezier( .785, .135, .15, .86 )",
+			"easeInOutBack" : "cubic-bezier( .68, -.55, .265, 1.55 )"
+		},
+		renderer : {}
+	});
+
+	$.widget( "ui.coverflow", {
+
+		options: {
+			items : "> *",
+			active : 0,
+			duration : 400,
+			easing : "easeOutQuint",
+			// renderer options
+			// angle and perspective are only available when the browser supports 3d transformations
+			angle: 45,
+			perspectiveY: 45,
+			scale: 0.7,
+			overlap: 0.3,
+			// selection triggers
+			trigger : {
+				itemfocus : false,
+				itemclick : true,
+				mousewheel : true,
+				// if swipe is enabled, itemfocus will be set to false
+				swipe : true
+			}
+		},
+		isTicking : false,
+		_create : function () {
+
+			var me = this,
+				o = this.options,
+				Renderer,
+				rendererOptions,
+				support = $.coverflow.support || {};
+
+			me.elementOrigStyle = me.element.attr( "style" );
+
+			me.items = me.element.find( o.items )
+					.each( function () {
+						var $this = $( this );
+						$this.data({
+							coverflowOrigElemAttr : {
+								style : $this.attr( "style" ),
+								"class" : $this.attr( "class" ),
+								// Tab index is included here as attr, even though we call it as a prop because when you removeProp it sets it to 0 instead of actually removing
+								tabIndex : $this.attr( "tabIndex" )
+							}
+						});
+					})
+					.addClass( "ui-coverflow-item" );
+
+			me._setDimensions();
+
+			me.support = support;
+
+			if ( // transform is not supported
+				! support.transform
+				// or is old IE
+				|| isOldie
+				// or it's opera: fails to create a perspective on coverflow items
+				|| window.opera != null
+				// or no css3 transformation is available
+				|| ! support.transform3d
+			) {
+				Renderer = $.coverflow.renderer.Classic;
+			} else {
+				Renderer = $.coverflow.renderer.ThreeD;
+			}
+
+			rendererOptions = {
+				angle: o.angle,
+				perspectiveY: o.perspectiveY,
+				scale: o.scale,
+				overlap: o.overlap,
+				itemSize : me.itemSize,
+				outerWidth : me.outerWidth
+			};
+
+			me.renderer = new Renderer(
+					me,
+					me.element,
+					me.items,
+					rendererOptions
+				);
+
+			me.element
+				.addClass( "ui-coverflow ui-coverflow-" + me.renderer.cssClass + "-render" )
+				.parent()
+				.addClass( "ui-coverflow-wrapper ui-clearfix" );
+
+			if( o.trigger.itemfocus ) {
+				this._bindFocus();
+			}
+
+			if( o.trigger.itemclick ) {
+				me._on( me.items, { click : me._select });
+			}
+
+			if( o.trigger.mousewheel ) {
+				me._on({
+					mousewheel: me._onMouseWheel,
+					DOMMouseScroll: me._onMouseWheel
+				});
+			}
+
+			if( o.trigger.swipe ) {
+				me._bindSwipe();
+			}
+
+			me.useJqueryAnimate = ! ( support.transition && $.isFunction( window.requestAnimationFrame ) );
+
+			me.coverflowrafid = 0;
+		},
+		_bindFocus : function() {
+			var me = this;
+
+			// set tabindex so widget items get focusable
+			// makes items accessible by keyboard
+			me.items
+				.prop( "tabIndex", 0 );
+
+			me._on( me.items, { focus : me._select });
+		},
+		_bindSwipe : function() {
+
+			var me = this,
+				$el = me.element,
+				hasJqm = false,
+				hasHammer = false;
+
+			// jQuery mobile
+			if( $.event.special && $.event.special.swipe ) {
+
+				hasJqm = true;
+
+				if( $.coverflow.isAndroid ) {
+					$.event.special.swipe.scrollSupressionThreshold = 0;
+				}
+
+				$.event.special.swipe.handleSwipe = function( start, stop ) {
+
+					var startPos = start.coords,
+						endPos = stop.coords,
+						swipeEv = $.event.special.swipe;
+
+					if ( stop.time - start.time < swipeEv.durationThreshold &&
+						Math.abs( startPos[ 0 ] - endPos[ 0 ] ) > swipeEv.horizontalDistanceThreshold &&
+						Math.abs( startPos[ 1 ] - endPos[ 1 ] ) < swipeEv.verticalDistanceThreshold
+					) {
+
+						start.origin
+							.trigger( "swipe", { swipestart: start, swipestop: stop } )
+							.trigger(
+								start.coords[0] > stop.coords[ 0 ]
+									? "swipeleft"
+									: "swiperight", { swipestart: start, swipestop: stop }
+							);
+					}
+				};
+
+				me._on({
+					swipe : debounce( me._handleJQmSwipe, 150 )
+				});
+			}
+
+			// hammer.js
+			if( $el.hammer && window.Hammer != null ) {
+
+				hasHammer = true;
+
+				$el
+					.hammer()
+					.on("drag swipe", function(ev) {
+
+						// only horizontal swipe
+						if( Hammer.utils.isVertical( ev.gesture.direction) ) {
+						   return;
+						}
+
+						// prevent scrolling, so the drag/swipe handler is getting called
+						// fix swipe on webkit based Android browsers
+						ev.gesture.preventDefault();
+					});
+
+				me._on({
+					swipe: me._handleHammerSwipe
+				});
+			}
+
+			if( ! hasJqm && ! hasHammer ) {
+				me._on({
+					swipeleft : me.next,
+					swiperight : me.prev
+				});
+			}
+		},
+		_init : function () {
+			var me = this,
+				o = me.options;
+
+			o.duration = ~~ o.duration;
+			if( o.duration < 1 ) {
+				o.duration = 1;
+			}
+
+			me.currentIndex = me._isValidIndex( o.active, true ) ? o.active : 0;
+			me.activeItem = me.items
+				.removeClass( "ui-state-active" )
+				.eq( me.currentIndex )
+				.addClass( "ui-state-active" );
+
+			me._setDimensions();
+
+			// Call renderer-specific code
+			me.renderer.initialize();
+
+			// Jump to the first item
+			me._refresh( 1, me._getFrom(), me.currentIndex );
+
+			me._trigger( "beforeselect", null, me._ui() );
+			me._trigger( "select", null, me._ui() );
+		},
+		_setDimensions : function() {
+			var me = this;
+
+			me.itemWidth = me.items.width();
+
+			me.itemHeight = me.items.height();
+
+			me.itemSize = me.items.outerWidth( true );
+
+			me.outerWidth = me.element.parent().outerWidth( false );
+		},
+		_isValidIndex : function ( index, ignoreCurrent ) {
+			ignoreCurrent = !! ignoreCurrent;
+			index = ~~index;
+			return ( this.currentIndex !== index || ignoreCurrent ) && index > -1 && !! this.items.get( index );
+		},
+		_select: function ( ev ) {
+			this.select( ev.currentTarget );
+		},
+		next : function () {
+			return this.select( this.currentIndex + 1 );
+		},
+		prev : function () {
+			return this.select( this.currentIndex - 1 );
+		},
+		_handleJQmSwipe : function ( ev, data ) {
+			var start = data.swipestart,
+				stop = data.swipestop,
+				time = stop.time - start.time,
+				distance = stop.coords[ 0 ] - start.coords[ 0 ],
+				speed = distance / time,
+				direction = distance < 0 ? "left" : "right";
+
+			this._handleSwipe( direction, speed );
+		},
+		_handleHammerSwipe : function( ev ) {
+			var gesture = ev.gesture;
+
+			this._handleSwipe(
+				gesture.direction,
+				gesture.distance / gesture.deltaTime
+			);
+		},
+		_handleSwipe : function( direction, speed ) {
+
+			var me = this,
+				delta,
+				destination;
+
+			delta = me.outerWidth * ( Math.pow( speed, 2 ) ) * 0.25;
+			delta /= me.itemWidth;
+			delta = Math.floor( delta ) * ( direction === "left" ? 1 : -1 );
+
+			destination = me.currentIndex + delta;
+
+			if( ! delta ) {
+				( direction === "left" ) ? me.next() : me.prev();
+				return;
+			}
+			if( destination < 0 ) {
+				me.select( 0 );
+				return;
+			}
+
+			if( me._isValidIndex( destination ) ) {
+				me.select( destination );
+				return;
+			}
+			me.select( me.items.length - 1 );
+		},
+		_getFrom : function () {
+			var me = this;
+
+			return Math.abs( me.previous - me.currentIndex ) <= 1
+				? me.previousIndex
+				: me.currentIndex + ( me.previousIndex < me.currentIndex ? -1 : 1 );
+		},
+		select : function( item ) {
+
+			var me = this,
+				o = me.options,
+				index = ! isNaN( parseInt( item, 10 ) )
+						? parseInt( item, 10 )
+						: me.items.index( item ),
+				animation;
+
+			if( ! me._isValidIndex( index ) ) {
+				return false;
+			}
+
+			if( false === me._trigger(
+					"beforeselect",
+					null,
+					this._ui(
+						me.items.eq( index ), index
+					)
+				)
+			) {
+				return false;
+			}
+
+			if( me.isTicking ) {
+				if( me.useJqueryAnimate ) {
+					me.element.stop( true, false );
+				} else {
+
+					if( me.coverflowrafid ) {
+						window.cancelAnimationFrame( me.coverflowrafid );
+					}
+
+					me.element
+						.unbind( eventsMap[ me.support.transition ] );
+				}
+			}
+			me.isTicking = true;
+
+			me.previousIndex = me.currentIndex;
+			o.active = me.currentIndex = index;
+
+			animation = $.extend( {}, me.renderer.select(), {
+					coverflow : 1
+				});
+
+			if( me.useJqueryAnimate ) {
+
+				me._animation( o, animation );
+			} else {
+
+				o = $.extend({
+						duration: o.duration,
+						easing: o.easing
+					}, animation );
+
+				me._transition( o );
+			}
+
+			return true;
+		},
+		_animation : function( o, animation ) {
+
+			var me = this,
+				from = this._getFrom();
+
+			// Overwrite $.fx.step.coverflow everytime again with custom scoped values for this specific animation
+			$.fx.step.coverflow = function( fx ) {
+				me._refresh( fx.now, from, me.currentIndex );
+			};
+
+			// 1. Stop the previous animation
+			// 2. Animate the parent's left/top property so the current item is in the center
+			// 3. Use our custom coverflow animation which animates the item
+
+			me.element
+				.animate(
+					animation,
+					{
+						duration: o.duration,
+						easing: o.easing
+					}
+				)
+				.promise()
+				.done(function() {
+					me._onAnimationEnd();
+				});
+		},
+		_transition : function( o ) {
+			var me = this,
+				d = new Date(),
+				from = me._getFrom(),
+				to = me.currentIndex,
+				styles = {},
+				loopRefresh = function() {
+					var state = ( (new Date()).getTime() - d.getTime() ) / o.duration;
+
+					if( state > 1 ) {
+						me.isTicking = false;
+					} else {
+						me._refresh( state, from, to );
+					}
+
+					if( me.isTicking ) {
+						me.coverflowrafid = window.requestAnimationFrame( loopRefresh );
+					}
+				};
+
+
+			if( $.isFunction( me.renderer.getElementTransitionStyles ) ) {
+				styles = $.extend( styles, me.renderer.getElementTransitionStyles( o ) );
+			}
+
+			me.element
+				.one( eventsMap[ me.support.transition ],
+					function() {
+						me._refresh( 1, from, to );
+						me._onAnimationEnd();
+					}
+				)
+				.css( styles );
+
+			me.coverflowrafid = window.requestAnimationFrame( loopRefresh );
+		},
+		_onAnimationEnd : function() {
+
+			var me = this;
+
+			if( me.coverflowrafid ) {
+				cancelAnimationFrame( me.coverflowrafid );
+			}
+
+			me.isTicking = false;
+			me.activeItem = me.items
+					.removeClass( "ui-state-active" )
+					.eq( me.currentIndex )
+					.addClass( "ui-state-active" );
+
+			// fire select after animation has finished
+			me._trigger( "select", null, me._ui() );
+		},
+		_refresh: function( state, from, to ) {
+			this.element
+				.parent()
+				.scrollTop( 0 );
+
+			this.renderer.refresh( state, from, to );
+
+		},
+		_ui : function ( active, index ) {
+			return {
+				active: active || this.activeItem,
+				index: index != null ? index : this.currentIndex
+			};
+		},
+		_onMouseWheel : function ( ev ) {
+			var origEv = ev.originalEvent;
+
+			ev.preventDefault();
+			if( origEv.wheelDelta > 0 || origEv.detail < 0 ) {
+				this.prev();
+				return;
+			}
+			this.next();
+		},
+		_destroy : function () {
+
+			var me = this;
+
+			if ( me.elementOrigStyle !== undefined ) {
+				me.element.attr( "style", this.elementOrigStyle );
+			} else {
+				me.element.removeAttr( "style" );
+			}
+
+			me.element
+				.removeClass(
+					"ui-coverflow ui-helper-clearfix ui-coverflow-"
+					+ ( me.renderer.cssClass || "classic" ) + "-render"
+				)
+				.parent()
+				.removeClass( "ui-coverflow-wrapper ui-clearfix" );
+
+			me.items
+				.removeClass( "ui-coverflow-item ui-state-active" )
+				.each(function(){
+					var $this = $( this ),
+						origAttr = $this.data( "coverflowOrigElemAttr" );
+
+					$.each( origAttr, function( name, value ) {
+						if ( value !== undefined ) {
+							$this.attr( name, value );
+						} else {
+							$this.removeAttr( name );
+						}
+					});
+
+					$this.data( "coverflowOrigElemAttr", null );
+				});
+
+			me._super();
+		}
+	});
+
+
+})( jQuery, this, this.document );
+
+///#source 1 1 /core/lib/bootstrap-toggle/js/bootstrap-toggle.js
+/*! ========================================================================
+ * Bootstrap Toggle: bootstrap-toggle.js v2.2.0
+ * http://www.bootstraptoggle.com
+ * ========================================================================
+ * Copyright 2014 Min Hur, The New York Times Company
+ * Licensed under MIT
+ * ======================================================================== */
+
+
+ +function ($) {
+ 	'use strict';
+
+	// TOGGLE PUBLIC CLASS DEFINITION
+	// ==============================
+
+	var Toggle = function (element, options) {
+		this.$element  = $(element)
+		this.options   = $.extend({}, this.defaults(), options)
+		this.render()
+	}
+
+	Toggle.VERSION  = '2.2.0'
+
+	Toggle.DEFAULTS = {
+		on: 'On',
+		off: 'Off',
+		onstyle: 'primary',
+		offstyle: 'default',
+		size: 'normal',
+		style: '',
+		width: null,
+		height: null
+	}
+
+	Toggle.prototype.defaults = function() {
+		return {
+			on: this.$element.attr('data-on') || Toggle.DEFAULTS.on,
+			off: this.$element.attr('data-off') || Toggle.DEFAULTS.off,
+			onstyle: this.$element.attr('data-onstyle') || Toggle.DEFAULTS.onstyle,
+			offstyle: this.$element.attr('data-offstyle') || Toggle.DEFAULTS.offstyle,
+			size: this.$element.attr('data-size') || Toggle.DEFAULTS.size,
+			style: this.$element.attr('data-style') || Toggle.DEFAULTS.style,
+			width: this.$element.attr('data-width') || Toggle.DEFAULTS.width,
+			height: this.$element.attr('data-height') || Toggle.DEFAULTS.height
+		}
+	}
+
+	Toggle.prototype.render = function () {
+		this._onstyle = 'btn-' + this.options.onstyle
+		this._offstyle = 'btn-' + this.options.offstyle
+		var size = this.options.size === 'large' ? 'btn-lg'
+			: this.options.size === 'small' ? 'btn-sm'
+			: this.options.size === 'mini' ? 'btn-xs'
+			: ''
+		var $toggleOn = $('<label class="btn">').html(this.options.on)
+			.addClass(this._onstyle + ' ' + size)
+		var $toggleOff = $('<label class="btn">').html(this.options.off)
+			.addClass(this._offstyle + ' ' + size + ' active')
+		var $toggleHandle = $('<span class="toggle-handle btn btn-default">')
+			.addClass(size)
+		var $toggleGroup = $('<div class="toggle-group">')
+			.append($toggleOn, $toggleOff, $toggleHandle)
+		var $toggle = $('<div class="toggle btn" data-toggle="toggle">')
+			.addClass( this.$element.prop('checked') ? this._onstyle : this._offstyle+' off' )
+			.addClass(size).addClass(this.options.style)
+
+		this.$element.wrap($toggle)
+		$.extend(this, {
+			$toggle: this.$element.parent(),
+			$toggleOn: $toggleOn,
+			$toggleOff: $toggleOff,
+			$toggleGroup: $toggleGroup
+		})
+		this.$toggle.append($toggleGroup)
+
+		var width = this.options.width || Math.max($toggleOn.outerWidth(), $toggleOff.outerWidth())+($toggleHandle.outerWidth()/2)
+		var height = this.options.height || Math.max($toggleOn.outerHeight(), $toggleOff.outerHeight())
+		$toggleOn.addClass('toggle-on')
+		$toggleOff.addClass('toggle-off')
+		this.$toggle.css({ width: width, height: height })
+		if (this.options.height) {
+			$toggleOn.css('line-height', $toggleOn.height() + 'px')
+			$toggleOff.css('line-height', $toggleOff.height() + 'px')
+		}
+		this.update(true)
+		this.trigger(true)
+	}
+
+	Toggle.prototype.toggle = function () {
+		if (this.$element.prop('checked')) this.off()
+		else this.on()
+	}
+
+	Toggle.prototype.on = function (silent) {
+		if (this.$element.prop('disabled')) return false
+		this.$toggle.removeClass(this._offstyle + ' off').addClass(this._onstyle)
+		this.$element.prop('checked', true)
+		if (!silent) this.trigger()
+	}
+
+	Toggle.prototype.off = function (silent) {
+		if (this.$element.prop('disabled')) return false
+		this.$toggle.removeClass(this._onstyle).addClass(this._offstyle + ' off')
+		this.$element.prop('checked', false)
+		if (!silent) this.trigger()
+	}
+
+	Toggle.prototype.enable = function () {
+		this.$toggle.removeAttr('disabled')
+		this.$element.prop('disabled', false)
+	}
+
+	Toggle.prototype.disable = function () {
+		this.$toggle.attr('disabled', 'disabled')
+		this.$element.prop('disabled', true)
+	}
+
+	Toggle.prototype.update = function (silent) {
+		if (this.$element.prop('disabled')) this.disable()
+		else this.enable()
+		if (this.$element.prop('checked')) this.on(silent)
+		else this.off(silent)
+	}
+
+	Toggle.prototype.trigger = function (silent) {
+		this.$element.off('change.bs.toggle')
+		if (!silent) this.$element.change()
+		this.$element.on('change.bs.toggle', $.proxy(function() {
+			this.update()
+		}, this))
+	}
+
+	Toggle.prototype.destroy = function() {
+		this.$element.off('change.bs.toggle')
+		this.$toggleGroup.remove()
+		this.$element.removeData('bs.toggle')
+		this.$element.unwrap()
+	}
+
+	// TOGGLE PLUGIN DEFINITION
+	// ========================
+
+	function Plugin(option) {
+		return this.each(function () {
+			var $this   = $(this)
+			var data    = $this.data('bs.toggle')
+			var options = typeof option == 'object' && option
+
+			if (!data) $this.data('bs.toggle', (data = new Toggle(this, options)))
+			if (typeof option == 'string' && data[option]) data[option]()
+		})
+	}
+
+	var old = $.fn.bootstrapToggle
+
+	$.fn.bootstrapToggle             = Plugin
+	$.fn.bootstrapToggle.Constructor = Toggle
+
+	// TOGGLE NO CONFLICT
+	// ==================
+
+	$.fn.toggle.noConflict = function () {
+		$.fn.bootstrapToggle = old
+		return this
+	}
+
+	// TOGGLE DATA-API
+	// ===============
+
+	$(function() {
+		$('input[type=checkbox][data-toggle^=toggle]').bootstrapToggle()
+	})
+
+	$(document).on('click.bs.toggle', 'div[data-toggle^=toggle]', function(e) {
+		var $checkbox = $(this).find('input[type=checkbox]')
+		$checkbox.bootstrapToggle('toggle')
+		e.preventDefault()
+	})
+
+}(jQuery);
+
+///#source 1 1 /core/lib/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js
+!function(a,b){"use strict";if("function"==typeof define&&define.amd)define(["jquery","moment"],b);else if("object"==typeof exports)b(require("jquery"),require("moment"));else{if(!jQuery)throw new Error("bootstrap-datetimepicker requires jQuery to be loaded first");if(!moment)throw new Error("bootstrap-datetimepicker requires moment.js to be loaded first");b(a.jQuery,moment)}}(this,function(a,b){"use strict";if("undefined"==typeof b)throw new Error("momentjs is required");var c=0,d=function(d,e){var f,g=a.fn.datetimepicker.defaults,h={time:"glyphicon glyphicon-time",date:"glyphicon glyphicon-calendar",up:"glyphicon glyphicon-chevron-up",down:"glyphicon glyphicon-chevron-down"},i=this,j=!1,k=function(){var f,j,k=!1;if(i.options=a.extend({},g,e),i.options.icons=a.extend({},h,i.options.icons),i.element=a(d),m(),!i.options.pickTime&&!i.options.pickDate)throw new Error("Must choose at least one picker");if(i.id=c++,b.locale(i.options.language),i.date=b(),i.unset=!1,i.isInput=i.element.is("input"),i.component=!1,i.element.hasClass("input-group")&&(i.component=i.element.find(0===i.element.find(".datepickerbutton").size()?'[class^="input-group-"]':".datepickerbutton")),i.format=i.options.format,f=b().localeData(),i.format||(i.format=i.options.pickDate?f.longDateFormat("L"):"",i.options.pickDate&&i.options.pickTime&&(i.format+=" "),i.format+=i.options.pickTime?f.longDateFormat("LT"):"",i.options.useSeconds&&(-1!==f.longDateFormat("LT").indexOf(" A")?i.format=i.format.split(" A")[0]+":ss A":i.format+=":ss")),i.use24hours=i.format.toLowerCase().indexOf("a")<0&&i.format.indexOf("h")<0,i.component&&(k=i.component.find("span")),i.options.pickTime&&k&&k.addClass(i.options.icons.time),i.options.pickDate&&k&&(k.removeClass(i.options.icons.time),k.addClass(i.options.icons.date)),i.options.widgetParent="string"==typeof i.options.widgetParent&&i.options.widgetParent||i.element.parents().filter(function(){return"scroll"===a(this).css("overflow-y")}).get(0)||"body",i.widget=a(Q()).appendTo(i.options.widgetParent),i.minViewMode=i.options.minViewMode||0,"string"==typeof i.minViewMode)switch(i.minViewMode){case"months":i.minViewMode=1;break;case"years":i.minViewMode=2;break;default:i.minViewMode=0}if(i.viewMode=i.options.viewMode||0,"string"==typeof i.viewMode)switch(i.viewMode){case"months":i.viewMode=1;break;case"years":i.viewMode=2;break;default:i.viewMode=0}i.viewMode=Math.max(i.viewMode,i.minViewMode),i.options.disabledDates=O(i.options.disabledDates),i.options.enabledDates=O(i.options.enabledDates),i.startViewMode=i.viewMode,i.setMinDate(i.options.minDate),i.setMaxDate(i.options.maxDate),r(),s(),u(),v(),w(),q(),E(),l().prop("disabled")||F(),""!==i.options.defaultDate&&""===l().val()&&i.setValue(i.options.defaultDate),1!==i.options.minuteStepping&&(j=i.options.minuteStepping,i.date.minutes(Math.round(i.date.minutes()/j)*j%60).seconds(0))},l=function(){var a;if(i.isInput)return i.element;if(a=i.element.find(".datepickerinput"),0===a.size())a=i.element.find("input");else if(!a.is("input"))throw new Error('CSS class "datepickerinput" cannot be applied to non input element');return a},m=function(){var a;a=i.element.is("input")?i.element.data():i.element.find("input").data(),void 0!==a.dateFormat&&(i.options.format=a.dateFormat),void 0!==a.datePickdate&&(i.options.pickDate=a.datePickdate),void 0!==a.datePicktime&&(i.options.pickTime=a.datePicktime),void 0!==a.dateUseminutes&&(i.options.useMinutes=a.dateUseminutes),void 0!==a.dateUseseconds&&(i.options.useSeconds=a.dateUseseconds),void 0!==a.dateUsecurrent&&(i.options.useCurrent=a.dateUsecurrent),void 0!==a.calendarWeeks&&(i.options.calendarWeeks=a.calendarWeeks),void 0!==a.dateMinutestepping&&(i.options.minuteStepping=a.dateMinutestepping),void 0!==a.dateMindate&&(i.options.minDate=a.dateMindate),void 0!==a.dateMaxdate&&(i.options.maxDate=a.dateMaxdate),void 0!==a.dateShowtoday&&(i.options.showToday=a.dateShowtoday),void 0!==a.dateCollapse&&(i.options.collapse=a.dateCollapse),void 0!==a.dateLanguage&&(i.options.language=a.dateLanguage),void 0!==a.dateDefaultdate&&(i.options.defaultDate=a.dateDefaultdate),void 0!==a.dateDisableddates&&(i.options.disabledDates=a.dateDisableddates),void 0!==a.dateEnableddates&&(i.options.enabledDates=a.dateEnableddates),void 0!==a.dateIcons&&(i.options.icons=a.dateIcons),void 0!==a.dateUsestrict&&(i.options.useStrict=a.dateUsestrict),void 0!==a.dateDirection&&(i.options.direction=a.dateDirection),void 0!==a.dateSidebyside&&(i.options.sideBySide=a.dateSidebyside),void 0!==a.dateDaysofweekdisabled&&(i.options.daysOfWeekDisabled=a.dateDaysofweekdisabled)},n=function(){var b,c="absolute",d=i.component?i.component.offset():i.element.offset(),e=a(window);i.width=i.component?i.component.outerWidth():i.element.outerWidth(),d.top=d.top+i.element.outerHeight(),"up"===i.options.direction?b="top":"bottom"===i.options.direction?b="bottom":"auto"===i.options.direction&&(b=d.top+i.widget.height()>e.height()+e.scrollTop()&&i.widget.height()+i.element.outerHeight()<d.top?"top":"bottom"),"top"===b?(d.bottom=e.height()-d.top+i.element.outerHeight()+3,i.widget.addClass("top").removeClass("bottom")):(d.top+=1,i.widget.addClass("bottom").removeClass("top")),void 0!==i.options.width&&i.widget.width(i.options.width),"left"===i.options.orientation&&(i.widget.addClass("left-oriented"),d.left=d.left-i.widget.width()+20),J()&&(c="fixed",d.top-=e.scrollTop(),d.left-=e.scrollLeft()),e.width()<d.left+i.widget.outerWidth()?(d.right=e.width()-d.left-i.width,d.left="auto",i.widget.addClass("pull-right")):(d.right="auto",i.widget.removeClass("pull-right")),i.widget.css("top"===b?{position:c,bottom:d.bottom,top:"auto",left:d.left,right:d.right}:{position:c,top:d.top,bottom:"auto",left:d.left,right:d.right})},o=function(a,c){(!b(i.date).isSame(b(a))||j)&&(j=!1,i.element.trigger({type:"dp.change",date:b(i.date),oldDate:b(a)}),"change"!==c&&i.element.change())},p=function(a){j=!0,i.element.trigger({type:"dp.error",date:b(a,i.format,i.options.useStrict)})},q=function(a){b.locale(i.options.language);var c=a;c||(c=l().val(),c&&(i.date=b(c,i.format,i.options.useStrict)),i.date||(i.date=b())),i.viewDate=b(i.date).startOf("month"),t(),x()},r=function(){b.locale(i.options.language);var c,d=a("<tr>"),e=b.weekdaysMin();if(i.options.calendarWeeks===!0&&d.append('<th class="cw">#</th>'),0===b().localeData()._week.dow)for(c=0;7>c;c++)d.append('<th class="dow">'+e[c]+"</th>");else for(c=1;8>c;c++)d.append(7===c?'<th class="dow">'+e[0]+"</th>":'<th class="dow">'+e[c]+"</th>");i.widget.find(".datepicker-days thead").append(d)},s=function(){b.locale(i.options.language);var a,c="",d=b.monthsShort();for(a=0;12>a;a++)c+='<span class="month">'+d[a]+"</span>";i.widget.find(".datepicker-months td").append(c)},t=function(){if(i.options.pickDate){b.locale(i.options.language);var c,d,e,f,g,h,j,k,l,m=i.viewDate.year(),n=i.viewDate.month(),o=i.options.minDate.year(),p=i.options.minDate.month(),q=i.options.maxDate.year(),r=i.options.maxDate.month(),s=[],t=b.months();for(i.widget.find(".datepicker-days").find(".disabled").removeClass("disabled"),i.widget.find(".datepicker-months").find(".disabled").removeClass("disabled"),i.widget.find(".datepicker-years").find(".disabled").removeClass("disabled"),i.widget.find(".datepicker-days th:eq(1)").text(t[n]+" "+m),d=b(i.viewDate,i.format,i.options.useStrict).subtract(1,"months"),j=d.daysInMonth(),d.date(j).startOf("week"),(m===o&&p>=n||o>m)&&i.widget.find(".datepicker-days th:eq(0)").addClass("disabled"),(m===q&&n>=r||m>q)&&i.widget.find(".datepicker-days th:eq(2)").addClass("disabled"),e=b(d).add(42,"d");d.isBefore(e);){if(d.weekday()===b().startOf("week").weekday()&&(f=a("<tr>"),s.push(f),i.options.calendarWeeks===!0&&f.append('<td class="cw">'+d.week()+"</td>")),g="",d.year()<m||d.year()===m&&d.month()<n?g+=" old":(d.year()>m||d.year()===m&&d.month()>n)&&(g+=" new"),d.isSame(b({y:i.date.year(),M:i.date.month(),d:i.date.date()}))&&(g+=" active"),(M(d,"day")||!N(d))&&(g+=" disabled"),i.options.showToday===!0&&d.isSame(b(),"day")&&(g+=" today"),i.options.daysOfWeekDisabled)for(h=0;h<i.options.daysOfWeekDisabled.length;h++)if(d.day()===i.options.daysOfWeekDisabled[h]){g+=" disabled";break}f.append('<td class="day'+g+'">'+d.date()+"</td>"),c=d.date(),d.add(1,"d"),c===d.date()&&d.add(1,"d")}for(i.widget.find(".datepicker-days tbody").empty().append(s),l=i.date.year(),t=i.widget.find(".datepicker-months").find("th:eq(1)").text(m).end().find("span").removeClass("active"),l===m&&t.eq(i.date.month()).addClass("active"),o>m-1&&i.widget.find(".datepicker-months th:eq(0)").addClass("disabled"),m+1>q&&i.widget.find(".datepicker-months th:eq(2)").addClass("disabled"),h=0;12>h;h++)m===o&&p>h||o>m?a(t[h]).addClass("disabled"):(m===q&&h>r||m>q)&&a(t[h]).addClass("disabled");for(s="",m=10*parseInt(m/10,10),k=i.widget.find(".datepicker-years").find("th:eq(1)").text(m+"-"+(m+9)).parents("table").find("td"),i.widget.find(".datepicker-years").find("th").removeClass("disabled"),o>m&&i.widget.find(".datepicker-years").find("th:eq(0)").addClass("disabled"),m+9>q&&i.widget.find(".datepicker-years").find("th:eq(2)").addClass("disabled"),m-=1,h=-1;11>h;h++)s+='<span class="year'+(-1===h||10===h?" old":"")+(l===m?" active":"")+(o>m||m>q?" disabled":"")+'">'+m+"</span>",m+=1;k.html(s)}},u=function(){b.locale(i.options.language);var a,c,d,e=i.widget.find(".timepicker .timepicker-hours table"),f="";if(e.parent().hide(),i.use24hours)for(a=0,c=0;6>c;c+=1){for(f+="<tr>",d=0;4>d;d+=1)f+='<td class="hour">'+P(a.toString())+"</td>",a++;f+="</tr>"}else for(a=1,c=0;3>c;c+=1){for(f+="<tr>",d=0;4>d;d+=1)f+='<td class="hour">'+P(a.toString())+"</td>",a++;f+="</tr>"}e.html(f)},v=function(){var a,b,c=i.widget.find(".timepicker .timepicker-minutes table"),d="",e=0,f=i.options.minuteStepping;for(c.parent().hide(),1===f&&(f=5),a=0;a<Math.ceil(60/f/4);a++){for(d+="<tr>",b=0;4>b;b+=1)60>e?(d+='<td class="minute">'+P(e.toString())+"</td>",e+=f):d+="<td></td>";d+="</tr>"}c.html(d)},w=function(){var a,b,c=i.widget.find(".timepicker .timepicker-seconds table"),d="",e=0;for(c.parent().hide(),a=0;3>a;a++){for(d+="<tr>",b=0;4>b;b+=1)d+='<td class="second">'+P(e.toString())+"</td>",e+=5;d+="</tr>"}c.html(d)},x=function(){if(i.date){var a=i.widget.find(".timepicker span[data-time-component]"),b=i.date.hours(),c=i.date.format("A");i.use24hours||(0===b?b=12:12!==b&&(b%=12),i.widget.find(".timepicker [data-action=togglePeriod]").text(c)),a.filter("[data-time-component=hours]").text(P(b)),a.filter("[data-time-component=minutes]").text(P(i.date.minutes())),a.filter("[data-time-component=seconds]").text(P(i.date.second()))}},y=function(c){c.stopPropagation(),c.preventDefault(),i.unset=!1;var d,e,f,g,h=a(c.target).closest("span, td, th"),j=b(i.date);if(1===h.length&&!h.is(".disabled"))switch(h[0].nodeName.toLowerCase()){case"th":switch(h[0].className){case"picker-switch":E(1);break;case"prev":case"next":f=R.modes[i.viewMode].navStep,"prev"===h[0].className&&(f=-1*f),i.viewDate.add(f,R.modes[i.viewMode].navFnc),t()}break;case"span":h.is(".month")?(d=h.parent().find("span").index(h),i.viewDate.month(d)):(e=parseInt(h.text(),10)||0,i.viewDate.year(e)),i.viewMode===i.minViewMode&&(i.date=b({y:i.viewDate.year(),M:i.viewDate.month(),d:i.viewDate.date(),h:i.date.hours(),m:i.date.minutes(),s:i.date.seconds()}),K(),o(j,c.type)),E(-1),t();break;case"td":h.is(".day")&&(g=parseInt(h.text(),10)||1,d=i.viewDate.month(),e=i.viewDate.year(),h.is(".old")?0===d?(d=11,e-=1):d-=1:h.is(".new")&&(11===d?(d=0,e+=1):d+=1),i.date=b({y:e,M:d,d:g,h:i.date.hours(),m:i.date.minutes(),s:i.date.seconds()}),i.viewDate=b({y:e,M:d,d:Math.min(28,g)}),t(),K(),o(j,c.type))}},z={incrementHours:function(){L("add","hours",1)},incrementMinutes:function(){L("add","minutes",i.options.minuteStepping)},incrementSeconds:function(){L("add","seconds",1)},decrementHours:function(){L("subtract","hours",1)},decrementMinutes:function(){L("subtract","minutes",i.options.minuteStepping)},decrementSeconds:function(){L("subtract","seconds",1)},togglePeriod:function(){var a=i.date.hours();a>=12?a-=12:a+=12,i.date.hours(a)},showPicker:function(){i.widget.find(".timepicker > div:not(.timepicker-picker)").hide(),i.widget.find(".timepicker .timepicker-picker").show()},showHours:function(){i.widget.find(".timepicker .timepicker-picker").hide(),i.widget.find(".timepicker .timepicker-hours").show()},showMinutes:function(){i.widget.find(".timepicker .timepicker-picker").hide(),i.widget.find(".timepicker .timepicker-minutes").show()},showSeconds:function(){i.widget.find(".timepicker .timepicker-picker").hide(),i.widget.find(".timepicker .timepicker-seconds").show()},selectHour:function(b){var c=parseInt(a(b.target).text(),10);i.use24hours||(i.date.hours()>=12?12!==c&&(c+=12):12===c&&(c=0)),i.date.hours(c),z.showPicker.call(i)},selectMinute:function(b){i.date.minutes(parseInt(a(b.target).text(),10)),z.showPicker.call(i)},selectSecond:function(b){i.date.seconds(parseInt(a(b.target).text(),10)),z.showPicker.call(i)}},A=function(c){var d=b(i.date),e=a(c.currentTarget).data("action"),f=z[e].apply(i,arguments);return B(c),i.date||(i.date=b({y:1970})),K(),x(),o(d,c.type),f},B=function(a){a.stopPropagation(),a.preventDefault()},C=function(a){27===a.keyCode&&i.hide()},D=function(c){b.locale(i.options.language);var d=a(c.target),e=b(i.date),f=b(d.val(),i.format,i.options.useStrict);f.isValid()&&!M(f)&&N(f)?(q(),i.setValue(f),o(e,c.type),K()):(i.viewDate=e,i.unset=!0,o(e,c.type),p(f))},E=function(a){a&&(i.viewMode=Math.max(i.minViewMode,Math.min(2,i.viewMode+a))),i.widget.find(".datepicker > div").hide().filter(".datepicker-"+R.modes[i.viewMode].clsName).show()},F=function(){var b,c,d,e,f;i.widget.on("click",".datepicker *",a.proxy(y,this)),i.widget.on("click","[data-action]",a.proxy(A,this)),i.widget.on("mousedown",a.proxy(B,this)),i.element.on("keydown",a.proxy(C,this)),i.options.pickDate&&i.options.pickTime&&i.widget.on("click.togglePicker",".accordion-toggle",function(g){if(g.stopPropagation(),b=a(this),c=b.closest("ul"),d=c.find(".in"),e=c.find(".collapse:not(.in)"),d&&d.length){if(f=d.data("collapse"),f&&f.transitioning)return;d.collapse("hide"),e.collapse("show"),b.find("span").toggleClass(i.options.icons.time+" "+i.options.icons.date),i.component&&i.component.find("span").toggleClass(i.options.icons.time+" "+i.options.icons.date)}}),i.isInput?i.element.on({click:a.proxy(i.show,this),focus:a.proxy(i.show,this),change:a.proxy(D,this),blur:a.proxy(i.hide,this)}):(i.element.on({change:a.proxy(D,this)},"input"),i.component?(i.component.on("click",a.proxy(i.show,this)),i.component.on("mousedown",a.proxy(B,this))):i.element.on("click",a.proxy(i.show,this)))},G=function(){a(window).on("resize.datetimepicker"+i.id,a.proxy(n,this)),i.isInput||a(document).on("mousedown.datetimepicker"+i.id,a.proxy(i.hide,this))},H=function(){i.widget.off("click",".datepicker *",i.click),i.widget.off("click","[data-action]"),i.widget.off("mousedown",i.stopEvent),i.options.pickDate&&i.options.pickTime&&i.widget.off("click.togglePicker"),i.isInput?i.element.off({focus:i.show,change:D,click:i.show,blur:i.hide}):(i.element.off({change:D},"input"),i.component?(i.component.off("click",i.show),i.component.off("mousedown",i.stopEvent)):i.element.off("click",i.show))},I=function(){a(window).off("resize.datetimepicker"+i.id),i.isInput||a(document).off("mousedown.datetimepicker"+i.id)},J=function(){if(i.element){var b,c=i.element.parents(),d=!1;for(b=0;b<c.length;b++)if("fixed"===a(c[b]).css("position")){d=!0;break}return d}return!1},K=function(){b.locale(i.options.language);var a="";i.unset||(a=b(i.date).format(i.format)),l().val(a),i.element.data("date",a),i.options.pickTime||i.hide()},L=function(a,c,d){b.locale(i.options.language);var e;return"add"===a?(e=b(i.date),23===e.hours()&&e.add(d,c),e.add(d,c)):e=b(i.date).subtract(d,c),M(b(e.subtract(d,c)))||M(e)?void p(e.format(i.format)):("add"===a?i.date.add(d,c):i.date.subtract(d,c),void(i.unset=!1))},M=function(a,c){b.locale(i.options.language);var d=b(i.options.maxDate,i.format,i.options.useStrict),e=b(i.options.minDate,i.format,i.options.useStrict);return c&&(d=d.endOf(c),e=e.startOf(c)),a.isAfter(d)||a.isBefore(e)?!0:i.options.disabledDates===!1?!1:i.options.disabledDates[a.format("YYYY-MM-DD")]===!0},N=function(a){return b.locale(i.options.language),i.options.enabledDates===!1?!0:i.options.enabledDates[a.format("YYYY-MM-DD")]===!0},O=function(a){var c,d={},e=0;for(c=0;c<a.length;c++)f=b.isMoment(a[c])||a[c]instanceof Date?b(a[c]):b(a[c],i.format,i.options.useStrict),f.isValid()&&(d[f.format("YYYY-MM-DD")]=!0,e++);return e>0?d:!1},P=function(a){return a=a.toString(),a.length>=2?a:"0"+a},Q=function(){var a='<thead><tr><th class="prev">&lsaquo;</th><th colspan="'+(i.options.calendarWeeks?"6":"5")+'" class="picker-switch"></th><th class="next">&rsaquo;</th></tr></thead>',b='<tbody><tr><td colspan="'+(i.options.calendarWeeks?"8":"7")+'"></td></tr></tbody>',c='<div class="datepicker-days"><table class="table-condensed">'+a+'<tbody></tbody></table></div><div class="datepicker-months"><table class="table-condensed">'+a+b+'</table></div><div class="datepicker-years"><table class="table-condensed">'+a+b+"</table></div>",d="";return i.options.pickDate&&i.options.pickTime?(d='<div class="bootstrap-datetimepicker-widget'+(i.options.sideBySide?" timepicker-sbs":"")+(i.use24hours?" usetwentyfour":"")+' dropdown-menu" style="z-index:9999 !important;">',d+=i.options.sideBySide?'<div class="row"><div class="col-sm-6 datepicker">'+c+'</div><div class="col-sm-6 timepicker">'+S.getTemplate()+"</div></div>":'<ul class="list-unstyled"><li'+(i.options.collapse?' class="collapse in"':"")+'><div class="datepicker">'+c+'</div></li><li class="picker-switch accordion-toggle"><a class="btn" style="width:100%"><span class="'+i.options.icons.time+'"></span></a></li><li'+(i.options.collapse?' class="collapse"':"")+'><div class="timepicker">'+S.getTemplate()+"</div></li></ul>",d+="</div>"):i.options.pickTime?'<div class="bootstrap-datetimepicker-widget dropdown-menu"><div class="timepicker">'+S.getTemplate()+"</div></div>":'<div class="bootstrap-datetimepicker-widget dropdown-menu"><div class="datepicker">'+c+"</div></div>"},R={modes:[{clsName:"days",navFnc:"month",navStep:1},{clsName:"months",navFnc:"year",navStep:1},{clsName:"years",navFnc:"year",navStep:10}]},S={hourTemplate:'<span data-action="showHours"   data-time-component="hours"   class="timepicker-hour"></span>',minuteTemplate:'<span data-action="showMinutes" data-time-component="minutes" class="timepicker-minute"></span>',secondTemplate:'<span data-action="showSeconds"  data-time-component="seconds" class="timepicker-second"></span>'};S.getTemplate=function(){return'<div class="timepicker-picker"><table class="table-condensed"><tr><td><a href="#" class="btn" data-action="incrementHours"><span class="'+i.options.icons.up+'"></span></a></td><td class="separator"></td><td>'+(i.options.useMinutes?'<a href="#" class="btn" data-action="incrementMinutes"><span class="'+i.options.icons.up+'"></span></a>':"")+"</td>"+(i.options.useSeconds?'<td class="separator"></td><td><a href="#" class="btn" data-action="incrementSeconds"><span class="'+i.options.icons.up+'"></span></a></td>':"")+(i.use24hours?"":'<td class="separator"></td>')+"</tr><tr><td>"+S.hourTemplate+'</td> <td class="separator">:</td><td>'+(i.options.useMinutes?S.minuteTemplate:'<span class="timepicker-minute">00</span>')+"</td> "+(i.options.useSeconds?'<td class="separator">:</td><td>'+S.secondTemplate+"</td>":"")+(i.use24hours?"":'<td class="separator"></td><td><button type="button" class="btn btn-primary" data-action="togglePeriod"></button></td>')+'</tr><tr><td><a href="#" class="btn" data-action="decrementHours"><span class="'+i.options.icons.down+'"></span></a></td><td class="separator"></td><td>'+(i.options.useMinutes?'<a href="#" class="btn" data-action="decrementMinutes"><span class="'+i.options.icons.down+'"></span></a>':"")+"</td>"+(i.options.useSeconds?'<td class="separator"></td><td><a href="#" class="btn" data-action="decrementSeconds"><span class="'+i.options.icons.down+'"></span></a></td>':"")+(i.use24hours?"":'<td class="separator"></td>')+'</tr></table></div><div class="timepicker-hours" data-action="selectHour"><table class="table-condensed"></table></div><div class="timepicker-minutes" data-action="selectMinute"><table class="table-condensed"></table></div>'+(i.options.useSeconds?'<div class="timepicker-seconds" data-action="selectSecond"><table class="table-condensed"></table></div>':"")},i.destroy=function(){H(),I(),i.widget.remove(),i.element.removeData("DateTimePicker"),i.component&&i.component.removeData("DateTimePicker")},i.show=function(a){if(!l().prop("disabled")){if(i.options.useCurrent&&""===l().val()){if(1!==i.options.minuteStepping){var c=b(),d=i.options.minuteStepping;c.minutes(Math.round(c.minutes()/d)*d%60).seconds(0),i.setValue(c.format(i.format))}else i.setValue(b().format(i.format));o("",a.type)}a&&"click"===a.type&&i.isInput&&i.widget.hasClass("picker-open")||(i.widget.hasClass("picker-open")?(i.widget.hide(),i.widget.removeClass("picker-open")):(i.widget.show(),i.widget.addClass("picker-open")),i.height=i.component?i.component.outerHeight():i.element.outerHeight(),n(),i.element.trigger({type:"dp.show",date:b(i.date)}),G(),a&&B(a))}},i.disable=function(){var a=l();a.prop("disabled")||(a.prop("disabled",!0),H())},i.enable=function(){var a=l();a.prop("disabled")&&(a.prop("disabled",!1),F())},i.hide=function(){var a,c,d=i.widget.find(".collapse");for(a=0;a<d.length;a++)if(c=d.eq(a).data("collapse"),c&&c.transitioning)return;i.widget.hide(),i.widget.removeClass("picker-open"),i.viewMode=i.startViewMode,E(),i.element.trigger({type:"dp.hide",date:b(i.date)}),I()},i.setValue=function(a){b.locale(i.options.language),a?i.unset=!1:(i.unset=!0,K()),a=b.isMoment(a)?a.locale(i.options.language):a instanceof Date?b(a):b(a,i.format,i.options.useStrict),a.isValid()?(i.date=a,K(),i.viewDate=b({y:i.date.year(),M:i.date.month()}),t(),x()):p(a)},i.getDate=function(){return i.unset?null:b(i.date)},i.setDate=function(a){var c=b(i.date);i.setValue(a?a:null),o(c,"function")},i.setDisabledDates=function(a){i.options.disabledDates=O(a),i.viewDate&&q()},i.setEnabledDates=function(a){i.options.enabledDates=O(a),i.viewDate&&q()},i.setMaxDate=function(a){void 0!==a&&(i.options.maxDate=b.isMoment(a)||a instanceof Date?b(a):b(a,i.format,i.options.useStrict),i.viewDate&&q())},i.setMinDate=function(a){void 0!==a&&(i.options.minDate=b.isMoment(a)||a instanceof Date?b(a):b(a,i.format,i.options.useStrict),i.viewDate&&q())},k()};a.fn.datetimepicker=function(b){return this.each(function(){var c=a(this),e=c.data("DateTimePicker");e||c.data("DateTimePicker",new d(this,b))})},a.fn.datetimepicker.defaults={format:!1,pickDate:!0,pickTime:!0,useMinutes:!0,useSeconds:!1,useCurrent:!0,calendarWeeks:!1,minuteStepping:1,minDate:b({y:1900}),maxDate:b().add(100,"y"),showToday:!0,collapse:!0,language:b.locale(),defaultDate:"",disabledDates:!1,enabledDates:!1,icons:{},useStrict:!1,direction:"auto",sideBySide:!1,daysOfWeekDisabled:[],widgetParent:!1}});
+///#source 1 1 /core/lib/bootstrap-select/js/bootstrap-select.js
+/*!
+ * Bootstrap-select v1.6.3 (http://silviomoreto.github.io/bootstrap-select/)
+ *
+ * Copyright 2013-2014 bootstrap-select
+ * Licensed under MIT (https://github.com/silviomoreto/bootstrap-select/blob/master/LICENSE)
+ */
+(function ($) {
+  'use strict';
+
+  // Case insensitive search
+  $.expr[':'].icontains = function (obj, index, meta) {
+    return icontains($(obj).text(), meta[3]);
+  };
+
+  // Case and accent insensitive search
+  $.expr[':'].aicontains = function (obj, index, meta) {
+    return icontains($(obj).data('normalizedText') || $(obj).text(), meta[3]);
+  };
+
+  /**
+   * Actual implementation of the case insensitive search.
+   * @access private
+   * @param {String} haystack
+   * @param {String} needle
+   * @returns {boolean}
+   */
+  function icontains(haystack, needle) {
+    return haystack.toUpperCase().indexOf(needle.toUpperCase()) > -1;
+  }
+
+  /**
+   * Remove all diatrics from the given text.
+   * @access private
+   * @param {String} text
+   * @returns {String}
+   */
+  function normalizeToBase(text) {
+    var rExps = [
+      {re: /[\xC0-\xC6]/g, ch: "A"},
+      {re: /[\xE0-\xE6]/g, ch: "a"},
+      {re: /[\xC8-\xCB]/g, ch: "E"},
+      {re: /[\xE8-\xEB]/g, ch: "e"},
+      {re: /[\xCC-\xCF]/g, ch: "I"},
+      {re: /[\xEC-\xEF]/g, ch: "i"},
+      {re: /[\xD2-\xD6]/g, ch: "O"},
+      {re: /[\xF2-\xF6]/g, ch: "o"},
+      {re: /[\xD9-\xDC]/g, ch: "U"},
+      {re: /[\xF9-\xFC]/g, ch: "u"},
+      {re: /[\xC7-\xE7]/g, ch: "c"},
+      {re: /[\xD1]/g, ch: "N"},
+      {re: /[\xF1]/g, ch: "n"}
+    ];
+    $.each(rExps, function () {
+      text = text.replace(this.re, this.ch);
+    });
+    return text;
+  }
+
+
+  function htmlEscape(html) {
+    var escapeMap = {
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      "'": '&#x27;',
+      '`': '&#x60;'
+    };
+    var source = '(?:' + Object.keys(escapeMap).join('|') + ')',
+        testRegexp = new RegExp(source),
+        replaceRegexp = new RegExp(source, 'g'),
+        string = html == null ? '' : '' + html;
+    return testRegexp.test(string) ? string.replace(replaceRegexp, function (match) {
+      return escapeMap[match];
+    }) : string;
+  }
+
+  var Selectpicker = function (element, options, e) {
+    if (e) {
+      e.stopPropagation();
+      e.preventDefault();
+    }
+
+    this.$element = $(element);
+    this.$newElement = null;
+    this.$button = null;
+    this.$menu = null;
+    this.$lis = null;
+    this.options = options;
+
+    // If we have no title yet, try to pull it from the html title attribute (jQuery doesnt' pick it up as it's not a
+    // data-attribute)
+    if (this.options.title === null) {
+      this.options.title = this.$element.attr('title');
+    }
+
+    //Expose public methods
+    this.val = Selectpicker.prototype.val;
+    this.render = Selectpicker.prototype.render;
+    this.refresh = Selectpicker.prototype.refresh;
+    this.setStyle = Selectpicker.prototype.setStyle;
+    this.selectAll = Selectpicker.prototype.selectAll;
+    this.deselectAll = Selectpicker.prototype.deselectAll;
+    this.destroy = Selectpicker.prototype.remove;
+    this.remove = Selectpicker.prototype.remove;
+    this.show = Selectpicker.prototype.show;
+    this.hide = Selectpicker.prototype.hide;
+
+    this.init();
+  };
+
+  Selectpicker.VERSION = '1.6.3';
+
+  // part of this is duplicated in i18n/defaults-en_US.js. Make sure to update both.
+  Selectpicker.DEFAULTS = {
+    noneSelectedText: 'Nothing selected',
+    noneResultsText: 'No results match',
+    countSelectedText: function (numSelected, numTotal) {
+      return (numSelected == 1) ? "{0} item selected" : "{0} items selected";
+    },
+    maxOptionsText: function (numAll, numGroup) {
+      var arr = [];
+
+      arr[0] = (numAll == 1) ? 'Limit reached ({n} item max)' : 'Limit reached ({n} items max)';
+      arr[1] = (numGroup == 1) ? 'Group limit reached ({n} item max)' : 'Group limit reached ({n} items max)';
+
+      return arr;
+    },
+    selectAllText: 'Select All',
+    deselectAllText: 'Deselect All',
+    multipleSeparator: ', ',
+    style: 'btn-default',
+    size: 'auto',
+    title: null,
+    selectedTextFormat: 'values',
+    width: false,
+    container: false,
+    hideDisabled: false,
+    showSubtext: false,
+    showIcon: true,
+    showContent: true,
+    dropupAuto: true,
+    header: false,
+    liveSearch: false,
+    actionsBox: false,
+    iconBase: 'glyphicon',
+    tickIcon: 'glyphicon-ok',
+    maxOptions: false,
+    mobile: false,
+    selectOnTab: false,
+    dropdownAlignRight: false,
+    searchAccentInsensitive: false
+  };
+
+  Selectpicker.prototype = {
+
+    constructor: Selectpicker,
+
+    init: function () {
+      var that = this,
+          id = this.$element.attr('id');
+
+      this.$element.hide();
+      this.multiple = this.$element.prop('multiple');
+      this.autofocus = this.$element.prop('autofocus');
+      this.$newElement = this.createView();
+      this.$element.after(this.$newElement);
+      this.$menu = this.$newElement.find('> .dropdown-menu');
+      this.$button = this.$newElement.find('> button');
+      this.$searchbox = this.$newElement.find('input');
+
+      if (this.options.dropdownAlignRight)
+        this.$menu.addClass('dropdown-menu-right');
+
+      if (typeof id !== 'undefined') {
+        this.$button.attr('data-id', id);
+        $('label[for="' + id + '"]').click(function (e) {
+          e.preventDefault();
+          that.$button.focus();
+        });
+      }
+
+      this.checkDisabled();
+      this.clickListener();
+      if (this.options.liveSearch) this.liveSearchListener();
+      this.render();
+      this.liHeight();
+      this.setStyle();
+      this.setWidth();
+      if (this.options.container) this.selectPosition();
+      this.$menu.data('this', this);
+      this.$newElement.data('this', this);
+      if (this.options.mobile) this.mobile();
+    },
+
+    createDropdown: function () {
+      // Options
+      // If we are multiple, then add the show-tick class by default
+      var multiple = this.multiple ? ' show-tick' : '',
+          inputGroup = this.$element.parent().hasClass('input-group') ? ' input-group-btn' : '',
+          autofocus = this.autofocus ? ' autofocus' : '',
+          btnSize = this.$element.parents().hasClass('form-group-lg') ? ' btn-lg' : (this.$element.parents().hasClass('form-group-sm') ? ' btn-sm' : '');
+      // Elements
+      var header = this.options.header ? '<div class="popover-title"><button type="button" class="close" aria-hidden="true">&times;</button>' + this.options.header + '</div>' : '';
+      var searchbox = this.options.liveSearch ? '<div class="bs-searchbox"><input type="text" class="input-block-level form-control" autocomplete="off" /></div>' : '';
+      var actionsbox = this.options.actionsBox ? '<div class="bs-actionsbox">' +
+      '<div class="btn-group btn-block">' +
+      '<button class="actions-btn bs-select-all btn btn-sm btn-default">' +
+      this.options.selectAllText +
+      '</button>' +
+      '<button class="actions-btn bs-deselect-all btn btn-sm btn-default">' +
+      this.options.deselectAllText +
+      '</button>' +
+      '</div>' +
+      '</div>' : '';
+      var drop =
+          '<div class="btn-group bootstrap-select' + multiple + inputGroup + '">' +
+          '<button type="button" class="btn dropdown-toggle selectpicker' + btnSize + '" data-toggle="dropdown"' + autofocus + '>' +
+          '<span class="filter-option pull-left"></span>&nbsp;' +
+          '<span class="caret"></span>' +
+          '</button>' +
+          '<div class="dropdown-menu open">' +
+          header +
+          searchbox +
+          actionsbox +
+          '<ul class="dropdown-menu inner selectpicker" role="menu">' +
+          '</ul>' +
+          '</div>' +
+          '</div>';
+
+      return $(drop);
+    },
+
+    createView: function () {
+      var $drop = this.createDropdown();
+      var $li = this.createLi();
+      $drop.find('ul').append($li);
+      return $drop;
+    },
+
+    reloadLi: function () {
+      //Remove all children.
+      this.destroyLi();
+      //Re build
+      var $li = this.createLi();
+      this.$menu.find('ul').append($li);
+    },
+
+    destroyLi: function () {
+      this.$menu.find('li').remove();
+    },
+
+    createLi: function () {
+      var that = this,
+          _li = [],
+          optID = 0;
+
+      // Helper functions
+      /**
+       * @param content
+       * @param [index]
+       * @param [classes]
+       * @returns {string}
+       */
+      var generateLI = function (content, index, classes) {
+        return '<li' +
+        (typeof classes !== 'undefined' ? ' class="' + classes + '"' : '') +
+        (typeof index !== 'undefined' | null === index ? ' data-original-index="' + index + '"' : '') +
+        '>' + content + '</li>';
+      };
+
+      /**
+       * @param text
+       * @param [classes]
+       * @param [inline]
+       * @param [optgroup]
+       * @returns {string}
+       */
+      var generateA = function (text, classes, inline, optgroup) {
+        var normText = normalizeToBase(htmlEscape(text));
+        return '<a tabindex="0"' +
+        (typeof classes !== 'undefined' ? ' class="' + classes + '"' : '') +
+        (typeof inline !== 'undefined' ? ' style="' + inline + '"' : '') +
+        (typeof optgroup !== 'undefined' ? 'data-optgroup="' + optgroup + '"' : '') +
+        ' data-normalized-text="' + normText + '"' +
+        '>' + text +
+        '<span class="' + that.options.iconBase + ' ' + that.options.tickIcon + ' check-mark"></span>' +
+        '</a>';
+      };
+
+      this.$element.find('option').each(function () {
+        var $this = $(this);
+
+        // Get the class and text for the option
+        var optionClass = $this.attr('class') || '',
+            inline = $this.attr('style'),
+            text = $this.data('content') ? $this.data('content') : $this.html(),
+            subtext = typeof $this.data('subtext') !== 'undefined' ? '<small class="muted text-muted">' + $this.data('subtext') + '</small>' : '',
+            icon = typeof $this.data('icon') !== 'undefined' ? '<span class="' + that.options.iconBase + ' ' + $this.data('icon') + '"></span> ' : '',
+            isDisabled = $this.is(':disabled') || $this.parent().is(':disabled'),
+            index = $this[0].index;
+        if (icon !== '' && isDisabled) {
+          icon = '<span>' + icon + '</span>';
+        }
+
+        if (!$this.data('content')) {
+          // Prepend any icon and append any subtext to the main text.
+          text = icon + '<span class="text">' + text + subtext + '</span>';
+        }
+
+        if (that.options.hideDisabled && isDisabled) {
+          return;
+        }
+
+        if ($this.parent().is('optgroup') && $this.data('divider') !== true) {
+          if ($this.index() === 0) { // Is it the first option of the optgroup?
+            optID += 1;
+
+            // Get the opt group label
+            var label = $this.parent().attr('label');
+            var labelSubtext = typeof $this.parent().data('subtext') !== 'undefined' ? '<small class="muted text-muted">' + $this.parent().data('subtext') + '</small>' : '';
+            var labelIcon = $this.parent().data('icon') ? '<span class="' + that.options.iconBase + ' ' + $this.parent().data('icon') + '"></span> ' : '';
+            label = labelIcon + '<span class="text">' + label + labelSubtext + '</span>';
+
+            if (index !== 0 && _li.length > 0) { // Is it NOT the first option of the select && are there elements in the dropdown?
+              _li.push(generateLI('', null, 'divider'));
+            }
+
+            _li.push(generateLI(label, null, 'dropdown-header'));
+          }
+
+          _li.push(generateLI(generateA(text, 'opt ' + optionClass, inline, optID), index));
+        } else if ($this.data('divider') === true) {
+          _li.push(generateLI('', index, 'divider'));
+        } else if ($this.data('hidden') === true) {
+          _li.push(generateLI(generateA(text, optionClass, inline), index, 'hide is-hidden'));
+        } else {
+          _li.push(generateLI(generateA(text, optionClass, inline), index));
+        }
+      });
+
+      //If we are not multiple, we don't have a selected item, and we don't have a title, select the first element so something is set in the button
+      if (!this.multiple && this.$element.find('option:selected').length === 0 && !this.options.title) {
+        this.$element.find('option').eq(0).prop('selected', true).attr('selected', 'selected');
+      }
+
+      return $(_li.join(''));
+    },
+
+    findLis: function () {
+      if (this.$lis == null) this.$lis = this.$menu.find('li');
+      return this.$lis;
+    },
+
+    /**
+     * @param [updateLi] defaults to true
+     */
+    render: function (updateLi) {
+      var that = this;
+
+      //Update the LI to match the SELECT
+      if (updateLi !== false) {
+        this.$element.find('option').each(function (index) {
+          that.setDisabled(index, $(this).is(':disabled') || $(this).parent().is(':disabled'));
+          that.setSelected(index, $(this).is(':selected'));
+        });
+      }
+
+      this.tabIndex();
+      var notDisabled = this.options.hideDisabled ? ':not([disabled])' : '';
+      var selectedItems = this.$element.find('option:selected' + notDisabled).map(function () {
+        var $this = $(this);
+        var icon = $this.data('icon') && that.options.showIcon ? '<i class="' + that.options.iconBase + ' ' + $this.data('icon') + '"></i> ' : '';
+        var subtext;
+        if (that.options.showSubtext && $this.attr('data-subtext') && !that.multiple) {
+          subtext = ' <small class="muted text-muted">' + $this.data('subtext') + '</small>';
+        } else {
+          subtext = '';
+        }
+        if ($this.data('content') && that.options.showContent) {
+          return $this.data('content');
+        } else if (typeof $this.attr('title') !== 'undefined') {
+          return $this.attr('title');
+        } else {
+          return icon + $this.html() + subtext;
+        }
+      }).toArray();
+
+      //Fixes issue in IE10 occurring when no default option is selected and at least one option is disabled
+      //Convert all the values into a comma delimited string
+      var title = !this.multiple ? selectedItems[0] : selectedItems.join(this.options.multipleSeparator);
+
+      //If this is multi select, and the selectText type is count, the show 1 of 2 selected etc..
+      if (this.multiple && this.options.selectedTextFormat.indexOf('count') > -1) {
+        var max = this.options.selectedTextFormat.split('>');
+        if ((max.length > 1 && selectedItems.length > max[1]) || (max.length == 1 && selectedItems.length >= 2)) {
+          notDisabled = this.options.hideDisabled ? ', [disabled]' : '';
+          var totalCount = this.$element.find('option').not('[data-divider="true"], [data-hidden="true"]' + notDisabled).length,
+              tr8nText = (typeof this.options.countSelectedText === 'function') ? this.options.countSelectedText(selectedItems.length, totalCount) : this.options.countSelectedText;
+          title = tr8nText.replace('{0}', selectedItems.length.toString()).replace('{1}', totalCount.toString());
+        }
+      }
+
+      this.options.title = this.$element.attr('title');
+
+      if (this.options.selectedTextFormat == 'static') {
+        title = this.options.title;
+      }
+
+      //If we dont have a title, then use the default, or if nothing is set at all, use the not selected text
+      if (!title) {
+        title = typeof this.options.title !== 'undefined' ? this.options.title : this.options.noneSelectedText;
+      }
+
+      this.$button.attr('title', htmlEscape(title));
+      this.$newElement.find('.filter-option').html(title);
+    },
+
+    /**
+     * @param [style]
+     * @param [status]
+     */
+    setStyle: function (style, status) {
+      if (this.$element.attr('class')) {
+        this.$newElement.addClass(this.$element.attr('class').replace(/selectpicker|mobile-device|validate\[.*\]/gi, ''));
+      }
+
+      var buttonClass = style ? style : this.options.style;
+
+      if (status == 'add') {
+        this.$button.addClass(buttonClass);
+      } else if (status == 'remove') {
+        this.$button.removeClass(buttonClass);
+      } else {
+        this.$button.removeClass(this.options.style);
+        this.$button.addClass(buttonClass);
+      }
+    },
+
+    liHeight: function () {
+      if (this.options.size === false) return;
+
+      var $selectClone = this.$menu.parent().clone().find('> .dropdown-toggle').prop('autofocus', false).end().appendTo('body'),
+          $menuClone = $selectClone.addClass('open').find('> .dropdown-menu'),
+          liHeight = $menuClone.find('li').not('.divider').not('.dropdown-header').filter(':visible').children('a').outerHeight(),
+          headerHeight = this.options.header ? $menuClone.find('.popover-title').outerHeight() : 0,
+          searchHeight = this.options.liveSearch ? $menuClone.find('.bs-searchbox').outerHeight() : 0,
+          actionsHeight = this.options.actionsBox ? $menuClone.find('.bs-actionsbox').outerHeight() : 0;
+
+      $selectClone.remove();
+
+      this.$newElement
+          .data('liHeight', liHeight)
+          .data('headerHeight', headerHeight)
+          .data('searchHeight', searchHeight)
+          .data('actionsHeight', actionsHeight);
+    },
+
+    setSize: function () {
+      this.findLis();
+      var that = this,
+          menu = this.$menu,
+          menuInner = menu.find('.inner'),
+          selectHeight = this.$newElement.outerHeight(),
+          liHeight = this.$newElement.data('liHeight'),
+          headerHeight = this.$newElement.data('headerHeight'),
+          searchHeight = this.$newElement.data('searchHeight'),
+          actionsHeight = this.$newElement.data('actionsHeight'),
+          divHeight = this.$lis.filter('.divider').outerHeight(true),
+          menuPadding = parseInt(menu.css('padding-top')) +
+              parseInt(menu.css('padding-bottom')) +
+              parseInt(menu.css('border-top-width')) +
+              parseInt(menu.css('border-bottom-width')),
+          notDisabled = this.options.hideDisabled ? ', .disabled' : '',
+          $window = $(window),
+          menuExtras = menuPadding + parseInt(menu.css('margin-top')) + parseInt(menu.css('margin-bottom')) + 2,
+          menuHeight,
+          selectOffsetTop,
+          selectOffsetBot,
+          posVert = function () {
+            // JQuery defines a scrollTop function, but in pure JS it's a property
+            //noinspection JSValidateTypes
+            selectOffsetTop = that.$newElement.offset().top - $window.scrollTop();
+            selectOffsetBot = $window.height() - selectOffsetTop - selectHeight;
+          };
+      posVert();
+      if (this.options.header) menu.css('padding-top', 0);
+
+      if (this.options.size == 'auto') {
+        var getSize = function () {
+          var minHeight,
+              lisVis = that.$lis.not('.hide');
+
+          posVert();
+          menuHeight = selectOffsetBot - menuExtras;
+
+          if (that.options.dropupAuto) {
+            that.$newElement.toggleClass('dropup', (selectOffsetTop > selectOffsetBot) && ((menuHeight - menuExtras) < menu.height()));
+          }
+          if (that.$newElement.hasClass('dropup')) {
+            menuHeight = selectOffsetTop - menuExtras;
+          }
+
+          if ((lisVis.length + lisVis.filter('.dropdown-header').length) > 3) {
+            minHeight = liHeight * 3 + menuExtras - 2;
+          } else {
+            minHeight = 0;
+          }
+
+          menu.css({
+            'max-height': menuHeight + 'px',
+            'overflow': 'hidden',
+            'min-height': minHeight + headerHeight + searchHeight + actionsHeight + 'px'
+          });
+          menuInner.css({
+            'max-height': menuHeight - headerHeight - searchHeight - actionsHeight - menuPadding + 'px',
+            'overflow-y': 'auto',
+            'min-height': Math.max(minHeight - menuPadding, 0) + 'px'
+          });
+        };
+        getSize();
+        this.$searchbox.off('input.getSize propertychange.getSize').on('input.getSize propertychange.getSize', getSize);
+        $(window).off('resize.getSize').on('resize.getSize', getSize);
+        $(window).off('scroll.getSize').on('scroll.getSize', getSize);
+      } else if (this.options.size && this.options.size != 'auto' && menu.find('li' + notDisabled).length > this.options.size) {
+        var optIndex = this.$lis.not('.divider' + notDisabled).find(' > *').slice(0, this.options.size).last().parent().index();
+        var divLength = this.$lis.slice(0, optIndex + 1).filter('.divider').length;
+        menuHeight = liHeight * this.options.size + divLength * divHeight + menuPadding;
+        if (that.options.dropupAuto) {
+          //noinspection JSUnusedAssignment
+          this.$newElement.toggleClass('dropup', (selectOffsetTop > selectOffsetBot) && (menuHeight < menu.height()));
+        }
+        menu.css({'max-height': menuHeight + headerHeight + searchHeight + actionsHeight + 'px', 'overflow': 'hidden'});
+        menuInner.css({'max-height': menuHeight - menuPadding + 'px', 'overflow-y': 'auto'});
+      }
+    },
+
+    setWidth: function () {
+      if (this.options.width == 'auto') {
+        this.$menu.css('min-width', '0');
+
+        // Get correct width if element hidden
+        var selectClone = this.$newElement.clone().appendTo('body');
+        var ulWidth = selectClone.find('> .dropdown-menu').css('width');
+        var btnWidth = selectClone.css('width', 'auto').find('> button').css('width');
+        selectClone.remove();
+
+        // Set width to whatever's larger, button title or longest option
+        this.$newElement.css('width', Math.max(parseInt(ulWidth), parseInt(btnWidth)) + 'px');
+      } else if (this.options.width == 'fit') {
+        // Remove inline min-width so width can be changed from 'auto'
+        this.$menu.css('min-width', '');
+        this.$newElement.css('width', '').addClass('fit-width');
+      } else if (this.options.width) {
+        // Remove inline min-width so width can be changed from 'auto'
+        this.$menu.css('min-width', '');
+        this.$newElement.css('width', this.options.width);
+      } else {
+        // Remove inline min-width/width so width can be changed
+        this.$menu.css('min-width', '');
+        this.$newElement.css('width', '');
+      }
+      // Remove fit-width class if width is changed programmatically
+      if (this.$newElement.hasClass('fit-width') && this.options.width !== 'fit') {
+        this.$newElement.removeClass('fit-width');
+      }
+    },
+
+    selectPosition: function () {
+      var that = this,
+          drop = '<div />',
+          $drop = $(drop),
+          pos,
+          actualHeight,
+          getPlacement = function ($element) {
+            $drop.addClass($element.attr('class').replace(/form-control/gi, '')).toggleClass('dropup', $element.hasClass('dropup'));
+            pos = $element.offset();
+            actualHeight = $element.hasClass('dropup') ? 0 : $element[0].offsetHeight;
+            $drop.css({
+              'top': pos.top + actualHeight,
+              'left': pos.left,
+              'width': $element[0].offsetWidth,
+              'position': 'absolute'
+            });
+          };
+      this.$newElement.on('click', function () {
+        if (that.isDisabled()) {
+          return;
+        }
+        getPlacement($(this));
+        $drop.appendTo(that.options.container);
+        $drop.toggleClass('open', !$(this).hasClass('open'));
+        $drop.append(that.$menu);
+      });
+      $(window).resize(function () {
+        getPlacement(that.$newElement);
+      });
+      $(window).on('scroll', function () {
+        getPlacement(that.$newElement);
+      });
+      $('html').on('click', function (e) {
+        if ($(e.target).closest(that.$newElement).length < 1) {
+          $drop.removeClass('open');
+        }
+      });
+    },
+
+    setSelected: function (index, selected) {
+      this.findLis();
+      this.$lis.filter('[data-original-index="' + index + '"]').toggleClass('selected', selected);
+    },
+
+    setDisabled: function (index, disabled) {
+      this.findLis();
+      if (disabled) {
+        this.$lis.filter('[data-original-index="' + index + '"]').addClass('disabled').find('a').attr('href', '#').attr('tabindex', -1);
+      } else {
+        this.$lis.filter('[data-original-index="' + index + '"]').removeClass('disabled').find('a').removeAttr('href').attr('tabindex', 0);
+      }
+    },
+
+    isDisabled: function () {
+      return this.$element.is(':disabled');
+    },
+
+    checkDisabled: function () {
+      var that = this;
+
+      if (this.isDisabled()) {
+        this.$button.addClass('disabled').attr('tabindex', -1);
+      } else {
+        if (this.$button.hasClass('disabled')) {
+          this.$button.removeClass('disabled');
+        }
+
+        if (this.$button.attr('tabindex') == -1) {
+          if (!this.$element.data('tabindex')) this.$button.removeAttr('tabindex');
+        }
+      }
+
+      this.$button.click(function () {
+        return !that.isDisabled();
+      });
+    },
+
+    tabIndex: function () {
+      if (this.$element.is('[tabindex]')) {
+        this.$element.data('tabindex', this.$element.attr('tabindex'));
+        this.$button.attr('tabindex', this.$element.data('tabindex'));
+      }
+    },
+
+    clickListener: function () {
+      var that = this;
+
+      this.$newElement.on('touchstart.dropdown', '.dropdown-menu', function (e) {
+        e.stopPropagation();
+      });
+
+      this.$newElement.on('click', function () {
+        that.setSize();
+        if (!that.options.liveSearch && !that.multiple) {
+          setTimeout(function () {
+            that.$menu.find('.selected a').focus();
+          }, 10);
+        }
+      });
+
+      this.$menu.on('click', 'li a', function (e) {
+        var $this = $(this),
+            clickedIndex = $this.parent().data('originalIndex'),
+            prevValue = that.$element.val(),
+            prevIndex = that.$element.prop('selectedIndex');
+
+        // Don't close on multi choice menu
+        if (that.multiple) {
+          e.stopPropagation();
+        }
+
+        e.preventDefault();
+
+        //Don't run if we have been disabled
+        if (!that.isDisabled() && !$this.parent().hasClass('disabled')) {
+          var $options = that.$element.find('option'),
+              $option = $options.eq(clickedIndex),
+              state = $option.prop('selected'),
+              $optgroup = $option.parent('optgroup'),
+              maxOptions = that.options.maxOptions,
+              maxOptionsGrp = $optgroup.data('maxOptions') || false;
+
+          if (!that.multiple) { // Deselect all others if not multi select box
+            $options.prop('selected', false);
+            $option.prop('selected', true);
+            that.$menu.find('.selected').removeClass('selected');
+            that.setSelected(clickedIndex, true);
+          } else { // Toggle the one we have chosen if we are multi select.
+            $option.prop('selected', !state);
+            that.setSelected(clickedIndex, !state);
+            $this.blur();
+
+            if ((maxOptions !== false) || (maxOptionsGrp !== false)) {
+              var maxReached = maxOptions < $options.filter(':selected').length,
+                  maxReachedGrp = maxOptionsGrp < $optgroup.find('option:selected').length;
+
+              if ((maxOptions && maxReached) || (maxOptionsGrp && maxReachedGrp)) {
+                if (maxOptions && maxOptions == 1) {
+                  $options.prop('selected', false);
+                  $option.prop('selected', true);
+                  that.$menu.find('.selected').removeClass('selected');
+                  that.setSelected(clickedIndex, true);
+                } else if (maxOptionsGrp && maxOptionsGrp == 1) {
+                  $optgroup.find('option:selected').prop('selected', false);
+                  $option.prop('selected', true);
+                  var optgroupID = $this.data('optgroup');
+
+                  that.$menu.find('.selected').has('a[data-optgroup="' + optgroupID + '"]').removeClass('selected');
+
+                  that.setSelected(clickedIndex, true);
+                } else {
+                  var maxOptionsArr = (typeof that.options.maxOptionsText === 'function') ?
+                          that.options.maxOptionsText(maxOptions, maxOptionsGrp) : that.options.maxOptionsText,
+                      maxTxt = maxOptionsArr[0].replace('{n}', maxOptions),
+                      maxTxtGrp = maxOptionsArr[1].replace('{n}', maxOptionsGrp),
+                      $notify = $('<div class="notify"></div>');
+                  // If {var} is set in array, replace it
+                  /** @deprecated */
+                  if (maxOptionsArr[2]) {
+                    maxTxt = maxTxt.replace('{var}', maxOptionsArr[2][maxOptions > 1 ? 0 : 1]);
+                    maxTxtGrp = maxTxtGrp.replace('{var}', maxOptionsArr[2][maxOptionsGrp > 1 ? 0 : 1]);
+                  }
+
+                  $option.prop('selected', false);
+
+                  that.$menu.append($notify);
+
+                  if (maxOptions && maxReached) {
+                    $notify.append($('<div>' + maxTxt + '</div>'));
+                    that.$element.trigger('maxReached.bs.select');
+                  }
+
+                  if (maxOptionsGrp && maxReachedGrp) {
+                    $notify.append($('<div>' + maxTxtGrp + '</div>'));
+                    that.$element.trigger('maxReachedGrp.bs.select');
+                  }
+
+                  setTimeout(function () {
+                    that.setSelected(clickedIndex, false);
+                  }, 10);
+
+                  $notify.delay(750).fadeOut(300, function () {
+                    $(this).remove();
+                  });
+                }
+              }
+            }
+          }
+
+          if (!that.multiple) {
+            that.$button.focus();
+          } else if (that.options.liveSearch) {
+            that.$searchbox.focus();
+          }
+
+          // Trigger select 'change'
+          if ((prevValue != that.$element.val() && that.multiple) || (prevIndex != that.$element.prop('selectedIndex') && !that.multiple)) {
+            that.$element.change();
+          }
+        }
+      });
+
+      this.$menu.on('click', 'li.disabled a, .popover-title, .popover-title :not(.close)', function (e) {
+        if (e.target == this) {
+          e.preventDefault();
+          e.stopPropagation();
+          if (!that.options.liveSearch) {
+            that.$button.focus();
+          } else {
+            that.$searchbox.focus();
+          }
+        }
+      });
+
+      this.$menu.on('click', 'li.divider, li.dropdown-header', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        if (!that.options.liveSearch) {
+          that.$button.focus();
+        } else {
+          that.$searchbox.focus();
+        }
+      });
+
+      this.$menu.on('click', '.popover-title .close', function () {
+        that.$button.focus();
+      });
+
+      this.$searchbox.on('click', function (e) {
+        e.stopPropagation();
+      });
+
+
+      this.$menu.on('click', '.actions-btn', function (e) {
+        if (that.options.liveSearch) {
+          that.$searchbox.focus();
+        } else {
+          that.$button.focus();
+        }
+
+        e.preventDefault();
+        e.stopPropagation();
+
+        if ($(this).is('.bs-select-all')) {
+          that.selectAll();
+        } else {
+          that.deselectAll();
+        }
+        that.$element.change();
+      });
+
+      this.$element.change(function () {
+        that.render(false);
+      });
+    },
+
+    liveSearchListener: function () {
+      var that = this,
+          no_results = $('<li class="no-results"></li>');
+
+      this.$newElement.on('click.dropdown.data-api touchstart.dropdown.data-api', function () {
+        that.$menu.find('.active').removeClass('active');
+        if (!!that.$searchbox.val()) {
+          that.$searchbox.val('');
+          that.$lis.not('.is-hidden').removeClass('hide');
+          if (!!no_results.parent().length) no_results.remove();
+        }
+        if (!that.multiple) that.$menu.find('.selected').addClass('active');
+        setTimeout(function () {
+          that.$searchbox.focus();
+        }, 10);
+      });
+
+      this.$searchbox.on('click.dropdown.data-api focus.dropdown.data-api touchend.dropdown.data-api', function (e) {
+        e.stopPropagation();
+      });
+
+      this.$searchbox.on('input propertychange', function () {
+        if (that.$searchbox.val()) {
+
+          if (that.options.searchAccentInsensitive) {
+            that.$lis.not('.is-hidden').removeClass('hide').find('a').not(':aicontains(' + normalizeToBase(that.$searchbox.val()) + ')').parent().addClass('hide');
+          } else {
+            that.$lis.not('.is-hidden').removeClass('hide').find('a').not(':icontains(' + that.$searchbox.val() + ')').parent().addClass('hide');
+          }
+
+          if (!that.$menu.find('li').filter(':visible:not(.no-results)').length) {
+            if (!!no_results.parent().length) no_results.remove();
+            no_results.html(that.options.noneResultsText + ' "' + htmlEscape(that.$searchbox.val()) + '"').show();
+            that.$menu.find('li').last().after(no_results);
+          } else if (!!no_results.parent().length) {
+            no_results.remove();
+          }
+
+        } else {
+          that.$lis.not('.is-hidden').removeClass('hide');
+          if (!!no_results.parent().length) no_results.remove();
+        }
+
+        that.$menu.find('li.active').removeClass('active');
+        that.$menu.find('li').filter(':visible:not(.divider)').eq(0).addClass('active').find('a').focus();
+        $(this).focus();
+      });
+    },
+
+    val: function (value) {
+      if (typeof value !== 'undefined') {
+        this.$element.val(value);
+        this.render();
+
+        return this.$element;
+      } else {
+        return this.$element.val();
+      }
+    },
+
+    selectAll: function () {
+      this.findLis();
+      this.$lis.not('.divider').not('.disabled').not('.selected').filter(':visible').find('a').click();
+    },
+
+    deselectAll: function () {
+      this.findLis();
+      this.$lis.not('.divider').not('.disabled').filter('.selected').filter(':visible').find('a').click();
+    },
+
+    keydown: function (e) {
+      var $this = $(this),
+          $parent = ($this.is('input')) ? $this.parent().parent() : $this.parent(),
+          $items,
+          that = $parent.data('this'),
+          index,
+          next,
+          first,
+          last,
+          prev,
+          nextPrev,
+          prevIndex,
+          isActive,
+          keyCodeMap = {
+            32: ' ',
+            48: '0',
+            49: '1',
+            50: '2',
+            51: '3',
+            52: '4',
+            53: '5',
+            54: '6',
+            55: '7',
+            56: '8',
+            57: '9',
+            59: ';',
+            65: 'a',
+            66: 'b',
+            67: 'c',
+            68: 'd',
+            69: 'e',
+            70: 'f',
+            71: 'g',
+            72: 'h',
+            73: 'i',
+            74: 'j',
+            75: 'k',
+            76: 'l',
+            77: 'm',
+            78: 'n',
+            79: 'o',
+            80: 'p',
+            81: 'q',
+            82: 'r',
+            83: 's',
+            84: 't',
+            85: 'u',
+            86: 'v',
+            87: 'w',
+            88: 'x',
+            89: 'y',
+            90: 'z',
+            96: '0',
+            97: '1',
+            98: '2',
+            99: '3',
+            100: '4',
+            101: '5',
+            102: '6',
+            103: '7',
+            104: '8',
+            105: '9'
+          };
+
+      if (that.options.liveSearch) $parent = $this.parent().parent();
+
+      if (that.options.container) $parent = that.$menu;
+
+      $items = $('[role=menu] li a', $parent);
+
+      isActive = that.$menu.parent().hasClass('open');
+
+      if (!isActive && /([0-9]|[A-z])/.test(String.fromCharCode(e.keyCode))) {
+        if (!that.options.container) {
+          that.setSize();
+          that.$menu.parent().addClass('open');
+          isActive = true;
+        } else {
+          that.$newElement.trigger('click');
+        }
+        that.$searchbox.focus();
+      }
+
+      if (that.options.liveSearch) {
+        if (/(^9$|27)/.test(e.keyCode.toString(10)) && isActive && that.$menu.find('.active').length === 0) {
+          e.preventDefault();
+          that.$menu.parent().removeClass('open');
+          that.$button.focus();
+        }
+        $items = $('[role=menu] li:not(.divider):not(.dropdown-header):visible', $parent);
+        if (!$this.val() && !/(38|40)/.test(e.keyCode.toString(10))) {
+          if ($items.filter('.active').length === 0) {
+            if (that.options.searchAccentInsensitive) {
+              $items = that.$newElement.find('li').filter(':aicontains(' + normalizeToBase(keyCodeMap[e.keyCode]) + ')');
+            } else {
+              $items = that.$newElement.find('li').filter(':icontains(' + keyCodeMap[e.keyCode] + ')');
+            }
+          }
+        }
+      }
+
+      if (!$items.length) return;
+
+      if (/(38|40)/.test(e.keyCode.toString(10))) {
+        index = $items.index($items.filter(':focus'));
+        first = $items.parent(':not(.disabled):visible').first().index();
+        last = $items.parent(':not(.disabled):visible').last().index();
+        next = $items.eq(index).parent().nextAll(':not(.disabled):visible').eq(0).index();
+        prev = $items.eq(index).parent().prevAll(':not(.disabled):visible').eq(0).index();
+        nextPrev = $items.eq(next).parent().prevAll(':not(.disabled):visible').eq(0).index();
+
+        if (that.options.liveSearch) {
+          $items.each(function (i) {
+            if ($(this).is(':not(.disabled)')) {
+              $(this).data('index', i);
+            }
+          });
+          index = $items.index($items.filter('.active'));
+          first = $items.filter(':not(.disabled):visible').first().data('index');
+          last = $items.filter(':not(.disabled):visible').last().data('index');
+          next = $items.eq(index).nextAll(':not(.disabled):visible').eq(0).data('index');
+          prev = $items.eq(index).prevAll(':not(.disabled):visible').eq(0).data('index');
+          nextPrev = $items.eq(next).prevAll(':not(.disabled):visible').eq(0).data('index');
+        }
+
+        prevIndex = $this.data('prevIndex');
+
+        if (e.keyCode == 38) {
+          if (that.options.liveSearch) index -= 1;
+          if (index != nextPrev && index > prev) index = prev;
+          if (index < first) index = first;
+          if (index == prevIndex) index = last;
+        }
+
+        if (e.keyCode == 40) {
+          if (that.options.liveSearch) index += 1;
+          if (index == -1) index = 0;
+          if (index != nextPrev && index < next) index = next;
+          if (index > last) index = last;
+          if (index == prevIndex) index = first;
+        }
+
+        $this.data('prevIndex', index);
+
+        if (!that.options.liveSearch) {
+          $items.eq(index).focus();
+        } else {
+          e.preventDefault();
+          if (!$this.is('.dropdown-toggle')) {
+            $items.removeClass('active');
+            $items.eq(index).addClass('active').find('a').focus();
+            $this.focus();
+          }
+        }
+
+      } else if (!$this.is('input')) {
+        var keyIndex = [],
+            count,
+            prevKey;
+
+        $items.each(function () {
+          if ($(this).parent().is(':not(.disabled)')) {
+            if ($.trim($(this).text().toLowerCase()).substring(0, 1) == keyCodeMap[e.keyCode]) {
+              keyIndex.push($(this).parent().index());
+            }
+          }
+        });
+
+        count = $(document).data('keycount');
+        count++;
+        $(document).data('keycount', count);
+
+        prevKey = $.trim($(':focus').text().toLowerCase()).substring(0, 1);
+
+        if (prevKey != keyCodeMap[e.keyCode]) {
+          count = 1;
+          $(document).data('keycount', count);
+        } else if (count >= keyIndex.length) {
+          $(document).data('keycount', 0);
+          if (count > keyIndex.length) count = 1;
+        }
+
+        $items.eq(keyIndex[count - 1]).focus();
+      }
+
+      // Select focused option if "Enter", "Spacebar" or "Tab" (when selectOnTab is true) are pressed inside the menu.
+      if ((/(13|32)/.test(e.keyCode.toString(10)) || (/(^9$)/.test(e.keyCode.toString(10)) && that.options.selectOnTab)) && isActive) {
+        if (!/(32)/.test(e.keyCode.toString(10))) e.preventDefault();
+        if (!that.options.liveSearch) {
+          $(':focus').click();
+        } else if (!/(32)/.test(e.keyCode.toString(10))) {
+          that.$menu.find('.active a').click();
+          $this.focus();
+        }
+        $(document).data('keycount', 0);
+      }
+
+      if ((/(^9$|27)/.test(e.keyCode.toString(10)) && isActive && (that.multiple || that.options.liveSearch)) || (/(27)/.test(e.keyCode.toString(10)) && !isActive)) {
+        that.$menu.parent().removeClass('open');
+        that.$button.focus();
+      }
+    },
+
+    mobile: function () {
+      this.$element.addClass('mobile-device').appendTo(this.$newElement);
+      if (this.options.container) this.$menu.hide();
+    },
+
+    refresh: function () {
+      this.$lis = null;
+      this.reloadLi();
+      this.render();
+      this.setWidth();
+      this.setStyle();
+      this.checkDisabled();
+      this.liHeight();
+    },
+
+    update: function () {
+      this.reloadLi();
+      this.setWidth();
+      this.setStyle();
+      this.checkDisabled();
+      this.liHeight();
+    },
+
+    hide: function () {
+      this.$newElement.hide();
+    },
+
+    show: function () {
+      this.$newElement.show();
+    },
+
+    remove: function () {
+      this.$newElement.remove();
+      this.$element.remove();
+    }
+  };
+
+  // SELECTPICKER PLUGIN DEFINITION
+  // ==============================
+  function Plugin(option, event) {
+    // get the args of the outer function..
+    var args = arguments;
+    // The arguments of the function are explicitly re-defined from the argument list, because the shift causes them
+    // to get lost
+    //noinspection JSDuplicatedDeclaration
+    var _option = option,
+        option = args[0],
+        event = args[1];
+    [].shift.apply(args);
+
+    // This fixes a bug in the js implementation on android 2.3 #715
+    if (typeof option == 'undefined') {
+      option = _option;
+    }
+
+    var value;
+    var chain = this.each(function () {
+      var $this = $(this);
+      if ($this.is('select')) {
+        var data = $this.data('selectpicker'),
+            options = typeof option == 'object' && option;
+
+        if (!data) {
+          var config = $.extend({}, Selectpicker.DEFAULTS, $.fn.selectpicker.defaults || {}, $this.data(), options);
+          $this.data('selectpicker', (data = new Selectpicker(this, config, event)));
+        } else if (options) {
+          for (var i in options) {
+            if (options.hasOwnProperty(i)) {
+              data.options[i] = options[i];
+            }
+          }
+        }
+
+        if (typeof option == 'string') {
+          if (data[option] instanceof Function) {
+            value = data[option].apply(data, args);
+          } else {
+            value = data.options[option];
+          }
+        }
+      }
+    });
+
+    if (typeof value !== 'undefined') {
+      //noinspection JSUnusedAssignment
+      return value;
+    } else {
+      return chain;
+    }
+  }
+
+  var old = $.fn.selectpicker;
+  $.fn.selectpicker = Plugin;
+  $.fn.selectpicker.Constructor = Selectpicker;
+
+  // SELECTPICKER NO CONFLICT
+  // ========================
+  $.fn.selectpicker.noConflict = function () {
+    $.fn.selectpicker = old;
+    return this;
+  };
+
+  $(document)
+      .data('keycount', 0)
+      .on('keydown', '.bootstrap-select [data-toggle=dropdown], .bootstrap-select [role=menu], .bs-searchbox input', Selectpicker.prototype.keydown)
+      .on('focusin.modal', '.bootstrap-select [data-toggle=dropdown], .bootstrap-select [role=menu], .bs-searchbox input', function (e) {
+        e.stopPropagation();
+      });
+
+  // SELECTPICKER DATA-API
+  // =====================
+  $(window).on('load.bs.select.data-api', function () {
+    $('.selectpicker').each(function () {
+      var $selectpicker = $(this);
+      Plugin.call($selectpicker, $selectpicker.data());
+    })
+  });
+})(jQuery);
+
 ///#source 1 1 /core/js/app.js
 function mod(n, m) {
     return ((n % m) + m) % m;
 }
 Backbone.View.prototype.destroy = function () {
-    // chain call for removing all subviews under curent view.
     if (this.views != undefined) {
         _.invoke(this.views, 'destroy');
         this.views.length = 0;
     }
-    // remove binded event of current view (comment out since it will be handled by remove() call.
-    //this.undelegateEvents();
-    // remove jquery data
     this.$el.removeData().unbind();
-    // remove view from dom (most browswer's remove() also handle unbind().
     this.remove();
-    //this.unbind();
-    // remove child doms (I am not exactly sure to call this.. This iterates all children dom elements, so it can make program slower).
     this.$el.find("*").remove();
-    // I believe most of remove related function will be handled by this remove() call.
     Backbone.View.prototype.remove.call(this);
-    // remove any model bind events if it's defined. (onDestroy() function should be defined manually in each view).
     if (this.onDestroy) {
         this.onDestroy();
     }
@@ -30362,10 +35528,116 @@ $(document).ready(function () {
     var url = window.location;
     FoodParent.Setting.getInstance().setBaseUrl(url.origin + window.location.pathname);
     FoodParent.View.setElement({ el: $('#wrapper-main') });
-    // Start Router
     Backbone.history.start();
 });
-//# sourceMappingURL=app.js.map
+
+///#source 1 1 /core/js/view/gridformat.js
+var DatePickerCellEditor = Backgrid.InputCellEditor.extend({
+    events: {},
+    initialize: function () {
+        Backgrid.InputCellEditor.prototype.initialize.apply(this, arguments);
+        var input = this;
+        $(this.el).datetimepicker({
+            defaultDate: input.model.get("date"),
+            format: FoodParent.Setting.getInstance().getDateTimeFormat(),
+        }).on("dp.hide", function () {
+            if ($(this).data("date") != undefined) {
+                var command = new Backgrid.Command({});
+                input.model.set(input.column.get("name"), $(this).data("date"));
+                input.model.trigger("backgrid:edited", input.model, input.column, command);
+            }
+        });
+    },
+});
+var TreeDeleteCell = Backgrid.Cell.extend({
+    template: _.template('<button type="button" class="btn btn-default btn-table"><span class="glyphicon glyphicon-remove"></span></button>'),
+    events: {
+        "click": "deleteRow"
+    },
+    deleteRow: function (e) {
+        var r = confirm(FoodParent.Localization.getInstance().getDeleteConfirmText());
+        if (r == true) {
+            e.preventDefault();
+            this.model.collection.remove(this.model);
+            this.model.destroy({
+                wait: true,
+                success: function (model, response) {
+                },
+                error: function () {
+                },
+            });
+        }
+    },
+    render: function () {
+        $(this.el).html(this.template());
+        this.delegateEvents();
+        return this;
+    }
+});
+var TreeDetailCell = Backgrid.Cell.extend({
+    template: _.template('<button type="button" class="btn btn-default btn-table"><span class="glyphicon glyphicon-log-in"></span></button>'),
+    events: {
+        "click": "showDetail"
+    },
+    showDetail: function (e) {
+        FoodParent.Router.getInstance().navigate("tree/" + this.model.getId(), { trigger: true });
+    },
+    render: function () {
+        $(this.el).html(this.template());
+        this.delegateEvents();
+        return this;
+    }
+});
+var TreeColumn = [
+    {
+        name: "id",
+        label: "#",
+        editable: false,
+        cell: "string",
+    },
+    {
+        name: "food",
+        label: "Type of Food",
+        editable: true,
+    },
+    {
+        name: "lat",
+        label: "Latitude",
+        editable: true,
+        cell: "number",
+    },
+    {
+        name: "lng",
+        label: "Longitude",
+        editable: true,
+        cell: "number",
+    },
+    {
+        name: "address",
+        label: "Address",
+        editable: true,
+        cell: "string",
+    },
+    {
+        name: "updated",
+        label: "Updated",
+        editable: false,
+        cell: Backgrid.Cell.extend({ editor: DatePickerCellEditor }),
+    },
+    {
+        label: "Detail",
+        sortable: false,
+        editable: false,
+        cell: TreeDetailCell,
+    },
+    {
+        label: "Delete",
+        sortable: false,
+        editable: false,
+        cell: TreeDeleteCell,
+    }
+];
+
 ///#source 1 1 /core/js/view/view.js
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -30386,7 +35658,42 @@ var FoodParent;
     var View = (function (_super) {
         __extends(View, _super);
         function View(options) {
+            var _this = this;
             _super.call(this, options);
+            this.renderTreeInfo = function (tree) {
+                var that = _this;
+                switch (that.viewType) {
+                    case 1 /* TREES */:
+                        var views = that.bodyView.getViews();
+                        var validView;
+                        $.each(views, function (index, view) {
+                            if (view instanceof FoodParent.SideInfoView) {
+                                validView = view;
+                            }
+                        });
+                        validView.customRender(tree);
+                        break;
+                    case 2 /* TREE */:
+                        var views = that.bodyView.getViews();
+                        var validView2;
+                        var validView3;
+                        $.each(views, function (index, view) {
+                            if (view instanceof FoodParent.TreeInfoView) {
+                                validView2 = view;
+                            }
+                            if (view instanceof FoodParent.CoverflowView) {
+                                validView3 = view;
+                            }
+                        });
+                        validView2.customRender(tree);
+                        validView3.customRender(tree);
+                        break;
+                    case 3 /* NOTE */:
+                        break;
+                    case 4 /* ABOUT */:
+                        break;
+                }
+            };
             if (View._instance) {
                 throw new Error("Error: Instantiation failed: Use View.getInstance() instead of new.");
             }
@@ -30405,28 +35712,34 @@ var FoodParent;
         View.prototype.getViewType = function () {
             return this.viewType;
         };
+        View.prototype.setMapView = function (mapView) {
+            this.mapView = mapView;
+        };
+        View.prototype.getMapView = function () {
+            return this.mapView;
+        };
         View.prototype.render = function () {
             var that = this;
-            // add a new view
             var template = _.template(FoodParent.Template.getInstance().getBaseTemplate());
             var data = {};
             that.$el.html(template(data));
-            // render a new header view
-            if (that.currentHeaderView != undefined) {
-                that.currentHeaderView.destroy();
+            if (that.headerView != undefined) {
+                that.headerView.destroy();
             }
-            that.currentHeaderView = FoodParent.HeaderFactory.getInstance().create(that.$('#wrapper-main-header'));
-            that.currentHeaderView.render();
-            // render a new body view
-            if (that.currentBodyView != undefined) {
-                that.currentBodyView.destroy();
+            that.headerView = FoodParent.HeaderFactory.getInstance().create(that.$('#wrapper-main-header'));
+            that.headerView.render();
+            if (that.bodyView != undefined) {
+                that.bodyView.destroy();
             }
+            that.mapView = undefined;
             switch (that.viewType) {
                 case 1 /* TREES */:
-                    that.currentBodyView = FoodParent.TreesViewFactory.getInstance().create(that.$('#wrapper-main-body'));
-                    that.currentBodyView.render();
+                    that.bodyView = FoodParent.TreesViewFactory.getInstance().create(that.$('#wrapper-main-body'));
+                    that.bodyView.render();
                     break;
                 case 2 /* TREE */:
+                    that.bodyView = FoodParent.TreeViewFactory.getInstance().create(that.$('#wrapper-main-body'), FoodParent.Controller.getInstance().getCurrent());
+                    that.bodyView.render();
                     break;
                 case 3 /* NOTE */:
                     break;
@@ -30435,12 +35748,127 @@ var FoodParent;
             }
             return that;
         };
+        View.prototype.renderTreesOnMap = function (trees) {
+            var that = this;
+            if (that.mapView != undefined) {
+                switch (that.viewType) {
+                    case 1 /* TREES */:
+                        var exist = new FoodParent.Trees();
+                        var markers = that.mapView.getAllMarkers();
+                        $.each(trees.models, function (i, model) {
+                            $.each(markers, function (j, marker) {
+                                var food = FoodParent.Model.getInstance().getFoods().findWhere({
+                                    id: model.getFoodId()
+                                });
+                                if (marker.options.name == (food.getName() + model.getName())) {
+                                    exist.add(model);
+                                }
+                            });
+                        });
+                        $.each(markers, function (j, marker) {
+                            var bDeleted = true;
+                            $.each(exist.models, function (i, model) {
+                                var food = FoodParent.Model.getInstance().getFoods().findWhere({
+                                    id: model.getFoodId()
+                                });
+                                if (marker.options.name != (food.getName() + model.getName())) {
+                                    bDeleted = false;
+                                }
+                            });
+                            if (bDeleted) {
+                                that.mapView.removeMarker(marker);
+                            }
+                        });
+                        $.each(trees.models, function (index, model) {
+                            if (exist.findWhere({ id: model.getId() }) == undefined) {
+                                that.createMarker(model);
+                            }
+                        });
+                        break;
+                    case 2 /* TREE */:
+                        var exist = new FoodParent.Trees();
+                        var markers = that.mapView.getAllMarkers();
+                        $.each(trees.models, function (i, model) {
+                            $.each(markers, function (j, marker) {
+                                var food = FoodParent.Model.getInstance().getFoods().findWhere({
+                                    id: model.getFoodId()
+                                });
+                                if (marker.options.name == (food.getName() + model.getName())) {
+                                    exist.add(model);
+                                }
+                            });
+                        });
+                        $.each(markers, function (j, marker) {
+                            var bDeleted = true;
+                            $.each(exist.models, function (i, model) {
+                                var food = FoodParent.Model.getInstance().getFoods().findWhere({
+                                    id: model.getFoodId()
+                                });
+                                if (marker.options.name != (food.getName() + model.getName())) {
+                                    bDeleted = false;
+                                }
+                            });
+                            if (bDeleted) {
+                                that.mapView.removeMarker(marker);
+                            }
+                        });
+                        var tree = FoodParent.Model.getInstance().getTrees().findWhere({ id: FoodParent.Controller.getInstance().getCurrent() });
+                        $.each(trees.models, function (index, model) {
+                            if (exist.findWhere({ id: model.getId() }) == undefined) {
+                                that.createMarker2(model, (tree == model));
+                            }
+                        });
+                        break;
+                    case 3 /* NOTE */:
+                        break;
+                    case 4 /* ABOUT */:
+                        break;
+                }
+            }
+        };
+        View.prototype.createMarker = function (model) {
+            var that = this;
+            var view = FoodParent.MarkerViewFactory.getInstance().create(model);
+            view.getMarker().on('popupopen', function (event) {
+                that.renderTreeInfo(model);
+                $('.leaflet-popup-content .glyphicon').off('click');
+                $('.leaflet-popup-content .glyphicon').on('click', function (event) {
+                    FoodParent.Router.getInstance().navigate("tree/" + $('.leaflet-popup-content .glyphicon').attr('data-id'), { trigger: true });
+                });
+            });
+            view.getMarker().on('popupclose', function () {
+                that.renderTreeInfo(null);
+            });
+            that.mapView.addMarker(view.getMarker());
+        };
+        View.prototype.createMarker2 = function (model, bPopupOpen) {
+            var that = this;
+            var view = FoodParent.MarkerViewFactory.getInstance().create2(model);
+            view.getMarker().on('click', function (event) {
+                if (event.target._popup == undefined) {
+                }
+                else {
+                    this.openPopup();
+                }
+            });
+            view.getMarker().on('popupopen', function (event) {
+                that.renderTreeInfo(model);
+                FoodParent.Router.getInstance().navigate("tree/" + $('.leaflet-popup-content span').attr('data-id'), { trigger: false });
+            });
+            view.getMarker().on('popupclose', function () {
+                that.renderTreeInfo(null);
+            });
+            that.mapView.addMarker(view.getMarker());
+            if (bPopupOpen) {
+                view.getMarker().openPopup();
+            }
+        };
         View._instance = new View();
         return View;
     })(Backbone.View);
     FoodParent.View = View;
 })(FoodParent || (FoodParent = {}));
-//# sourceMappingURL=view.js.map
+
 ///#source 1 1 /core/js/view/template.js
 var FoodParent;
 (function (FoodParent) {
@@ -30470,12 +35898,144 @@ var FoodParent;
             template += '</div>';
             return template;
         };
+        Template.prototype.getMainTreeViewTemplate = function () {
+            var template = "";
+            template += '<div class="col-xs-3 panel-body">';
+            template += '<div class="panel-tree-info"></div>';
+            template += '<div id="map-tree" class="panel-tree-map"></div>';
+            template += '</div>';
+            template += '<div class="col-xs-9 panel-body">';
+            template += '<div class="panel-breadcrumb"></div>';
+            template += '<div class="panel-tree-coverflow"></div>';
+            template += '<div class="panel-tree-detail"></div>';
+            template += '</div>';
+            return template;
+        };
         Template.prototype.getMainTreesViewTemplate = function () {
             var template = "";
-            //template += '<div class="row panel-body">';
-            template += '<div id="map-trees" class="col-xs-8 panel-body panel-map"></div>';
-            template += '<div class="col-xs-4 panel-body panel-sideinfo"></div>';
-            //template += '</div>';
+            template += '<div id="map-trees" class="col-xs-9 panel-body panel-map"></div>';
+            template += '<div class="col-xs-3 panel-body panel-sideinfo"></div>';
+            return template;
+        };
+        Template.prototype.getEmptySideInfoViewTemplate = function () {
+            var template = "";
+            template += '<div class="form-group">';
+            template += '<div class="col-xs-12 left"><input type="checkbox" checked id="toggle-table"></div>';
+            template += '</div>';
+            return template;
+        };
+        Template.prototype.getSideInfoViewTemplate = function () {
+            var template = "";
+            template += '<div class="form-group">';
+            template += '<div class="col-xs-12 left"><input type="checkbox" checked id="toggle-table"></div>';
+            template += '</div>';
+            template += '<div class="col-xs-12 panel-sideinfo"><h1><%= name %></h1></div>';
+            template += '<div class="col-xs-12 panel-sideinfo"><%= location %></div>';
+            template += '<div class="clear" />';
+            template += '<div class="form-group split">';
+            template += '<div class="col-xs-3 split-rect"></div>';
+            template += '<div class="col-xs-9 split-label"></div>';
+            template += '<div class="clear" />';
+            template += '<div class="col-xs-12 panel-sideinfo"><h2><span class="glyphicon glyphicon-flag" aria-hidden="true"></span> <%= flag %></h2></div>';
+            template += '<div class="form-group">';
+            template += '<% _.each(flags.models, function (flag) { %>';
+            template += '<div class="col-xs-6 group-radio">';
+            template += '<label class="label-radio"><input type="radio" class="flag-radio" data-flag="<%= flag.getId() %>">&nbsp <%= flag.getName() %></label>';
+            template += '</div>';
+            template += '<% }); %>';
+            template += '</div>';
+            template += '<div class="form-group split">';
+            template += '<div class="col-xs-4 split-rect"></div>';
+            template += '<div class="col-xs-8 split-label"></div>';
+            template += '<div class="clear" />';
+            template += '<div class="col-xs-12 panel-sideinfo"><h2><span class="glyphicon glyphicon-bookmark" aria-hidden="true"></span> <%= type %></h2></div>';
+            template += '<div class="form-group">';
+            template += '<% _.each(types.models, function (type) { %>';
+            template += '<div class="col-xs-6 group-radio">';
+            template += '<label class="label-radio"><input type="radio" class="type-radio" data-type="<%= type.getId() %>">&nbsp <%= type.getName() %></label>';
+            template += '</div>';
+            template += '<% }); %>';
+            template += '</div>';
+            template += '<div class="form-group split">';
+            template += '<div class="col-xs-5 split-rect"></div>';
+            template += '<div class="col-xs-7 split-label"></div>';
+            template += '<div class="clear" />';
+            template += '<div class="col-xs-12 panel-sideinfo"><h2><span class="glyphicon glyphicon-time" aria-hidden="true"></span> <%= recent %></h2></div>';
+            return template;
+        };
+        Template.prototype.getMapPopupTemplate = function () {
+            var template = "";
+            template += '<%= name %>&nbsp&nbsp<span class="glyphicon glyphicon-log-in" aria-hidden="true" data-id="<%= id %>"></span>&nbsp';
+            return template;
+        };
+        Template.prototype.getSmallMapPopupTemplate = function () {
+            var template = "";
+            template += '<span data-id="<%= id %>"><%= name %></span>';
+            return template;
+        };
+        Template.prototype.getTreeInfoViewTemplate = function () {
+            var template = "";
+            template += '<div class="col-xs-12"><h1><%= name %></h1></div>';
+            template += '<div class="col-xs-12"><%= location %></div>';
+            template += '<div class="clear" />';
+            template += '<div class="form-group">';
+            template += '<div class="col-xs-3 circle-progress-left"><div><%= ripening %></div><div><%= ratio %></div></div>';
+            template += '<div class="col-xs-6">';
+            template += '<div id="ripen-progress" class="circle-progress"></div>';
+            template += '</div>';
+            template += '<div class="col-xs-3 circle-progress-right"><div><%= approximate %></div><div><%= food %></div></div>';
+            template += '</div>';
+            template += '<div class="clear" />';
+            template += '<div class="form-group split">';
+            template += '<div class="col-xs-3 split-rect"></div>';
+            template += '<div class="col-xs-9 split-label"></div>';
+            template += '<div class="clear" />';
+            template += '<div class="col-xs-12"><h2><span class="glyphicon glyphicon-flag" aria-hidden="true"></span> <%= flag %></h2></div>';
+            template += '<div class="form-group">';
+            template += '<% _.each(flags.models, function (flag) { %>';
+            template += '<div class="col-xs-6 group-radio">';
+            template += '<label class="label-radio"><input type="radio" class="flag-radio" data-flag="<%= flag.getId() %>">&nbsp <%= flag.getName() %></label>';
+            template += '</div>';
+            template += '<% }); %>';
+            template += '</div>';
+            template += '<div class="form-group split">';
+            template += '<div class="col-xs-4 split-rect"></div>';
+            template += '<div class="col-xs-8 split-label"></div>';
+            template += '<div class="clear" />';
+            template += '<div class="col-xs-12"><h2><span class="glyphicon glyphicon-bookmark" aria-hidden="true"></span> <%= type %></h2></div>';
+            template += '<div class="form-group">';
+            template += '<% _.each(types.models, function (type) { %>';
+            template += '<div class="col-xs-6 group-radio">';
+            template += '<label class="label-radio"><input type="radio" class="type-radio" data-type="<%= type.getId() %>">&nbsp <%= type.getName() %></label>';
+            template += '</div>';
+            template += '<% }); %>';
+            template += '</div>';
+            return template;
+        };
+        Template.prototype.getCoverflowTemplate = function () {
+            var template = "";
+            template += '<div class="wrapper-coverflow">';
+            template += '<div id="coverflow">';
+            template += '<% _.each(notes, function (note) { %>';
+            template += '<img src="<%= note.getPicturePath() %>" data-id="<%= note.getId() %>" />';
+            template += '<% }); %>';
+            template += '</div>';
+            template += '</div>';
+            template += '<div class="label-coverflow">';
+            template += '</div>';
+            return template;
+        };
+        Template.prototype.getLocationTableTemplate = function () {
+            var template = "";
+            template += '<div class="list">';
+            template += '<div class="col-xs-12"><h1><%= title %></h1></div>';
+            template += '<div class="clear" />';
+            template += '<div class="form-group">';
+            template += '<div class="col-xs-12">';
+            template += '<div class="list-location"></div>';
+            template += '</div>';
+            template += '<div class="clear" />';
+            template += '</div>';
             return template;
         };
         Template._instance = new Template();
@@ -30483,7 +36043,7 @@ var FoodParent;
     })();
     FoodParent.Template = Template;
 })(FoodParent || (FoodParent = {}));
-//# sourceMappingURL=template.js.map
+
 ///#source 1 1 /core/js/view/headerview.js
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -30510,7 +36070,6 @@ var FoodParent;
         }
         HeaderView.prototype.render = function () {
             var that = this;
-            // add a new view
             var template = _.template(FoodParent.Template.getInstance().getMainHeaderTemplate());
             var data = {
                 site: FoodParent.Localization.getInstance().getSiteText(),
@@ -30521,19 +36080,6 @@ var FoodParent;
             that.$el.html(template(data));
             return that;
         };
-        /*
-        _clickName(event: Event): void {
-            var that: HeaderView = this;
-            that.bExpanded = !that.bExpanded;
-
-            if (that.bExpanded) {
-                //new DetailView({ model: this.model, el: this.$('.detail') }).render();
-            } else {
-                //this.$('.detail').empty();
-            }
-            event.preventDefault();
-        }
-        */
         HeaderView.prototype._navHome = function (event) {
             event.preventDefault();
             FoodParent.Router.getInstance().navigate("home", { trigger: true, replace: false });
@@ -30554,7 +36100,7 @@ var FoodParent;
     })(Backbone.View);
     FoodParent.HeaderView = HeaderView;
 })(FoodParent || (FoodParent = {}));
-//# sourceMappingURL=headerview.js.map
+
 ///#source 1 1 /core/js/view/localization.js
 var FoodParent;
 (function (FoodParent) {
@@ -30580,12 +36126,33 @@ var FoodParent;
         Localization.prototype.getAboutText = function () {
             return "About";
         };
+        Localization.prototype.getFlagText = function () {
+            return "Flag";
+        };
+        Localization.prototype.getTypeText = function () {
+            return "Ownership";
+        };
+        Localization.prototype.getRecentText = function () {
+            return "Recent Activities";
+        };
+        Localization.prototype.getRipeningText = function () {
+            return "Ripnening";
+        };
+        Localization.prototype.getTreeListText = function () {
+            return "Tree List";
+        };
+        Localization.prototype.getDeleteConfirmText = function () {
+            return "Are you sure to delete this item?";
+        };
+        Localization.prototype.getNoDataText = function () {
+            return "No Data";
+        };
         Localization._instance = new Localization();
         return Localization;
     })();
     FoodParent.Localization = Localization;
 })(FoodParent || (FoodParent = {}));
-//# sourceMappingURL=localization.js.map
+
 ///#source 1 1 /core/js/view/treesview.js
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -30609,18 +36176,25 @@ var FoodParent;
         }
         TreesView.prototype.render = function () {
             var that = this;
-            // add a new view
             var template = _.template(FoodParent.Template.getInstance().getMainTreesViewTemplate());
             var data = {};
             that.$el.html(template(data));
-            that.views.push(FoodParent.MapViewFactory.getInstance().create(that.$('.panel-map')).render());
+            var view1 = FoodParent.MapViewFactory.getInstance().create(that.$('.panel-map'), true).render();
+            that.views.push(view1);
+            var view2 = FoodParent.SideViewFactory.getInstance().create(that.$('.panel-sideinfo')).render();
+            view2.setMapView(view1);
+            that.views.push(view2);
             return that;
+        };
+        TreesView.prototype.getViews = function () {
+            var that = this;
+            return that.views;
         };
         return TreesView;
     })(Backbone.View);
     FoodParent.TreesView = TreesView;
 })(FoodParent || (FoodParent = {}));
-//# sourceMappingURL=treesview.js.map
+
 ///#source 1 1 /core/js/view/mapview.js
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -30637,6 +36211,9 @@ var FoodParent;
             _super.call(this, options);
             this.bDebug = true;
             this.bActive = true;
+            this.bCentered = true;
+            this.bClosePopupOnClick = true;
+            this.bGraphicView = true;
             this.createMap = function (position) {
                 var that = _this;
                 var accuracy = position.coords.accuracy;
@@ -30644,8 +36221,8 @@ var FoodParent;
                 if (that.map == undefined) {
                     that.setLocation(new L.LatLng(position.coords.latitude, position.coords.longitude));
                     that.map = L.map(that.$el[0].id, {
-                        closePopupOnClick: true,
                         zoomControl: false,
+                        closePopupOnClick: that.bClosePopupOnClick,
                         doubleClickZoom: true,
                         touchZoom: true,
                         zoomAnimation: true,
@@ -30656,15 +36233,22 @@ var FoodParent;
                         maxZoom: FoodParent.Setting.getInstance().getMapMaxZoomLevel(),
                     }).addTo(that.map);
                     that.map.invalidateSize(false);
-                    that.map.whenReady(that.createLayers);
-                    // remove leaflet thumbnail
-                    that.$('.leaflet-control-attribution.leaflet-control').html('');
+                    that.map.whenReady(that.afterCreateMap);
+                    that.map.on("moveend", that.afterMoveMap);
                 }
             };
-            this.createLayers = function () {
+            this.afterCreateMap = function () {
                 var that = _this;
                 if (that.bDebug)
-                    console.log("createLayers()");
+                    console.log("afterCreateMap()");
+                FoodParent.Controller.getInstance().fetchTrees(that.map.getBounds());
+                FoodParent.Controller.getInstance().setMapView(that);
+            };
+            this.afterMoveMap = function () {
+                var that = _this;
+                if (that.bDebug)
+                    console.log("afterMoveMap()");
+                FoodParent.Controller.getInstance().fetchTrees(that.map.getBounds());
             };
             var that = this;
             that.events = {
@@ -30676,26 +36260,575 @@ var FoodParent;
         }
         MapView.prototype.render = function () {
             var that = this;
-            FoodParent.Controller.getInstance().updateGeoLocation(that.createMap);
+            that.$el.html("");
+            if (that.bCentered) {
+                console.log("render()");
+                FoodParent.Controller.getInstance().updateGeoLocation(that.createMap);
+            }
             return that;
+        };
+        MapView.prototype.setIsCentered = function (bCentered) {
+            this.bCentered = bCentered;
+        };
+        MapView.prototype.setIsClosePopupOnClick = function (bClosePopupOnClick) {
+            this.bClosePopupOnClick = bClosePopupOnClick;
+        };
+        MapView.prototype.setZoom = function (zoom) {
+            this.zoom = zoom;
         };
         MapView.prototype.setLocation = function (location) {
             var that = this;
             that.location = location;
         };
+        MapView.prototype.updateLocation = function () {
+            var that = this;
+            that.map.setView(that.location, that.zoom);
+        };
         MapView.prototype.getLocation = function () {
             return this.location;
+        };
+        MapView.prototype.addMarker = function (marker) {
+            var that = this;
+            marker.addTo(that.map);
+        };
+        MapView.prototype.getAllMarkers = function () {
+            var that = this;
+            var result = new Array();
+            $.each(that.map._layers, function (index, model) {
+                if (model instanceof L.Marker) {
+                    result.push(model);
+                }
+            });
+            return result;
+        };
+        MapView.prototype.removeMarker = function (marker) {
+            var that = this;
+            marker.off('click');
+            that.map.removeLayer(marker);
+            return marker;
+        };
+        MapView.prototype.SetIsGraphicView = function (bGraphicView) {
+            var that = this;
+            that.bGraphicView = bGraphicView;
+            if (that.bGraphicView) {
+                that.render();
+            }
+            else {
+                that.render2();
+            }
+        };
+        MapView.prototype.getIsGraphicView = function () {
+            return this.bGraphicView;
+        };
+        MapView.prototype.render2 = function () {
+            console.log("render2()");
+            var that = this;
+            that.map.remove();
+            that.map = undefined;
+            that.$el.removeClass('leaflet-container');
+            that.$el.removeClass('leaflet-touch');
+            that.$el.removeClass('leaflet-fade-anim');
+            that.$el.removeAttr('tabindex');
+            var template = _.template(FoodParent.Template.getInstance().getLocationTableTemplate());
+            var data = {
+                title: FoodParent.Localization.getInstance().getTreeListText(),
+            };
+            that.$el.html(template(data));
+            TreeColumn[1].cell = Backgrid.SelectCell.extend({
+                optionValues: FoodParent.Model.getInstance().getFoods().toArray(),
+            });
+            var trees = new FoodParent.Trees(FoodParent.Model.getInstance().getTrees().where({ type: 1 }));
+            var grid = new Backgrid.Grid({
+                columns: TreeColumn,
+                collection: trees,
+                emptyText: FoodParent.Localization.getInstance().getNoDataText(),
+            });
+            grid.render();
+            that.$(".list-location").append(grid.el);
         };
         return MapView;
     })(Backbone.View);
     FoodParent.MapView = MapView;
 })(FoodParent || (FoodParent = {}));
-//# sourceMappingURL=mapview.js.map
+
+///#source 1 1 /core/js/view/markerview.js
+var __extends = this.__extends || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    __.prototype = b.prototype;
+    d.prototype = new __();
+};
+var FoodParent;
+(function (FoodParent) {
+    var MarkerView = (function (_super) {
+        __extends(MarkerView, _super);
+        function MarkerView(options) {
+            _super.call(this, options);
+            var that = this;
+        }
+        MarkerView.prototype.create = function (id, name, icon, lat, lng) {
+            var that = this;
+            var template = _.template(FoodParent.Template.getInstance().getMapPopupTemplate());
+            var data = {
+                name: name,
+                id: id,
+            };
+            that.marker = new L.Marker(new L.LatLng(lat, lng), {
+                icon: icon,
+                draggable: false,
+                riseOnHover: true,
+                name: name,
+                id: id,
+            }).bindPopup(template(data), {
+                closeButton: false,
+            });
+        };
+        MarkerView.prototype.create2 = function (id, name, icon, lat, lng) {
+            var that = this;
+            var template = _.template(FoodParent.Template.getInstance().getSmallMapPopupTemplate());
+            var data = {
+                name: name,
+                id: id,
+            };
+            that.marker = new L.Marker(new L.LatLng(lat, lng), {
+                icon: icon,
+                draggable: false,
+                riseOnHover: true,
+                closeOnClick: false,
+                name: name,
+                id: id,
+            }).bindPopup(template(data), {
+                closeButton: false,
+                closeOnClick: false,
+            });
+        };
+        MarkerView.prototype.getMarker = function () {
+            return this.marker;
+        };
+        return MarkerView;
+    })(Backbone.View);
+    FoodParent.MarkerView = MarkerView;
+})(FoodParent || (FoodParent = {}));
+
+///#source 1 1 /core/js/view/sideinfoview.js
+var __extends = this.__extends || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    __.prototype = b.prototype;
+    d.prototype = new __();
+};
+var FoodParent;
+(function (FoodParent) {
+    var SideInfoView = (function (_super) {
+        __extends(SideInfoView, _super);
+        function SideInfoView(options) {
+            var _this = this;
+            _super.call(this, options);
+            this.bActive = true;
+            this.renderTreeInfo = function () {
+                var that = _this;
+                if (that.tree) {
+                    var food = FoodParent.Model.getInstance().getFoods().findWhere({ id: that.tree.getFoodId() });
+                    var flag = FoodParent.Model.getInstance().getFlags().findWhere({ id: that.tree.getFlagId() });
+                    var ownership = FoodParent.Model.getInstance().getOwnerships().findWhere({ id: that.tree.getOwnershipId() });
+                    var template = _.template(FoodParent.Template.getInstance().getSideInfoViewTemplate());
+                    var data = {
+                        name: food.getName() + that.tree.getName(),
+                        location: '@ ' + that.tree.getLat().toFixed(4) + ", " + that.tree.getLng().toFixed(4),
+                        flag: FoodParent.Localization.getInstance().getFlagText(),
+                        flags: FoodParent.Model.getInstance().getFlags(),
+                        type: FoodParent.Localization.getInstance().getTypeText(),
+                        types: FoodParent.Model.getInstance().getOwnerships(),
+                        recent: FoodParent.Localization.getInstance().getRecentText(),
+                    };
+                    that.$el.html(template(data));
+                    that.renderFlagInfo(flag);
+                    that.renderTypeInfo(ownership);
+                    that.renderTableToggle();
+                }
+                else {
+                    that.$el.html("");
+                }
+                return that;
+            };
+            this.renderFlagInfo = function (flag) {
+                var that = _this;
+                $.each(that.$('.flag-radio'), function (index, item) {
+                    if (parseInt($(item).attr('data-flag')) == flag.getId()) {
+                        $(item).prop({ 'checked': 'checked' });
+                    }
+                    else {
+                        $(item).prop({ 'checked': '' });
+                    }
+                });
+            };
+            this.renderTypeInfo = function (ownership) {
+                var that = _this;
+                $.each(that.$('.type-radio'), function (index, item) {
+                    if (parseInt($(item).attr('data-type')) == ownership.getId()) {
+                        $(item).prop({ 'checked': 'checked' });
+                    }
+                    else {
+                        $(item).prop({ 'checked': '' });
+                    }
+                });
+            };
+            var that = this;
+            that.events = {
+                "click .flag-radio": "_clickFlagRadio",
+                "click .type-radio": "_clickTypeRadio",
+            };
+            that.delegateEvents();
+            that.views = new Array();
+        }
+        SideInfoView.prototype.render = function () {
+            var that = this;
+            var template = _.template(FoodParent.Template.getInstance().getEmptySideInfoViewTemplate());
+            var data = {};
+            that.$el.html(template(data));
+            that.renderTableToggle();
+            return that;
+        };
+        SideInfoView.prototype.render2 = function (bChecked) {
+            var that = this;
+            var template = _.template(FoodParent.Template.getInstance().getEmptySideInfoViewTemplate());
+            var data = {};
+            that.$el.html(template(data));
+            that.renderTableToggle(bChecked);
+            return that;
+        };
+        SideInfoView.prototype.customRender = function (tree) {
+            var that = this;
+            that.tree = tree;
+            FoodParent.Controller.getInstance().fetchFlags(FoodParent.Controller.getInstance().fetchTypes, that.renderTreeInfo);
+        };
+        SideInfoView.prototype.renderTableToggle = function (bChecked) {
+            var that = this;
+            that.$('#toggle-table').bootstrapToggle({
+                on: 'Graphic',
+                off: 'Table',
+                size: 'small',
+                onstyle: 'default',
+            });
+            if (bChecked != undefined) {
+                if (bChecked) {
+                    that.$('#toggle-table').bootstrapToggle('on');
+                }
+                else {
+                    that.$('#toggle-table').bootstrapToggle('off');
+                }
+            }
+            that.$('#toggle-table').change(function () {
+                that.render2($(this).prop('checked'));
+                that.mapView.SetIsGraphicView($(this).prop('checked'));
+            });
+        };
+        SideInfoView.prototype._clickFlagRadio = function (event) {
+            var that = this;
+            $.each(that.$('.flag-radio'), function (index, item) {
+                if (item == event.target) {
+                    $(item).prop({ 'checked': 'checked' });
+                }
+                else {
+                    $(item).prop({ 'checked': '' });
+                }
+            });
+        };
+        SideInfoView.prototype._clickTypeRadio = function (event) {
+            var that = this;
+            $.each(that.$('.type-radio'), function (index, item) {
+                if (item == event.target) {
+                    $(item).prop({ 'checked': 'checked' });
+                }
+                else {
+                    $(item).prop({ 'checked': '' });
+                }
+            });
+        };
+        SideInfoView.prototype.setMapView = function (view) {
+            this.mapView = view;
+        };
+        return SideInfoView;
+    })(Backbone.View);
+    FoodParent.SideInfoView = SideInfoView;
+})(FoodParent || (FoodParent = {}));
+
+///#source 1 1 /core/js/view/treeview.js
+var __extends = this.__extends || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    __.prototype = b.prototype;
+    d.prototype = new __();
+};
+var FoodParent;
+(function (FoodParent) {
+    var TreeView = (function (_super) {
+        __extends(TreeView, _super);
+        function TreeView(options) {
+            var _this = this;
+            _super.call(this, options);
+            this.bActive = true;
+            this.renderTree = function () {
+                console.log("renderTree");
+                var that = _this;
+                var tree = FoodParent.Model.getInstance().getTrees().findWhere({ id: that.current });
+                var validView;
+                var validView2;
+                var validView3;
+                $.each(that.views, function (index, view) {
+                    if (view instanceof FoodParent.MapView) {
+                        validView = view;
+                    }
+                    if (view instanceof FoodParent.TreeInfoView) {
+                        validView2 = view;
+                    }
+                    if (view instanceof FoodParent.CoverflowView) {
+                        validView3 = view;
+                    }
+                });
+                validView.setZoom(FoodParent.Setting.getInstance().getDefaultSmallMapZoomLevel());
+                validView.setIsClosePopupOnClick(false);
+                validView.createMap({ timestamp: new Date(), coords: { altitudeAccuracy: 0, latitude: tree.getLat(), longitude: tree.getLng(), speed: 0, heading: 0, altitude: 0, accuracy: 0 } });
+                validView2.customRender(tree);
+                validView3.customRender(tree);
+            };
+            var that = this;
+            that.events = {
+                "click .nav-home": "_navHome",
+            };
+            that.delegateEvents();
+            that.views = new Array();
+        }
+        TreeView.prototype.render = function () {
+            var that = this;
+            var template = _.template(FoodParent.Template.getInstance().getMainTreeViewTemplate());
+            var data = {};
+            that.$el.html(template(data));
+            that.views.push(FoodParent.MapViewFactory.getInstance().create2(that.$('.panel-tree-map'), false).render());
+            that.views.push(FoodParent.TreeInfoViewFactory.getInstance().create(that.$('.panel-tree-info')).render());
+            that.views.push(FoodParent.CoverflowViewFactory.getInstance().create(that.$('.panel-tree-coverflow')).render());
+            FoodParent.Controller.getInstance().fetchTree(that.current, that.renderTree);
+            return that;
+        };
+        TreeView.prototype.getViews = function () {
+            var that = this;
+            return that.views;
+        };
+        TreeView.prototype.setCurrent = function (id) {
+            var that = this;
+            that.current = Math.floor(id);
+        };
+        return TreeView;
+    })(Backbone.View);
+    FoodParent.TreeView = TreeView;
+})(FoodParent || (FoodParent = {}));
+
+///#source 1 1 /core/js/view/treeinfoview.js
+var __extends = this.__extends || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    __.prototype = b.prototype;
+    d.prototype = new __();
+};
+var FoodParent;
+(function (FoodParent) {
+    var TreeInfoView = (function (_super) {
+        __extends(TreeInfoView, _super);
+        function TreeInfoView(options) {
+            var _this = this;
+            _super.call(this, options);
+            this.bActive = true;
+            this.renderTreeInfo = function () {
+                var that = _this;
+                if (that.tree) {
+                    var food = FoodParent.Model.getInstance().getFoods().findWhere({ id: that.tree.getFoodId() });
+                    var flag = FoodParent.Model.getInstance().getFlags().findWhere({ id: that.tree.getFlagId() });
+                    var ownership = FoodParent.Model.getInstance().getOwnerships().findWhere({ id: that.tree.getOwnershipId() });
+                    var ratio = 0.75;
+                    var approximate = 15;
+                    var template = _.template(FoodParent.Template.getInstance().getTreeInfoViewTemplate());
+                    var data = {
+                        name: food.getName() + that.tree.getName(),
+                        location: '@ ' + that.tree.getLat().toFixed(4) + ", " + that.tree.getLng().toFixed(4),
+                        ripening: FoodParent.Localization.getInstance().getRipeningText(),
+                        ratio: Math.floor(ratio * 100) + "%",
+                        approximate: approximate,
+                        food: food.getName(),
+                        flag: FoodParent.Localization.getInstance().getFlagText(),
+                        flags: FoodParent.Model.getInstance().getFlags(),
+                        type: FoodParent.Localization.getInstance().getTypeText(),
+                        types: FoodParent.Model.getInstance().getOwnerships(),
+                        recent: FoodParent.Localization.getInstance().getRecentText(),
+                    };
+                    that.$el.html(template(data));
+                    that.renderFlagInfo(flag);
+                    that.renderTypeInfo(ownership);
+                    var radius = that.$('.circle-progress').innerWidth();
+                    that.$('#ripen-progress').circleProgress({
+                        startAngle: -Math.PI / 2,
+                        value: ratio,
+                        size: radius,
+                        thickness: radius / 8,
+                        fill: {
+                            gradient: ["red", "orange"],
+                            gradientAngle: Math.PI / 4,
+                        }
+                    });
+                    that.$('.circle-progress-left').css({ height: radius });
+                    that.$('.circle-progress-right').css({ height: radius });
+                }
+                else {
+                    that.$el.html("");
+                }
+                return that;
+            };
+            this.renderFlagInfo = function (flag) {
+                var that = _this;
+                $.each(that.$('.flag-radio'), function (index, item) {
+                    if (parseInt($(item).attr('data-flag')) == flag.getId()) {
+                        $(item).prop({ 'checked': 'checked' });
+                    }
+                    else {
+                        $(item).prop({ 'checked': '' });
+                    }
+                });
+            };
+            this.renderTypeInfo = function (ownership) {
+                var that = _this;
+                $.each(that.$('.type-radio'), function (index, item) {
+                    if (parseInt($(item).attr('data-type')) == ownership.getId()) {
+                        $(item).prop({ 'checked': 'checked' });
+                    }
+                    else {
+                        $(item).prop({ 'checked': '' });
+                    }
+                });
+            };
+            var that = this;
+            that.events = {
+                "click .flag-radio": "_clickFlagRadio",
+                "click .type-radio": "_clickTypeRadio",
+            };
+            that.delegateEvents();
+            that.views = new Array();
+        }
+        TreeInfoView.prototype.render = function () {
+            var that = this;
+            return that;
+        };
+        TreeInfoView.prototype.customRender = function (tree) {
+            var that = this;
+            that.tree = tree;
+            FoodParent.Controller.getInstance().fetchFlags(FoodParent.Controller.getInstance().fetchTypes, that.renderTreeInfo);
+        };
+        TreeInfoView.prototype._clickFlagRadio = function (event) {
+            var that = this;
+            $.each(that.$('.flag-radio'), function (index, item) {
+                if (item == event.target) {
+                    $(item).prop({ 'checked': 'checked' });
+                }
+                else {
+                    $(item).prop({ 'checked': '' });
+                }
+            });
+        };
+        TreeInfoView.prototype._clickTypeRadio = function (event) {
+            var that = this;
+            $.each(that.$('.type-radio'), function (index, item) {
+                if (item == event.target) {
+                    $(item).prop({ 'checked': 'checked' });
+                }
+                else {
+                    $(item).prop({ 'checked': '' });
+                }
+            });
+        };
+        TreeInfoView.prototype.getViews = function () {
+            var that = this;
+            return that.views;
+        };
+        return TreeInfoView;
+    })(Backbone.View);
+    FoodParent.TreeInfoView = TreeInfoView;
+})(FoodParent || (FoodParent = {}));
+
+///#source 1 1 /core/js/view/coverflowview.js
+var __extends = this.__extends || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    __.prototype = b.prototype;
+    d.prototype = new __();
+};
+var FoodParent;
+(function (FoodParent) {
+    var CoverflowView = (function (_super) {
+        __extends(CoverflowView, _super);
+        function CoverflowView(options) {
+            var _this = this;
+            _super.call(this, options);
+            this.bActive = true;
+            this.renderTreeInfo = function () {
+                var that = _this;
+                if (that.tree) {
+                    var template = _.template(FoodParent.Template.getInstance().getCoverflowTemplate());
+                    var notes = FoodParent.Model.getInstance().getNotes().where({ tree: that.tree.getId() });
+                    var data = {
+                        notes: notes,
+                    };
+                    that.$el.html(template(data));
+                    $.each(that.$('.wrapper-coverflow img'), function (index, item) {
+                        $(item).attr({
+                            width: (that.$('.wrapper-coverflow').innerHeight() - 12) * 4 / 3,
+                            height: (that.$('.wrapper-coverflow').innerHeight() - 12),
+                        });
+                    });
+                    that.$('#coverflow').coverflow({
+                        active: notes.length - 2,
+                        select: function (ev, ui) {
+                            var el = ui.active;
+                            console.log(el.attr('data-id'));
+                        }
+                    });
+                    that.$('#coverflow').coverflow('select', notes.length - 1);
+                }
+                else {
+                }
+                return that;
+            };
+            var that = this;
+            that.events = {
+                "click .nav-home": "_navHome",
+            };
+            that.delegateEvents();
+            that.views = new Array();
+        }
+        CoverflowView.prototype.render = function () {
+            var that = this;
+            var template = _.template(FoodParent.Template.getInstance().getCoverflowTemplate());
+            return that;
+        };
+        CoverflowView.prototype.getViews = function () {
+            var that = this;
+            return that.views;
+        };
+        CoverflowView.prototype.customRender = function (tree) {
+            var that = this;
+            that.tree = tree;
+            if (that.tree) {
+                FoodParent.Controller.getInstance().fetchNotes([that.tree.getId()], 100, 0, that.renderTreeInfo);
+            }
+        };
+        return CoverflowView;
+    })(Backbone.View);
+    FoodParent.CoverflowView = CoverflowView;
+})(FoodParent || (FoodParent = {}));
+
 ///#source 1 1 /core/js/model/model.js
 var FoodParent;
 (function (FoodParent) {
     var Model = (function () {
         function Model() {
+            var that = this;
             if (Model._instance) {
                 throw new Error("Error: Instantiation failed: Use Model.getInstance() instead of new.");
             }
@@ -30704,12 +36837,630 @@ var FoodParent;
         Model.getInstance = function () {
             return Model._instance;
         };
+        Model.prototype.getFoods = function () {
+            return this.foods;
+        };
+        Model.prototype.getTrees = function () {
+            return this.trees;
+        };
+        Model.prototype.getOwnerships = function () {
+            return this.ownerships;
+        };
+        Model.prototype.getFlags = function () {
+            return this.flags;
+        };
+        Model.prototype.getNotes = function () {
+            return this.notes;
+        };
+        Model.prototype.fetchFood = function (id) {
+            var that = this;
+            if (that.foods == undefined) {
+                that.foods = new FoodParent.Foods();
+            }
+            that.foods.fetch({
+                remove: false,
+                processData: true,
+                data: {
+                    id: id,
+                },
+                success: function (collection, response, options) {
+                    console.log("success fetch with " + collection.models.length + " items");
+                    console.log(that.foods);
+                },
+                error: function (collection, jqxhr, options) {
+                    console.log("error while fetching item data from the server");
+                }
+            });
+        };
+        Model.prototype.fetchTree = function (id, callback) {
+            var that = this;
+            if (that.trees == undefined) {
+                that.trees = new FoodParent.Trees();
+            }
+            if (that.foods == undefined) {
+                that.foods = new FoodParent.Foods();
+            }
+            that.trees.fetch({
+                remove: false,
+                processData: true,
+                data: {
+                    id: id,
+                    south: 0,
+                    north: 0,
+                    west: 0,
+                    east: 0,
+                },
+                success: function (collection, response, options) {
+                    console.log("success fetch with " + collection.models.length + " trees");
+                    that.fetchFoods(that.foods.getUndetectedIds(that.trees.getFoodIds()), callback);
+                },
+                error: function (collection, jqxhr, options) {
+                    console.log("error while fetching item data from the server");
+                    if (callback != undefined) {
+                        callback();
+                    }
+                }
+            });
+        };
+        Model.prototype.fetchTrees = function (bounds) {
+            var that = this;
+            if (that.trees == undefined) {
+                that.trees = new FoodParent.Trees();
+            }
+            if (that.foods == undefined) {
+                that.foods = new FoodParent.Foods();
+            }
+            that.trees.fetch({
+                remove: false,
+                processData: true,
+                data: {
+                    id: -1,
+                    south: bounds.getSouthEast().lat,
+                    north: bounds.getNorthEast().lat,
+                    west: bounds.getSouthWest().lng,
+                    east: bounds.getSouthEast().lng,
+                },
+                success: function (collection, response, options) {
+                    console.log("success fetch with " + collection.models.length + " trees");
+                    that.fetchFoods(that.foods.getUndetectedIds(that.trees.getFoodIds()));
+                },
+                error: function (collection, jqxhr, options) {
+                    console.log("error while fetching item data from the server");
+                }
+            });
+        };
+        Model.prototype.fetchFoods = function (ids, callback) {
+            var that = this;
+            if (that.foods == undefined) {
+                that.foods = new FoodParent.Foods();
+            }
+            if (ids.length != 0) {
+                that.foods.fetch({
+                    remove: false,
+                    processData: true,
+                    data: {
+                        ids: ids.toString(),
+                    },
+                    success: function (collection, response, options) {
+                        console.log("success fetch with " + collection.models.length + " foods");
+                        FoodParent.Controller.getInstance().renderTreesOnMap();
+                        if (callback != undefined) {
+                            callback();
+                        }
+                    },
+                    error: function (collection, jqxhr, options) {
+                        console.log("error while fetching item data from the server");
+                    }
+                });
+            }
+            else {
+                FoodParent.Controller.getInstance().renderTreesOnMap();
+                if (callback != undefined) {
+                    callback();
+                }
+            }
+        };
+        Model.prototype.fetchFlags = function (callback, callback2) {
+            var that = this;
+            if (that.flags == undefined) {
+                that.flags = new FoodParent.Flags();
+                that.flags.fetch({
+                    remove: false,
+                    processData: true,
+                    data: {},
+                    success: function (collection, response, options) {
+                        console.log("success fetch with " + collection.models.length + " flags");
+                        if (callback != undefined) {
+                            callback(callback2);
+                        }
+                    },
+                    error: function (collection, jqxhr, options) {
+                        console.log("error while fetching item data from the server");
+                    }
+                });
+            }
+            else {
+                if (callback != undefined) {
+                    callback(callback2);
+                }
+            }
+        };
+        Model.prototype.fetchTypes = function (callback, callback2) {
+            var that = this;
+            if (that.ownerships == undefined) {
+                that.ownerships = new FoodParent.Ownerships();
+                that.ownerships.fetch({
+                    remove: false,
+                    processData: true,
+                    data: {},
+                    success: function (collection, response, options) {
+                        console.log("success fetch with " + collection.models.length + " types");
+                        if (callback != undefined) {
+                            callback(callback2);
+                        }
+                    },
+                    error: function (collection, jqxhr, options) {
+                        console.log("error while fetching item data from the server");
+                    }
+                });
+            }
+            else {
+                if (callback != undefined) {
+                    callback(callback2);
+                }
+            }
+        };
+        Model.prototype.fetchNotes = function (trees, size, offset, callback) {
+            var that = this;
+            if (that.notes == undefined) {
+                that.notes = new FoodParent.Notes();
+            }
+            if (trees.length != 0) {
+                that.notes.fetch({
+                    remove: false,
+                    processData: true,
+                    data: {
+                        trees: trees.toString(),
+                        size: size,
+                        offset: offset,
+                    },
+                    success: function (collection, response, options) {
+                        console.log("success fetch with " + collection.models.length + " notes");
+                        if (callback != undefined) {
+                            callback();
+                        }
+                    },
+                    error: function (collection, jqxhr, options) {
+                        console.log("error while fetching item data from the server");
+                    }
+                });
+            }
+            else {
+                if (callback != undefined) {
+                    callback();
+                }
+            }
+        };
         Model._instance = new Model();
         return Model;
     })();
     FoodParent.Model = Model;
 })(FoodParent || (FoodParent = {}));
-//# sourceMappingURL=model.js.map
+
+///#source 1 1 /core/js/model/food.js
+var __extends = this.__extends || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    __.prototype = b.prototype;
+    d.prototype = new __();
+};
+var FoodParent;
+(function (FoodParent) {
+    var Food = (function (_super) {
+        __extends(Food, _super);
+        function Food(attributes, options) {
+            _super.call(this, attributes, options);
+            this.url = "food.php";
+            this.url = FoodParent.Setting.getInstance().getPhpDir() + this.url;
+            this.defaults = {
+                "id": 0,
+                "name": "",
+                "icon": "",
+                "description": "",
+                "updated": moment(new Date()).format(FoodParent.Setting.getInstance().getDateTimeFormat()),
+            };
+        }
+        Food.prototype.parse = function (response, options) {
+            if (response.id != null) {
+                response.id = parseInt(response.id);
+            }
+            response.updated = moment(response.updated).format(FoodParent.Setting.getInstance().getDateTimeFormat());
+            return _super.prototype.parse.call(this, response, options);
+        };
+        Food.prototype.toJSON = function (options) {
+            var clone = this.clone().attributes;
+            if (this.id != null) {
+                clone["id"] = this.id;
+            }
+            return clone;
+        };
+        Food.prototype.getId = function () {
+            return Math.floor(this.id);
+        };
+        Food.prototype.getName = function () {
+            return this.get('name');
+        };
+        Food.prototype.getIconPath = function () {
+            return FoodParent.Setting.getInstance().getCoreImageDir() + this.get('icon');
+        };
+        return Food;
+    })(Backbone.Model);
+    FoodParent.Food = Food;
+    var Foods = (function (_super) {
+        __extends(Foods, _super);
+        function Foods(models, options) {
+            _super.call(this, models, options);
+            this.url = "foods.php";
+            this.url = FoodParent.Setting.getInstance().getPhpDir() + this.url;
+            this.model = Food;
+        }
+        Foods.prototype.getUndetectedIds = function (ids) {
+            var that = this;
+            var result = Array();
+            result = ids;
+            $.each(that.models, function (index, model) {
+                var i = result.indexOf(model.getId());
+                if (i != -1) {
+                    result.splice(i, 1);
+                }
+            });
+            return result;
+        };
+        Foods.prototype.toArray = function () {
+            var that = this;
+            var result = new Array();
+            $.each(that.models, function (index, model) {
+                result.push([model.getName(), model.getId()]);
+            });
+            return result;
+        };
+        return Foods;
+    })(Backbone.Collection);
+    FoodParent.Foods = Foods;
+})(FoodParent || (FoodParent = {}));
+
+///#source 1 1 /core/js/model/tree.js
+var __extends = this.__extends || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    __.prototype = b.prototype;
+    d.prototype = new __();
+};
+var FoodParent;
+(function (FoodParent) {
+    var Tree = (function (_super) {
+        __extends(Tree, _super);
+        function Tree(attributes, options) {
+            _super.call(this, attributes, options);
+            this.url = "tree.php";
+            this.isSavable = true;
+            var that = this;
+            this.url = FoodParent.Setting.getInstance().getPhpDir() + this.url;
+            this.defaults = {
+                "id": 0,
+                "lat": 0,
+                "lng": 0,
+                "address": "",
+                "food": 0,
+                "type": 0,
+                "flag": 0,
+                "owner": 0,
+                "ownership": 0,
+                "updated": moment(new Date()).format(FoodParent.Setting.getInstance().getDateTimeFormat()),
+            };
+            that.off("change");
+            that.on("change", function (model, options) {
+                if (that.isSavable == false)
+                    return;
+                var attributes = model.attributes;
+                attributes.lat = parseFloat(attributes.lat);
+                attributes.lng = parseFloat(attributes.lng);
+                attributes.food = parseInt(attributes.food);
+                attributes.type = parseInt(attributes.type);
+                attributes.flag = parseInt(attributes.flag);
+                attributes.owner = parseInt(attributes.owner);
+                attributes.ownership = parseInt(attributes.ownership);
+                attributes.updated = moment(attributes.updated).format(FoodParent.Setting.getInstance().getDateTimeFormat());
+                that.isSavable = false;
+                model.save({}, {
+                    wait: true,
+                    success: function (model, response) {
+                        console.log(model);
+                        that.resetSavable();
+                    },
+                    error: function (error, response) {
+                        that.resetSavable();
+                    },
+                });
+            });
+        }
+        Tree.prototype.resetSavable = function () {
+            var that = this;
+            setTimeout(function () {
+                that.isSavable = true;
+            }, FoodParent.Setting.getInstance().getResetUpdateDelay());
+        };
+        Tree.prototype.parse = function (response, options) {
+            if (response.id != null) {
+                response.id = parseInt(response.id);
+            }
+            response.lat = parseFloat(response.lat);
+            response.lng = parseFloat(response.lng);
+            response.food = parseInt(response.food);
+            response.type = parseInt(response.type);
+            response.flag = parseInt(response.flag);
+            response.owner = parseInt(response.owner);
+            response.ownership = parseInt(response.ownership);
+            response.updated = moment(response.updated).format(FoodParent.Setting.getInstance().getDateTimeFormat());
+            return _super.prototype.parse.call(this, response, options);
+        };
+        Tree.prototype.toJSON = function (options) {
+            var clone = this.clone().attributes;
+            if (this.id != null) {
+                clone["id"] = this.id;
+            }
+            return clone;
+        };
+        Tree.prototype.getFoodId = function () {
+            return this.get('food');
+        };
+        Tree.prototype.getFlagId = function () {
+            return this.get('flag');
+        };
+        Tree.prototype.getOwnershipId = function () {
+            return Math.floor(this.get('ownership'));
+        };
+        Tree.prototype.getName = function () {
+            var that = this;
+            return ' #' + that.getId();
+        };
+        Tree.prototype.getLat = function () {
+            return parseFloat(this.get('lat'));
+        };
+        Tree.prototype.getLng = function () {
+            return parseFloat(this.get('lng'));
+        };
+        Tree.prototype.getId = function () {
+            return Math.floor(this.id);
+        };
+        Tree.prototype.getLocation = function () {
+            return new L.LatLng(this.getLat(), this.getLng());
+        };
+        return Tree;
+    })(Backbone.Model);
+    FoodParent.Tree = Tree;
+    var Trees = (function (_super) {
+        __extends(Trees, _super);
+        function Trees(models, options) {
+            _super.call(this, models, options);
+            this.url = "trees.php";
+            this.url = FoodParent.Setting.getInstance().getPhpDir() + this.url;
+            this.model = Tree;
+        }
+        Trees.prototype.getIds = function () {
+            var that = this;
+            var result = Array();
+            $.each(that.models, function (index, model) {
+                if (result.indexOf(model.getId()) == -1) {
+                    result.push(model.getId());
+                }
+            });
+            return result;
+        };
+        Trees.prototype.getFoodIds = function () {
+            var that = this;
+            var result = Array();
+            $.each(that.models, function (index, model) {
+                if (result.indexOf(model.getFoodId()) == -1) {
+                    result.push(model.getFoodId());
+                }
+            });
+            return result;
+        };
+        Trees.prototype.getFlagIds = function () {
+            var that = this;
+            var result = Array();
+            $.each(that.models, function (index, model) {
+                if (result.indexOf(model.getFlagId()) == -1) {
+                    result.push(model.getFlagId());
+                }
+            });
+            return result;
+        };
+        return Trees;
+    })(Backbone.Collection);
+    FoodParent.Trees = Trees;
+})(FoodParent || (FoodParent = {}));
+
+///#source 1 1 /core/js/model/flag.js
+var __extends = this.__extends || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    __.prototype = b.prototype;
+    d.prototype = new __();
+};
+var FoodParent;
+(function (FoodParent) {
+    var Flag = (function (_super) {
+        __extends(Flag, _super);
+        function Flag(attributes, options) {
+            _super.call(this, attributes, options);
+            this.url = "flag.php";
+            this.url = FoodParent.Setting.getInstance().getPhpDir() + this.url;
+            this.defaults = {
+                "id": 0,
+                "name": "",
+            };
+        }
+        Flag.prototype.parse = function (response, options) {
+            if (response.id != null) {
+                response.id = parseInt(response.id);
+            }
+            return _super.prototype.parse.call(this, response, options);
+        };
+        Flag.prototype.toJSON = function (options) {
+            var clone = this.clone().attributes;
+            if (this.id != null) {
+                clone["id"] = this.id;
+            }
+            return clone;
+        };
+        Flag.prototype.getId = function () {
+            return this.id;
+        };
+        Flag.prototype.getName = function () {
+            return this.get('name');
+        };
+        return Flag;
+    })(Backbone.Model);
+    FoodParent.Flag = Flag;
+    var Flags = (function (_super) {
+        __extends(Flags, _super);
+        function Flags(models, options) {
+            _super.call(this, models, options);
+            this.url = "flags.php";
+            this.url = FoodParent.Setting.getInstance().getPhpDir() + this.url;
+            this.model = Flag;
+        }
+        return Flags;
+    })(Backbone.Collection);
+    FoodParent.Flags = Flags;
+})(FoodParent || (FoodParent = {}));
+
+///#source 1 1 /core/js/model/type.js
+var __extends = this.__extends || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    __.prototype = b.prototype;
+    d.prototype = new __();
+};
+var FoodParent;
+(function (FoodParent) {
+    var Ownership = (function (_super) {
+        __extends(Ownership, _super);
+        function Ownership(attributes, options) {
+            _super.call(this, attributes, options);
+            this.url = "ownership.php";
+            this.url = FoodParent.Setting.getInstance().getPhpDir() + this.url;
+            this.defaults = {
+                "id": 0,
+                "name": "",
+            };
+        }
+        Ownership.prototype.parse = function (response, options) {
+            if (response.id != null) {
+                response.id = parseInt(response.id);
+            }
+            return _super.prototype.parse.call(this, response, options);
+        };
+        Ownership.prototype.toJSON = function (options) {
+            var clone = this.clone().attributes;
+            if (this.id != null) {
+                clone["id"] = this.id;
+            }
+            return clone;
+        };
+        Ownership.prototype.getId = function () {
+            return this.id;
+        };
+        Ownership.prototype.getName = function () {
+            return this.get('name');
+        };
+        return Ownership;
+    })(Backbone.Model);
+    FoodParent.Ownership = Ownership;
+    var Ownerships = (function (_super) {
+        __extends(Ownerships, _super);
+        function Ownerships(models, options) {
+            _super.call(this, models, options);
+            this.url = "ownerships.php";
+            this.url = FoodParent.Setting.getInstance().getPhpDir() + this.url;
+            this.model = Ownership;
+        }
+        return Ownerships;
+    })(Backbone.Collection);
+    FoodParent.Ownerships = Ownerships;
+})(FoodParent || (FoodParent = {}));
+
+///#source 1 1 /core/js/model/note.js
+var __extends = this.__extends || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    __.prototype = b.prototype;
+    d.prototype = new __();
+};
+var FoodParent;
+(function (FoodParent) {
+    var Note = (function (_super) {
+        __extends(Note, _super);
+        function Note(attributes, options) {
+            _super.call(this, attributes, options);
+            this.url = "note.php";
+            this.url = FoodParent.Setting.getInstance().getPhpDir() + this.url;
+            this.defaults = {
+                "id": 0,
+                "type": 0,
+                "tree": 0,
+                "person": 0,
+                "comment": "",
+                "picture": "",
+                "rate": 0,
+                "date": moment(new Date()).format(FoodParent.Setting.getInstance().getDateTimeFormat()),
+            };
+        }
+        Note.prototype.parse = function (response, options) {
+            if (response.id != null) {
+                response.id = parseInt(response.id);
+            }
+            response.type = parseFloat(response.type);
+            response.tree = parseFloat(response.tree);
+            response.person = parseInt(response.person);
+            response.rate = parseFloat(response.rate);
+            response.date = moment(response.date).format(FoodParent.Setting.getInstance().getDateTimeFormat());
+            return _super.prototype.parse.call(this, response, options);
+        };
+        Note.prototype.toJSON = function (options) {
+            var clone = this.clone().attributes;
+            if (this.id != null) {
+                clone["id"] = this.id;
+            }
+            return clone;
+        };
+        Note.prototype.getId = function () {
+            return Math.floor(this.id);
+        };
+        Note.prototype.getPicturePath = function () {
+            return FoodParent.Setting.getInstance().getContentsImageDir() + this.get('picture');
+        };
+        Note.prototype.getFakePicturePath = function () {
+            return FoodParent.Setting.getInstance().getCoreImageDir() + "placeholder-image.jpg";
+        };
+        return Note;
+    })(Backbone.Model);
+    FoodParent.Note = Note;
+    var Notes = (function (_super) {
+        __extends(Notes, _super);
+        function Notes(models, options) {
+            _super.call(this, models, options);
+            this.url = "notes.php";
+            this.url = FoodParent.Setting.getInstance().getPhpDir() + this.url;
+            this.model = Note;
+        }
+        return Notes;
+    })(Backbone.Collection);
+    FoodParent.Notes = Notes;
+})(FoodParent || (FoodParent = {}));
+
 ///#source 1 1 /core/js/controller/controller.js
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -30722,6 +37473,9 @@ var FoodParent;
     var Controller = (function () {
         function Controller(args) {
             this.bDebug = true;
+            this.fetchTypes = function (callback, callback2) {
+                FoodParent.Model.getInstance().fetchTypes(callback, callback2);
+            };
             if (Controller._instance) {
                 throw new Error("Error: Instantiation failed: Use Controller.getInstance() instead of new.");
             }
@@ -30731,21 +37485,54 @@ var FoodParent;
             return Controller._instance;
         };
         Controller.prototype.loadTreesPage = function () {
+            var that = this;
             if (this.bDebug)
                 console.log("loadTreesPage()");
-            FoodParent.View.getInstance().SetViewType(FoodParent.MainViewType.TREES);
+            FoodParent.View.getInstance().SetViewType(1 /* TREES */);
+            FoodParent.View.getInstance().render();
+        };
+        Controller.prototype.loadTreePage = function (id) {
+            var that = this;
+            that.current = id;
+            if (this.bDebug)
+                console.log("loadTreePage(" + id + ")");
+            FoodParent.View.getInstance().SetViewType(2 /* TREE */);
             FoodParent.View.getInstance().render();
         };
         Controller.prototype.loadNotePage = function () {
             if (this.bDebug)
                 console.log("loadNotePage()");
-            FoodParent.View.getInstance().SetViewType(FoodParent.MainViewType.NOTE);
+            FoodParent.View.getInstance().SetViewType(3 /* NOTE */);
             FoodParent.View.getInstance().render();
         };
         Controller.prototype.updateGeoLocation = function (callback) {
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(callback);
             }
+        };
+        Controller.prototype.fetchFood = function (id) {
+            FoodParent.Model.getInstance().fetchFood(id);
+        };
+        Controller.prototype.fetchTree = function (id, callback) {
+            FoodParent.Model.getInstance().fetchTree(id, callback);
+        };
+        Controller.prototype.fetchTrees = function (bounds) {
+            FoodParent.Model.getInstance().fetchTrees(bounds);
+        };
+        Controller.prototype.fetchFlags = function (callback, callback2) {
+            FoodParent.Model.getInstance().fetchFlags(callback, callback2);
+        };
+        Controller.prototype.fetchNotes = function (trees, size, offset, callback) {
+            FoodParent.Model.getInstance().fetchNotes(trees, size, offset, callback);
+        };
+        Controller.prototype.setMapView = function (view) {
+            FoodParent.View.getInstance().setMapView(view);
+        };
+        Controller.prototype.renderTreesOnMap = function () {
+            FoodParent.View.getInstance().renderTreesOnMap(FoodParent.Model.getInstance().getTrees());
+        };
+        Controller.prototype.getCurrent = function () {
+            return Math.floor(this.current);
         };
         Controller._instance = new Controller();
         return Controller;
@@ -30758,7 +37545,6 @@ var FoodParent;
                 throw new Error("Error: Instantiation failed: Use Router.getInstance() instead of new.");
             }
             Router._instance = this;
-            // Setup Router parameters
             this.routes = {
                 "": "home",
                 "trees": "trees",
@@ -30772,7 +37558,6 @@ var FoodParent;
             return Router._instance;
         };
         Router.prototype.home = function () {
-            //console.log("we have loaded the home page");
             this.navigate("trees", { trigger: true, replace: true });
         };
         Router.prototype.trees = function () {
@@ -30781,6 +37566,7 @@ var FoodParent;
         };
         Router.prototype.tree = function (id) {
             console.log("we have loaded the tree id: " + id);
+            Controller.getInstance().loadTreePage(id);
         };
         Router.prototype.note = function () {
             console.log("we have loaded the note");
@@ -30794,7 +37580,7 @@ var FoodParent;
     })(Backbone.Router);
     FoodParent.Router = Router;
 })(FoodParent || (FoodParent = {}));
-//# sourceMappingURL=controller.js.map
+
 ///#source 1 1 /core/js/controller/setting.js
 var FoodParent;
 (function (FoodParent) {
@@ -30814,26 +37600,45 @@ var FoodParent;
         Setting.prototype.getBaseUrl = function () {
             return this.baseUrl;
         };
+        Setting.prototype.getPhpDir = function () {
+            return this.baseUrl + "core/php/";
+        };
+        Setting.prototype.getContentsImageDir = function () {
+            return this.baseUrl + "contents/image/";
+        };
+        Setting.prototype.getCoreImageDir = function () {
+            return this.baseUrl + "core/image/";
+        };
+        Setting.prototype.getMarkerShadowPath = function () {
+            return this.getCoreImageDir() + "marker-shadow.png";
+        };
         Setting.prototype.getTileMapAddress = function () {
-            //return 'http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png';
-            //return 'http://{s}.tile.stamen.com/watercolor/{z}/{x}/{y}.jpg'
-            return 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+            return 'http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png';
         };
         Setting.prototype.getDefaultMapZoomLevel = function () {
-            return 18;
+            return 10;
+        };
+        Setting.prototype.getDefaultSmallMapZoomLevel = function () {
+            return 11;
         };
         Setting.prototype.getMapMinZoomLevel = function () {
-            return 17;
+            return 5;
         };
         Setting.prototype.getMapMaxZoomLevel = function () {
             return 19;
+        };
+        Setting.prototype.getDateTimeFormat = function () {
+            return "YYYY-MM-DD HH:mm";
+        };
+        Setting.prototype.getResetUpdateDelay = function () {
+            return 100;
         };
         Setting._instance = new Setting();
         return Setting;
     })();
     FoodParent.Setting = Setting;
 })(FoodParent || (FoodParent = {}));
-//# sourceMappingURL=setting.js.map
+
 ///#source 1 1 /core/js/controller/headerviewfactory.js
 var FoodParent;
 (function (FoodParent) {
@@ -30855,7 +37660,7 @@ var FoodParent;
     })();
     FoodParent.HeaderFactory = HeaderFactory;
 })(FoodParent || (FoodParent = {}));
-//# sourceMappingURL=headerviewfactory.js.map
+
 ///#source 1 1 /core/js/controller/treesviewfactory.js
 var FoodParent;
 (function (FoodParent) {
@@ -30877,7 +37682,7 @@ var FoodParent;
     })();
     FoodParent.TreesViewFactory = TreesViewFactory;
 })(FoodParent || (FoodParent = {}));
-//# sourceMappingURL=treesviewfactory.js.map
+
 ///#source 1 1 /core/js/controller/mapviewfactory.js
 var FoodParent;
 (function (FoodParent) {
@@ -30891,12 +37696,158 @@ var FoodParent;
         MapViewFactory.getInstance = function () {
             return MapViewFactory._instance;
         };
-        MapViewFactory.prototype.create = function (el) {
-            return new FoodParent.MapView({ el: el });
+        MapViewFactory.prototype.create = function (el, bCentered) {
+            var view = new FoodParent.MapView({ el: el });
+            view.setIsCentered(true);
+            return view;
+        };
+        MapViewFactory.prototype.create2 = function (el, bCentered) {
+            var view = new FoodParent.MapView({ el: el });
+            view.setIsCentered(false);
+            return view;
         };
         MapViewFactory._instance = new MapViewFactory();
         return MapViewFactory;
     })();
     FoodParent.MapViewFactory = MapViewFactory;
 })(FoodParent || (FoodParent = {}));
-//# sourceMappingURL=mapviewfactory.js.map
+
+///#source 1 1 /core/js/controller/markerviewfactory.js
+var FoodParent;
+(function (FoodParent) {
+    var MarkerViewFactory = (function () {
+        function MarkerViewFactory(args) {
+            if (MarkerViewFactory._instance) {
+                throw new Error("Error: Instantiation failed: Use MarkerViewFactory.getInstance() instead of new.");
+            }
+            MarkerViewFactory._instance = this;
+        }
+        MarkerViewFactory.getInstance = function () {
+            return MarkerViewFactory._instance;
+        };
+        MarkerViewFactory.prototype.create = function (tree) {
+            var view = new FoodParent.MarkerView();
+            var food = FoodParent.Model.getInstance().getFoods().findWhere({ id: tree.getFoodId() });
+            var icon = new L.Icon({
+                iconUrl: food.getIconPath(),
+                shadowUrl: FoodParent.Setting.getInstance().getMarkerShadowPath(),
+                iconSize: new L.Point(40, 40),
+                iconAnchor: new L.Point(20, 40),
+                shadowAnchor: new L.Point(9, 38),
+                popupAnchor: new L.Point(0, -40),
+            });
+            view.create(tree.getId(), food.getName() + tree.getName(), icon, tree.getLat(), tree.getLng());
+            return view;
+        };
+        MarkerViewFactory.prototype.create2 = function (tree) {
+            var view = new FoodParent.MarkerView();
+            var food = FoodParent.Model.getInstance().getFoods().findWhere({ id: tree.getFoodId() });
+            var icon = new L.Icon({
+                iconUrl: food.getIconPath(),
+                shadowUrl: FoodParent.Setting.getInstance().getMarkerShadowPath(),
+                iconSize: new L.Point(40, 40),
+                iconAnchor: new L.Point(20, 40),
+                shadowAnchor: new L.Point(9, 38),
+                popupAnchor: new L.Point(0, -40),
+            });
+            view.create2(tree.getId(), food.getName() + tree.getName(), icon, tree.getLat(), tree.getLng());
+            return view;
+        };
+        MarkerViewFactory._instance = new MarkerViewFactory();
+        return MarkerViewFactory;
+    })();
+    FoodParent.MarkerViewFactory = MarkerViewFactory;
+})(FoodParent || (FoodParent = {}));
+
+///#source 1 1 /core/js/controller/sideviewfactory.js
+var FoodParent;
+(function (FoodParent) {
+    var SideViewFactory = (function () {
+        function SideViewFactory(args) {
+            if (SideViewFactory._instance) {
+                throw new Error("Error: Instantiation failed: Use SideViewFactory.getInstance() instead of new.");
+            }
+            SideViewFactory._instance = this;
+        }
+        SideViewFactory.getInstance = function () {
+            return SideViewFactory._instance;
+        };
+        SideViewFactory.prototype.create = function (el) {
+            return new FoodParent.SideInfoView({ el: el });
+        };
+        SideViewFactory._instance = new SideViewFactory();
+        return SideViewFactory;
+    })();
+    FoodParent.SideViewFactory = SideViewFactory;
+})(FoodParent || (FoodParent = {}));
+
+///#source 1 1 /core/js/controller/treeviewfactory.js
+var FoodParent;
+(function (FoodParent) {
+    var TreeViewFactory = (function () {
+        function TreeViewFactory(args) {
+            if (TreeViewFactory._instance) {
+                throw new Error("Error: Instantiation failed: Use TreeViewFactory.getInstance() instead of new.");
+            }
+            TreeViewFactory._instance = this;
+        }
+        TreeViewFactory.getInstance = function () {
+            return TreeViewFactory._instance;
+        };
+        TreeViewFactory.prototype.create = function (el, id) {
+            var view = new FoodParent.TreeView({ el: el });
+            view.setCurrent(id);
+            return view;
+        };
+        TreeViewFactory._instance = new TreeViewFactory();
+        return TreeViewFactory;
+    })();
+    FoodParent.TreeViewFactory = TreeViewFactory;
+})(FoodParent || (FoodParent = {}));
+
+///#source 1 1 /core/js/controller/treeinfoviewfactory.js
+var FoodParent;
+(function (FoodParent) {
+    var TreeInfoViewFactory = (function () {
+        function TreeInfoViewFactory(args) {
+            if (TreeInfoViewFactory._instance) {
+                throw new Error("Error: Instantiation failed: Use TreeInfoViewFactory.getInstance() instead of new.");
+            }
+            TreeInfoViewFactory._instance = this;
+        }
+        TreeInfoViewFactory.getInstance = function () {
+            return TreeInfoViewFactory._instance;
+        };
+        TreeInfoViewFactory.prototype.create = function (el) {
+            var view = new FoodParent.TreeInfoView({ el: el });
+            return view;
+        };
+        TreeInfoViewFactory._instance = new TreeInfoViewFactory();
+        return TreeInfoViewFactory;
+    })();
+    FoodParent.TreeInfoViewFactory = TreeInfoViewFactory;
+})(FoodParent || (FoodParent = {}));
+
+///#source 1 1 /core/js/controller/coverflowviewfactory.js
+var FoodParent;
+(function (FoodParent) {
+    var CoverflowViewFactory = (function () {
+        function CoverflowViewFactory(args) {
+            if (CoverflowViewFactory._instance) {
+                throw new Error("Error: Instantiation failed: Use CoverflowViewFactory.getInstance() instead of new.");
+            }
+            CoverflowViewFactory._instance = this;
+        }
+        CoverflowViewFactory.getInstance = function () {
+            return CoverflowViewFactory._instance;
+        };
+        CoverflowViewFactory.prototype.create = function (el) {
+            var view = new FoodParent.CoverflowView({ el: el });
+            return view;
+        };
+        CoverflowViewFactory._instance = new CoverflowViewFactory();
+        return CoverflowViewFactory;
+    })();
+    FoodParent.CoverflowViewFactory = CoverflowViewFactory;
+})(FoodParent || (FoodParent = {}));
+

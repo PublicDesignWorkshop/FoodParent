@@ -20,15 +20,21 @@ var FoodParent;
         }
         TreesView.prototype.render = function () {
             var that = this;
-            // add a new view
             var template = _.template(FoodParent.Template.getInstance().getMainTreesViewTemplate());
             var data = {};
             that.$el.html(template(data));
-            that.views.push(FoodParent.MapViewFactory.getInstance().create(that.$('.panel-map')).render());
+            var view1 = FoodParent.MapViewFactory.getInstance().create(that.$('.panel-map'), true).render();
+            that.views.push(view1);
+            var view2 = FoodParent.SideViewFactory.getInstance().create(that.$('.panel-sideinfo')).render();
+            view2.setMapView(view1);
+            that.views.push(view2);
             return that;
+        };
+        TreesView.prototype.getViews = function () {
+            var that = this;
+            return that.views;
         };
         return TreesView;
     })(Backbone.View);
     FoodParent.TreesView = TreesView;
 })(FoodParent || (FoodParent = {}));
-//# sourceMappingURL=treesview.js.map

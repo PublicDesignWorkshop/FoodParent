@@ -16,23 +16,41 @@ var FoodParent;
         Setting.prototype.getBaseUrl = function () {
             return this.baseUrl;
         };
+        Setting.prototype.getPhpDir = function () {
+            return this.baseUrl + "core/php/";
+        };
+        Setting.prototype.getContentsImageDir = function () {
+            return this.baseUrl + "contents/image/";
+        };
+        Setting.prototype.getCoreImageDir = function () {
+            return this.baseUrl + "core/image/";
+        };
+        Setting.prototype.getMarkerShadowPath = function () {
+            return this.getCoreImageDir() + "marker-shadow.png";
+        };
         Setting.prototype.getTileMapAddress = function () {
-            //return 'http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png';
-            //return 'http://{s}.tile.stamen.com/watercolor/{z}/{x}/{y}.jpg'
-            return 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+            return 'http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png';
         };
         Setting.prototype.getDefaultMapZoomLevel = function () {
-            return 18;
+            return 10;
+        };
+        Setting.prototype.getDefaultSmallMapZoomLevel = function () {
+            return 11;
         };
         Setting.prototype.getMapMinZoomLevel = function () {
-            return 17;
+            return 5;
         };
         Setting.prototype.getMapMaxZoomLevel = function () {
             return 19;
+        };
+        Setting.prototype.getDateTimeFormat = function () {
+            return "YYYY-MM-DD HH:mm";
+        };
+        Setting.prototype.getResetUpdateDelay = function () {
+            return 100;
         };
         Setting._instance = new Setting();
         return Setting;
     })();
     FoodParent.Setting = Setting;
 })(FoodParent || (FoodParent = {}));
-//# sourceMappingURL=setting.js.map

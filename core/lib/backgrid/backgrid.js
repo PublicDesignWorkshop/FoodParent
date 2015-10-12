@@ -258,7 +258,7 @@ _.extend(NumberFormatter.prototype, {
      separator thousands. May be an empty string.
    */
   defaults: {
-    decimals: 2,
+    decimals: 4,
     decimalSeparator: '.',
     orderSeparator: ','
   },

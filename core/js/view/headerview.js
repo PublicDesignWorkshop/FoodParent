@@ -23,7 +23,6 @@ var FoodParent;
         }
         HeaderView.prototype.render = function () {
             var that = this;
-            // add a new view
             var template = _.template(FoodParent.Template.getInstance().getMainHeaderTemplate());
             var data = {
                 site: FoodParent.Localization.getInstance().getSiteText(),
@@ -34,19 +33,6 @@ var FoodParent;
             that.$el.html(template(data));
             return that;
         };
-        /*
-        _clickName(event: Event): void {
-            var that: HeaderView = this;
-            that.bExpanded = !that.bExpanded;
-
-            if (that.bExpanded) {
-                //new DetailView({ model: this.model, el: this.$('.detail') }).render();
-            } else {
-                //this.$('.detail').empty();
-            }
-            event.preventDefault();
-        }
-        */
         HeaderView.prototype._navHome = function (event) {
             event.preventDefault();
             FoodParent.Router.getInstance().navigate("home", { trigger: true, replace: false });
@@ -67,4 +53,3 @@ var FoodParent;
     })(Backbone.View);
     FoodParent.HeaderView = HeaderView;
 })(FoodParent || (FoodParent = {}));
-//# sourceMappingURL=headerview.js.map

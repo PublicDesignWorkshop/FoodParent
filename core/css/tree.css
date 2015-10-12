@@ -1,0 +1,104 @@
+﻿@media all {
+    .panel-body #map-tree {
+        border-top: 1px dashed #878787;
+        border-right: 1px dashed #878787;
+    }
+    .panel-tree-info {
+        height: 65%;
+        overflow-x: hidden;
+        overflow-y: scroll;
+        border-right: 1px dashed #878787;
+    }
+
+    .panel-tree-map {
+        height: 35%;
+    }
+
+    .leaflet-popup-content-wrapper {
+        opacity: 0.75;
+    }
+
+    #map-tree .leaflet-popup-content {
+        height: 16px;
+        margin: 8px;
+	}
+
+    #map-tree .leaflet-popup-content span {
+        cursor: pointer;
+	}
+
+    .panel-tree-info .split {
+        height: 30px;
+        text-align: left;
+    }
+
+    .panel-tree-info .split-rect {
+        height: 6px;
+        background-color: #ffffff;
+        margin-top: 12px;
+    }
+
+    .panel-tree-info h1 {
+        font-size: x-large;
+        font-weight: 700;
+    }
+    .panel-tree-info h2 {
+        font-weight: 700;
+        font-size: large;
+        margin: 8px;
+        margin-left: 0;
+    }
+    .panel-tree-info div {
+        font-size: medium;
+    }
+
+    .circle-progress {
+        margin-top: 20px;
+    }
+
+    .circle-progress-left {
+        margin-top: 20px;
+        padding-right: 0;
+    }
+
+    .circle-progress-right {
+        margin-top: 20px;
+        padding-left: 0;
+        -ms-word-wrap: break-word;
+        word-wrap: break-word;
+    }
+
+    .panel-breadcrumb {
+        height: 8%;
+        background-color: #fefefe;
+        border-bottom: 1px solid #878787;
+    }
+
+    .panel-tree-coverflow {
+        padding: 12px;
+        height: 50%;
+        background-color: #fefefe;
+        border-bottom: 1px solid #878787;
+    }
+
+    .panel-tree-detail {
+        height: 42%;
+        background-color: #fefefe;
+    }
+
+    .wrapper-coverflow {
+        padding-top: 2px;
+        height: 85%;
+    }
+
+    .wrapper-coverflow img {
+        border-radius: 16px;
+        border: 8px solid rgba(255, 255, 255, 0.5);
+        -webkit-box-shadow: 0  0 4px 1px rgba(0,0,0,0.25);
+        -moz-box-shadow: 0  0 4px 1px rgba(0,0,0,0.25);
+        box-shadow: 0  0 4px 1px rgba(0,0,0,0.25);
+    }
+    .label-coverflow {
+        height: 15%;
+    }
+}

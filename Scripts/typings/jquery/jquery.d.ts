@@ -1269,6 +1269,9 @@ interface JQueryStatic {
  * The jQuery instance members
  */
 interface JQuery {
+    circleProgress(option?: any): any;
+    coverflow(option1?: any, option2?: any): any;
+    bootstrapToggle(option?: any): any;
     /**
      * Register a handler to be called when Ajax requests complete. This is an AjaxEvent.
      *
