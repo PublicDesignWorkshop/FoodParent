@@ -44,10 +44,16 @@ var FoodParent;
             return 19;
         };
         Setting.prototype.getDateTimeFormat = function () {
-            return "YYYY-MM-DD HH:mm";
+            return "YYYY-MM-DD HH:mm:ss";
+        };
+        Setting.prototype.getDateFormat = function () {
+            return "DD MMM";
         };
         Setting.prototype.getResetUpdateDelay = function () {
             return 100;
+        };
+        Setting.prototype.getNumRecentActivityShown = function () {
+            return 5;
         };
         Setting._instance = new Setting();
         return Setting;

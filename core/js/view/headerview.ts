@@ -8,7 +8,7 @@
             that.events = <any>{
                 "click .nav-home": "_navHome",
                 "click .nav-trees": "_navTrees",
-                "click .nav-note": "_navNote",
+                "click .nav-people": "_navPeople",
                 "click .nav-about": "_navAbout",
                 
             };
@@ -22,11 +22,10 @@
             var data = {
                 site: Localization.getInstance().getSiteText(),
                 trees: Localization.getInstance().getTreesText(),
-                note: Localization.getInstance().getNoteText(),
+                people: Localization.getInstance().getPeopleText(),
                 about: Localization.getInstance().getAboutText(),
             }
             that.$el.html(template(data));
-
             
             return that;
         }
@@ -53,9 +52,9 @@
             event.preventDefault();
             Router.getInstance().navigate("trees", { trigger: true, replace: false });
         }
-        _navNote(event: Event): void {
+        _navPeople(event: Event): void {
             event.preventDefault();
-            Router.getInstance().navigate("note", { trigger: true, replace: false });
+            Router.getInstance().navigate("people", { trigger: true, replace: false });
         }
         _navAbout(event: Event): void {
             event.preventDefault();

@@ -146,7 +146,37 @@ var FoodParent;
                 emptyText: FoodParent.Localization.getInstance().getNoDataText(),
             });
             grid.render();
-            that.$(".list-location").append(grid.el);
+            that.$(".list-location").html(grid.el);
+        };
+        MapView.prototype.customRender = function (trees) {
+            var that = this;
+            if (!that.bGraphicView) {
+                if (that.map) {
+                    that.map.remove();
+                    that.map = undefined;
+                    that.$el.removeClass('leaflet-container');
+                    that.$el.removeClass('leaflet-touch');
+                    that.$el.removeClass('leaflet-fade-anim');
+                    that.$el.removeAttr('tabindex');
+                }
+                var template = _.template(FoodParent.Template.getInstance().getLocationTableTemplate());
+                var data = {
+                    title: FoodParent.Localization.getInstance().getTreeListText(),
+                };
+                that.$el.html(template(data));
+                TreeColumn[1].cell = Backgrid.SelectCell.extend({
+                    optionValues: FoodParent.Model.getInstance().getFoods().toArray(),
+                });
+                var grid = new Backgrid.Grid({
+                    columns: TreeColumn,
+                    collection: trees,
+                    emptyText: FoodParent.Localization.getInstance().getNoDataText(),
+                });
+                grid.render();
+                that.$(".list-location").html(grid.el);
+            }
+            else {
+            }
         };
         return MapView;
     })(Backbone.View);

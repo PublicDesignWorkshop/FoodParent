@@ -35531,1522 +35531,6 @@ $(document).ready(function () {
     Backbone.history.start();
 });
 
-///#source 1 1 /core/js/view/gridformat.js
-var DatePickerCellEditor = Backgrid.InputCellEditor.extend({
-    events: {},
-    initialize: function () {
-        Backgrid.InputCellEditor.prototype.initialize.apply(this, arguments);
-        var input = this;
-        $(this.el).datetimepicker({
-            defaultDate: input.model.get("date"),
-            format: FoodParent.Setting.getInstance().getDateTimeFormat(),
-        }).on("dp.hide", function () {
-            if ($(this).data("date") != undefined) {
-                var command = new Backgrid.Command({});
-                input.model.set(input.column.get("name"), $(this).data("date"));
-                input.model.trigger("backgrid:edited", input.model, input.column, command);
-            }
-        });
-    },
-});
-var TreeDeleteCell = Backgrid.Cell.extend({
-    template: _.template('<button type="button" class="btn btn-default btn-table"><span class="glyphicon glyphicon-remove"></span></button>'),
-    events: {
-        "click": "deleteRow"
-    },
-    deleteRow: function (e) {
-        var r = confirm(FoodParent.Localization.getInstance().getDeleteConfirmText());
-        if (r == true) {
-            e.preventDefault();
-            this.model.collection.remove(this.model);
-            this.model.destroy({
-                wait: true,
-                success: function (model, response) {
-                },
-                error: function () {
-                },
-            });
-        }
-    },
-    render: function () {
-        $(this.el).html(this.template());
-        this.delegateEvents();
-        return this;
-    }
-});
-var TreeDetailCell = Backgrid.Cell.extend({
-    template: _.template('<button type="button" class="btn btn-default btn-table"><span class="glyphicon glyphicon-log-in"></span></button>'),
-    events: {
-        "click": "showDetail"
-    },
-    showDetail: function (e) {
-        FoodParent.Router.getInstance().navigate("tree/" + this.model.getId(), { trigger: true });
-    },
-    render: function () {
-        $(this.el).html(this.template());
-        this.delegateEvents();
-        return this;
-    }
-});
-var TreeColumn = [
-    {
-        name: "id",
-        label: "#",
-        editable: false,
-        cell: "string",
-    },
-    {
-        name: "food",
-        label: "Type of Food",
-        editable: true,
-    },
-    {
-        name: "lat",
-        label: "Latitude",
-        editable: true,
-        cell: "number",
-    },
-    {
-        name: "lng",
-        label: "Longitude",
-        editable: true,
-        cell: "number",
-    },
-    {
-        name: "address",
-        label: "Address",
-        editable: true,
-        cell: "string",
-    },
-    {
-        name: "updated",
-        label: "Updated",
-        editable: false,
-        cell: Backgrid.Cell.extend({ editor: DatePickerCellEditor }),
-    },
-    {
-        label: "Detail",
-        sortable: false,
-        editable: false,
-        cell: TreeDetailCell,
-    },
-    {
-        label: "Delete",
-        sortable: false,
-        editable: false,
-        cell: TreeDeleteCell,
-    }
-];
-
-///#source 1 1 /core/js/view/view.js
-var __extends = this.__extends || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    __.prototype = b.prototype;
-    d.prototype = new __();
-};
-var FoodParent;
-(function (FoodParent) {
-    (function (MainViewType) {
-        MainViewType[MainViewType["NONE"] = 0] = "NONE";
-        MainViewType[MainViewType["TREES"] = 1] = "TREES";
-        MainViewType[MainViewType["TREE"] = 2] = "TREE";
-        MainViewType[MainViewType["NOTE"] = 3] = "NOTE";
-        MainViewType[MainViewType["ABOUT"] = 4] = "ABOUT";
-    })(FoodParent.MainViewType || (FoodParent.MainViewType = {}));
-    var MainViewType = FoodParent.MainViewType;
-    var View = (function (_super) {
-        __extends(View, _super);
-        function View(options) {
-            var _this = this;
-            _super.call(this, options);
-            this.renderTreeInfo = function (tree) {
-                var that = _this;
-                switch (that.viewType) {
-                    case 1 /* TREES */:
-                        var views = that.bodyView.getViews();
-                        var validView;
-                        $.each(views, function (index, view) {
-                            if (view instanceof FoodParent.SideInfoView) {
-                                validView = view;
-                            }
-                        });
-                        validView.customRender(tree);
-                        break;
-                    case 2 /* TREE */:
-                        var views = that.bodyView.getViews();
-                        var validView2;
-                        var validView3;
-                        $.each(views, function (index, view) {
-                            if (view instanceof FoodParent.TreeInfoView) {
-                                validView2 = view;
-                            }
-                            if (view instanceof FoodParent.CoverflowView) {
-                                validView3 = view;
-                            }
-                        });
-                        validView2.customRender(tree);
-                        validView3.customRender(tree);
-                        break;
-                    case 3 /* NOTE */:
-                        break;
-                    case 4 /* ABOUT */:
-                        break;
-                }
-            };
-            if (View._instance) {
-                throw new Error("Error: Instantiation failed: Use View.getInstance() instead of new.");
-            }
-            View._instance = this;
-            var that = this;
-        }
-        View.setElement = function (options) {
-            View._instance.setElement(options.el);
-        };
-        View.getInstance = function () {
-            return View._instance;
-        };
-        View.prototype.SetViewType = function (viewType) {
-            this.viewType = viewType;
-        };
-        View.prototype.getViewType = function () {
-            return this.viewType;
-        };
-        View.prototype.setMapView = function (mapView) {
-            this.mapView = mapView;
-        };
-        View.prototype.getMapView = function () {
-            return this.mapView;
-        };
-        View.prototype.render = function () {
-            var that = this;
-            var template = _.template(FoodParent.Template.getInstance().getBaseTemplate());
-            var data = {};
-            that.$el.html(template(data));
-            if (that.headerView != undefined) {
-                that.headerView.destroy();
-            }
-            that.headerView = FoodParent.HeaderFactory.getInstance().create(that.$('#wrapper-main-header'));
-            that.headerView.render();
-            if (that.bodyView != undefined) {
-                that.bodyView.destroy();
-            }
-            that.mapView = undefined;
-            switch (that.viewType) {
-                case 1 /* TREES */:
-                    that.bodyView = FoodParent.TreesViewFactory.getInstance().create(that.$('#wrapper-main-body'));
-                    that.bodyView.render();
-                    break;
-                case 2 /* TREE */:
-                    that.bodyView = FoodParent.TreeViewFactory.getInstance().create(that.$('#wrapper-main-body'), FoodParent.Controller.getInstance().getCurrent());
-                    that.bodyView.render();
-                    break;
-                case 3 /* NOTE */:
-                    break;
-                case 4 /* ABOUT */:
-                    break;
-            }
-            return that;
-        };
-        View.prototype.renderTreesOnMap = function (trees) {
-            var that = this;
-            if (that.mapView != undefined) {
-                switch (that.viewType) {
-                    case 1 /* TREES */:
-                        var exist = new FoodParent.Trees();
-                        var markers = that.mapView.getAllMarkers();
-                        $.each(trees.models, function (i, model) {
-                            $.each(markers, function (j, marker) {
-                                var food = FoodParent.Model.getInstance().getFoods().findWhere({
-                                    id: model.getFoodId()
-                                });
-                                if (marker.options.name == (food.getName() + model.getName())) {
-                                    exist.add(model);
-                                }
-                            });
-                        });
-                        $.each(markers, function (j, marker) {
-                            var bDeleted = true;
-                            $.each(exist.models, function (i, model) {
-                                var food = FoodParent.Model.getInstance().getFoods().findWhere({
-                                    id: model.getFoodId()
-                                });
-                                if (marker.options.name != (food.getName() + model.getName())) {
-                                    bDeleted = false;
-                                }
-                            });
-                            if (bDeleted) {
-                                that.mapView.removeMarker(marker);
-                            }
-                        });
-                        $.each(trees.models, function (index, model) {
-                            if (exist.findWhere({ id: model.getId() }) == undefined) {
-                                that.createMarker(model);
-                            }
-                        });
-                        break;
-                    case 2 /* TREE */:
-                        var exist = new FoodParent.Trees();
-                        var markers = that.mapView.getAllMarkers();
-                        $.each(trees.models, function (i, model) {
-                            $.each(markers, function (j, marker) {
-                                var food = FoodParent.Model.getInstance().getFoods().findWhere({
-                                    id: model.getFoodId()
-                                });
-                                if (marker.options.name == (food.getName() + model.getName())) {
-                                    exist.add(model);
-                                }
-                            });
-                        });
-                        $.each(markers, function (j, marker) {
-                            var bDeleted = true;
-                            $.each(exist.models, function (i, model) {
-                                var food = FoodParent.Model.getInstance().getFoods().findWhere({
-                                    id: model.getFoodId()
-                                });
-                                if (marker.options.name != (food.getName() + model.getName())) {
-                                    bDeleted = false;
-                                }
-                            });
-                            if (bDeleted) {
-                                that.mapView.removeMarker(marker);
-                            }
-                        });
-                        var tree = FoodParent.Model.getInstance().getTrees().findWhere({ id: FoodParent.Controller.getInstance().getCurrent() });
-                        $.each(trees.models, function (index, model) {
-                            if (exist.findWhere({ id: model.getId() }) == undefined) {
-                                that.createMarker2(model, (tree == model));
-                            }
-                        });
-                        break;
-                    case 3 /* NOTE */:
-                        break;
-                    case 4 /* ABOUT */:
-                        break;
-                }
-            }
-        };
-        View.prototype.createMarker = function (model) {
-            var that = this;
-            var view = FoodParent.MarkerViewFactory.getInstance().create(model);
-            view.getMarker().on('popupopen', function (event) {
-                that.renderTreeInfo(model);
-                $('.leaflet-popup-content .glyphicon').off('click');
-                $('.leaflet-popup-content .glyphicon').on('click', function (event) {
-                    FoodParent.Router.getInstance().navigate("tree/" + $('.leaflet-popup-content .glyphicon').attr('data-id'), { trigger: true });
-                });
-            });
-            view.getMarker().on('popupclose', function () {
-                that.renderTreeInfo(null);
-            });
-            that.mapView.addMarker(view.getMarker());
-        };
-        View.prototype.createMarker2 = function (model, bPopupOpen) {
-            var that = this;
-            var view = FoodParent.MarkerViewFactory.getInstance().create2(model);
-            view.getMarker().on('click', function (event) {
-                if (event.target._popup == undefined) {
-                }
-                else {
-                    this.openPopup();
-                }
-            });
-            view.getMarker().on('popupopen', function (event) {
-                that.renderTreeInfo(model);
-                FoodParent.Router.getInstance().navigate("tree/" + $('.leaflet-popup-content span').attr('data-id'), { trigger: false });
-            });
-            view.getMarker().on('popupclose', function () {
-                that.renderTreeInfo(null);
-            });
-            that.mapView.addMarker(view.getMarker());
-            if (bPopupOpen) {
-                view.getMarker().openPopup();
-            }
-        };
-        View._instance = new View();
-        return View;
-    })(Backbone.View);
-    FoodParent.View = View;
-})(FoodParent || (FoodParent = {}));
-
-///#source 1 1 /core/js/view/template.js
-var FoodParent;
-(function (FoodParent) {
-    var Template = (function () {
-        function Template(args) {
-            if (Template._instance) {
-                throw new Error("Error: Instantiation failed: Use Template.getInstance() instead of new.");
-            }
-            Template._instance = this;
-        }
-        Template.getInstance = function () {
-            return Template._instance;
-        };
-        Template.prototype.getBaseTemplate = function () {
-            var template = "";
-            template += '<div id="wrapper-main-body"></div>';
-            template += '<div id="wrapper-main-header"></div>';
-            return template;
-        };
-        Template.prototype.getMainHeaderTemplate = function () {
-            var template = "";
-            template += '<div class="row">';
-            template += '<div class="col-xs-3 btn-nav nav-home"><%= site %></div>';
-            template += '<div class="col-xs-3 btn-nav nav-trees"><%= trees %></div>';
-            template += '<div class="col-xs-3 btn-nav nav-note"><%= note %></div>';
-            template += '<div class="col-xs-3 btn-nav nav-about"><%= about %></div>';
-            template += '</div>';
-            return template;
-        };
-        Template.prototype.getMainTreeViewTemplate = function () {
-            var template = "";
-            template += '<div class="col-xs-3 panel-body">';
-            template += '<div class="panel-tree-info"></div>';
-            template += '<div id="map-tree" class="panel-tree-map"></div>';
-            template += '</div>';
-            template += '<div class="col-xs-9 panel-body">';
-            template += '<div class="panel-breadcrumb"></div>';
-            template += '<div class="panel-tree-coverflow"></div>';
-            template += '<div class="panel-tree-detail"></div>';
-            template += '</div>';
-            return template;
-        };
-        Template.prototype.getMainTreesViewTemplate = function () {
-            var template = "";
-            template += '<div id="map-trees" class="col-xs-9 panel-body panel-map"></div>';
-            template += '<div class="col-xs-3 panel-body panel-sideinfo"></div>';
-            return template;
-        };
-        Template.prototype.getEmptySideInfoViewTemplate = function () {
-            var template = "";
-            template += '<div class="form-group">';
-            template += '<div class="col-xs-12 left"><input type="checkbox" checked id="toggle-table"></div>';
-            template += '</div>';
-            return template;
-        };
-        Template.prototype.getSideInfoViewTemplate = function () {
-            var template = "";
-            template += '<div class="form-group">';
-            template += '<div class="col-xs-12 left"><input type="checkbox" checked id="toggle-table"></div>';
-            template += '</div>';
-            template += '<div class="col-xs-12 panel-sideinfo"><h1><%= name %></h1></div>';
-            template += '<div class="col-xs-12 panel-sideinfo"><%= location %></div>';
-            template += '<div class="clear" />';
-            template += '<div class="form-group split">';
-            template += '<div class="col-xs-3 split-rect"></div>';
-            template += '<div class="col-xs-9 split-label"></div>';
-            template += '<div class="clear" />';
-            template += '<div class="col-xs-12 panel-sideinfo"><h2><span class="glyphicon glyphicon-flag" aria-hidden="true"></span> <%= flag %></h2></div>';
-            template += '<div class="form-group">';
-            template += '<% _.each(flags.models, function (flag) { %>';
-            template += '<div class="col-xs-6 group-radio">';
-            template += '<label class="label-radio"><input type="radio" class="flag-radio" data-flag="<%= flag.getId() %>">&nbsp <%= flag.getName() %></label>';
-            template += '</div>';
-            template += '<% }); %>';
-            template += '</div>';
-            template += '<div class="form-group split">';
-            template += '<div class="col-xs-4 split-rect"></div>';
-            template += '<div class="col-xs-8 split-label"></div>';
-            template += '<div class="clear" />';
-            template += '<div class="col-xs-12 panel-sideinfo"><h2><span class="glyphicon glyphicon-bookmark" aria-hidden="true"></span> <%= type %></h2></div>';
-            template += '<div class="form-group">';
-            template += '<% _.each(types.models, function (type) { %>';
-            template += '<div class="col-xs-6 group-radio">';
-            template += '<label class="label-radio"><input type="radio" class="type-radio" data-type="<%= type.getId() %>">&nbsp <%= type.getName() %></label>';
-            template += '</div>';
-            template += '<% }); %>';
-            template += '</div>';
-            template += '<div class="form-group split">';
-            template += '<div class="col-xs-5 split-rect"></div>';
-            template += '<div class="col-xs-7 split-label"></div>';
-            template += '<div class="clear" />';
-            template += '<div class="col-xs-12 panel-sideinfo"><h2><span class="glyphicon glyphicon-time" aria-hidden="true"></span> <%= recent %></h2></div>';
-            return template;
-        };
-        Template.prototype.getMapPopupTemplate = function () {
-            var template = "";
-            template += '<%= name %>&nbsp&nbsp<span class="glyphicon glyphicon-log-in" aria-hidden="true" data-id="<%= id %>"></span>&nbsp';
-            return template;
-        };
-        Template.prototype.getSmallMapPopupTemplate = function () {
-            var template = "";
-            template += '<span data-id="<%= id %>"><%= name %></span>';
-            return template;
-        };
-        Template.prototype.getTreeInfoViewTemplate = function () {
-            var template = "";
-            template += '<div class="col-xs-12"><h1><%= name %></h1></div>';
-            template += '<div class="col-xs-12"><%= location %></div>';
-            template += '<div class="clear" />';
-            template += '<div class="form-group">';
-            template += '<div class="col-xs-3 circle-progress-left"><div><%= ripening %></div><div><%= ratio %></div></div>';
-            template += '<div class="col-xs-6">';
-            template += '<div id="ripen-progress" class="circle-progress"></div>';
-            template += '</div>';
-            template += '<div class="col-xs-3 circle-progress-right"><div><%= approximate %></div><div><%= food %></div></div>';
-            template += '</div>';
-            template += '<div class="clear" />';
-            template += '<div class="form-group split">';
-            template += '<div class="col-xs-3 split-rect"></div>';
-            template += '<div class="col-xs-9 split-label"></div>';
-            template += '<div class="clear" />';
-            template += '<div class="col-xs-12"><h2><span class="glyphicon glyphicon-flag" aria-hidden="true"></span> <%= flag %></h2></div>';
-            template += '<div class="form-group">';
-            template += '<% _.each(flags.models, function (flag) { %>';
-            template += '<div class="col-xs-6 group-radio">';
-            template += '<label class="label-radio"><input type="radio" class="flag-radio" data-flag="<%= flag.getId() %>">&nbsp <%= flag.getName() %></label>';
-            template += '</div>';
-            template += '<% }); %>';
-            template += '</div>';
-            template += '<div class="form-group split">';
-            template += '<div class="col-xs-4 split-rect"></div>';
-            template += '<div class="col-xs-8 split-label"></div>';
-            template += '<div class="clear" />';
-            template += '<div class="col-xs-12"><h2><span class="glyphicon glyphicon-bookmark" aria-hidden="true"></span> <%= type %></h2></div>';
-            template += '<div class="form-group">';
-            template += '<% _.each(types.models, function (type) { %>';
-            template += '<div class="col-xs-6 group-radio">';
-            template += '<label class="label-radio"><input type="radio" class="type-radio" data-type="<%= type.getId() %>">&nbsp <%= type.getName() %></label>';
-            template += '</div>';
-            template += '<% }); %>';
-            template += '</div>';
-            return template;
-        };
-        Template.prototype.getCoverflowTemplate = function () {
-            var template = "";
-            template += '<div class="wrapper-coverflow">';
-            template += '<div id="coverflow">';
-            template += '<% _.each(notes, function (note) { %>';
-            template += '<img src="<%= note.getPicturePath() %>" data-id="<%= note.getId() %>" />';
-            template += '<% }); %>';
-            template += '</div>';
-            template += '</div>';
-            template += '<div class="label-coverflow">';
-            template += '</div>';
-            return template;
-        };
-        Template.prototype.getLocationTableTemplate = function () {
-            var template = "";
-            template += '<div class="list">';
-            template += '<div class="col-xs-12"><h1><%= title %></h1></div>';
-            template += '<div class="clear" />';
-            template += '<div class="form-group">';
-            template += '<div class="col-xs-12">';
-            template += '<div class="list-location"></div>';
-            template += '</div>';
-            template += '<div class="clear" />';
-            template += '</div>';
-            return template;
-        };
-        Template._instance = new Template();
-        return Template;
-    })();
-    FoodParent.Template = Template;
-})(FoodParent || (FoodParent = {}));
-
-///#source 1 1 /core/js/view/headerview.js
-var __extends = this.__extends || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    __.prototype = b.prototype;
-    d.prototype = new __();
-};
-var FoodParent;
-(function (FoodParent) {
-    var HeaderView = (function (_super) {
-        __extends(HeaderView, _super);
-        function HeaderView(options) {
-            _super.call(this, options);
-            this.bActive = true;
-            var that = this;
-            that.events = {
-                "click .nav-home": "_navHome",
-                "click .nav-trees": "_navTrees",
-                "click .nav-note": "_navNote",
-                "click .nav-about": "_navAbout",
-            };
-            that.delegateEvents();
-            that.views = new Array();
-        }
-        HeaderView.prototype.render = function () {
-            var that = this;
-            var template = _.template(FoodParent.Template.getInstance().getMainHeaderTemplate());
-            var data = {
-                site: FoodParent.Localization.getInstance().getSiteText(),
-                trees: FoodParent.Localization.getInstance().getTreesText(),
-                note: FoodParent.Localization.getInstance().getNoteText(),
-                about: FoodParent.Localization.getInstance().getAboutText(),
-            };
-            that.$el.html(template(data));
-            return that;
-        };
-        HeaderView.prototype._navHome = function (event) {
-            event.preventDefault();
-            FoodParent.Router.getInstance().navigate("home", { trigger: true, replace: false });
-        };
-        HeaderView.prototype._navTrees = function (event) {
-            event.preventDefault();
-            FoodParent.Router.getInstance().navigate("trees", { trigger: true, replace: false });
-        };
-        HeaderView.prototype._navNote = function (event) {
-            event.preventDefault();
-            FoodParent.Router.getInstance().navigate("note", { trigger: true, replace: false });
-        };
-        HeaderView.prototype._navAbout = function (event) {
-            event.preventDefault();
-            FoodParent.Router.getInstance().navigate("about", { trigger: true, replace: false });
-        };
-        return HeaderView;
-    })(Backbone.View);
-    FoodParent.HeaderView = HeaderView;
-})(FoodParent || (FoodParent = {}));
-
-///#source 1 1 /core/js/view/localization.js
-var FoodParent;
-(function (FoodParent) {
-    var Localization = (function () {
-        function Localization(args) {
-            if (Localization._instance) {
-                throw new Error("Error: Instantiation failed: Use Localization.getInstance() instead of new.");
-            }
-            Localization._instance = this;
-        }
-        Localization.getInstance = function () {
-            return Localization._instance;
-        };
-        Localization.prototype.getSiteText = function () {
-            return "FoodParent";
-        };
-        Localization.prototype.getTreesText = function () {
-            return "Trees";
-        };
-        Localization.prototype.getNoteText = function () {
-            return "Note";
-        };
-        Localization.prototype.getAboutText = function () {
-            return "About";
-        };
-        Localization.prototype.getFlagText = function () {
-            return "Flag";
-        };
-        Localization.prototype.getTypeText = function () {
-            return "Ownership";
-        };
-        Localization.prototype.getRecentText = function () {
-            return "Recent Activities";
-        };
-        Localization.prototype.getRipeningText = function () {
-            return "Ripnening";
-        };
-        Localization.prototype.getTreeListText = function () {
-            return "Tree List";
-        };
-        Localization.prototype.getDeleteConfirmText = function () {
-            return "Are you sure to delete this item?";
-        };
-        Localization.prototype.getNoDataText = function () {
-            return "No Data";
-        };
-        Localization._instance = new Localization();
-        return Localization;
-    })();
-    FoodParent.Localization = Localization;
-})(FoodParent || (FoodParent = {}));
-
-///#source 1 1 /core/js/view/treesview.js
-var __extends = this.__extends || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    __.prototype = b.prototype;
-    d.prototype = new __();
-};
-var FoodParent;
-(function (FoodParent) {
-    var TreesView = (function (_super) {
-        __extends(TreesView, _super);
-        function TreesView(options) {
-            _super.call(this, options);
-            this.bActive = true;
-            var that = this;
-            that.events = {
-                "click .nav-home": "_navHome",
-            };
-            that.delegateEvents();
-            that.views = new Array();
-        }
-        TreesView.prototype.render = function () {
-            var that = this;
-            var template = _.template(FoodParent.Template.getInstance().getMainTreesViewTemplate());
-            var data = {};
-            that.$el.html(template(data));
-            var view1 = FoodParent.MapViewFactory.getInstance().create(that.$('.panel-map'), true).render();
-            that.views.push(view1);
-            var view2 = FoodParent.SideViewFactory.getInstance().create(that.$('.panel-sideinfo')).render();
-            view2.setMapView(view1);
-            that.views.push(view2);
-            return that;
-        };
-        TreesView.prototype.getViews = function () {
-            var that = this;
-            return that.views;
-        };
-        return TreesView;
-    })(Backbone.View);
-    FoodParent.TreesView = TreesView;
-})(FoodParent || (FoodParent = {}));
-
-///#source 1 1 /core/js/view/mapview.js
-var __extends = this.__extends || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    __.prototype = b.prototype;
-    d.prototype = new __();
-};
-var FoodParent;
-(function (FoodParent) {
-    var MapView = (function (_super) {
-        __extends(MapView, _super);
-        function MapView(options) {
-            var _this = this;
-            _super.call(this, options);
-            this.bDebug = true;
-            this.bActive = true;
-            this.bCentered = true;
-            this.bClosePopupOnClick = true;
-            this.bGraphicView = true;
-            this.createMap = function (position) {
-                var that = _this;
-                var accuracy = position.coords.accuracy;
-                that.location = new L.LatLng(position.coords.latitude, position.coords.longitude);
-                if (that.map == undefined) {
-                    that.setLocation(new L.LatLng(position.coords.latitude, position.coords.longitude));
-                    that.map = L.map(that.$el[0].id, {
-                        zoomControl: false,
-                        closePopupOnClick: that.bClosePopupOnClick,
-                        doubleClickZoom: true,
-                        touchZoom: true,
-                        zoomAnimation: true,
-                        markerZoomAnimation: true,
-                    }).setView(that.location, that.zoom);
-                    L.tileLayer(FoodParent.Setting.getInstance().getTileMapAddress(), {
-                        minZoom: FoodParent.Setting.getInstance().getMapMinZoomLevel(),
-                        maxZoom: FoodParent.Setting.getInstance().getMapMaxZoomLevel(),
-                    }).addTo(that.map);
-                    that.map.invalidateSize(false);
-                    that.map.whenReady(that.afterCreateMap);
-                    that.map.on("moveend", that.afterMoveMap);
-                }
-            };
-            this.afterCreateMap = function () {
-                var that = _this;
-                if (that.bDebug)
-                    console.log("afterCreateMap()");
-                FoodParent.Controller.getInstance().fetchTrees(that.map.getBounds());
-                FoodParent.Controller.getInstance().setMapView(that);
-            };
-            this.afterMoveMap = function () {
-                var that = _this;
-                if (that.bDebug)
-                    console.log("afterMoveMap()");
-                FoodParent.Controller.getInstance().fetchTrees(that.map.getBounds());
-            };
-            var that = this;
-            that.events = {
-                "click .nav-home": "_navHome",
-            };
-            that.delegateEvents();
-            that.views = new Array();
-            that.zoom = FoodParent.Setting.getInstance().getDefaultMapZoomLevel();
-        }
-        MapView.prototype.render = function () {
-            var that = this;
-            that.$el.html("");
-            if (that.bCentered) {
-                console.log("render()");
-                FoodParent.Controller.getInstance().updateGeoLocation(that.createMap);
-            }
-            return that;
-        };
-        MapView.prototype.setIsCentered = function (bCentered) {
-            this.bCentered = bCentered;
-        };
-        MapView.prototype.setIsClosePopupOnClick = function (bClosePopupOnClick) {
-            this.bClosePopupOnClick = bClosePopupOnClick;
-        };
-        MapView.prototype.setZoom = function (zoom) {
-            this.zoom = zoom;
-        };
-        MapView.prototype.setLocation = function (location) {
-            var that = this;
-            that.location = location;
-        };
-        MapView.prototype.updateLocation = function () {
-            var that = this;
-            that.map.setView(that.location, that.zoom);
-        };
-        MapView.prototype.getLocation = function () {
-            return this.location;
-        };
-        MapView.prototype.addMarker = function (marker) {
-            var that = this;
-            marker.addTo(that.map);
-        };
-        MapView.prototype.getAllMarkers = function () {
-            var that = this;
-            var result = new Array();
-            $.each(that.map._layers, function (index, model) {
-                if (model instanceof L.Marker) {
-                    result.push(model);
-                }
-            });
-            return result;
-        };
-        MapView.prototype.removeMarker = function (marker) {
-            var that = this;
-            marker.off('click');
-            that.map.removeLayer(marker);
-            return marker;
-        };
-        MapView.prototype.SetIsGraphicView = function (bGraphicView) {
-            var that = this;
-            that.bGraphicView = bGraphicView;
-            if (that.bGraphicView) {
-                that.render();
-            }
-            else {
-                that.render2();
-            }
-        };
-        MapView.prototype.getIsGraphicView = function () {
-            return this.bGraphicView;
-        };
-        MapView.prototype.render2 = function () {
-            console.log("render2()");
-            var that = this;
-            that.map.remove();
-            that.map = undefined;
-            that.$el.removeClass('leaflet-container');
-            that.$el.removeClass('leaflet-touch');
-            that.$el.removeClass('leaflet-fade-anim');
-            that.$el.removeAttr('tabindex');
-            var template = _.template(FoodParent.Template.getInstance().getLocationTableTemplate());
-            var data = {
-                title: FoodParent.Localization.getInstance().getTreeListText(),
-            };
-            that.$el.html(template(data));
-            TreeColumn[1].cell = Backgrid.SelectCell.extend({
-                optionValues: FoodParent.Model.getInstance().getFoods().toArray(),
-            });
-            var trees = new FoodParent.Trees(FoodParent.Model.getInstance().getTrees().where({ type: 1 }));
-            var grid = new Backgrid.Grid({
-                columns: TreeColumn,
-                collection: trees,
-                emptyText: FoodParent.Localization.getInstance().getNoDataText(),
-            });
-            grid.render();
-            that.$(".list-location").append(grid.el);
-        };
-        return MapView;
-    })(Backbone.View);
-    FoodParent.MapView = MapView;
-})(FoodParent || (FoodParent = {}));
-
-///#source 1 1 /core/js/view/markerview.js
-var __extends = this.__extends || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    __.prototype = b.prototype;
-    d.prototype = new __();
-};
-var FoodParent;
-(function (FoodParent) {
-    var MarkerView = (function (_super) {
-        __extends(MarkerView, _super);
-        function MarkerView(options) {
-            _super.call(this, options);
-            var that = this;
-        }
-        MarkerView.prototype.create = function (id, name, icon, lat, lng) {
-            var that = this;
-            var template = _.template(FoodParent.Template.getInstance().getMapPopupTemplate());
-            var data = {
-                name: name,
-                id: id,
-            };
-            that.marker = new L.Marker(new L.LatLng(lat, lng), {
-                icon: icon,
-                draggable: false,
-                riseOnHover: true,
-                name: name,
-                id: id,
-            }).bindPopup(template(data), {
-                closeButton: false,
-            });
-        };
-        MarkerView.prototype.create2 = function (id, name, icon, lat, lng) {
-            var that = this;
-            var template = _.template(FoodParent.Template.getInstance().getSmallMapPopupTemplate());
-            var data = {
-                name: name,
-                id: id,
-            };
-            that.marker = new L.Marker(new L.LatLng(lat, lng), {
-                icon: icon,
-                draggable: false,
-                riseOnHover: true,
-                closeOnClick: false,
-                name: name,
-                id: id,
-            }).bindPopup(template(data), {
-                closeButton: false,
-                closeOnClick: false,
-            });
-        };
-        MarkerView.prototype.getMarker = function () {
-            return this.marker;
-        };
-        return MarkerView;
-    })(Backbone.View);
-    FoodParent.MarkerView = MarkerView;
-})(FoodParent || (FoodParent = {}));
-
-///#source 1 1 /core/js/view/sideinfoview.js
-var __extends = this.__extends || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    __.prototype = b.prototype;
-    d.prototype = new __();
-};
-var FoodParent;
-(function (FoodParent) {
-    var SideInfoView = (function (_super) {
-        __extends(SideInfoView, _super);
-        function SideInfoView(options) {
-            var _this = this;
-            _super.call(this, options);
-            this.bActive = true;
-            this.renderTreeInfo = function () {
-                var that = _this;
-                if (that.tree) {
-                    var food = FoodParent.Model.getInstance().getFoods().findWhere({ id: that.tree.getFoodId() });
-                    var flag = FoodParent.Model.getInstance().getFlags().findWhere({ id: that.tree.getFlagId() });
-                    var ownership = FoodParent.Model.getInstance().getOwnerships().findWhere({ id: that.tree.getOwnershipId() });
-                    var template = _.template(FoodParent.Template.getInstance().getSideInfoViewTemplate());
-                    var data = {
-                        name: food.getName() + that.tree.getName(),
-                        location: '@ ' + that.tree.getLat().toFixed(4) + ", " + that.tree.getLng().toFixed(4),
-                        flag: FoodParent.Localization.getInstance().getFlagText(),
-                        flags: FoodParent.Model.getInstance().getFlags(),
-                        type: FoodParent.Localization.getInstance().getTypeText(),
-                        types: FoodParent.Model.getInstance().getOwnerships(),
-                        recent: FoodParent.Localization.getInstance().getRecentText(),
-                    };
-                    that.$el.html(template(data));
-                    that.renderFlagInfo(flag);
-                    that.renderTypeInfo(ownership);
-                    that.renderTableToggle();
-                }
-                else {
-                    that.$el.html("");
-                }
-                return that;
-            };
-            this.renderFlagInfo = function (flag) {
-                var that = _this;
-                $.each(that.$('.flag-radio'), function (index, item) {
-                    if (parseInt($(item).attr('data-flag')) == flag.getId()) {
-                        $(item).prop({ 'checked': 'checked' });
-                    }
-                    else {
-                        $(item).prop({ 'checked': '' });
-                    }
-                });
-            };
-            this.renderTypeInfo = function (ownership) {
-                var that = _this;
-                $.each(that.$('.type-radio'), function (index, item) {
-                    if (parseInt($(item).attr('data-type')) == ownership.getId()) {
-                        $(item).prop({ 'checked': 'checked' });
-                    }
-                    else {
-                        $(item).prop({ 'checked': '' });
-                    }
-                });
-            };
-            var that = this;
-            that.events = {
-                "click .flag-radio": "_clickFlagRadio",
-                "click .type-radio": "_clickTypeRadio",
-            };
-            that.delegateEvents();
-            that.views = new Array();
-        }
-        SideInfoView.prototype.render = function () {
-            var that = this;
-            var template = _.template(FoodParent.Template.getInstance().getEmptySideInfoViewTemplate());
-            var data = {};
-            that.$el.html(template(data));
-            that.renderTableToggle();
-            return that;
-        };
-        SideInfoView.prototype.render2 = function (bChecked) {
-            var that = this;
-            var template = _.template(FoodParent.Template.getInstance().getEmptySideInfoViewTemplate());
-            var data = {};
-            that.$el.html(template(data));
-            that.renderTableToggle(bChecked);
-            return that;
-        };
-        SideInfoView.prototype.customRender = function (tree) {
-            var that = this;
-            that.tree = tree;
-            FoodParent.Controller.getInstance().fetchFlags(FoodParent.Controller.getInstance().fetchTypes, that.renderTreeInfo);
-        };
-        SideInfoView.prototype.renderTableToggle = function (bChecked) {
-            var that = this;
-            that.$('#toggle-table').bootstrapToggle({
-                on: 'Graphic',
-                off: 'Table',
-                size: 'small',
-                onstyle: 'default',
-            });
-            if (bChecked != undefined) {
-                if (bChecked) {
-                    that.$('#toggle-table').bootstrapToggle('on');
-                }
-                else {
-                    that.$('#toggle-table').bootstrapToggle('off');
-                }
-            }
-            that.$('#toggle-table').change(function () {
-                that.render2($(this).prop('checked'));
-                that.mapView.SetIsGraphicView($(this).prop('checked'));
-            });
-        };
-        SideInfoView.prototype._clickFlagRadio = function (event) {
-            var that = this;
-            $.each(that.$('.flag-radio'), function (index, item) {
-                if (item == event.target) {
-                    $(item).prop({ 'checked': 'checked' });
-                }
-                else {
-                    $(item).prop({ 'checked': '' });
-                }
-            });
-        };
-        SideInfoView.prototype._clickTypeRadio = function (event) {
-            var that = this;
-            $.each(that.$('.type-radio'), function (index, item) {
-                if (item == event.target) {
-                    $(item).prop({ 'checked': 'checked' });
-                }
-                else {
-                    $(item).prop({ 'checked': '' });
-                }
-            });
-        };
-        SideInfoView.prototype.setMapView = function (view) {
-            this.mapView = view;
-        };
-        return SideInfoView;
-    })(Backbone.View);
-    FoodParent.SideInfoView = SideInfoView;
-})(FoodParent || (FoodParent = {}));
-
-///#source 1 1 /core/js/view/treeview.js
-var __extends = this.__extends || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    __.prototype = b.prototype;
-    d.prototype = new __();
-};
-var FoodParent;
-(function (FoodParent) {
-    var TreeView = (function (_super) {
-        __extends(TreeView, _super);
-        function TreeView(options) {
-            var _this = this;
-            _super.call(this, options);
-            this.bActive = true;
-            this.renderTree = function () {
-                console.log("renderTree");
-                var that = _this;
-                var tree = FoodParent.Model.getInstance().getTrees().findWhere({ id: that.current });
-                var validView;
-                var validView2;
-                var validView3;
-                $.each(that.views, function (index, view) {
-                    if (view instanceof FoodParent.MapView) {
-                        validView = view;
-                    }
-                    if (view instanceof FoodParent.TreeInfoView) {
-                        validView2 = view;
-                    }
-                    if (view instanceof FoodParent.CoverflowView) {
-                        validView3 = view;
-                    }
-                });
-                validView.setZoom(FoodParent.Setting.getInstance().getDefaultSmallMapZoomLevel());
-                validView.setIsClosePopupOnClick(false);
-                validView.createMap({ timestamp: new Date(), coords: { altitudeAccuracy: 0, latitude: tree.getLat(), longitude: tree.getLng(), speed: 0, heading: 0, altitude: 0, accuracy: 0 } });
-                validView2.customRender(tree);
-                validView3.customRender(tree);
-            };
-            var that = this;
-            that.events = {
-                "click .nav-home": "_navHome",
-            };
-            that.delegateEvents();
-            that.views = new Array();
-        }
-        TreeView.prototype.render = function () {
-            var that = this;
-            var template = _.template(FoodParent.Template.getInstance().getMainTreeViewTemplate());
-            var data = {};
-            that.$el.html(template(data));
-            that.views.push(FoodParent.MapViewFactory.getInstance().create2(that.$('.panel-tree-map'), false).render());
-            that.views.push(FoodParent.TreeInfoViewFactory.getInstance().create(that.$('.panel-tree-info')).render());
-            that.views.push(FoodParent.CoverflowViewFactory.getInstance().create(that.$('.panel-tree-coverflow')).render());
-            FoodParent.Controller.getInstance().fetchTree(that.current, that.renderTree);
-            return that;
-        };
-        TreeView.prototype.getViews = function () {
-            var that = this;
-            return that.views;
-        };
-        TreeView.prototype.setCurrent = function (id) {
-            var that = this;
-            that.current = Math.floor(id);
-        };
-        return TreeView;
-    })(Backbone.View);
-    FoodParent.TreeView = TreeView;
-})(FoodParent || (FoodParent = {}));
-
-///#source 1 1 /core/js/view/treeinfoview.js
-var __extends = this.__extends || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    __.prototype = b.prototype;
-    d.prototype = new __();
-};
-var FoodParent;
-(function (FoodParent) {
-    var TreeInfoView = (function (_super) {
-        __extends(TreeInfoView, _super);
-        function TreeInfoView(options) {
-            var _this = this;
-            _super.call(this, options);
-            this.bActive = true;
-            this.renderTreeInfo = function () {
-                var that = _this;
-                if (that.tree) {
-                    var food = FoodParent.Model.getInstance().getFoods().findWhere({ id: that.tree.getFoodId() });
-                    var flag = FoodParent.Model.getInstance().getFlags().findWhere({ id: that.tree.getFlagId() });
-                    var ownership = FoodParent.Model.getInstance().getOwnerships().findWhere({ id: that.tree.getOwnershipId() });
-                    var ratio = 0.75;
-                    var approximate = 15;
-                    var template = _.template(FoodParent.Template.getInstance().getTreeInfoViewTemplate());
-                    var data = {
-                        name: food.getName() + that.tree.getName(),
-                        location: '@ ' + that.tree.getLat().toFixed(4) + ", " + that.tree.getLng().toFixed(4),
-                        ripening: FoodParent.Localization.getInstance().getRipeningText(),
-                        ratio: Math.floor(ratio * 100) + "%",
-                        approximate: approximate,
-                        food: food.getName(),
-                        flag: FoodParent.Localization.getInstance().getFlagText(),
-                        flags: FoodParent.Model.getInstance().getFlags(),
-                        type: FoodParent.Localization.getInstance().getTypeText(),
-                        types: FoodParent.Model.getInstance().getOwnerships(),
-                        recent: FoodParent.Localization.getInstance().getRecentText(),
-                    };
-                    that.$el.html(template(data));
-                    that.renderFlagInfo(flag);
-                    that.renderTypeInfo(ownership);
-                    var radius = that.$('.circle-progress').innerWidth();
-                    that.$('#ripen-progress').circleProgress({
-                        startAngle: -Math.PI / 2,
-                        value: ratio,
-                        size: radius,
-                        thickness: radius / 8,
-                        fill: {
-                            gradient: ["red", "orange"],
-                            gradientAngle: Math.PI / 4,
-                        }
-                    });
-                    that.$('.circle-progress-left').css({ height: radius });
-                    that.$('.circle-progress-right').css({ height: radius });
-                }
-                else {
-                    that.$el.html("");
-                }
-                return that;
-            };
-            this.renderFlagInfo = function (flag) {
-                var that = _this;
-                $.each(that.$('.flag-radio'), function (index, item) {
-                    if (parseInt($(item).attr('data-flag')) == flag.getId()) {
-                        $(item).prop({ 'checked': 'checked' });
-                    }
-                    else {
-                        $(item).prop({ 'checked': '' });
-                    }
-                });
-            };
-            this.renderTypeInfo = function (ownership) {
-                var that = _this;
-                $.each(that.$('.type-radio'), function (index, item) {
-                    if (parseInt($(item).attr('data-type')) == ownership.getId()) {
-                        $(item).prop({ 'checked': 'checked' });
-                    }
-                    else {
-                        $(item).prop({ 'checked': '' });
-                    }
-                });
-            };
-            var that = this;
-            that.events = {
-                "click .flag-radio": "_clickFlagRadio",
-                "click .type-radio": "_clickTypeRadio",
-            };
-            that.delegateEvents();
-            that.views = new Array();
-        }
-        TreeInfoView.prototype.render = function () {
-            var that = this;
-            return that;
-        };
-        TreeInfoView.prototype.customRender = function (tree) {
-            var that = this;
-            that.tree = tree;
-            FoodParent.Controller.getInstance().fetchFlags(FoodParent.Controller.getInstance().fetchTypes, that.renderTreeInfo);
-        };
-        TreeInfoView.prototype._clickFlagRadio = function (event) {
-            var that = this;
-            $.each(that.$('.flag-radio'), function (index, item) {
-                if (item == event.target) {
-                    $(item).prop({ 'checked': 'checked' });
-                }
-                else {
-                    $(item).prop({ 'checked': '' });
-                }
-            });
-        };
-        TreeInfoView.prototype._clickTypeRadio = function (event) {
-            var that = this;
-            $.each(that.$('.type-radio'), function (index, item) {
-                if (item == event.target) {
-                    $(item).prop({ 'checked': 'checked' });
-                }
-                else {
-                    $(item).prop({ 'checked': '' });
-                }
-            });
-        };
-        TreeInfoView.prototype.getViews = function () {
-            var that = this;
-            return that.views;
-        };
-        return TreeInfoView;
-    })(Backbone.View);
-    FoodParent.TreeInfoView = TreeInfoView;
-})(FoodParent || (FoodParent = {}));
-
-///#source 1 1 /core/js/view/coverflowview.js
-var __extends = this.__extends || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    __.prototype = b.prototype;
-    d.prototype = new __();
-};
-var FoodParent;
-(function (FoodParent) {
-    var CoverflowView = (function (_super) {
-        __extends(CoverflowView, _super);
-        function CoverflowView(options) {
-            var _this = this;
-            _super.call(this, options);
-            this.bActive = true;
-            this.renderTreeInfo = function () {
-                var that = _this;
-                if (that.tree) {
-                    var template = _.template(FoodParent.Template.getInstance().getCoverflowTemplate());
-                    var notes = FoodParent.Model.getInstance().getNotes().where({ tree: that.tree.getId() });
-                    var data = {
-                        notes: notes,
-                    };
-                    that.$el.html(template(data));
-                    $.each(that.$('.wrapper-coverflow img'), function (index, item) {
-                        $(item).attr({
-                            width: (that.$('.wrapper-coverflow').innerHeight() - 12) * 4 / 3,
-                            height: (that.$('.wrapper-coverflow').innerHeight() - 12),
-                        });
-                    });
-                    that.$('#coverflow').coverflow({
-                        active: notes.length - 2,
-                        select: function (ev, ui) {
-                            var el = ui.active;
-                            console.log(el.attr('data-id'));
-                        }
-                    });
-                    that.$('#coverflow').coverflow('select', notes.length - 1);
-                }
-                else {
-                }
-                return that;
-            };
-            var that = this;
-            that.events = {
-                "click .nav-home": "_navHome",
-            };
-            that.delegateEvents();
-            that.views = new Array();
-        }
-        CoverflowView.prototype.render = function () {
-            var that = this;
-            var template = _.template(FoodParent.Template.getInstance().getCoverflowTemplate());
-            return that;
-        };
-        CoverflowView.prototype.getViews = function () {
-            var that = this;
-            return that.views;
-        };
-        CoverflowView.prototype.customRender = function (tree) {
-            var that = this;
-            that.tree = tree;
-            if (that.tree) {
-                FoodParent.Controller.getInstance().fetchNotes([that.tree.getId()], 100, 0, that.renderTreeInfo);
-            }
-        };
-        return CoverflowView;
-    })(Backbone.View);
-    FoodParent.CoverflowView = CoverflowView;
-})(FoodParent || (FoodParent = {}));
-
-///#source 1 1 /core/js/model/model.js
-var FoodParent;
-(function (FoodParent) {
-    var Model = (function () {
-        function Model() {
-            var that = this;
-            if (Model._instance) {
-                throw new Error("Error: Instantiation failed: Use Model.getInstance() instead of new.");
-            }
-            Model._instance = this;
-        }
-        Model.getInstance = function () {
-            return Model._instance;
-        };
-        Model.prototype.getFoods = function () {
-            return this.foods;
-        };
-        Model.prototype.getTrees = function () {
-            return this.trees;
-        };
-        Model.prototype.getOwnerships = function () {
-            return this.ownerships;
-        };
-        Model.prototype.getFlags = function () {
-            return this.flags;
-        };
-        Model.prototype.getNotes = function () {
-            return this.notes;
-        };
-        Model.prototype.fetchFood = function (id) {
-            var that = this;
-            if (that.foods == undefined) {
-                that.foods = new FoodParent.Foods();
-            }
-            that.foods.fetch({
-                remove: false,
-                processData: true,
-                data: {
-                    id: id,
-                },
-                success: function (collection, response, options) {
-                    console.log("success fetch with " + collection.models.length + " items");
-                    console.log(that.foods);
-                },
-                error: function (collection, jqxhr, options) {
-                    console.log("error while fetching item data from the server");
-                }
-            });
-        };
-        Model.prototype.fetchTree = function (id, callback) {
-            var that = this;
-            if (that.trees == undefined) {
-                that.trees = new FoodParent.Trees();
-            }
-            if (that.foods == undefined) {
-                that.foods = new FoodParent.Foods();
-            }
-            that.trees.fetch({
-                remove: false,
-                processData: true,
-                data: {
-                    id: id,
-                    south: 0,
-                    north: 0,
-                    west: 0,
-                    east: 0,
-                },
-                success: function (collection, response, options) {
-                    console.log("success fetch with " + collection.models.length + " trees");
-                    that.fetchFoods(that.foods.getUndetectedIds(that.trees.getFoodIds()), callback);
-                },
-                error: function (collection, jqxhr, options) {
-                    console.log("error while fetching item data from the server");
-                    if (callback != undefined) {
-                        callback();
-                    }
-                }
-            });
-        };
-        Model.prototype.fetchTrees = function (bounds) {
-            var that = this;
-            if (that.trees == undefined) {
-                that.trees = new FoodParent.Trees();
-            }
-            if (that.foods == undefined) {
-                that.foods = new FoodParent.Foods();
-            }
-            that.trees.fetch({
-                remove: false,
-                processData: true,
-                data: {
-                    id: -1,
-                    south: bounds.getSouthEast().lat,
-                    north: bounds.getNorthEast().lat,
-                    west: bounds.getSouthWest().lng,
-                    east: bounds.getSouthEast().lng,
-                },
-                success: function (collection, response, options) {
-                    console.log("success fetch with " + collection.models.length + " trees");
-                    that.fetchFoods(that.foods.getUndetectedIds(that.trees.getFoodIds()));
-                },
-                error: function (collection, jqxhr, options) {
-                    console.log("error while fetching item data from the server");
-                }
-            });
-        };
-        Model.prototype.fetchFoods = function (ids, callback) {
-            var that = this;
-            if (that.foods == undefined) {
-                that.foods = new FoodParent.Foods();
-            }
-            if (ids.length != 0) {
-                that.foods.fetch({
-                    remove: false,
-                    processData: true,
-                    data: {
-                        ids: ids.toString(),
-                    },
-                    success: function (collection, response, options) {
-                        console.log("success fetch with " + collection.models.length + " foods");
-                        FoodParent.Controller.getInstance().renderTreesOnMap();
-                        if (callback != undefined) {
-                            callback();
-                        }
-                    },
-                    error: function (collection, jqxhr, options) {
-                        console.log("error while fetching item data from the server");
-                    }
-                });
-            }
-            else {
-                FoodParent.Controller.getInstance().renderTreesOnMap();
-                if (callback != undefined) {
-                    callback();
-                }
-            }
-        };
-        Model.prototype.fetchFlags = function (callback, callback2) {
-            var that = this;
-            if (that.flags == undefined) {
-                that.flags = new FoodParent.Flags();
-                that.flags.fetch({
-                    remove: false,
-                    processData: true,
-                    data: {},
-                    success: function (collection, response, options) {
-                        console.log("success fetch with " + collection.models.length + " flags");
-                        if (callback != undefined) {
-                            callback(callback2);
-                        }
-                    },
-                    error: function (collection, jqxhr, options) {
-                        console.log("error while fetching item data from the server");
-                    }
-                });
-            }
-            else {
-                if (callback != undefined) {
-                    callback(callback2);
-                }
-            }
-        };
-        Model.prototype.fetchTypes = function (callback, callback2) {
-            var that = this;
-            if (that.ownerships == undefined) {
-                that.ownerships = new FoodParent.Ownerships();
-                that.ownerships.fetch({
-                    remove: false,
-                    processData: true,
-                    data: {},
-                    success: function (collection, response, options) {
-                        console.log("success fetch with " + collection.models.length + " types");
-                        if (callback != undefined) {
-                            callback(callback2);
-                        }
-                    },
-                    error: function (collection, jqxhr, options) {
-                        console.log("error while fetching item data from the server");
-                    }
-                });
-            }
-            else {
-                if (callback != undefined) {
-                    callback(callback2);
-                }
-            }
-        };
-        Model.prototype.fetchNotes = function (trees, size, offset, callback) {
-            var that = this;
-            if (that.notes == undefined) {
-                that.notes = new FoodParent.Notes();
-            }
-            if (trees.length != 0) {
-                that.notes.fetch({
-                    remove: false,
-                    processData: true,
-                    data: {
-                        trees: trees.toString(),
-                        size: size,
-                        offset: offset,
-                    },
-                    success: function (collection, response, options) {
-                        console.log("success fetch with " + collection.models.length + " notes");
-                        if (callback != undefined) {
-                            callback();
-                        }
-                    },
-                    error: function (collection, jqxhr, options) {
-                        console.log("error while fetching item data from the server");
-                    }
-                });
-            }
-            else {
-                if (callback != undefined) {
-                    callback();
-                }
-            }
-        };
-        Model._instance = new Model();
-        return Model;
-    })();
-    FoodParent.Model = Model;
-})(FoodParent || (FoodParent = {}));
-
 ///#source 1 1 /core/js/model/food.js
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -37162,34 +35646,18 @@ var FoodParent;
             that.on("change", function (model, options) {
                 if (that.isSavable == false)
                     return;
-                var attributes = model.attributes;
-                attributes.lat = parseFloat(attributes.lat);
-                attributes.lng = parseFloat(attributes.lng);
-                attributes.food = parseInt(attributes.food);
-                attributes.type = parseInt(attributes.type);
-                attributes.flag = parseInt(attributes.flag);
-                attributes.owner = parseInt(attributes.owner);
-                attributes.ownership = parseInt(attributes.ownership);
-                attributes.updated = moment(attributes.updated).format(FoodParent.Setting.getInstance().getDateTimeFormat());
                 that.isSavable = false;
                 model.save({}, {
                     wait: true,
                     success: function (model, response) {
                         console.log(model);
-                        that.resetSavable();
+                        that.isSavable = true;
                     },
                     error: function (error, response) {
-                        that.resetSavable();
                     },
                 });
             });
         }
-        Tree.prototype.resetSavable = function () {
-            var that = this;
-            setTimeout(function () {
-                that.isSavable = true;
-            }, FoodParent.Setting.getInstance().getResetUpdateDelay());
-        };
         Tree.prototype.parse = function (response, options) {
             if (response.id != null) {
                 response.id = parseInt(response.id);
@@ -37202,6 +35670,7 @@ var FoodParent;
             response.owner = parseInt(response.owner);
             response.ownership = parseInt(response.ownership);
             response.updated = moment(response.updated).format(FoodParent.Setting.getInstance().getDateTimeFormat());
+            response.owners = FoodParent.Model.getInstance().getAdopts().getOwnerIds(response.id);
             return _super.prototype.parse.call(this, response, options);
         };
         Tree.prototype.toJSON = function (options) {
@@ -37209,6 +35678,7 @@ var FoodParent;
             if (this.id != null) {
                 clone["id"] = this.id;
             }
+            delete clone["owners"];
             return clone;
         };
         Tree.prototype.getFoodId = function () {
@@ -37276,6 +35746,46 @@ var FoodParent;
                 }
             });
             return result;
+        };
+        Trees.prototype.filterById = function (idArray) {
+            var that = this;
+            var trees = new Trees(that.models);
+            return trees.reset(_.map(idArray, function (id) {
+                return this.get(id);
+            }, this));
+        };
+        Trees.prototype.getAssigned = function (trees) {
+            var that = this;
+            $.each(that.models, function (index, model) {
+                if (model.get('owners').length >= 1) {
+                    if (trees.where({ id: model.getId() }) != undefined) {
+                        trees.add(model);
+                    }
+                }
+            });
+            return trees;
+        };
+        Trees.prototype.getUnassigned = function (trees) {
+            var that = this;
+            $.each(that.models, function (index, model) {
+                if (model.get('owners').length == 0) {
+                    if (trees.where({ id: model.getId() }) != undefined) {
+                        trees.add(model);
+                    }
+                }
+            });
+            return trees;
+        };
+        Trees.prototype.getFromFoodId = function (trees, id) {
+            var that = this;
+            $.each(that.models, function (index, model) {
+                if (model.getFoodId() == id) {
+                    if (trees.where({ id: model.getId() }) != undefined) {
+                        trees.add(model);
+                    }
+                }
+            });
+            return trees;
         };
         return Trees;
     })(Backbone.Collection);
@@ -37401,6 +35911,19 @@ var __extends = this.__extends || function (d, b) {
 };
 var FoodParent;
 (function (FoodParent) {
+    (function (SortType) {
+        SortType[SortType["NONE"] = 0] = "NONE";
+        SortType[SortType["DESCENDING"] = 1] = "DESCENDING";
+        SortType[SortType["ASCENDING"] = 2] = "ASCENDING";
+    })(FoodParent.SortType || (FoodParent.SortType = {}));
+    var SortType = FoodParent.SortType;
+    (function (NoteType) {
+        NoteType[NoteType["NONE"] = 0] = "NONE";
+        NoteType[NoteType["IMAGE"] = 1] = "IMAGE";
+        NoteType[NoteType["INFO"] = 2] = "INFO";
+        NoteType[NoteType["PICKUP"] = 3] = "PICKUP";
+    })(FoodParent.NoteType || (FoodParent.NoteType = {}));
+    var NoteType = FoodParent.NoteType;
     var Note = (function (_super) {
         __extends(Note, _super);
         function Note(attributes, options) {
@@ -37439,11 +35962,26 @@ var FoodParent;
         Note.prototype.getId = function () {
             return Math.floor(this.id);
         };
+        Note.prototype.getComment = function () {
+            return this.get('comment');
+        };
         Note.prototype.getPicturePath = function () {
             return FoodParent.Setting.getInstance().getContentsImageDir() + this.get('picture');
         };
         Note.prototype.getFakePicturePath = function () {
             return FoodParent.Setting.getInstance().getCoreImageDir() + "placeholder-image.jpg";
+        };
+        Note.prototype.getFormattedDate = function () {
+            return moment(this.get('date')).format(FoodParent.Setting.getInstance().getDateFormat());
+        };
+        Note.prototype.getFormattedDateTime = function () {
+            return moment(this.get('date')).format(FoodParent.Setting.getInstance().getDateTimeFormat());
+        };
+        Note.prototype.getDateValueOf = function () {
+            return moment(this.get('date')).valueOf();
+        };
+        Note.prototype.getRate = function () {
+            return parseFloat(this.get('rate'));
         };
         return Note;
     })(Backbone.Model);
@@ -37453,12 +35991,667 @@ var FoodParent;
         function Notes(models, options) {
             _super.call(this, models, options);
             this.url = "notes.php";
+            this.sortType = 0 /* NONE */;
             this.url = FoodParent.Setting.getInstance().getPhpDir() + this.url;
             this.model = Note;
         }
+        Notes.prototype.comparator = function (model) {
+            var that = this;
+            switch (that.sortType) {
+                case 0 /* NONE */:
+                    return 0;
+                    break;
+                case 2 /* ASCENDING */:
+                    return model.getDateValueOf();
+                    break;
+                case 1 /* DESCENDING */:
+                    return -model.getDateValueOf();
+                    break;
+            }
+        };
+        Notes.prototype.sortByDescendingDate = function () {
+            var that = this;
+            that.sortType = 1 /* DESCENDING */;
+            that.sort();
+        };
+        Notes.prototype.sortByAscendingDate = function () {
+            var that = this;
+            that.sortType = 2 /* ASCENDING */;
+            that.sort();
+        };
         return Notes;
     })(Backbone.Collection);
     FoodParent.Notes = Notes;
+})(FoodParent || (FoodParent = {}));
+
+///#source 1 1 /core/js/model/auth.js
+var __extends = this.__extends || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    __.prototype = b.prototype;
+    d.prototype = new __();
+};
+var FoodParent;
+(function (FoodParent) {
+    var Auth = (function (_super) {
+        __extends(Auth, _super);
+        function Auth(attributes, options) {
+            _super.call(this, attributes, options);
+            this.defaults = {
+                "id": 0,
+                "name": ""
+            };
+        }
+        Auth.prototype.parse = function (response, options) {
+            if (response.id != null) {
+                response.id = parseInt(response.id);
+            }
+            return _super.prototype.parse.call(this, response, options);
+        };
+        Auth.prototype.toJSON = function (options) {
+            var clone = this.clone().attributes;
+            if (this.id != null) {
+                clone["id"] = this.id;
+            }
+            return clone;
+        };
+        Auth.prototype.getId = function () {
+            return Math.floor(this.id);
+        };
+        Auth.prototype.getName = function () {
+            return this.get('name');
+        };
+        return Auth;
+    })(Backbone.Model);
+    FoodParent.Auth = Auth;
+    var Auths = (function (_super) {
+        __extends(Auths, _super);
+        function Auths(models, options) {
+            _super.call(this, models, options);
+            this.model = Auth;
+        }
+        Auths.prototype.toArray = function () {
+            var that = this;
+            var result = new Array();
+            $.each(that.models, function (index, model) {
+                result.push([model.getName(), model.getId()]);
+            });
+            console.log(result);
+            return result;
+        };
+        return Auths;
+    })(Backbone.Collection);
+    FoodParent.Auths = Auths;
+})(FoodParent || (FoodParent = {}));
+
+///#source 1 1 /core/js/model/model.js
+var FoodParent;
+(function (FoodParent) {
+    var Model = (function () {
+        function Model() {
+            var that = this;
+            if (Model._instance) {
+                throw new Error("Error: Instantiation failed: Use Model.getInstance() instead of new.");
+            }
+            Model._instance = this;
+            that.fetchAuths();
+        }
+        Model.getInstance = function () {
+            return Model._instance;
+        };
+        Model.prototype.getFoods = function () {
+            return this.foods;
+        };
+        Model.prototype.getTrees = function () {
+            return this.trees;
+        };
+        Model.prototype.getOwnerships = function () {
+            return this.ownerships;
+        };
+        Model.prototype.getFlags = function () {
+            return this.flags;
+        };
+        Model.prototype.getNotes = function () {
+            return this.notes;
+        };
+        Model.prototype.getAuths = function () {
+            return this.auths;
+        };
+        Model.prototype.getPersons = function () {
+            return this.persons;
+        };
+        Model.prototype.getAdopts = function () {
+            return this.adopts;
+        };
+        Model.prototype.fetchAuths = function () {
+            console.log("Fetch Authorizations");
+            var that = this;
+            if (that.auths == undefined) {
+                that.auths = new FoodParent.Auths();
+                var auth1 = new FoodParent.Auth({ id: 1, name: "ConcreteJungle" });
+                auth1.id = 1;
+                var auth2 = new FoodParent.Auth({ id: 2, name: "Participant" });
+                auth2.id = 2;
+                var auth3 = new FoodParent.Auth({ id: 3, name: "Manager" });
+                auth3.id = 3;
+                var auth4 = new FoodParent.Auth({ id: 4, name: "Unkown" });
+                auth4.id = 4;
+                that.auths.add(auth1);
+                that.auths.add(auth2);
+                that.auths.add(auth3);
+                that.auths.add(auth4);
+            }
+        };
+        Model.prototype.fetchAdopts = function (callback) {
+            var that = this;
+            if (that.adopts == undefined) {
+                that.adopts = new FoodParent.Adopts();
+            }
+            that.adopts.fetch({
+                remove: true,
+                processData: true,
+                data: {},
+                success: function (collection, response, options) {
+                    console.log("success fetch with " + collection.models.length + " adopt items");
+                    if (callback != undefined) {
+                        callback();
+                    }
+                },
+                error: function (collection, jqxhr, options) {
+                    console.log("error while fetching item data from the server");
+                }
+            });
+        };
+        Model.prototype.fetchPersons = function (callback) {
+            var that = this;
+            if (that.persons == undefined) {
+                that.persons = new FoodParent.Persons();
+            }
+            that.persons.fetch({
+                remove: true,
+                processData: true,
+                data: {},
+                success: function (collection, response, options) {
+                    console.log("success fetch with " + collection.models.length + " items");
+                    if (callback != undefined) {
+                        callback();
+                    }
+                },
+                error: function (collection, jqxhr, options) {
+                    console.log("error while fetching item data from the server");
+                }
+            });
+        };
+        Model.prototype.fetchFood = function (id) {
+            var that = this;
+            if (that.foods == undefined) {
+                that.foods = new FoodParent.Foods();
+            }
+            that.foods.fetch({
+                remove: true,
+                processData: true,
+                data: {
+                    id: id,
+                },
+                success: function (collection, response, options) {
+                    console.log("success fetch with " + collection.models.length + " items");
+                    console.log(that.foods);
+                },
+                error: function (collection, jqxhr, options) {
+                    console.log("error while fetching item data from the server");
+                }
+            });
+        };
+        Model.prototype.fetchTree = function (id, callback) {
+            var that = this;
+            if (that.trees == undefined) {
+                that.trees = new FoodParent.Trees();
+            }
+            if (that.foods == undefined) {
+                that.foods = new FoodParent.Foods();
+            }
+            that.trees.fetch({
+                remove: true,
+                processData: true,
+                data: {
+                    id: id,
+                    south: 0,
+                    north: 0,
+                    west: 0,
+                    east: 0,
+                },
+                success: function (collection, response, options) {
+                    console.log("success fetch with " + collection.models.length + " trees");
+                    that.fetchFoods(that.foods.getUndetectedIds(that.trees.getFoodIds()), callback);
+                },
+                error: function (collection, jqxhr, options) {
+                    console.log("error while fetching item data from the server");
+                    if (callback != undefined) {
+                        callback();
+                    }
+                }
+            });
+        };
+        Model.prototype.fetchTrees = function (bounds, callback) {
+            var that = this;
+            if (that.trees == undefined) {
+                that.trees = new FoodParent.Trees();
+            }
+            if (that.foods == undefined) {
+                that.foods = new FoodParent.Foods();
+            }
+            that.trees.fetch({
+                remove: true,
+                processData: true,
+                data: {
+                    id: -1,
+                    south: bounds.getSouthEast().lat,
+                    north: bounds.getNorthEast().lat,
+                    west: bounds.getSouthWest().lng,
+                    east: bounds.getSouthEast().lng,
+                },
+                success: function (collection, response, options) {
+                    console.log("success fetch with " + collection.models.length + " trees");
+                    that.fetchFoods(that.foods.getUndetectedIds(that.trees.getFoodIds()));
+                    if (callback != undefined) {
+                        callback();
+                    }
+                },
+                error: function (collection, jqxhr, options) {
+                    console.log("error while fetching item data from the server");
+                }
+            });
+        };
+        Model.prototype.fetchFoods = function (ids, callback) {
+            var that = this;
+            if (that.foods == undefined) {
+                that.foods = new FoodParent.Foods();
+            }
+            if (ids.length != 0) {
+                that.foods.fetch({
+                    remove: true,
+                    processData: true,
+                    data: {
+                        ids: ids.toString(),
+                    },
+                    success: function (collection, response, options) {
+                        console.log("success fetch with " + collection.models.length + " foods");
+                        FoodParent.Controller.getInstance().renderTreesOnMap();
+                        if (callback != undefined) {
+                            callback();
+                        }
+                    },
+                    error: function (collection, jqxhr, options) {
+                        console.log("error while fetching item data from the server");
+                    }
+                });
+            }
+            else {
+                FoodParent.Controller.getInstance().renderTreesOnMap();
+                if (callback != undefined) {
+                    callback();
+                }
+            }
+        };
+        Model.prototype.fetchFoods2 = function (callback) {
+            var that = this;
+            if (that.foods == undefined) {
+                that.foods = new FoodParent.Foods();
+            }
+            that.foods.fetch({
+                remove: true,
+                processData: true,
+                data: {
+                    ids: [-1].toString(),
+                },
+                success: function (collection, response, options) {
+                    console.log("success fetch with " + collection.models.length + " foods");
+                    if (callback != undefined) {
+                        callback();
+                    }
+                },
+                error: function (collection, jqxhr, options) {
+                    console.log("error while fetching item data from the server");
+                }
+            });
+        };
+        Model.prototype.fetchFlags = function (callback, callback2) {
+            var that = this;
+            if (that.flags == undefined) {
+                that.flags = new FoodParent.Flags();
+                that.flags.fetch({
+                    remove: true,
+                    processData: true,
+                    data: {},
+                    success: function (collection, response, options) {
+                        console.log("success fetch with " + collection.models.length + " flags");
+                        if (callback != undefined) {
+                            callback(callback2);
+                        }
+                    },
+                    error: function (collection, jqxhr, options) {
+                        console.log("error while fetching item data from the server");
+                    }
+                });
+            }
+            else {
+                if (callback != undefined) {
+                    callback(callback2);
+                }
+            }
+        };
+        Model.prototype.fetchTypes = function (callback, callback2) {
+            var that = this;
+            if (that.ownerships == undefined) {
+                that.ownerships = new FoodParent.Ownerships();
+                that.ownerships.fetch({
+                    remove: true,
+                    processData: true,
+                    data: {},
+                    success: function (collection, response, options) {
+                        console.log("success fetch with " + collection.models.length + " types");
+                        if (callback != undefined) {
+                            callback(callback2);
+                        }
+                    },
+                    error: function (collection, jqxhr, options) {
+                        console.log("error while fetching item data from the server");
+                    }
+                });
+            }
+            else {
+                if (callback != undefined) {
+                    callback(callback2);
+                }
+            }
+        };
+        Model.prototype.fetchNotes = function (trees, size, offset, callback) {
+            var that = this;
+            if (that.notes == undefined) {
+                that.notes = new FoodParent.Notes();
+            }
+            if (trees.length != 0) {
+                that.notes.fetch({
+                    remove: true,
+                    processData: true,
+                    data: {
+                        trees: trees.toString(),
+                        size: size,
+                        offset: offset,
+                    },
+                    success: function (collection, response, options) {
+                        console.log("success fetch with " + collection.models.length + " notes");
+                        if (callback != undefined) {
+                            callback();
+                        }
+                    },
+                    error: function (collection, jqxhr, options) {
+                        console.log("error while fetching item data from the server");
+                    }
+                });
+            }
+            else {
+                if (callback != undefined) {
+                    callback();
+                }
+            }
+        };
+        Model._instance = new Model();
+        return Model;
+    })();
+    FoodParent.Model = Model;
+})(FoodParent || (FoodParent = {}));
+
+///#source 1 1 /core/js/model/person.js
+var __extends = this.__extends || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    __.prototype = b.prototype;
+    d.prototype = new __();
+};
+var FoodParent;
+(function (FoodParent) {
+    var Person = (function (_super) {
+        __extends(Person, _super);
+        function Person(attributes, options) {
+            _super.call(this, attributes, options);
+            this.url = "person.php";
+            this.isSavable = true;
+            var that = this;
+            this.url = FoodParent.Setting.getInstance().getPhpDir() + this.url;
+            this.defaults = {
+                "id": 0,
+                "auth": 0,
+                "name": "",
+                "address": "",
+                "contact": "",
+                "neightboorhood": "",
+                "updated": moment(new Date()).format(FoodParent.Setting.getInstance().getDateTimeFormat()),
+            };
+            that.off("change");
+            that.on("change", function (model, options) {
+                if (that.isSavable == false)
+                    return;
+                that.isSavable = false;
+                model.save({}, {
+                    wait: true,
+                    success: function (model, response) {
+                        console.log(model);
+                        model.isSavable = true;
+                    },
+                    error: function (error, response) {
+                    },
+                });
+            });
+        }
+        Person.prototype.parse = function (response, options) {
+            if (response.id != null) {
+                response.id = parseInt(response.id);
+            }
+            response.auth = parseInt(response.auth);
+            response.updated = moment(response.updated).format(FoodParent.Setting.getInstance().getDateTimeFormat());
+            response.trees = FoodParent.Model.getInstance().getAdopts().getTreeIds(response.id);
+            return _super.prototype.parse.call(this, response, options);
+        };
+        Person.prototype.toJSON = function (options) {
+            var clone = this.clone().attributes;
+            if (this.id != null) {
+                clone["id"] = this.id;
+            }
+            delete clone["trees"];
+            return clone;
+        };
+        Person.prototype.getId = function () {
+            return Math.floor(this.id);
+        };
+        Person.prototype.getAuth = function () {
+            var that = this;
+            return Math.floor(this.get('auth'));
+        };
+        Person.prototype.getName = function () {
+            var that = this;
+            return this.get('name');
+        };
+        Person.prototype.getAddress = function () {
+            var that = this;
+            return this.get('address');
+        };
+        Person.prototype.getContact = function () {
+            var that = this;
+            return this.get('contact');
+        };
+        Person.prototype.getNeightboorhood = function () {
+            var that = this;
+            return this.get('neightboorhood');
+        };
+        return Person;
+    })(Backbone.Model);
+    FoodParent.Person = Person;
+    var Persons = (function (_super) {
+        __extends(Persons, _super);
+        function Persons(models, options) {
+            _super.call(this, models, options);
+            this.url = "persons.php";
+            this.url = FoodParent.Setting.getInstance().getPhpDir() + this.url;
+            this.model = Person;
+        }
+        Persons.prototype.getIds = function () {
+            var that = this;
+            var result = Array();
+            $.each(that.models, function (index, model) {
+                if (result.indexOf(model.getId()) == -1) {
+                    result.push(model.getId());
+                }
+            });
+            return result;
+        };
+        Persons.prototype.getAssigned = function (persons) {
+            var that = this;
+            $.each(that.models, function (index, model) {
+                if (model.get('trees').length >= 1) {
+                    if (persons.where({ id: model.getId() }) != undefined) {
+                        persons.add(model);
+                    }
+                }
+            });
+            return persons;
+        };
+        Persons.prototype.getUnassigned = function (persons) {
+            var that = this;
+            $.each(that.models, function (index, model) {
+                if (model.get('trees').length == 0) {
+                    if (persons.where({ id: model.getId() }) != undefined) {
+                        persons.add(model);
+                    }
+                }
+            });
+            return persons;
+        };
+        Persons.prototype.updateTrees = function () {
+            var that = this;
+            $.each(that.models, function (index, model) {
+                model.attributes.trees = FoodParent.Model.getInstance().getAdopts().getTreeIds(model.id);
+            });
+        };
+        return Persons;
+    })(Backbone.Collection);
+    FoodParent.Persons = Persons;
+})(FoodParent || (FoodParent = {}));
+
+///#source 1 1 /core/js/model/adopt.js
+var __extends = this.__extends || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    __.prototype = b.prototype;
+    d.prototype = new __();
+};
+var FoodParent;
+(function (FoodParent) {
+    var Adopt = (function (_super) {
+        __extends(Adopt, _super);
+        function Adopt(attributes, options) {
+            _super.call(this, attributes, options);
+            this.url = "adopt.php";
+            this.isSavable = true;
+            var that = this;
+            this.url = FoodParent.Setting.getInstance().getPhpDir() + this.url;
+            this.defaults = {
+                "id": 0,
+                "tree": "",
+                "owner": "",
+                "updated": moment(new Date()).format(FoodParent.Setting.getInstance().getDateTimeFormat()),
+            };
+            that.off("change");
+            that.on("change", function (model, options) {
+                if (that.isSavable == false)
+                    return;
+                that.isSavable = false;
+                model.save({}, {
+                    wait: true,
+                    success: function (model, response) {
+                        console.log(model);
+                        model.isSavable = true;
+                    },
+                    error: function (error, response) {
+                    },
+                });
+            });
+        }
+        Adopt.prototype.parse = function (response, options) {
+            if (response.id != null) {
+                response.id = parseInt(response.id);
+            }
+            response.tree = parseInt(response.tree);
+            response.owner = parseInt(response.owner);
+            response.updated = moment(response.updated).format(FoodParent.Setting.getInstance().getDateTimeFormat());
+            return _super.prototype.parse.call(this, response, options);
+        };
+        Adopt.prototype.toJSON = function (options) {
+            var clone = this.clone().attributes;
+            if (this.id != null) {
+                clone["id"] = this.id;
+            }
+            return clone;
+        };
+        Adopt.prototype.getId = function () {
+            return Math.floor(this.id);
+        };
+        Adopt.prototype.getTreeId = function () {
+            var that = this;
+            return Math.floor(this.get('tree'));
+        };
+        Adopt.prototype.getOwnerId = function () {
+            var that = this;
+            return Math.floor(this.get('owner'));
+        };
+        return Adopt;
+    })(Backbone.Model);
+    FoodParent.Adopt = Adopt;
+    var Adopts = (function (_super) {
+        __extends(Adopts, _super);
+        function Adopts(models, options) {
+            _super.call(this, models, options);
+            this.url = "adopts.php";
+            this.url = FoodParent.Setting.getInstance().getPhpDir() + this.url;
+            this.model = Adopt;
+        }
+        Adopts.prototype.getIds = function () {
+            var that = this;
+            var result = Array();
+            $.each(that.models, function (index, model) {
+                if (result.indexOf(model.getId()) == -1) {
+                    result.push(model.getId());
+                }
+            });
+            return result;
+        };
+        Adopts.prototype.getTreeIds = function (ownerId) {
+            var that = this;
+            var result = Array();
+            $.each(that.models, function (index, model) {
+                if (model.getOwnerId() == ownerId) {
+                    if (result.indexOf(model.getTreeId()) == -1) {
+                        result.push(model.getTreeId());
+                    }
+                }
+            });
+            return result;
+        };
+        Adopts.prototype.getOwnerIds = function (treeId) {
+            var that = this;
+            var result = Array();
+            $.each(that.models, function (index, model) {
+                if (model.getTreeId() == treeId) {
+                    if (result.indexOf(model.getOwnerId()) == -1) {
+                        result.push(model.getOwnerId());
+                    }
+                }
+            });
+            return result;
+        };
+        return Adopts;
+    })(Backbone.Collection);
+    FoodParent.Adopts = Adopts;
 })(FoodParent || (FoodParent = {}));
 
 ///#source 1 1 /core/js/controller/controller.js
@@ -37499,10 +36692,10 @@ var FoodParent;
             FoodParent.View.getInstance().SetViewType(2 /* TREE */);
             FoodParent.View.getInstance().render();
         };
-        Controller.prototype.loadNotePage = function () {
+        Controller.prototype.loadPeoplePage = function () {
             if (this.bDebug)
                 console.log("loadNotePage()");
-            FoodParent.View.getInstance().SetViewType(3 /* NOTE */);
+            FoodParent.View.getInstance().SetViewType(3 /* PEOPLE */);
             FoodParent.View.getInstance().render();
         };
         Controller.prototype.updateGeoLocation = function (callback) {
@@ -37549,7 +36742,7 @@ var FoodParent;
                 "": "home",
                 "trees": "trees",
                 "tree/:id": "tree",
-                "note": "note",
+                "people": "people",
                 "about": "about",
             };
             _super.call(this, options);
@@ -37568,9 +36761,9 @@ var FoodParent;
             console.log("we have loaded the tree id: " + id);
             Controller.getInstance().loadTreePage(id);
         };
-        Router.prototype.note = function () {
-            console.log("we have loaded the note");
-            Controller.getInstance().loadNotePage();
+        Router.prototype.people = function () {
+            console.log("we have loaded the people");
+            Controller.getInstance().loadPeoplePage();
         };
         Router.prototype.about = function () {
             console.log("we have loaded the note");
@@ -37628,10 +36821,16 @@ var FoodParent;
             return 19;
         };
         Setting.prototype.getDateTimeFormat = function () {
-            return "YYYY-MM-DD HH:mm";
+            return "YYYY-MM-DD HH:mm:ss";
+        };
+        Setting.prototype.getDateFormat = function () {
+            return "DD MMM";
         };
         Setting.prototype.getResetUpdateDelay = function () {
             return 100;
+        };
+        Setting.prototype.getNumRecentActivityShown = function () {
+            return 5;
         };
         Setting._instance = new Setting();
         return Setting;
@@ -37850,4 +37049,2588 @@ var FoodParent;
     })();
     FoodParent.CoverflowViewFactory = CoverflowViewFactory;
 })(FoodParent || (FoodParent = {}));
+
+///#source 1 1 /core/js/controller/peopleviewfactory.js
+var FoodParent;
+(function (FoodParent) {
+    var PeopleViewFactory = (function () {
+        function PeopleViewFactory(args) {
+            if (PeopleViewFactory._instance) {
+                throw new Error("Error: Instantiation failed: Use PeopleViewFactory.getInstance() instead of new.");
+            }
+            PeopleViewFactory._instance = this;
+        }
+        PeopleViewFactory.getInstance = function () {
+            return PeopleViewFactory._instance;
+        };
+        PeopleViewFactory.prototype.create = function (el) {
+            return new FoodParent.PeopleView({ el: el });
+        };
+        PeopleViewFactory._instance = new PeopleViewFactory();
+        return PeopleViewFactory;
+    })();
+    FoodParent.PeopleViewFactory = PeopleViewFactory;
+    var PersonsViewFactory = (function () {
+        function PersonsViewFactory(args) {
+            if (PersonsViewFactory._instance) {
+                throw new Error("Error: Instantiation failed: Use PersonsViewFactory.getInstance() instead of new.");
+            }
+            PersonsViewFactory._instance = this;
+        }
+        PersonsViewFactory.getInstance = function () {
+            return PersonsViewFactory._instance;
+        };
+        PersonsViewFactory.prototype.create = function (el) {
+            return new FoodParent.PersonsView({ el: el });
+        };
+        PersonsViewFactory._instance = new PersonsViewFactory();
+        return PersonsViewFactory;
+    })();
+    FoodParent.PersonsViewFactory = PersonsViewFactory;
+})(FoodParent || (FoodParent = {}));
+
+///#source 1 1 /core/js/controller/treedetailviewfactory.js
+var FoodParent;
+(function (FoodParent) {
+    var TreeDetailViewFactory = (function () {
+        function TreeDetailViewFactory(args) {
+            if (TreeDetailViewFactory._instance) {
+                throw new Error("Error: Instantiation failed: Use TreeDetailViewFactory.getInstance() instead of new.");
+            }
+            TreeDetailViewFactory._instance = this;
+        }
+        TreeDetailViewFactory.getInstance = function () {
+            return TreeDetailViewFactory._instance;
+        };
+        TreeDetailViewFactory.prototype.create = function (el) {
+            return new FoodParent.TreeDetailView({ el: el });
+        };
+        TreeDetailViewFactory._instance = new TreeDetailViewFactory();
+        return TreeDetailViewFactory;
+    })();
+    FoodParent.TreeDetailViewFactory = TreeDetailViewFactory;
+})(FoodParent || (FoodParent = {}));
+
+///#source 1 1 /core/js/controller/popupviewfactory.js
+var FoodParent;
+(function (FoodParent) {
+    var PopupViewFactory = (function () {
+        function PopupViewFactory(args) {
+            if (PopupViewFactory._instance) {
+                throw new Error("Error: Instantiation failed: Use PopupViewFactory.getInstance() instead of new.");
+            }
+            PopupViewFactory._instance = this;
+        }
+        PopupViewFactory.getInstance = function () {
+            return PopupViewFactory._instance;
+        };
+        PopupViewFactory.prototype.create = function (el) {
+            return new FoodParent.PopupView({ el: el });
+        };
+        PopupViewFactory._instance = new PopupViewFactory();
+        return PopupViewFactory;
+    })();
+    FoodParent.PopupViewFactory = PopupViewFactory;
+})(FoodParent || (FoodParent = {}));
+
+///#source 1 1 /core/js/view/view.js
+var __extends = this.__extends || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    __.prototype = b.prototype;
+    d.prototype = new __();
+};
+var FoodParent;
+(function (FoodParent) {
+    (function (MainViewType) {
+        MainViewType[MainViewType["NONE"] = 0] = "NONE";
+        MainViewType[MainViewType["TREES"] = 1] = "TREES";
+        MainViewType[MainViewType["TREE"] = 2] = "TREE";
+        MainViewType[MainViewType["PEOPLE"] = 3] = "PEOPLE";
+        MainViewType[MainViewType["ABOUT"] = 4] = "ABOUT";
+    })(FoodParent.MainViewType || (FoodParent.MainViewType = {}));
+    var MainViewType = FoodParent.MainViewType;
+    var View = (function (_super) {
+        __extends(View, _super);
+        function View(options) {
+            var _this = this;
+            _super.call(this, options);
+            this.treesViewAfterFetchAdops = function () {
+                var that = _this;
+                FoodParent.Model.getInstance().fetchFoods2(that.treesViewAfterFetchAdops2);
+            };
+            this.treesViewAfterFetchAdops2 = function () {
+                var that = _this;
+                that.bodyView = FoodParent.TreesViewFactory.getInstance().create(that.$('#wrapper-main-body'));
+                that.bodyView.render();
+            };
+            this.treeViewAfterFetchAdops = function () {
+                var that = _this;
+                FoodParent.Model.getInstance().fetchPersons(that.treeViewAfterFetchAdops2);
+            };
+            this.treeViewAfterFetchAdops2 = function () {
+                var that = _this;
+                that.bodyView = FoodParent.TreeViewFactory.getInstance().create(that.$('#wrapper-main-body'), FoodParent.Controller.getInstance().getCurrent());
+                that.bodyView.render();
+                that.popupview = FoodParent.PopupViewFactory.getInstance().create(that.$('#wrapper-main-popup'));
+            };
+            this.peopleViewAfterFetchAdops = function () {
+                var that = _this;
+                FoodParent.Model.getInstance().fetchTrees(new L.LatLngBounds(new L.LatLng(0, 0), new L.LatLng(0, 0)), that.peopleViewAfterFetchAdops2);
+            };
+            this.peopleViewAfterFetchAdops2 = function () {
+                var that = _this;
+                that.bodyView = FoodParent.PeopleViewFactory.getInstance().create(that.$('#wrapper-main-body'));
+                that.bodyView.render();
+            };
+            this.renderTreeInfo = function (tree) {
+                var that = _this;
+                switch (that.viewType) {
+                    case 1 /* TREES */:
+                        var views = that.bodyView.getViews();
+                        var validView;
+                        $.each(views, function (index, view) {
+                            if (view instanceof FoodParent.SideInfoView) {
+                                validView = view;
+                            }
+                        });
+                        if (tree != null) {
+                            validView.customRender(tree);
+                        }
+                        else {
+                            validView.render();
+                        }
+                        break;
+                    case 2 /* TREE */:
+                        var views = that.bodyView.getViews();
+                        var validView2;
+                        var validView3;
+                        var validView4;
+                        $.each(views, function (index, view) {
+                            if (view instanceof FoodParent.TreeInfoView) {
+                                validView2 = view;
+                            }
+                            if (view instanceof FoodParent.CoverflowView) {
+                                validView3 = view;
+                            }
+                            if (view instanceof FoodParent.TreeDetailView) {
+                                validView4 = view;
+                            }
+                        });
+                        validView2.customRender(tree);
+                        validView3.customRender(tree);
+                        validView4.customRender(tree);
+                        break;
+                    case 3 /* PEOPLE */:
+                        break;
+                    case 4 /* ABOUT */:
+                        break;
+                }
+            };
+            if (View._instance) {
+                throw new Error("Error: Instantiation failed: Use View.getInstance() instead of new.");
+            }
+            View._instance = this;
+            var that = this;
+        }
+        View.setElement = function (options) {
+            View._instance.setElement(options.el);
+        };
+        View.getInstance = function () {
+            return View._instance;
+        };
+        View.prototype.SetViewType = function (viewType) {
+            this.viewType = viewType;
+        };
+        View.prototype.getViewType = function () {
+            return this.viewType;
+        };
+        View.prototype.setMapView = function (mapView) {
+            this.mapView = mapView;
+        };
+        View.prototype.getMapView = function () {
+            return this.mapView;
+        };
+        View.prototype.getPopupView = function () {
+            return this.popupview;
+        };
+        View.prototype.render = function () {
+            var that = this;
+            var template = _.template(FoodParent.Template.getInstance().getBaseTemplate());
+            var data = {};
+            that.$el.html(template(data));
+            if (that.headerView != undefined) {
+                that.headerView.destroy();
+            }
+            that.headerView = FoodParent.HeaderFactory.getInstance().create(that.$('#wrapper-main-header'));
+            that.headerView.render();
+            if (that.bodyView != undefined) {
+                that.bodyView.destroy();
+            }
+            if (that.popupview != undefined) {
+                that.popupview.destroy();
+            }
+            that.mapView = undefined;
+            switch (that.viewType) {
+                case 1 /* TREES */:
+                    FoodParent.Model.getInstance().fetchAdopts(that.treesViewAfterFetchAdops);
+                    break;
+                case 2 /* TREE */:
+                    FoodParent.Model.getInstance().fetchAdopts(that.treeViewAfterFetchAdops);
+                    break;
+                case 3 /* PEOPLE */:
+                    FoodParent.Model.getInstance().fetchAdopts(that.peopleViewAfterFetchAdops);
+                    break;
+                case 4 /* ABOUT */:
+                    break;
+            }
+            return that;
+        };
+        View.prototype.renderTreesOnMap = function (trees) {
+            var that = this;
+            if (that.mapView != undefined) {
+                switch (that.viewType) {
+                    case 1 /* TREES */:
+                        var exist = new FoodParent.Trees();
+                        var markers = that.mapView.getAllMarkers();
+                        $.each(trees.models, function (i, model) {
+                            $.each(markers, function (j, marker) {
+                                var food = FoodParent.Model.getInstance().getFoods().findWhere({
+                                    id: model.getFoodId()
+                                });
+                                if (marker.options.name == (food.getName() + model.getName())) {
+                                    exist.add(model);
+                                }
+                            });
+                        });
+                        $.each(markers, function (j, marker) {
+                            var bDeleted = true;
+                            $.each(exist.models, function (i, model) {
+                                var food = FoodParent.Model.getInstance().getFoods().findWhere({
+                                    id: model.getFoodId()
+                                });
+                                if (marker.options.name != (food.getName() + model.getName())) {
+                                    bDeleted = false;
+                                }
+                            });
+                            if (bDeleted) {
+                                that.mapView.removeMarker(marker);
+                            }
+                        });
+                        $.each(trees.models, function (index, model) {
+                            if (exist.findWhere({ id: model.getId() }) == undefined) {
+                                that.createMarker(model);
+                            }
+                        });
+                        break;
+                    case 2 /* TREE */:
+                        var exist = new FoodParent.Trees();
+                        var markers = that.mapView.getAllMarkers();
+                        $.each(trees.models, function (i, model) {
+                            $.each(markers, function (j, marker) {
+                                var food = FoodParent.Model.getInstance().getFoods().findWhere({
+                                    id: model.getFoodId()
+                                });
+                                if (marker.options.name == (food.getName() + model.getName())) {
+                                    exist.add(model);
+                                }
+                            });
+                        });
+                        $.each(markers, function (j, marker) {
+                            var bDeleted = true;
+                            $.each(exist.models, function (i, model) {
+                                var food = FoodParent.Model.getInstance().getFoods().findWhere({
+                                    id: model.getFoodId()
+                                });
+                                if (marker.options.name != (food.getName() + model.getName())) {
+                                    bDeleted = false;
+                                }
+                            });
+                            if (bDeleted) {
+                                that.mapView.removeMarker(marker);
+                            }
+                        });
+                        var tree = FoodParent.Model.getInstance().getTrees().findWhere({ id: FoodParent.Controller.getInstance().getCurrent() });
+                        $.each(trees.models, function (index, model) {
+                            if (exist.findWhere({ id: model.getId() }) == undefined) {
+                                that.createMarker2(model, (tree == model));
+                            }
+                        });
+                        break;
+                    case 3 /* PEOPLE */:
+                        break;
+                    case 4 /* ABOUT */:
+                        break;
+                }
+            }
+        };
+        View.prototype.createMarker = function (model) {
+            var that = this;
+            var view = FoodParent.MarkerViewFactory.getInstance().create(model);
+            view.getMarker().on('popupopen', function (event) {
+                that.renderTreeInfo(model);
+                $('.leaflet-popup-content .glyphicon').off('click');
+                $('.leaflet-popup-content .glyphicon').on('click', function (event) {
+                    FoodParent.Router.getInstance().navigate("tree/" + $('.leaflet-popup-content .glyphicon').attr('data-id'), { trigger: true });
+                });
+            });
+            view.getMarker().on('popupclose', function () {
+                that.renderTreeInfo(null);
+            });
+            that.mapView.addMarker(view.getMarker());
+        };
+        View.prototype.createMarker2 = function (model, bPopupOpen) {
+            var that = this;
+            var view = FoodParent.MarkerViewFactory.getInstance().create2(model);
+            view.getMarker().on('click', function (event) {
+                if (event.target._popup == undefined) {
+                }
+                else {
+                    this.openPopup();
+                }
+            });
+            view.getMarker().on('popupopen', function (event) {
+                that.renderTreeInfo(model);
+                FoodParent.Router.getInstance().navigate("tree/" + $('.leaflet-popup-content span').attr('data-id'), { trigger: false });
+            });
+            view.getMarker().on('popupclose', function () {
+                that.renderTreeInfo(null);
+            });
+            that.mapView.addMarker(view.getMarker());
+            if (bPopupOpen) {
+                view.getMarker().openPopup();
+            }
+        };
+        View._instance = new View();
+        return View;
+    })(Backbone.View);
+    FoodParent.View = View;
+})(FoodParent || (FoodParent = {}));
+
+///#source 1 1 /core/js/view/template.js
+var FoodParent;
+(function (FoodParent) {
+    var Template = (function () {
+        function Template(args) {
+            if (Template._instance) {
+                throw new Error("Error: Instantiation failed: Use Template.getInstance() instead of new.");
+            }
+            Template._instance = this;
+        }
+        Template.getInstance = function () {
+            return Template._instance;
+        };
+        Template.prototype.getBaseTemplate = function () {
+            var template = "";
+            template += '<div id="wrapper-main-popup" class="hidden"></div>';
+            template += '<div id="wrapper-main-body"></div>';
+            template += '<div id="wrapper-main-header"></div>';
+            return template;
+        };
+        Template.prototype.getMainHeaderTemplate = function () {
+            var template = "";
+            template += '<div class="row-100">';
+            template += '<div class="col-xs-3 btn-nav nav-home"><%= site %></div>';
+            template += '<div class="col-xs-3 btn-nav nav-trees"><%= trees %></div>';
+            template += '<div class="col-xs-3 btn-nav nav-people"><%= people %></div>';
+            template += '<div class="col-xs-3 btn-nav nav-about"><%= about %></div>';
+            template += '</div>';
+            return template;
+        };
+        Template.prototype.getMainTreeViewTemplate = function () {
+            var template = "";
+            template += '<div class="col-xs-3 panel-body">';
+            template += '<div class="panel-tree-info"></div>';
+            template += '<div id="map-tree" class="panel-tree-map"></div>';
+            template += '</div>';
+            template += '<div class="col-xs-9 panel-body">';
+            template += '<div class="panel-breadcrumb"></div>';
+            template += '<div class="panel-tree-coverflow"></div>';
+            template += '<div class="panel-tree-detail"></div>';
+            template += '<div id="panel-popup" class="hidden">';
+            template += '<div class="wrapper-popup">';
+            template += '</div>';
+            template += '</div>';
+            template += '</div>';
+            return template;
+        };
+        Template.prototype.getMainTreesViewTemplate = function () {
+            var template = "";
+            template += '<div class="col-xs-3 panel-body panel-sideinfo panel-left-split"></div>';
+            template += '<div id="map-trees" class="col-xs-9 panel-body panel-map"></div>';
+            return template;
+        };
+        Template.prototype.getMainPeopleViewTemplate = function () {
+            var template = "";
+            template += '<div class="col-xs-3 panel-body panel-sideinfo panel-left-split panel-side-people"></div>';
+            template += '<div id="map-people" class="col-xs-9 panel-body panel-people"></div>';
+            return template;
+        };
+        Template.prototype.getEmptySideInfoViewTemplate = function () {
+            var template = "";
+            template += '<div class="form-group">';
+            template += '<div class="col-xs-12 left"><input type="checkbox" checked id="toggle-table"></div>';
+            template += '</div>';
+            return template;
+        };
+        Template.prototype.getTreesSideInfoViewTemplate = function () {
+            var template = "";
+            template += '<div class="form-group">';
+            template += '<div class="col-xs-12 left"><input type="checkbox" checked id="toggle-table"></div>';
+            template += '</div>';
+            template += '<div class="col-xs-9 panel-sideinfo"><h2><span class="glyphicon glyphicon-flag" aria-hidden="true"></span> Filtering</h2></div>';
+            template += '<div class="col-xs-3 panel-sideinfo"><h2><i data-toggle="collapse" data-target="#peoplefilter" class="toggle-collapse fa fa-folder-open-o fa-1x"></i></h2></div>';
+            template += '<div class="clear" />';
+            template += '<div id="peoplefilter" class="collapse in filter">';
+            template += '<div data-toggle="buttons">';
+            template += '<label class="btn filter-checkbox">';
+            template += '<input type="checkbox" name="showall">';
+            template += '<i class="fa fa-square-o fa-1x"></i>';
+            template += '<i class="fa fa-check-square-o fa-1x"></i>';
+            template += ' show / hide all</label>';
+            template += '</div>';
+            template += '<div data-toggle="buttons">';
+            template += '<label class="btn filter-checkbox">';
+            template += '<input type="checkbox" name="assigned">';
+            template += '<i class="fa fa-square-o fa-1x"></i>';
+            template += '<i class="fa fa-check-square-o fa-1x"></i>';
+            template += ' adopted</label>';
+            template += '</div>';
+            template += '<div data-toggle="buttons">';
+            template += '<label class="btn filter-checkbox">';
+            template += '<input type="checkbox" name="unassigned">';
+            template += '<i class="fa fa-square-o fa-1x"></i>';
+            template += '<i class="fa fa-check-square-o fa-1x"></i>';
+            template += ' unadopted</label>';
+            template += '</div>';
+            template += '<% _.each(food.models, function (food) { %>';
+            template += '<div data-toggle="buttons">';
+            template += '<label class="btn filter-checkbox">';
+            template += '<input type="checkbox" name="<%= food.getId() %>">';
+            template += '<i class="fa fa-square-o fa-1x"></i>';
+            template += '<i class="fa fa-check-square-o fa-1x"></i>';
+            template += ' <%= food.getName() %></label>';
+            template += '</div>';
+            template += '<% }); %>';
+            template += '</div>';
+            template += '<div class="form-group split">';
+            template += '<div class="col-xs-10 split-rect"></div>';
+            template += '<div class="col-xs-2 split-label"></div>';
+            template += '<div class="clear" />';
+            return template;
+        };
+        Template.prototype.getPeopleSideInfoViewTemplate = function () {
+            var template = "";
+            template += '<div class="form-group">';
+            template += '<div class="col-xs-12 left"><input type="checkbox" checked id="toggle-table"></div>';
+            template += '</div>';
+            template += '<div class="col-xs-9 panel-sideinfo"><h2><span class="glyphicon glyphicon-flag" aria-hidden="true"></span> Filtering</h2></div>';
+            template += '<div class="col-xs-3 panel-sideinfo"><h2><i data-toggle="collapse" data-target="#peoplefilter" class="toggle-collapse fa fa-folder-open-o fa-1x"></i></h2></div>';
+            template += '<div class="clear" />';
+            template += '<div id="peoplefilter" class="collapse in">';
+            template += '<div data-toggle="buttons">';
+            template += '<label class="btn filter-checkbox">';
+            template += '<input type="checkbox" name="showall">';
+            template += '<i class="fa fa-square-o fa-1x"></i>';
+            template += '<i class="fa fa-check-square-o fa-1x"></i>';
+            template += ' show / hide all</label>';
+            template += '</div>';
+            template += '<div data-toggle="buttons">';
+            template += '<label class="btn filter-checkbox">';
+            template += '<input type="checkbox" name="assigned">';
+            template += '<i class="fa fa-square-o fa-1x"></i>';
+            template += '<i class="fa fa-check-square-o fa-1x"></i>';
+            template += ' assigned</label>';
+            template += '</div>';
+            template += '<div data-toggle="buttons">';
+            template += '<label class="btn filter-checkbox">';
+            template += '<input type="checkbox" name="unassigned">';
+            template += '<i class="fa fa-square-o fa-1x"></i>';
+            template += '<i class="fa fa-check-square-o fa-1x"></i>';
+            template += ' unassigned</label>';
+            template += '</div>';
+            template += '</div>';
+            template += '<div class="form-group split">';
+            template += '<div class="col-xs-10 split-rect"></div>';
+            template += '<div class="col-xs-2 split-label"></div>';
+            template += '<div class="clear" />';
+            return template;
+        };
+        Template.prototype.getRecentActivityTemplate = function () {
+            var template = "";
+            template += '<div class="col-xs-12 panel-sideinfo"><h2><span class="glyphicon glyphicon-time" aria-hidden="true"></span> <%= recent %></h2></div>';
+            template += '<div class="form-group">';
+            template += '<% _.each(notes, function (note) { %>';
+            template += '<div class="col-xs-12"><span class="glyphicon glyphicon-leaf" aria-hidden="true"></span> <%= note.getComment() %> (<%= note.getFormattedDate() %>)</div>';
+            template += '<% }); %>';
+            template += '</div>';
+            return template;
+        };
+        Template.prototype.getTreeDetailTemplate = function () {
+            var template = "";
+            template += '<div class="col-xs-8 panel-body panel-sideinfo">';
+            template += '</div>';
+            template += '<div class="col-xs-4 panel-body panel-sideinfo panel-right-split">';
+            template += '<div class="col-xs-9"><h2><i class="fa fa-child fa-1x" /> Parents</h2></div><div id="edit-parents" class="col-xs-3 pointer"><h2><i class="fa fa-pencil-square-o fa-1x"></i></h2></div>';
+            template += '<div id="list-parents" class="col-xs-12">';
+            template += '<%= persons %>';
+            template += '</div>';
+            template += '<div class="clear" />';
+            template += '<div class="form-group split">';
+            template += '<div class="col-xs-10 split-rect"></div>';
+            template += '<div class="col-xs-2 split-label"></div>';
+            template += '<div class="clear" />';
+            template += '</div>';
+            return template;
+        };
+        Template.prototype.getSideInfoViewTemplate = function () {
+            var template = "";
+            template += '<div class="form-group">';
+            template += '<div class="col-xs-12 left"><input type="checkbox" checked id="toggle-table"></div>';
+            template += '</div>';
+            template += '<div class="col-xs-9 panel-sideinfo"><h2><span class="glyphicon glyphicon-flag" aria-hidden="true"></span> Filtering</h2></div>';
+            template += '<div class="col-xs-3 panel-sideinfo"><h2><i data-toggle="collapse" data-target="#peoplefilter" class="toggle-collapse fa fa-folder-o fa-1x"></i></h2></div>';
+            template += '<div class="clear" />';
+            template += '<div id="peoplefilter" class="collapse filter">';
+            template += '<div data-toggle="buttons">';
+            template += '<label class="btn filter-checkbox">';
+            template += '<input type="checkbox" name="showall">';
+            template += '<i class="fa fa-square-o fa-1x"></i>';
+            template += '<i class="fa fa-check-square-o fa-1x"></i>';
+            template += ' show / hide all</label>';
+            template += '</div>';
+            template += '<div data-toggle="buttons">';
+            template += '<label class="btn filter-checkbox">';
+            template += '<input type="checkbox" name="assigned">';
+            template += '<i class="fa fa-square-o fa-1x"></i>';
+            template += '<i class="fa fa-check-square-o fa-1x"></i>';
+            template += ' adopted</label>';
+            template += '</div>';
+            template += '<div data-toggle="buttons">';
+            template += '<label class="btn filter-checkbox">';
+            template += '<input type="checkbox" name="unassigned">';
+            template += '<i class="fa fa-square-o fa-1x"></i>';
+            template += '<i class="fa fa-check-square-o fa-1x"></i>';
+            template += ' unadopted</label>';
+            template += '</div>';
+            template += '<% _.each(foods.models, function (food) { %>';
+            template += '<div data-toggle="buttons">';
+            template += '<label class="btn filter-checkbox">';
+            template += '<input type="checkbox" name="<%= food.getId() %>">';
+            template += '<i class="fa fa-square-o fa-1x"></i>';
+            template += '<i class="fa fa-check-square-o fa-1x"></i>';
+            template += ' <%= food.getName() %></label>';
+            template += '</div>';
+            template += '<% }); %>';
+            template += '</div>';
+            template += '<div class="form-group split">';
+            template += '<div class="col-xs-10 split-rect"></div>';
+            template += '<div class="col-xs-2 split-label"></div>';
+            template += '<div class="clear" />';
+            template += '<div class="col-xs-12 panel-sideinfo center"><h1><%= name %></h1></div>';
+            template += '<div class="col-xs-12 panel-sideinfo location"><%= location %></div>';
+            template += '<div class="clear" />';
+            template += '<div class="form-group split">';
+            template += '<div class="col-xs-4 split-rect"></div>';
+            template += '<div class="col-xs-8 split-label"></div>';
+            template += '<div class="clear" />';
+            template += '<div class="col-xs-12 panel-sideinfo"><h2><span class="glyphicon glyphicon-flag" aria-hidden="true"></span> <%= flag %></h2></div>';
+            template += '<div class="btn-group" data-toggle="buttons">';
+            template += '<% _.each(flags.models, function (flag) { %>';
+            template += '<label class="btn flag-radio" data-flag="<%= flag.getId() %>">';
+            template += '<input type="radio" name="flag" data-flag="<%= flag.getId() %>">';
+            template += '<i class="fa fa-circle-o fa-1x" data-flag="<%= flag.getId() %>"></i>';
+            template += '<i class="fa fa-check-circle-o fa-1x" data-flag="<%= flag.getId() %>"></i>';
+            template += ' <%= flag.getName() %></label>';
+            template += '<% }); %>';
+            template += '</div>';
+            template += '<div class="form-group split">';
+            template += '<div class="col-xs-4 split-rect"></div>';
+            template += '<div class="col-xs-8 split-label"></div>';
+            template += '<div class="clear" />';
+            template += '<div class="col-xs-12 panel-sideinfo"><h2><span class="glyphicon glyphicon-bookmark" aria-hidden="true"></span> <%= ownership %></h2></div>';
+            template += '<div class="btn-group" data-toggle="buttons">';
+            template += '<% _.each(ownerships.models, function (ownership) { %>';
+            template += '<label class="btn ownership-radio" data-ownership="<%= ownership.getId() %>">';
+            template += '<input type="radio" name="ownership" data-ownership="<%= ownership.getId() %>">';
+            template += '<i class="fa fa-circle-o fa-1x" data-ownership="<%= ownership.getId() %>"></i>';
+            template += '<i class="fa fa-check-circle-o fa-1x" data-ownership="<%= ownership.getId() %>"></i>';
+            template += ' <%= ownership.getName() %></label>';
+            template += '<% }); %>';
+            template += '</div>';
+            template += '<div class="form-group split">';
+            template += '<div class="col-xs-4 split-rect"></div>';
+            template += '<div class="col-xs-8 split-label"></div>';
+            template += '<div class="wrapper-recent-activity"></div>';
+            return template;
+        };
+        Template.prototype.getMapPopupTemplate = function () {
+            var template = "";
+            template += '<%= name %>&nbsp&nbsp<span class="glyphicon glyphicon-log-in" aria-hidden="true" data-id="<%= id %>"></span>&nbsp';
+            return template;
+        };
+        Template.prototype.getSmallMapPopupTemplate = function () {
+            var template = "";
+            template += '<span data-id="<%= id %>"><%= name %></span>';
+            return template;
+        };
+        Template.prototype.getTreeInfoViewTemplate = function () {
+            var template = "";
+            template += '<div class="col-xs-12"><h1><%= name %></h1></div>';
+            template += '<div class="col-xs-12"><%= location %></div>';
+            template += '<div class="clear" />';
+            template += '<div class="form-group">';
+            template += '<div class="col-xs-3 circle-progress-left"><div><%= ripening %></div><div><%= ratio %></div></div>';
+            template += '<div class="col-xs-6">';
+            template += '<div id="ripen-progress" class="circle-progress"></div>';
+            template += '</div>';
+            template += '<div class="col-xs-3 circle-progress-right"><div><%= approximate %></div><div><%= food %></div></div>';
+            template += '</div>';
+            template += '<div class="clear" />';
+            template += '<div class="form-group split">';
+            template += '<div class="col-xs-10 split-rect"></div>';
+            template += '<div class="col-xs-2 split-label"></div>';
+            template += '<div class="clear" />';
+            template += '<div class="col-xs-12 panel-sideinfo"><h2><span class="glyphicon glyphicon-flag" aria-hidden="true"></span> <%= flag %></h2></div>';
+            template += '<div class="btn-group" data-toggle="buttons">';
+            template += '<% _.each(flags.models, function (flag) { %>';
+            template += '<label class="btn flag-radio" data-flag="<%= flag.getId() %>">';
+            template += '<input type="radio" name="flag" data-flag="<%= flag.getId() %>">';
+            template += '<i class="fa fa-circle-o fa-1x" data-flag="<%= flag.getId() %>"></i>';
+            template += '<i class="fa fa-check-circle-o fa-1x" data-flag="<%= flag.getId() %>"></i>';
+            template += ' <%= flag.getName() %></label>';
+            template += '<% }); %>';
+            template += '</div>';
+            template += '<div class="form-group split">';
+            template += '<div class="col-xs-10 split-rect"></div>';
+            template += '<div class="col-xs-2 split-label"></div>';
+            template += '<div class="clear" />';
+            template += '<div class="col-xs-12 panel-sideinfo"><h2><span class="glyphicon glyphicon-bookmark" aria-hidden="true"></span> <%= ownership %></h2></div>';
+            template += '<div class="btn-group" data-toggle="buttons">';
+            template += '<% _.each(ownerships.models, function (ownership) { %>';
+            template += '<label class="btn ownership-radio" data-ownership="<%= ownership.getId() %>">';
+            template += '<input type="radio" name="ownership" data-ownership="<%= ownership.getId() %>">';
+            template += '<i class="fa fa-circle-o fa-1x" data-ownership="<%= ownership.getId() %>"></i>';
+            template += '<i class="fa fa-check-circle-o fa-1x" data-ownership="<%= ownership.getId() %>"></i>';
+            template += ' <%= ownership.getName() %></label>';
+            template += '<% }); %>';
+            template += '</div>';
+            return template;
+        };
+        Template.prototype.getCoverflowTemplate = function () {
+            var template = "";
+            template += '<div class="panel-coverflow col-xs-8">';
+            template += '<div class="wrapper-coverflow">';
+            template += '<div id="coverflow">';
+            template += '<% _.each(notes.models, function (note) { %>';
+            template += '<img src="<%= note.getPicturePath() %>" data-id="<%= note.getId() %>" />';
+            template += '<% }); %>';
+            template += '</div>';
+            template += '</div>';
+            template += '</div>';
+            template += '<div id="coverflow-info" class="col-xs-4">';
+            template += '</div>';
+            template += '<div class="clear" />';
+            template += '<div class="label-coverflow">';
+            template += '<div class="col-xs-8">';
+            template += '<div id="select-date" class="btn btn-default"><i class="fa fa-calendar-check-o fa-1x"></i>&nbsp;<span><%= curdate %></span></div>';
+            template += '</div>';
+            template += '<div class="col-xs-4">';
+            template += '<div id="add-note" class="btn btn-default"><i class="fa fa-plus-square-o fa-1x"></i>&nbsp;<%= addnote %></div>';
+            template += '<div id="delete-note" class="btn btn-default"><i class="fa fa-minus-square-o fa-1x"></i>&nbsp;<%= deletenote %></div>';
+            template += '</div>';
+            template += '</div>';
+            return template;
+        };
+        Template.prototype.getCoverflowInfoTemplate = function () {
+            var template = '';
+            template += '<div class="col-xs-12"><h1><%= detail %></h1></div>';
+            template += '<div class="input-group">';
+            template += '<span class="input-group-addon"><i class="fa fa-calendar fa-fw"></i></span>';
+            template += '<input class="form-control date-input" type="text" placeholder="date" value="<%= date %>">';
+            template += '</div>';
+            template += '<div class="input-group">';
+            template += '<span class="input-group-addon"><i class="fa fa-star-half-o fa-fw"></i></span>';
+            template += '<div class="form-control rating">';
+            template += '<span class="rating-element" data-rating="5">☆</span><span class="rating-element" data-rating="4">☆</span><span class="rating-element" data-rating="3">☆</span><span class="rating-element" data-rating="2">☆</span><span class="rating-element" data-rating="1">☆</span>';
+            template += '</div>';
+            template += '</div>';
+            template += '<div class="input-group">';
+            template += '<span class="input-group-addon"><i class="fa fa-comment fa-fw"></i></span>';
+            template += '<textarea class="form-control comment-input" rows="5" placeholder="comment"><%= note %></textarea>';
+            template += '</div>';
+            template += '<div class="clear" />';
+            return template;
+        };
+        Template.prototype.getAddNotePopupTemplate = function () {
+            var template = '';
+            template += '<div class="col-xs-12"><h1><%= title %></h1></div>';
+            template += '<div class="col-xs-4">';
+            template += '<div id="popup-confirm" class="btn btn-default"><i class="fa fa-circle-o fa-1x"></i>&nbsp;<%= confirm %></div>';
+            template += '<div id="popup-close" class="btn btn-default"><i class="fa fa-times fa-1x"></i>&nbsp;<%= close %></div>';
+            template += '</div>';
+            return template;
+        };
+        Template.prototype.getLocationTableTemplate = function () {
+            var template = "";
+            template += '<div class="list">';
+            template += '<div class="col-xs-12"><h1><%= title %></h1></div>';
+            template += '<div class="clear" />';
+            template += '<div class="form-group">';
+            template += '<div class="col-xs-12">';
+            template += '<div class="list-location"></div>';
+            template += '</div>';
+            template += '<div class="clear" />';
+            template += '</div>';
+            return template;
+        };
+        Template.prototype.getPeopleTableTemplate = function () {
+            var template = "";
+            template += '<div class="list">';
+            template += '<div class="col-xs-12"><h1><%= title %></h1></div>';
+            template += '<div class="clear" />';
+            template += '<div class="form-group">';
+            template += '<div class="col-xs-12">';
+            template += '<div class="list-people"></div>';
+            template += '</div>';
+            template += '<div class="clear" />';
+            template += '</div>';
+            return template;
+        };
+        Template.prototype.getAdoptTreeCellTemplate = function () {
+            var template = "";
+            template += '<% _.each(trees.models, function (tree) { %>';
+            template += '<a href="#tree/<%= tree.getId() %>"><%= tree.getName() %></a>';
+            template += '<% }); %>';
+            return template;
+        };
+        Template.prototype.getEditParentPopupViewTemplate = function () {
+            var template = "";
+            template += '<div class="popup-wrapper">';
+            template += '<div class="col-xs-3 panel-body panel-sideinfo panel-left-split panel-side-people">';
+            template += '<div class="col-xs-9 panel-sideinfo"><h2><span class="glyphicon glyphicon-flag" aria-hidden="true"></span> Filtering</h2></div>';
+            template += '<div class="col-xs-3 panel-sideinfo"><h2><i data-toggle="collapse" data-target="#peoplefilter" class="toggle-collapse fa fa-folder-open-o fa-1x"></i></h2></div>';
+            template += '<div class="clear" />';
+            template += '<div id="peoplefilter" class="collapse in">';
+            template += '<div data-toggle="buttons">';
+            template += '<label class="btn filter-checkbox">';
+            template += '<input type="checkbox" name="showall">';
+            template += '<i class="fa fa-square-o fa-1x"></i>';
+            template += '<i class="fa fa-check-square-o fa-1x"></i>';
+            template += ' show / hide all</label>';
+            template += '</div>';
+            template += '<div data-toggle="buttons">';
+            template += '<label class="btn filter-checkbox">';
+            template += '<input type="checkbox" name="assigned">';
+            template += '<i class="fa fa-square-o fa-1x"></i>';
+            template += '<i class="fa fa-check-square-o fa-1x"></i>';
+            template += ' assigned</label>';
+            template += '</div>';
+            template += '<div data-toggle="buttons">';
+            template += '<label class="btn filter-checkbox">';
+            template += '<input type="checkbox" name="unassigned">';
+            template += '<i class="fa fa-square-o fa-1x"></i>';
+            template += '<i class="fa fa-check-square-o fa-1x"></i>';
+            template += ' unassigned</label>';
+            template += '</div>';
+            template += '</div>';
+            template += '<div class="form-group split">';
+            template += '<div class="col-xs-10 split-rect"></div>';
+            template += '<div class="col-xs-2 split-label"></div>';
+            template += '<div class="clear" />';
+            template += '</div>';
+            template += '</div>';
+            template += '<div class="col-xs-9 panel-body panel-people">';
+            template += '<div class="list">';
+            template += '<div class="col-xs-12"><h1>Tree Adoption</h1></div>';
+            template += '<div class="col-xs-12"><h2><i>Click <i class="fa fa-plus-square fa-1x"></i> icon to assign a new parent for tree <strong><%= tree %></strong>.</h2></i></div>';
+            template += '<div class="clear" />';
+            template += '<div class="form-group">';
+            template += '<div class="col-xs-12">';
+            template += '<div class="list-people"></div>';
+            template += '</div>';
+            template += '<div class="clear" />';
+            template += '</div>';
+            template += '</div>';
+            return template;
+        };
+        Template._instance = new Template();
+        return Template;
+    })();
+    FoodParent.Template = Template;
+})(FoodParent || (FoodParent = {}));
+
+///#source 1 1 /core/js/view/headerview.js
+var __extends = this.__extends || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    __.prototype = b.prototype;
+    d.prototype = new __();
+};
+var FoodParent;
+(function (FoodParent) {
+    var HeaderView = (function (_super) {
+        __extends(HeaderView, _super);
+        function HeaderView(options) {
+            _super.call(this, options);
+            this.bActive = true;
+            var that = this;
+            that.events = {
+                "click .nav-home": "_navHome",
+                "click .nav-trees": "_navTrees",
+                "click .nav-people": "_navPeople",
+                "click .nav-about": "_navAbout",
+            };
+            that.delegateEvents();
+            that.views = new Array();
+        }
+        HeaderView.prototype.render = function () {
+            var that = this;
+            var template = _.template(FoodParent.Template.getInstance().getMainHeaderTemplate());
+            var data = {
+                site: FoodParent.Localization.getInstance().getSiteText(),
+                trees: FoodParent.Localization.getInstance().getTreesText(),
+                people: FoodParent.Localization.getInstance().getPeopleText(),
+                about: FoodParent.Localization.getInstance().getAboutText(),
+            };
+            that.$el.html(template(data));
+            return that;
+        };
+        HeaderView.prototype._navHome = function (event) {
+            event.preventDefault();
+            FoodParent.Router.getInstance().navigate("home", { trigger: true, replace: false });
+        };
+        HeaderView.prototype._navTrees = function (event) {
+            event.preventDefault();
+            FoodParent.Router.getInstance().navigate("trees", { trigger: true, replace: false });
+        };
+        HeaderView.prototype._navPeople = function (event) {
+            event.preventDefault();
+            FoodParent.Router.getInstance().navigate("people", { trigger: true, replace: false });
+        };
+        HeaderView.prototype._navAbout = function (event) {
+            event.preventDefault();
+            FoodParent.Router.getInstance().navigate("about", { trigger: true, replace: false });
+        };
+        return HeaderView;
+    })(Backbone.View);
+    FoodParent.HeaderView = HeaderView;
+})(FoodParent || (FoodParent = {}));
+
+///#source 1 1 /core/js/view/localization.js
+var FoodParent;
+(function (FoodParent) {
+    var Localization = (function () {
+        function Localization(args) {
+            if (Localization._instance) {
+                throw new Error("Error: Instantiation failed: Use Localization.getInstance() instead of new.");
+            }
+            Localization._instance = this;
+        }
+        Localization.getInstance = function () {
+            return Localization._instance;
+        };
+        Localization.prototype.getSiteText = function () {
+            return "FoodParent&#153;";
+        };
+        Localization.prototype.getTreesText = function () {
+            return "Trees";
+        };
+        Localization.prototype.getPeopleText = function () {
+            return "People";
+        };
+        Localization.prototype.getNoteText = function () {
+            return "Note";
+        };
+        Localization.prototype.getAboutText = function () {
+            return "About";
+        };
+        Localization.prototype.getFlagText = function () {
+            return "Flag";
+        };
+        Localization.prototype.getOwnershipText = function () {
+            return "Ownership";
+        };
+        Localization.prototype.getRecentText = function () {
+            return "Recent Activities";
+        };
+        Localization.prototype.getRipeningText = function () {
+            return "Ripnening";
+        };
+        Localization.prototype.getTreeListText = function () {
+            return "Tree List";
+        };
+        Localization.prototype.getPeopleListText = function () {
+            return "People List";
+        };
+        Localization.prototype.getDeleteConfirmText = function () {
+            return "Are you sure to delete this item?";
+        };
+        Localization.prototype.getNoDataText = function () {
+            return "No Data";
+        };
+        Localization.prototype.getNoteDetailText = function () {
+            return "Note Detail";
+        };
+        Localization.prototype.getAddNoteText = function () {
+            return "Add Note";
+        };
+        Localization.prototype.getDeleteNoteText = function () {
+            return "Delete Note";
+        };
+        Localization._instance = new Localization();
+        return Localization;
+    })();
+    FoodParent.Localization = Localization;
+})(FoodParent || (FoodParent = {}));
+
+///#source 1 1 /core/js/view/treesview.js
+var __extends = this.__extends || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    __.prototype = b.prototype;
+    d.prototype = new __();
+};
+var FoodParent;
+(function (FoodParent) {
+    var TreesView = (function (_super) {
+        __extends(TreesView, _super);
+        function TreesView(options) {
+            _super.call(this, options);
+            this.bActive = true;
+            var that = this;
+            that.events = {
+                "click .nav-home": "_navHome",
+            };
+            that.delegateEvents();
+            that.views = new Array();
+        }
+        TreesView.prototype.render = function () {
+            var that = this;
+            var template = _.template(FoodParent.Template.getInstance().getMainTreesViewTemplate());
+            var data = {};
+            that.$el.html(template(data));
+            var view1 = FoodParent.MapViewFactory.getInstance().create(that.$('.panel-map'), true).render();
+            that.views.push(view1);
+            var view2 = FoodParent.SideViewFactory.getInstance().create(that.$('.panel-sideinfo')).render();
+            view2.setMapView(view1);
+            that.views.push(view2);
+            return that;
+        };
+        TreesView.prototype.getViews = function () {
+            var that = this;
+            return that.views;
+        };
+        return TreesView;
+    })(Backbone.View);
+    FoodParent.TreesView = TreesView;
+})(FoodParent || (FoodParent = {}));
+
+///#source 1 1 /core/js/view/mapview.js
+var __extends = this.__extends || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    __.prototype = b.prototype;
+    d.prototype = new __();
+};
+var FoodParent;
+(function (FoodParent) {
+    var MapView = (function (_super) {
+        __extends(MapView, _super);
+        function MapView(options) {
+            var _this = this;
+            _super.call(this, options);
+            this.bDebug = true;
+            this.bActive = true;
+            this.bCentered = true;
+            this.bClosePopupOnClick = true;
+            this.bGraphicView = true;
+            this.createMap = function (position) {
+                var that = _this;
+                var accuracy = position.coords.accuracy;
+                that.location = new L.LatLng(position.coords.latitude, position.coords.longitude);
+                if (that.map == undefined) {
+                    that.setLocation(new L.LatLng(position.coords.latitude, position.coords.longitude));
+                    that.map = L.map(that.$el[0].id, {
+                        zoomControl: false,
+                        closePopupOnClick: that.bClosePopupOnClick,
+                        doubleClickZoom: true,
+                        touchZoom: true,
+                        zoomAnimation: true,
+                        markerZoomAnimation: true,
+                    }).setView(that.location, that.zoom);
+                    L.tileLayer(FoodParent.Setting.getInstance().getTileMapAddress(), {
+                        minZoom: FoodParent.Setting.getInstance().getMapMinZoomLevel(),
+                        maxZoom: FoodParent.Setting.getInstance().getMapMaxZoomLevel(),
+                    }).addTo(that.map);
+                    that.map.invalidateSize(false);
+                    that.map.whenReady(that.afterCreateMap);
+                    that.map.on("moveend", that.afterMoveMap);
+                }
+            };
+            this.afterCreateMap = function () {
+                var that = _this;
+                if (that.bDebug)
+                    console.log("afterCreateMap()");
+                FoodParent.Controller.getInstance().fetchTrees(that.map.getBounds());
+                FoodParent.Controller.getInstance().setMapView(that);
+            };
+            this.afterMoveMap = function () {
+                var that = _this;
+                if (that.bDebug)
+                    console.log("afterMoveMap()");
+                FoodParent.Controller.getInstance().fetchTrees(that.map.getBounds());
+            };
+            var that = this;
+            that.events = {
+                "click .nav-home": "_navHome",
+            };
+            that.delegateEvents();
+            that.views = new Array();
+            that.zoom = FoodParent.Setting.getInstance().getDefaultMapZoomLevel();
+        }
+        MapView.prototype.render = function () {
+            var that = this;
+            that.$el.html("");
+            if (that.bCentered) {
+                console.log("render()");
+                FoodParent.Controller.getInstance().updateGeoLocation(that.createMap);
+            }
+            return that;
+        };
+        MapView.prototype.setIsCentered = function (bCentered) {
+            this.bCentered = bCentered;
+        };
+        MapView.prototype.setIsClosePopupOnClick = function (bClosePopupOnClick) {
+            this.bClosePopupOnClick = bClosePopupOnClick;
+        };
+        MapView.prototype.setZoom = function (zoom) {
+            this.zoom = zoom;
+        };
+        MapView.prototype.setLocation = function (location) {
+            var that = this;
+            that.location = location;
+        };
+        MapView.prototype.updateLocation = function () {
+            var that = this;
+            that.map.setView(that.location, that.zoom);
+        };
+        MapView.prototype.getLocation = function () {
+            return this.location;
+        };
+        MapView.prototype.addMarker = function (marker) {
+            var that = this;
+            marker.addTo(that.map);
+        };
+        MapView.prototype.getAllMarkers = function () {
+            var that = this;
+            var result = new Array();
+            $.each(that.map._layers, function (index, model) {
+                if (model instanceof L.Marker) {
+                    result.push(model);
+                }
+            });
+            return result;
+        };
+        MapView.prototype.removeMarker = function (marker) {
+            var that = this;
+            marker.off('click');
+            that.map.removeLayer(marker);
+            return marker;
+        };
+        MapView.prototype.SetIsGraphicView = function (bGraphicView) {
+            var that = this;
+            that.bGraphicView = bGraphicView;
+            if (that.bGraphicView) {
+                that.render();
+            }
+            else {
+                that.render2();
+            }
+        };
+        MapView.prototype.getIsGraphicView = function () {
+            return this.bGraphicView;
+        };
+        MapView.prototype.render2 = function () {
+            console.log("render2()");
+            var that = this;
+            that.map.remove();
+            that.map = undefined;
+            that.$el.removeClass('leaflet-container');
+            that.$el.removeClass('leaflet-touch');
+            that.$el.removeClass('leaflet-fade-anim');
+            that.$el.removeAttr('tabindex');
+            var template = _.template(FoodParent.Template.getInstance().getLocationTableTemplate());
+            var data = {
+                title: FoodParent.Localization.getInstance().getTreeListText(),
+            };
+            that.$el.html(template(data));
+            TreeColumn[1].cell = Backgrid.SelectCell.extend({
+                optionValues: FoodParent.Model.getInstance().getFoods().toArray(),
+            });
+            var trees = new FoodParent.Trees(FoodParent.Model.getInstance().getTrees().where({ type: 1 }));
+            var grid = new Backgrid.Grid({
+                columns: TreeColumn,
+                collection: trees,
+                emptyText: FoodParent.Localization.getInstance().getNoDataText(),
+            });
+            grid.render();
+            that.$(".list-location").html(grid.el);
+        };
+        MapView.prototype.customRender = function (trees) {
+            var that = this;
+            if (!that.bGraphicView) {
+                if (that.map) {
+                    that.map.remove();
+                    that.map = undefined;
+                    that.$el.removeClass('leaflet-container');
+                    that.$el.removeClass('leaflet-touch');
+                    that.$el.removeClass('leaflet-fade-anim');
+                    that.$el.removeAttr('tabindex');
+                }
+                var template = _.template(FoodParent.Template.getInstance().getLocationTableTemplate());
+                var data = {
+                    title: FoodParent.Localization.getInstance().getTreeListText(),
+                };
+                that.$el.html(template(data));
+                TreeColumn[1].cell = Backgrid.SelectCell.extend({
+                    optionValues: FoodParent.Model.getInstance().getFoods().toArray(),
+                });
+                var grid = new Backgrid.Grid({
+                    columns: TreeColumn,
+                    collection: trees,
+                    emptyText: FoodParent.Localization.getInstance().getNoDataText(),
+                });
+                grid.render();
+                that.$(".list-location").html(grid.el);
+            }
+            else {
+            }
+        };
+        return MapView;
+    })(Backbone.View);
+    FoodParent.MapView = MapView;
+})(FoodParent || (FoodParent = {}));
+
+///#source 1 1 /core/js/view/markerview.js
+var __extends = this.__extends || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    __.prototype = b.prototype;
+    d.prototype = new __();
+};
+var FoodParent;
+(function (FoodParent) {
+    var MarkerView = (function (_super) {
+        __extends(MarkerView, _super);
+        function MarkerView(options) {
+            _super.call(this, options);
+            var that = this;
+        }
+        MarkerView.prototype.create = function (id, name, icon, lat, lng) {
+            var that = this;
+            var template = _.template(FoodParent.Template.getInstance().getMapPopupTemplate());
+            var data = {
+                name: name,
+                id: id,
+            };
+            that.marker = new L.Marker(new L.LatLng(lat, lng), {
+                icon: icon,
+                draggable: false,
+                riseOnHover: true,
+                name: name,
+                id: id,
+            }).bindPopup(template(data), {
+                closeButton: false,
+            });
+        };
+        MarkerView.prototype.create2 = function (id, name, icon, lat, lng) {
+            var that = this;
+            var template = _.template(FoodParent.Template.getInstance().getSmallMapPopupTemplate());
+            var data = {
+                name: name,
+                id: id,
+            };
+            that.marker = new L.Marker(new L.LatLng(lat, lng), {
+                icon: icon,
+                draggable: false,
+                riseOnHover: true,
+                closeOnClick: false,
+                name: name,
+                id: id,
+            }).bindPopup(template(data), {
+                closeButton: false,
+                closeOnClick: false,
+            });
+        };
+        MarkerView.prototype.getMarker = function () {
+            return this.marker;
+        };
+        return MarkerView;
+    })(Backbone.View);
+    FoodParent.MarkerView = MarkerView;
+})(FoodParent || (FoodParent = {}));
+
+///#source 1 1 /core/js/view/sideinfoview.js
+var __extends = this.__extends || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    __.prototype = b.prototype;
+    d.prototype = new __();
+};
+var FoodParent;
+(function (FoodParent) {
+    var SideInfoView = (function (_super) {
+        __extends(SideInfoView, _super);
+        function SideInfoView(options) {
+            var _this = this;
+            _super.call(this, options);
+            this.bActive = true;
+            this.renderRecentActivity = function () {
+                var that = _this;
+                if (that.tree) {
+                    var template = _.template(FoodParent.Template.getInstance().getRecentActivityTemplate());
+                    var notes = new FoodParent.Notes(FoodParent.Model.getInstance().getNotes().where({ tree: that.tree.getId() }));
+                    FoodParent.Model.getInstance().getNotes().sortByDescendingDate();
+                    var data = {
+                        recent: FoodParent.Localization.getInstance().getRecentText(),
+                        notes: notes.first(FoodParent.Setting.getInstance().getNumRecentActivityShown()),
+                    };
+                    that.$('.wrapper-recent-activity').html(template(data));
+                }
+            };
+            this.renderTreeInfo = function () {
+                var that = _this;
+                if (that.tree) {
+                    var food = FoodParent.Model.getInstance().getFoods().findWhere({ id: that.tree.getFoodId() });
+                    var flag = FoodParent.Model.getInstance().getFlags().findWhere({ id: that.tree.getFlagId() });
+                    var ownership = FoodParent.Model.getInstance().getOwnerships().findWhere({ id: that.tree.getOwnershipId() });
+                    var template = _.template(FoodParent.Template.getInstance().getSideInfoViewTemplate());
+                    var data = {
+                        name: food.getName() + that.tree.getName(),
+                        location: '@ ' + that.tree.getLat().toFixed(4) + ", " + that.tree.getLng().toFixed(4),
+                        flag: FoodParent.Localization.getInstance().getFlagText(),
+                        flags: FoodParent.Model.getInstance().getFlags(),
+                        ownership: FoodParent.Localization.getInstance().getOwnershipText(),
+                        ownerships: FoodParent.Model.getInstance().getOwnerships(),
+                        foods: FoodParent.Model.getInstance().getFoods(),
+                    };
+                    that.$el.html(template(data));
+                    that.renderFlagInfo(flag);
+                    that.renderOwnershipInfo(ownership);
+                    FoodParent.Controller.getInstance().fetchNotes([that.tree.getId()], FoodParent.Setting.getInstance().getNumRecentActivityShown(), 0, that.renderRecentActivity);
+                    that.renderTableToggle();
+                }
+                else {
+                    that.$el.html("");
+                }
+                return that;
+            };
+            this.renderFlagInfo = function (flag) {
+                var that = _this;
+                $.each(that.$('.flag-radio'), function (index, item) {
+                    if (parseInt($(item).attr('data-flag')) == flag.getId()) {
+                        $(item).addClass('active');
+                        $(item).find('input').prop({ 'checked': 'checked' });
+                        that.currentFlag = parseInt($(item).attr('data-flag'));
+                    }
+                    else {
+                        $(item).removeClass('active');
+                        $(item).find('input').prop({ 'checked': '' });
+                    }
+                });
+            };
+            this.renderOwnershipInfo = function (ownership) {
+                var that = _this;
+                $.each(that.$('.ownership-radio'), function (index, item) {
+                    if (parseInt($(item).attr('data-ownership')) == ownership.getId()) {
+                        $(item).addClass('active');
+                        $(item).find('input').prop({ 'checked': 'checked' });
+                        that.currentOwnership = parseInt($(item).attr('data-ownership'));
+                    }
+                    else {
+                        $(item).removeClass('active');
+                        $(item).find('input').prop({ 'checked': '' });
+                    }
+                });
+            };
+            var that = this;
+            that.events = {
+                "click .flag-radio": "_clickFlagRadio",
+                "click .ownership-radio": "_clickOwnershipRadio",
+                "click .filter-checkbox": "_clickFilterCheckbox",
+            };
+            that.delegateEvents();
+            that.views = new Array();
+        }
+        SideInfoView.prototype.render = function () {
+            var that = this;
+            if (FoodParent.View.getInstance().getViewType() == 1 /* TREES */) {
+                var template = _.template(FoodParent.Template.getInstance().getTreesSideInfoViewTemplate());
+                var data = {
+                    food: FoodParent.Model.getInstance().getFoods(),
+                };
+                that.$el.html(template(data));
+            }
+            else if (FoodParent.View.getInstance().getViewType() == 3 /* PEOPLE */) {
+                var template = _.template(FoodParent.Template.getInstance().getPeopleSideInfoViewTemplate());
+                var data2 = {};
+                that.$el.html(template(data2));
+            }
+            else {
+                var template = _.template(FoodParent.Template.getInstance().getEmptySideInfoViewTemplate());
+                var data3 = {};
+                that.$el.html(template(data3));
+            }
+            that.renderTableToggle();
+            return that;
+        };
+        SideInfoView.prototype.render2 = function (bChecked) {
+            var that = this;
+            if (FoodParent.View.getInstance().getViewType() == 1 /* TREES */) {
+                var template = _.template(FoodParent.Template.getInstance().getTreesSideInfoViewTemplate());
+                var data = {
+                    food: FoodParent.Model.getInstance().getFoods(),
+                };
+                that.$el.html(template(data));
+            }
+            that.renderTableToggle(bChecked);
+            return that;
+        };
+        SideInfoView.prototype.customRender = function (tree) {
+            var that = this;
+            that.tree = tree;
+            FoodParent.Controller.getInstance().fetchFlags(FoodParent.Controller.getInstance().fetchTypes, that.renderTreeInfo);
+        };
+        SideInfoView.prototype.renderTableToggle = function (bChecked) {
+            var that = this;
+            that.$('#toggle-table').bootstrapToggle({
+                on: 'Graphic',
+                off: 'Table',
+                size: 'small',
+                onstyle: 'default',
+            });
+            if (FoodParent.View.getInstance().getViewType() == 1 /* TREES */) {
+                if (bChecked != undefined) {
+                    if (bChecked) {
+                        that.$('#toggle-table').bootstrapToggle('on');
+                    }
+                    else {
+                        that.$('#toggle-table').bootstrapToggle('off');
+                    }
+                }
+                that.$('#toggle-table').change(function () {
+                    that.render2($(this).prop('checked'));
+                    that.mapView.SetIsGraphicView($(this).prop('checked'));
+                });
+            }
+            else if (FoodParent.View.getInstance().getViewType() == 3 /* PEOPLE */) {
+                that.$('#toggle-table').bootstrapToggle('off');
+                that.$('#toggle-table').prop({ disabled: 'disabled' });
+            }
+        };
+        SideInfoView.prototype._clickFilterCheckbox = function (event) {
+            var that = this;
+            setTimeout(function () {
+                if ($(event.target).find('input').prop('name') == 'showall') {
+                    if ($(event.target).find('input').prop('checked') == true) {
+                        $.each(that.$('.filter-checkbox'), function (index, item) {
+                            $(item).addClass('active');
+                            $(item).find('input').prop({ 'checked': 'checked' });
+                        });
+                    }
+                    else {
+                        $.each(that.$('.filter-checkbox'), function (index, item) {
+                            $(item).removeClass('active');
+                            $(item).find('input').prop({ 'checked': '' });
+                        });
+                    }
+                }
+                else if ($(event.target).find('input').prop('name') != 'showall') {
+                    var isAllChecked = true;
+                    $.each(that.$('.filter-checkbox'), function (index, item) {
+                        if ($(item).find('input').prop('name') != 'showall') {
+                            if ($(item).find('input').prop('checked') == false) {
+                                isAllChecked = false;
+                            }
+                        }
+                    });
+                    if (isAllChecked) {
+                        that.$('.filter-checkbox').find('input[name="showall"]').parent().addClass('active');
+                        that.$('.filter-checkbox').find('input[name="showall"]').prop({ 'checked': 'checked' });
+                    }
+                    else if ($(event.target).find('input').prop('checked') == false) {
+                        that.$('.filter-checkbox').find('input[name="showall"]').parent().removeClass('active');
+                        that.$('.filter-checkbox').find('input[name="showall"]').prop({ 'checked': '' });
+                    }
+                }
+                var trees = new FoodParent.Trees();
+                var persons = new FoodParent.Persons();
+                if (that.$('.filter-checkbox').find('input[name="showall"]').prop('checked')) {
+                    if (FoodParent.View.getInstance().getViewType() == 1 /* TREES */) {
+                        trees = FoodParent.Model.getInstance().getTrees();
+                    }
+                    else if (FoodParent.View.getInstance().getViewType() == 3 /* PEOPLE */) {
+                        persons = FoodParent.Model.getInstance().getPersons();
+                    }
+                }
+                if (that.$('.filter-checkbox').find('input[name="assigned"]').prop('checked')) {
+                    if (FoodParent.View.getInstance().getViewType() == 1 /* TREES */) {
+                        trees = FoodParent.Model.getInstance().getTrees().getAssigned(trees);
+                        console.log(trees);
+                    }
+                    else if (FoodParent.View.getInstance().getViewType() == 3 /* PEOPLE */) {
+                        persons = FoodParent.Model.getInstance().getPersons().getAssigned(persons);
+                    }
+                }
+                if (that.$('.filter-checkbox').find('input[name="unassigned"]').prop('checked')) {
+                    if (FoodParent.View.getInstance().getViewType() == 1 /* TREES */) {
+                        trees = FoodParent.Model.getInstance().getTrees().getUnassigned(trees);
+                    }
+                    else if (FoodParent.View.getInstance().getViewType() == 3 /* PEOPLE */) {
+                        persons = FoodParent.Model.getInstance().getPersons().getUnassigned(persons);
+                    }
+                }
+                $.each(that.$('.filter-checkbox'), function (index, item) {
+                    if (($(item).find('input').prop('name') != 'showall') && ($(item).find('input').prop('name') != 'assigned') && ($(item).find('input').prop('name') != 'unassigned')) {
+                        if ($(item).find('input').prop('checked')) {
+                            trees = FoodParent.Model.getInstance().getTrees().getFromFoodId(trees, parseInt($(item).find('input').prop('name')));
+                        }
+                    }
+                });
+                if (FoodParent.View.getInstance().getViewType() == 1 /* TREES */) {
+                    that.mapView.customRender(trees);
+                }
+                else if (FoodParent.View.getInstance().getViewType() == 3 /* PEOPLE */) {
+                    that.personsView.renderGrid(persons);
+                }
+            }, 1);
+        };
+        SideInfoView.prototype._clickFlagRadio = function (event) {
+            var that = this;
+            $.each(that.$('.flag-radio'), function (index, item) {
+                if (item == event.target) {
+                    $(item).addClass('active');
+                    $(item).find('input').prop({ 'checked': 'checked' });
+                }
+                else {
+                    $(item).removeClass('active');
+                    $(item).find('input').prop({ 'checked': '' });
+                }
+            });
+            if (that.currentFlag != parseInt($(event.target).attr('data-flag')) && that.tree) {
+                that.currentFlag = parseInt($(event.target).attr('data-flag'));
+                that.tree.save({
+                    flag: parseInt($(event.target).attr('data-flag')),
+                }, {
+                    wait: true,
+                    success: function (model, response) {
+                    },
+                    error: function (error) {
+                        console.log(error);
+                    },
+                });
+                var note = new FoodParent.Note({
+                    type: 2 /* INFO */,
+                    tree: that.tree.getId(),
+                    person: 0,
+                    comment: "Flag is changed to '" + FoodParent.Model.getInstance().getFlags().findWhere({ id: parseInt($(event.target).attr('data-flag')) }).getName() + "'",
+                    picture: "",
+                    rate: 0,
+                    date: moment(new Date()).format(FoodParent.Setting.getInstance().getDateTimeFormat()),
+                });
+                note.save({}, {
+                    wait: true,
+                    success: function (model, response) {
+                        FoodParent.Model.getInstance().getNotes().add(model);
+                        that.renderRecentActivity();
+                    },
+                    error: function (error) {
+                        console.log(error);
+                    },
+                });
+            }
+        };
+        SideInfoView.prototype._clickOwnershipRadio = function (event) {
+            var that = this;
+            $.each(that.$('.ownership-radio'), function (index, item) {
+                if (item == event.target) {
+                    $(item).addClass('active');
+                    $(item).find('input').prop({ 'checked': 'checked' });
+                }
+                else {
+                    $(item).removeClass('active');
+                    $(item).find('input').prop({ 'checked': '' });
+                }
+            });
+            if (that.currentOwnership != parseInt($(event.target).attr('data-ownership')) && that.tree) {
+                that.currentOwnership = parseInt($(event.target).attr('data-ownership'));
+                that.tree.save({
+                    ownership: parseInt($(event.target).attr('data-ownership')),
+                }, {
+                    wait: true,
+                    success: function (model, response) {
+                    },
+                    error: function (error) {
+                        console.log(error);
+                    },
+                });
+                var note = new FoodParent.Note({
+                    type: 2 /* INFO */,
+                    tree: that.tree.getId(),
+                    person: 0,
+                    comment: "Ownership is changed to '" + FoodParent.Model.getInstance().getOwnerships().findWhere({ id: parseInt($(event.target).attr('data-ownership')) }).getName() + "'",
+                    picture: "",
+                    rate: 0,
+                    date: moment(new Date()).format(FoodParent.Setting.getInstance().getDateTimeFormat()),
+                });
+                note.save({}, {
+                    wait: true,
+                    success: function (model, response) {
+                        FoodParent.Model.getInstance().getNotes().add(model);
+                        that.renderRecentActivity();
+                    },
+                    error: function (error) {
+                        console.log(error);
+                    },
+                });
+            }
+        };
+        SideInfoView.prototype.setMapView = function (view) {
+            this.mapView = view;
+        };
+        SideInfoView.prototype.setPersonsView = function (view) {
+            this.personsView = view;
+        };
+        return SideInfoView;
+    })(Backbone.View);
+    FoodParent.SideInfoView = SideInfoView;
+})(FoodParent || (FoodParent = {}));
+
+///#source 1 1 /core/js/view/treeview.js
+var __extends = this.__extends || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    __.prototype = b.prototype;
+    d.prototype = new __();
+};
+var FoodParent;
+(function (FoodParent) {
+    var TreeView = (function (_super) {
+        __extends(TreeView, _super);
+        function TreeView(options) {
+            var _this = this;
+            _super.call(this, options);
+            this.bActive = true;
+            this.renderTree = function () {
+                console.log("renderTree");
+                var that = _this;
+                var tree = FoodParent.Model.getInstance().getTrees().findWhere({ id: that.current });
+                var validView;
+                var validView2;
+                var validView3;
+                var validView4;
+                $.each(that.views, function (index, view) {
+                    if (view instanceof FoodParent.MapView) {
+                        validView = view;
+                    }
+                    if (view instanceof FoodParent.TreeInfoView) {
+                        validView2 = view;
+                    }
+                    if (view instanceof FoodParent.CoverflowView) {
+                        validView3 = view;
+                    }
+                    if (view instanceof FoodParent.TreeDetailView) {
+                        validView4 = view;
+                    }
+                });
+                validView.setZoom(FoodParent.Setting.getInstance().getDefaultSmallMapZoomLevel());
+                validView.setIsClosePopupOnClick(false);
+                validView.createMap({ timestamp: new Date(), coords: { altitudeAccuracy: 0, latitude: tree.getLat(), longitude: tree.getLng(), speed: 0, heading: 0, altitude: 0, accuracy: 0 } });
+                validView2.customRender(tree);
+                validView3.customRender(tree);
+                validView4.customRender(tree);
+            };
+            var that = this;
+            that.events = {
+                "click .nav-home": "_navHome",
+            };
+            that.delegateEvents();
+            that.views = new Array();
+        }
+        TreeView.prototype.render = function () {
+            var that = this;
+            var template = _.template(FoodParent.Template.getInstance().getMainTreeViewTemplate());
+            var data = {};
+            that.$el.html(template(data));
+            that.views.push(FoodParent.MapViewFactory.getInstance().create2(that.$('.panel-tree-map'), false).render());
+            that.views.push(FoodParent.TreeInfoViewFactory.getInstance().create(that.$('.panel-tree-info')).render());
+            that.views.push(FoodParent.CoverflowViewFactory.getInstance().create(that.$('.panel-tree-coverflow')).render());
+            that.views.push(FoodParent.TreeDetailViewFactory.getInstance().create(that.$('.panel-tree-detail')).render());
+            FoodParent.Controller.getInstance().fetchTree(that.current, that.renderTree);
+            return that;
+        };
+        TreeView.prototype.getViews = function () {
+            var that = this;
+            return that.views;
+        };
+        TreeView.prototype.setCurrent = function (id) {
+            var that = this;
+            that.current = Math.floor(id);
+        };
+        return TreeView;
+    })(Backbone.View);
+    FoodParent.TreeView = TreeView;
+})(FoodParent || (FoodParent = {}));
+
+///#source 1 1 /core/js/view/treeinfoview.js
+var __extends = this.__extends || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    __.prototype = b.prototype;
+    d.prototype = new __();
+};
+var FoodParent;
+(function (FoodParent) {
+    var TreeInfoView = (function (_super) {
+        __extends(TreeInfoView, _super);
+        function TreeInfoView(options) {
+            var _this = this;
+            _super.call(this, options);
+            this.bActive = true;
+            this.renderTreeInfo = function () {
+                var that = _this;
+                if (that.tree) {
+                    var food = FoodParent.Model.getInstance().getFoods().findWhere({ id: that.tree.getFoodId() });
+                    var flag = FoodParent.Model.getInstance().getFlags().findWhere({ id: that.tree.getFlagId() });
+                    var ownership = FoodParent.Model.getInstance().getOwnerships().findWhere({ id: that.tree.getOwnershipId() });
+                    var ratio = 0.75;
+                    var approximate = 15;
+                    var template = _.template(FoodParent.Template.getInstance().getTreeInfoViewTemplate());
+                    var data = {
+                        name: food.getName() + that.tree.getName(),
+                        location: '@ ' + that.tree.getLat().toFixed(4) + ", " + that.tree.getLng().toFixed(4),
+                        ripening: FoodParent.Localization.getInstance().getRipeningText(),
+                        ratio: Math.floor(ratio * 100) + "%",
+                        approximate: approximate,
+                        food: food.getName(),
+                        flag: FoodParent.Localization.getInstance().getFlagText(),
+                        flags: FoodParent.Model.getInstance().getFlags(),
+                        ownership: FoodParent.Localization.getInstance().getOwnershipText(),
+                        ownerships: FoodParent.Model.getInstance().getOwnerships(),
+                        recent: FoodParent.Localization.getInstance().getRecentText(),
+                    };
+                    that.$el.html(template(data));
+                    that.renderFlagInfo(flag);
+                    that.renderOwnershipInfo(ownership);
+                    var radius = that.$('.circle-progress').innerWidth();
+                    that.$('#ripen-progress').circleProgress({
+                        startAngle: -Math.PI / 2,
+                        value: ratio,
+                        size: radius,
+                        thickness: radius / 8,
+                        fill: {
+                            gradient: ["red", "orange"],
+                            gradientAngle: Math.PI / 4,
+                        }
+                    });
+                    that.$('.circle-progress-left').css({ height: radius });
+                    that.$('.circle-progress-right').css({ height: radius });
+                }
+                else {
+                    that.$el.html("");
+                }
+                return that;
+            };
+            this.renderFlagInfo = function (flag) {
+                var that = _this;
+                $.each(that.$('.flag-radio'), function (index, item) {
+                    if (parseInt($(item).attr('data-flag')) == flag.getId()) {
+                        $(item).addClass('active');
+                        $(item).find('input').prop({ 'checked': 'checked' });
+                        that.currentFlag = parseInt($(item).attr('data-flag'));
+                    }
+                    else {
+                        $(item).removeClass('active');
+                        $(item).find('input').prop({ 'checked': '' });
+                    }
+                });
+            };
+            this.renderOwnershipInfo = function (ownership) {
+                var that = _this;
+                $.each(that.$('.ownership-radio'), function (index, item) {
+                    if (parseInt($(item).attr('data-ownership')) == ownership.getId()) {
+                        $(item).addClass('active');
+                        $(item).find('input').prop({ 'checked': 'checked' });
+                        that.currentOwnership = parseInt($(item).attr('data-ownership'));
+                    }
+                    else {
+                        $(item).removeClass('active');
+                        $(item).find('input').prop({ 'checked': '' });
+                    }
+                });
+            };
+            var that = this;
+            that.events = {
+                "click .flag-radio": "_clickFlagRadio",
+                "click .ownership-radio": "_clickOwnershipRadio",
+            };
+            that.delegateEvents();
+            that.views = new Array();
+        }
+        TreeInfoView.prototype.render = function () {
+            var that = this;
+            return that;
+        };
+        TreeInfoView.prototype.customRender = function (tree) {
+            var that = this;
+            that.tree = tree;
+            FoodParent.Controller.getInstance().fetchFlags(FoodParent.Controller.getInstance().fetchTypes, that.renderTreeInfo);
+        };
+        TreeInfoView.prototype._clickFlagRadio = function (event) {
+            var that = this;
+            $.each(that.$('.flag-radio'), function (index, item) {
+                if (item == event.target) {
+                    $(item).prop({ 'checked': 'checked' });
+                }
+                else {
+                    $(item).prop({ 'checked': '' });
+                }
+            });
+        };
+        TreeInfoView.prototype._clickOwnershipRadio = function (event) {
+            var that = this;
+            $.each(that.$('.type-radio'), function (index, item) {
+                if (item == event.target) {
+                    $(item).prop({ 'checked': 'checked' });
+                }
+                else {
+                    $(item).prop({ 'checked': '' });
+                }
+            });
+        };
+        TreeInfoView.prototype.getViews = function () {
+            var that = this;
+            return that.views;
+        };
+        return TreeInfoView;
+    })(Backbone.View);
+    FoodParent.TreeInfoView = TreeInfoView;
+})(FoodParent || (FoodParent = {}));
+
+///#source 1 1 /core/js/view/coverflowview.js
+var __extends = this.__extends || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    __.prototype = b.prototype;
+    d.prototype = new __();
+};
+var FoodParent;
+(function (FoodParent) {
+    (function (PopupType) {
+        PopupType[PopupType["NONE"] = 0] = "NONE";
+        PopupType[PopupType["ADD"] = 1] = "ADD";
+    })(FoodParent.PopupType || (FoodParent.PopupType = {}));
+    var PopupType = FoodParent.PopupType;
+    var CoverflowView = (function (_super) {
+        __extends(CoverflowView, _super);
+        function CoverflowView(options) {
+            var _this = this;
+            _super.call(this, options);
+            this.bActive = true;
+            this.renderTreeInfo = function () {
+                var that = _this;
+                if (that.tree) {
+                    var template = _.template(FoodParent.Template.getInstance().getCoverflowTemplate());
+                    var notes = new FoodParent.Notes(FoodParent.Model.getInstance().getNotes().where({ tree: that.tree.getId(), type: 1 /* IMAGE */ }));
+                    if (notes.models.length > 0) {
+                        notes.sortByAscendingDate();
+                        var data = {
+                            notes: notes,
+                            addnote: FoodParent.Localization.getInstance().getAddNoteText(),
+                            deletenote: FoodParent.Localization.getInstance().getDeleteNoteText(),
+                            curdate: notes.at(notes.models.length - 1).getFormattedDateTime(),
+                        };
+                        that.$el.html(template(data));
+                        $.each(that.$('.wrapper-coverflow img'), function (index, item) {
+                            $(item).attr({
+                                width: (that.$('.wrapper-coverflow').innerHeight() - 12) * 4 / 3,
+                                height: (that.$('.wrapper-coverflow').innerHeight() - 12),
+                            });
+                        });
+                    }
+                    that.$('#coverflow').coverflow({
+                        active: notes.length - 1,
+                        duration: 100,
+                        select: function (ev, ui) {
+                            var el = ui.active;
+                            var note = FoodParent.Model.getInstance().getNotes().findWhere({ id: parseInt(el.attr('data-id')) });
+                            that.renderNoteInfo(note);
+                            that.renderCalendar(note);
+                        }
+                    });
+                }
+                else {
+                }
+                return that;
+            };
+            this.renderCalendar = function (note) {
+                var that = _this;
+                if (note) {
+                    that.$('#select-date span').html(note.getFormattedDateTime());
+                }
+            };
+            this.renderNoteInfo = function (note) {
+                var that = _this;
+                if (note) {
+                    var template = _.template(FoodParent.Template.getInstance().getCoverflowInfoTemplate());
+                    var data = {
+                        detail: FoodParent.Localization.getInstance().getNoteDetailText(),
+                        date: note.getFormattedDateTime(),
+                        note: note.getComment(),
+                    };
+                    that.$('#coverflow-info').html(template(data));
+                    that.renderRating(note.getRate());
+                }
+            };
+            var that = this;
+            that.events = {
+                "click #add-note": "_clickAddNote",
+                "click .rating-element": "_clickRating",
+                "mouseenter .rating-element": "_mouseenterRating",
+                "mouseleave .rating": "_mouseleaveRating",
+            };
+            that.delegateEvents();
+            that.views = new Array();
+        }
+        CoverflowView.prototype.render = function () {
+            var that = this;
+            var template = _.template(FoodParent.Template.getInstance().getCoverflowTemplate());
+            return that;
+        };
+        CoverflowView.prototype.getViews = function () {
+            var that = this;
+            return that.views;
+        };
+        CoverflowView.prototype.customRender = function (tree) {
+            var that = this;
+            that.tree = tree;
+            if (that.tree) {
+                FoodParent.Controller.getInstance().fetchNotes([that.tree.getId()], 100, 0, that.renderTreeInfo);
+            }
+        };
+        CoverflowView.prototype.renderRating = function (rate) {
+            var that = this;
+            console.log(rate);
+            $.each(that.$('.rating-element'), function (index, item) {
+                if (parseInt($(item).attr('data-rating')) <= rate) {
+                    $(item).addClass('rating-active');
+                }
+            });
+        };
+        CoverflowView.prototype._clickRating = function (event) {
+            var that = this;
+            $.each(that.$('.rating-element'), function (index, item) {
+                if (parseInt($(item).attr('data-rating')) <= parseInt($(event.target).attr('data-rating'))) {
+                    $(item).addClass('rating-active');
+                }
+            });
+        };
+        CoverflowView.prototype._mouseenterRating = function (event) {
+            var that = this;
+            that.$('.rating-element').removeClass('rating-active');
+        };
+        CoverflowView.prototype._mouseleaveRating = function (event) {
+            var that = this;
+            console.log("_mouseleaveRating");
+        };
+        CoverflowView.prototype._clickAddNote = function (event) {
+            var that = this;
+            console.log("_clickAddNote");
+            that.renderPopup(1 /* ADD */);
+        };
+        CoverflowView.prototype.renderPopup = function (pType) {
+            var that = this;
+            switch (pType) {
+                case 1 /* ADD */:
+                    var template = _.template(FoodParent.Template.getInstance().getAddNotePopupTemplate());
+                    var data = {
+                        title: "Add Note",
+                        confirm: "Confirm",
+                        close: "Cancle",
+                    };
+                    $('#panel-popup .wrapper-popup').html(template(data));
+                    $('#panel-popup').removeClass('hidden');
+                    break;
+            }
+            $('#popup-close').off('click');
+            $('#popup-close').on('click', function () {
+                that._closePopup();
+            });
+        };
+        CoverflowView.prototype._closePopup = function () {
+            console.log("_closePopup");
+            $('#panel-popup').addClass('hidden');
+            $('#panel-popup .wrapper-popup').html("");
+        };
+        return CoverflowView;
+    })(Backbone.View);
+    FoodParent.CoverflowView = CoverflowView;
+})(FoodParent || (FoodParent = {}));
+
+///#source 1 1 /core/js/view/peopleview.js
+var __extends = this.__extends || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    __.prototype = b.prototype;
+    d.prototype = new __();
+};
+var FoodParent;
+(function (FoodParent) {
+    var PeopleView = (function (_super) {
+        __extends(PeopleView, _super);
+        function PeopleView(options) {
+            _super.call(this, options);
+            this.bActive = true;
+            var that = this;
+            that.events = {
+                "click .nav-home": "_navHome",
+            };
+            that.delegateEvents();
+            that.views = new Array();
+        }
+        PeopleView.prototype.render = function () {
+            var that = this;
+            var template = _.template(FoodParent.Template.getInstance().getMainPeopleViewTemplate());
+            var data = {
+                title: FoodParent.Localization.getInstance().getPeopleListText(),
+            };
+            that.$el.html(template(data));
+            var view1 = FoodParent.PersonsViewFactory.getInstance().create(that.$('.panel-people')).render();
+            that.views.push(view1);
+            var view2 = FoodParent.SideViewFactory.getInstance().create(that.$('.panel-sideinfo')).render();
+            view2.setPersonsView(view1);
+            that.views.push(view2);
+            return that;
+        };
+        PeopleView.prototype.getViews = function () {
+            var that = this;
+            return that.views;
+        };
+        return PeopleView;
+    })(Backbone.View);
+    FoodParent.PeopleView = PeopleView;
+})(FoodParent || (FoodParent = {}));
+
+///#source 1 1 /core/js/view/personsview.js
+var __extends = this.__extends || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    __.prototype = b.prototype;
+    d.prototype = new __();
+};
+var FoodParent;
+(function (FoodParent) {
+    var PersonsView = (function (_super) {
+        __extends(PersonsView, _super);
+        function PersonsView(options) {
+            _super.call(this, options);
+            this.bActive = true;
+            var that = this;
+            that.events = {
+                "click .nav-home": "_navHome",
+            };
+            that.delegateEvents();
+            that.views = new Array();
+        }
+        PersonsView.prototype.render = function () {
+            var that = this;
+            var template = _.template(FoodParent.Template.getInstance().getPeopleTableTemplate());
+            var data = {
+                title: FoodParent.Localization.getInstance().getPeopleListText(),
+            };
+            that.$el.html(template(data));
+            PersonColumn[1].cell = Backgrid.SelectCell.extend({
+                optionValues: FoodParent.Model.getInstance().getAuths().toArray(),
+            });
+            FoodParent.Model.getInstance().fetchPersons(function () {
+                var persons = FoodParent.Model.getInstance().getPersons();
+                that.renderGrid(persons);
+            });
+            return that;
+        };
+        PersonsView.prototype.getViews = function () {
+            var that = this;
+            return that.views;
+        };
+        PersonsView.prototype.renderGrid = function (persons) {
+            var that = this;
+            var grid = new Backgrid.Grid({
+                columns: PersonColumn,
+                collection: persons,
+                emptyText: FoodParent.Localization.getInstance().getNoDataText(),
+            });
+            grid.render();
+            that.$(".list-people").html(grid.el);
+            return that;
+        };
+        return PersonsView;
+    })(Backbone.View);
+    FoodParent.PersonsView = PersonsView;
+})(FoodParent || (FoodParent = {}));
+
+///#source 1 1 /core/js/view/treedetailview.js
+var __extends = this.__extends || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    __.prototype = b.prototype;
+    d.prototype = new __();
+};
+var FoodParent;
+(function (FoodParent) {
+    var TreeDetailView = (function (_super) {
+        __extends(TreeDetailView, _super);
+        function TreeDetailView(options) {
+            _super.call(this, options);
+            this.bActive = true;
+            var that = this;
+            that.events = {
+                "click .nav-home": "_navHome",
+            };
+            that.delegateEvents();
+            that.views = new Array();
+        }
+        TreeDetailView.prototype.render = function () {
+            var that = this;
+            return that;
+        };
+        TreeDetailView.prototype.customRender = function (tree) {
+            var that = this;
+            that.tree = tree;
+            if (that.tree) {
+                var persons = Array();
+                var template = _.template(FoodParent.Template.getInstance().getTreeDetailTemplate());
+                $.each(that.tree.get('owners'), function (index, owner) {
+                    var name = FoodParent.Model.getInstance().getPersons().findWhere({ id: owner }).getName();
+                    persons.push(" " + name);
+                });
+                var data = {
+                    persons: persons.toString(),
+                };
+                that.$el.html(template(data));
+                $('#edit-parents').off('click');
+                $('#edit-parents').on('click', function () {
+                    FoodParent.View.getInstance().getPopupView().renderEditParent(that.tree);
+                    FoodParent.View.getInstance().getPopupView().SetVisibility(true);
+                });
+            }
+        };
+        TreeDetailView.prototype.getViews = function () {
+            var that = this;
+            return that.views;
+        };
+        return TreeDetailView;
+    })(Backbone.View);
+    FoodParent.TreeDetailView = TreeDetailView;
+})(FoodParent || (FoodParent = {}));
+
+///#source 1 1 /core/js/view/popupview.js
+var __extends = this.__extends || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    __.prototype = b.prototype;
+    d.prototype = new __();
+};
+var FoodParent;
+(function (FoodParent) {
+    var PopupView = (function (_super) {
+        __extends(PopupView, _super);
+        function PopupView(options) {
+            _super.call(this, options);
+            this.bActive = true;
+            var that = this;
+            that.events = {
+                "click .nav-home": "_navHome",
+                "click .filter-checkbox": "_clickFilterCheckbox",
+            };
+            that.delegateEvents();
+            that.views = new Array();
+            that.bVisible = false;
+        }
+        PopupView.prototype.render = function () {
+            var that = this;
+            return that;
+        };
+        PopupView.prototype.getCurrentTree = function () {
+            return this.tree;
+        };
+        PopupView.prototype.renderEditParent = function (tree) {
+            var that = this;
+            that.tree = tree;
+            var template = _.template(FoodParent.Template.getInstance().getEditParentPopupViewTemplate());
+            var data = {
+                tree: tree.getName(),
+            };
+            that.$el.html(template(data));
+            that.delegateEvents();
+            that.renderGrid(FoodParent.Model.getInstance().getPersons());
+            console.log(that.$el);
+        };
+        PopupView.prototype.renderGrid = function (persons) {
+            var that = this;
+            var fakeId = 14531;
+            var newpersons = new FoodParent.Persons();
+            $.each(persons.models, function (index, model) {
+                if (model.get('trees') == undefined || model.get('trees').length == 0) {
+                    var temp = new FoodParent.Person(model.attributes);
+                    temp.id = "#" + fakeId;
+                    temp.attributes.id = "#" + fakeId;
+                    temp.attributes.tempid = model.attributes.id;
+                    fakeId++;
+                    temp.isSavable = false;
+                    newpersons.add(temp);
+                }
+                else {
+                    console.log(model.get('trees').length);
+                    for (var i = 0; i < model.get('trees').length; i++) {
+                        var temp = new FoodParent.Person(model.attributes);
+                        temp.id = "#" + fakeId;
+                        temp.attributes.id = "#" + fakeId;
+                        temp.attributes.tempid = model.attributes.id;
+                        fakeId++;
+                        temp.attributes.trees = [model.get('trees')[i]];
+                        temp.isSavable = false;
+                        newpersons.add(temp);
+                    }
+                }
+            });
+            console.log(newpersons);
+            PersonPopupColumn[0].cell = Backgrid.SelectCell.extend({
+                optionValues: FoodParent.Model.getInstance().getAuths().toArray(),
+            });
+            var grid = new Backgrid.Grid({
+                columns: PersonPopupColumn,
+                collection: newpersons,
+                emptyText: FoodParent.Localization.getInstance().getNoDataText(),
+            });
+            grid.render();
+            that.$(".list-people").html(grid.el);
+            return that;
+        };
+        PopupView.prototype.SetVisibility = function (visible) {
+            var that = this;
+            that.bVisible = visible;
+            if (that.bVisible) {
+                that.$el.removeClass('hidden');
+                $('#wrapper-main-body').addClass('inactive');
+                $('#wrapper-main-body').addClass('inactive');
+            }
+            else if (that.bVisible) {
+                that.$el.addClass('hidden');
+                $('#wrapper-main-body').removeClass('inactive');
+                $('#wrapper-main-body').removeClass('inactive');
+            }
+        };
+        PopupView.prototype.getViews = function () {
+            var that = this;
+            return that.views;
+        };
+        PopupView.prototype._clickFilterCheckbox = function (event) {
+            var that = this;
+            setTimeout(function () {
+                if ($(event.target).find('input').prop('name') == 'showall') {
+                    if ($(event.target).find('input').prop('checked') == true) {
+                        $.each(that.$('.filter-checkbox'), function (index, item) {
+                            $(item).addClass('active');
+                            $(item).find('input').prop({ 'checked': 'checked' });
+                        });
+                    }
+                    else {
+                        $.each(that.$('.filter-checkbox'), function (index, item) {
+                            $(item).removeClass('active');
+                            $(item).find('input').prop({ 'checked': '' });
+                        });
+                    }
+                }
+                else if ($(event.target).find('input').prop('name') != 'showall') {
+                    var isAllChecked = true;
+                    $.each(that.$('.filter-checkbox'), function (index, item) {
+                        if ($(item).find('input').prop('name') != 'showall') {
+                            if ($(item).find('input').prop('checked') == false) {
+                                isAllChecked = false;
+                            }
+                        }
+                    });
+                    if (isAllChecked) {
+                        that.$('.filter-checkbox').find('input[name="showall"]').parent().addClass('active');
+                        that.$('.filter-checkbox').find('input[name="showall"]').prop({ 'checked': 'checked' });
+                    }
+                    else if ($(event.target).find('input').prop('checked') == false) {
+                        that.$('.filter-checkbox').find('input[name="showall"]').parent().removeClass('active');
+                        that.$('.filter-checkbox').find('input[name="showall"]').prop({ 'checked': '' });
+                    }
+                }
+                var trees = new FoodParent.Trees();
+                var persons = new FoodParent.Persons();
+                if (that.$('.filter-checkbox').find('input[name="showall"]').prop('checked')) {
+                    if (FoodParent.View.getInstance().getViewType() == FoodParent.MainViewType.TREES) {
+                        trees = FoodParent.Model.getInstance().getTrees();
+                    }
+                    else if (FoodParent.View.getInstance().getViewType() == FoodParent.MainViewType.PEOPLE || FoodParent.View.getInstance().getViewType() == FoodParent.MainViewType.TREE) {
+                        persons = FoodParent.Model.getInstance().getPersons();
+                    }
+                }
+                if (that.$('.filter-checkbox').find('input[name="assigned"]').prop('checked')) {
+                    if (FoodParent.View.getInstance().getViewType() == FoodParent.MainViewType.TREES) {
+                        trees = FoodParent.Model.getInstance().getTrees().getAssigned(trees);
+                        console.log(trees);
+                    }
+                    else if (FoodParent.View.getInstance().getViewType() == FoodParent.MainViewType.PEOPLE || FoodParent.View.getInstance().getViewType() == FoodParent.MainViewType.TREE) {
+                        persons = FoodParent.Model.getInstance().getPersons().getAssigned(persons);
+                    }
+                }
+                if (that.$('.filter-checkbox').find('input[name="unassigned"]').prop('checked')) {
+                    if (FoodParent.View.getInstance().getViewType() == FoodParent.MainViewType.TREES) {
+                        trees = FoodParent.Model.getInstance().getTrees().getUnassigned(trees);
+                    }
+                    else if (FoodParent.View.getInstance().getViewType() == FoodParent.MainViewType.PEOPLE || FoodParent.View.getInstance().getViewType() == FoodParent.MainViewType.TREE) {
+                        persons = FoodParent.Model.getInstance().getPersons().getUnassigned(persons);
+                    }
+                }
+                $.each(that.$('.filter-checkbox'), function (index, item) {
+                    if (($(item).find('input').prop('name') != 'showall') && ($(item).find('input').prop('name') != 'assigned') && ($(item).find('input').prop('name') != 'unassigned')) {
+                        if ($(item).find('input').prop('checked')) {
+                            trees = FoodParent.Model.getInstance().getTrees().getFromFoodId(trees, parseInt($(item).find('input').prop('name')));
+                        }
+                    }
+                });
+                if (FoodParent.View.getInstance().getViewType() == FoodParent.MainViewType.TREES) {
+                }
+                else if (FoodParent.View.getInstance().getViewType() == FoodParent.MainViewType.PEOPLE) {
+                }
+                else if (FoodParent.View.getInstance().getViewType() == FoodParent.MainViewType.TREE) {
+                    that.renderGrid(persons);
+                }
+            }, 1);
+        };
+        return PopupView;
+    })(Backbone.View);
+    FoodParent.PopupView = PopupView;
+})(FoodParent || (FoodParent = {}));
+
+///#source 1 1 /core/js/view/gridformat.js
+var AdoptTreesCell = Backgrid.Cell.extend({
+    initialize: function (options) {
+        this.column = options.column;
+        if (!(this.column instanceof Backgrid.Column)) {
+            this.column = new Backgrid.Column(this.column);
+        }
+        this.listenTo(this.model, "backgrid:editing", this.postRender);
+    },
+    template: _.template(FoodParent.Template.getInstance().getAdoptTreeCellTemplate()),
+    render: function () {
+        var trees = new FoodParent.Trees(FoodParent.Model.getInstance().getTrees().filterById(this.model.get('trees')));
+        var data = {
+            trees: trees,
+        };
+        $(this.el).html(this.template(data));
+        $(this.el).addClass('renderable');
+        this.delegateEvents();
+        return this;
+    }
+});
+var DatePickerCellEditor = Backgrid.InputCellEditor.extend({
+    events: {},
+    initialize: function () {
+        Backgrid.InputCellEditor.prototype.initialize.apply(this, arguments);
+        var input = this;
+        $(this.el).datetimepicker({
+            defaultDate: input.model.get("date"),
+            format: FoodParent.Setting.getInstance().getDateTimeFormat(),
+        }).on("dp.hide", function () {
+            if ($(this).data("date") != undefined) {
+                var command = new Backgrid.Command({});
+                input.model.set(input.column.get("name"), $(this).data("date"));
+                input.model.trigger("backgrid:edited", input.model, input.column, command);
+            }
+        });
+    },
+});
+var TreeDeleteCell = Backgrid.Cell.extend({
+    template: _.template('<button type="button" class="btn btn-default btn-table"><span class="glyphicon glyphicon-remove"></span></button>'),
+    events: {
+        "click": "deleteRow"
+    },
+    deleteRow: function (e) {
+        var r = confirm(FoodParent.Localization.getInstance().getDeleteConfirmText());
+        if (r == true) {
+            e.preventDefault();
+            this.model.collection.remove(this.model);
+            this.model.destroy({
+                wait: true,
+                success: function (model, response) {
+                },
+                error: function () {
+                },
+            });
+        }
+    },
+    render: function () {
+        $(this.el).html(this.template());
+        this.delegateEvents();
+        return this;
+    }
+});
+var TreeDetailCell = Backgrid.Cell.extend({
+    template: _.template('<button type="button" class="btn btn-default btn-table"><span class="glyphicon glyphicon-log-in"></span></button>'),
+    events: {
+        "click": "showDetail"
+    },
+    showDetail: function (e) {
+        FoodParent.Router.getInstance().navigate("tree/" + this.model.getId(), { trigger: true });
+    },
+    render: function () {
+        $(this.el).html(this.template());
+        this.delegateEvents();
+        return this;
+    }
+});
+var TreeColumn = [
+    {
+        name: "id",
+        label: "#",
+        editable: false,
+        cell: "string",
+    },
+    {
+        name: "food",
+        label: "Type of Food",
+        editable: true,
+    },
+    {
+        name: "lat",
+        label: "Latitude",
+        editable: true,
+        cell: "number",
+    },
+    {
+        name: "lng",
+        label: "Longitude",
+        editable: true,
+        cell: "number",
+    },
+    {
+        name: "address",
+        label: "Address",
+        editable: true,
+        cell: "string",
+    },
+    {
+        name: "updated",
+        label: "Updated",
+        editable: false,
+        cell: Backgrid.Cell.extend({ editor: DatePickerCellEditor }),
+    },
+    {
+        label: "Detail",
+        sortable: false,
+        editable: false,
+        cell: TreeDetailCell,
+    },
+    {
+        label: "Delete",
+        sortable: false,
+        editable: false,
+        cell: TreeDeleteCell,
+    }
+];
+var PersonDeleteCell = Backgrid.Cell.extend({
+    template: _.template('<button type="button" class="btn btn-default btn-table"><span class="glyphicon glyphicon-remove"></span></button>'),
+    events: {
+        "click": "deleteRow"
+    },
+    deleteRow: function (e) {
+        var r = confirm(FoodParent.Localization.getInstance().getDeleteConfirmText());
+        if (r == true) {
+            e.preventDefault();
+            this.model.collection.remove(this.model);
+            this.model.destroy({
+                wait: true,
+                success: function (model, response) {
+                },
+                error: function () {
+                },
+            });
+        }
+    },
+    render: function () {
+        $(this.el).html(this.template());
+        this.delegateEvents();
+        return this;
+    }
+});
+var PersonDetailCell = Backgrid.Cell.extend({
+    template: _.template('<button type="button" class="btn btn-default btn-table"><span class="glyphicon glyphicon-log-in"></span></button>'),
+    events: {
+        "click": "showDetail"
+    },
+    showDetail: function (e) {
+        FoodParent.Router.getInstance().navigate("person/" + this.model.getId(), { trigger: true });
+    },
+    render: function () {
+        $(this.el).html(this.template());
+        this.delegateEvents();
+        return this;
+    }
+});
+var PersonColumn = [
+    {
+        name: "id",
+        label: "#",
+        editable: false,
+        cell: "string",
+    },
+    {
+        name: "auth",
+        label: "Type",
+        editable: true,
+    },
+    {
+        name: "name",
+        label: "Name",
+        editable: true,
+        cell: "string",
+    },
+    {
+        name: "address",
+        label: "Address",
+        editable: true,
+        cell: "string",
+    },
+    {
+        name: "contact",
+        label: "Contact",
+        editable: true,
+        cell: "string",
+    },
+    {
+        name: "neighborhood",
+        label: "Neighborhood",
+        editable: true,
+        cell: "string",
+    },
+    {
+        name: "updated",
+        label: "Updated",
+        editable: false,
+        cell: Backgrid.Cell.extend({ editor: DatePickerCellEditor }),
+    },
+    {
+        name: "trees",
+        label: "Adoption",
+        sortable: false,
+        editable: false,
+        cell: AdoptTreesCell,
+    },
+    {
+        label: "Delete",
+        sortable: false,
+        editable: false,
+        cell: PersonDeleteCell,
+    }
+];
+var AdoptAddCell = Backgrid.Cell.extend({
+    initialize: function (options) {
+        this.column = options.column;
+        if (!(this.column instanceof Backgrid.Column)) {
+            this.column = new Backgrid.Column(this.column);
+        }
+        this.listenTo(this.model, "backgrid:editing", this.postRender);
+    },
+    template: _.template('<i class="pointer fa fa-plus-square fa-1x"></i>'),
+    events: {
+        "click": "AddAdoption"
+    },
+    render: function () {
+        var data = {};
+        $(this.el).html(this.template(data));
+        $(this.el).addClass('renderable');
+        this.delegateEvents();
+        return this;
+    },
+    AddAdoption: function (e) {
+        console.log(e);
+        console.log(this.model.get('tempid'));
+        var person = FoodParent.Model.getInstance().getPersons().findWhere({ id: this.model.get('tempid') });
+        var tree = FoodParent.View.getInstance().getPopupView().getCurrentTree();
+        var r = confirm("Do you want assign tree '" + tree.getName() + "' to '" + person.getName() + "'");
+        if (r == true) {
+            e.preventDefault();
+            var adopt = new FoodParent.Adopt({
+                tree: tree.getId(),
+                owner: person.getId(),
+            });
+            FoodParent.Model.getInstance().getAdopts().add(adopt);
+            FoodParent.Model.getInstance().getPersons().updateTrees();
+            FoodParent.View.getInstance().getPopupView().renderEditParent(tree);
+        }
+    },
+});
+var AdoptRemoveCell = Backgrid.Cell.extend({
+    template: _.template('<i class="pointer fa fa-minus-square fa-1x"></i>'),
+    events: {
+        "click": "RemoveAdoption"
+    },
+    AddAdoption: function (e) {
+    },
+    render: function () {
+        $(this.el).html(this.template());
+        this.delegateEvents();
+        return this;
+    }
+});
+var PersonPopupColumn = [
+    {
+        name: "auth",
+        label: "Type",
+        editable: false,
+    },
+    {
+        name: "name",
+        label: "Name",
+        editable: false,
+        cell: "string",
+    },
+    {
+        name: "contact",
+        label: "Contact",
+        editable: false,
+        cell: "string",
+    },
+    {
+        name: "trees",
+        label: "Adoption",
+        sortable: false,
+        editable: false,
+        cell: AdoptTreesCell,
+    },
+    {
+        label: "Add",
+        sortable: false,
+        editable: false,
+        cell: AdoptAddCell,
+    },
+    {
+        label: "Remove",
+        sortable: false,
+        editable: false,
+        cell: AdoptRemoveCell,
+    },
+    {
+        name: "updated",
+        label: "Updated",
+        editable: false,
+        cell: Backgrid.Cell.extend({ editor: DatePickerCellEditor }),
+    }
+];
 

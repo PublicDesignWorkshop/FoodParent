@@ -27,9 +27,9 @@
             View.getInstance().render();
         }
 
-        public loadNotePage(): void {
+        public loadPeoplePage(): void {
             if (this.bDebug) console.log("loadNotePage()");
-            View.getInstance().SetViewType(MainViewType.NOTE);
+            View.getInstance().SetViewType(MainViewType.PEOPLE);
             View.getInstance().render();
         }
 
@@ -86,7 +86,7 @@
                 "": "home",
                 "trees": "trees",
                 "tree/:id": "tree",
-                "note": "note",
+                "people": "people",
                 "about": "about",
                 //"donations": "donations",
                 //"donation/:id": "donation",
@@ -111,9 +111,9 @@
             console.log("we have loaded the tree id: " + id);
             Controller.getInstance().loadTreePage(id);
         }
-        note() {
-            console.log("we have loaded the note");
-            Controller.getInstance().loadNotePage();
+        people() {
+            console.log("we have loaded the people");
+            Controller.getInstance().loadPeoplePage();
         }
         about() {
             console.log("we have loaded the note");

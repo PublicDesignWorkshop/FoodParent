@@ -51,10 +51,17 @@
             return 19;
         }
         public getDateTimeFormat(): string {
-            return "YYYY-MM-DD HH:mm";
+            return "YYYY-MM-DD HH:mm:ss";
+        }
+        public getDateFormat(): string {
+            return "DD MMM";
         }
         public getResetUpdateDelay(): number {
             return 100;
+        }
+
+        public getNumRecentActivityShown(): number {
+            return 5;
         }
     }
 }

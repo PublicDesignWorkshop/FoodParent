@@ -1,12 +1,13 @@
 ﻿module FoodParent {
     export enum MainViewType {
-        NONE, TREES, TREE, NOTE, ABOUT
+        NONE, TREES, TREE, PEOPLE, ABOUT
     }
     export class View extends Backbone.View<Backbone.Model> {
         private static _instance: View = new View();
         private viewType: MainViewType;
         private headerView: Backbone.View<Backbone.Model>;
         private bodyView: Backbone.View<Backbone.Model>;
+        private popupview: Backbone.View<Backbone.Model>;
         private mapView: MapView;
         constructor(options?: Backbone.ViewOptions<Backbone.Model>) {
             super(options);
@@ -35,6 +36,10 @@
             return this.mapView;
         }
 
+        public getPopupView(): PopupView {
+            return <PopupView> this.popupview;
+        }
+
         render(): any {
             var that: View = this;
             // add a new view
@@ -53,18 +58,21 @@
                 that.bodyView.destroy();
             }
 
+            if (that.popupview != undefined) {
+                that.popupview.destroy();
+            }
+
             that.mapView = undefined;
 
             switch (that.viewType) {
                 case MainViewType.TREES:
-                    that.bodyView = TreesViewFactory.getInstance().create(that.$('#wrapper-main-body'));
-                    that.bodyView.render();
+                    Model.getInstance().fetchAdopts(that.treesViewAfterFetchAdops);
                     break;
                 case MainViewType.TREE:
-                    that.bodyView = TreeViewFactory.getInstance().create(that.$('#wrapper-main-body'), Controller.getInstance().getCurrent());
-                    that.bodyView.render();
+                    Model.getInstance().fetchAdopts(that.treeViewAfterFetchAdops);
                     break;
-                case MainViewType.NOTE:
+                case MainViewType.PEOPLE:
+                    Model.getInstance().fetchAdopts(that.peopleViewAfterFetchAdops);
                     break;
                 case MainViewType.ABOUT:
                     break;
@@ -72,6 +80,40 @@
 
 
             return that;
+        }
+
+        public treesViewAfterFetchAdops = () => {
+            var that: View = this;
+            Model.getInstance().fetchFoods2(that.treesViewAfterFetchAdops2);
+        }
+
+        public treesViewAfterFetchAdops2 = () => {
+            var that: View = this;
+            that.bodyView = TreesViewFactory.getInstance().create(that.$('#wrapper-main-body'));
+            that.bodyView.render();
+        }
+
+        public treeViewAfterFetchAdops = () => {
+            var that: View = this;
+            Model.getInstance().fetchPersons(that.treeViewAfterFetchAdops2);
+        }
+
+        public treeViewAfterFetchAdops2 = () => {
+            var that: View = this;
+            that.bodyView = TreeViewFactory.getInstance().create(that.$('#wrapper-main-body'), Controller.getInstance().getCurrent());
+            that.bodyView.render();
+            that.popupview = PopupViewFactory.getInstance().create(that.$('#wrapper-main-popup'));
+        }
+
+        public peopleViewAfterFetchAdops = () => {
+            var that: View = this;
+            Model.getInstance().fetchTrees(new L.LatLngBounds(new L.LatLng(0, 0), new L.LatLng(0, 0)), that.peopleViewAfterFetchAdops2);
+        }
+
+        public peopleViewAfterFetchAdops2 = () => {
+            var that: View = this;
+            that.bodyView = PeopleViewFactory.getInstance().create(that.$('#wrapper-main-body'));
+            that.bodyView.render();
         }
 
         public renderTreesOnMap(trees: Trees): void {
@@ -154,7 +196,7 @@
                         });
 
                         break;
-                    case MainViewType.NOTE:
+                    case MainViewType.PEOPLE:
                         break;
                     case MainViewType.ABOUT:
                         break;
@@ -213,12 +255,18 @@
                             validView = <SideInfoView> view;
                         }
                     });
-                    validView.customRender(tree);
+                    if (tree != null) {
+                        validView.customRender(tree);
+                    } else {
+                        validView.render();
+                    }
+                    
                     break;
                 case MainViewType.TREE:
                     var views: Array<Backbone.View<Backbone.Model>> = that.bodyView.getViews();
                     var validView2: TreeInfoView;
                     var validView3: CoverflowView;
+                    var validView4: TreeDetailView;
                     $.each(views, function (index: number, view: Backbone.View<Backbone.Model>) {
                         if (view instanceof TreeInfoView) {
                             validView2 = <TreeInfoView> view;
@@ -226,11 +274,15 @@
                         if (view instanceof CoverflowView) {
                             validView3 = <CoverflowView> view;
                         }
+                        if (view instanceof TreeDetailView) {
+                            validView4 = <TreeDetailView> view;
+                        }
                     });
                     validView2.customRender(tree);
                     validView3.customRender(tree);
+                    validView4.customRender(tree);
                     break;
-                case MainViewType.NOTE:
+                case MainViewType.PEOPLE:
                     break;
                 case MainViewType.ABOUT:
                     break;

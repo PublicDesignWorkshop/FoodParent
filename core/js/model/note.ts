@@ -1,4 +1,10 @@
 ﻿module FoodParent {
+    export enum SortType {
+        NONE, DESCENDING, ASCENDING
+    }
+    export enum NoteType {
+        NONE, IMAGE, INFO, PICKUP
+    }
     export class Note extends Backbone.Model {
         url: string = "note.php";
         constructor(attributes?: any, options?: any) {
@@ -36,19 +42,61 @@
         public getId(): number {
             return Math.floor(this.id);
         }
+        public getComment(): string {
+            return this.get('comment');
+        }
         public getPicturePath(): string {
             return Setting.getInstance().getContentsImageDir() + this.get('picture');
         }
         public getFakePicturePath(): string {
             return Setting.getInstance().getCoreImageDir() + "placeholder-image.jpg";
         }
+        public getFormattedDate(): string {
+            return moment(this.get('date')).format(Setting.getInstance().getDateFormat());
+        }
+        public getFormattedDateTime(): string {
+            return moment(this.get('date')).format(Setting.getInstance().getDateTimeFormat());
+        }
+        public getDateValueOf(): number {
+            return moment(this.get('date')).valueOf();
+        }
+        public getRate(): number {
+            return parseFloat(this.get('rate'));
+        }
     }
     export class Notes extends Backbone.Collection<Note> {
         url: string = "notes.php";
+        sortType: SortType = SortType.NONE;
         constructor(models?: Note[], options?: any) {
             super(models, options);
             this.url = Setting.getInstance().getPhpDir() + this.url;
             this.model = Note;
+        }
+        comparator(model: Note) {
+            var that: Notes = this;
+            switch (that.sortType) {
+                case SortType.NONE:
+                    return 0;
+                    break;
+                case SortType.ASCENDING:
+                    return model.getDateValueOf();
+                    break;
+                case SortType.DESCENDING:
+                    return -model.getDateValueOf();
+                    break;
+            }
+        }
+
+        public sortByDescendingDate(): void {
+            var that: Notes = this;
+            that.sortType = SortType.DESCENDING;
+            that.sort();
+        }
+
+        public sortByAscendingDate(): void {
+            var that: Notes = this;
+            that.sortType = SortType.ASCENDING;
+            that.sort();
         }
     }
 }

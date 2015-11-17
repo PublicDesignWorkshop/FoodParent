@@ -15,7 +15,7 @@ var FoodParent;
             that.events = {
                 "click .nav-home": "_navHome",
                 "click .nav-trees": "_navTrees",
-                "click .nav-note": "_navNote",
+                "click .nav-people": "_navPeople",
                 "click .nav-about": "_navAbout",
             };
             that.delegateEvents();
@@ -27,7 +27,7 @@ var FoodParent;
             var data = {
                 site: FoodParent.Localization.getInstance().getSiteText(),
                 trees: FoodParent.Localization.getInstance().getTreesText(),
-                note: FoodParent.Localization.getInstance().getNoteText(),
+                people: FoodParent.Localization.getInstance().getPeopleText(),
                 about: FoodParent.Localization.getInstance().getAboutText(),
             };
             that.$el.html(template(data));
@@ -41,9 +41,9 @@ var FoodParent;
             event.preventDefault();
             FoodParent.Router.getInstance().navigate("trees", { trigger: true, replace: false });
         };
-        HeaderView.prototype._navNote = function (event) {
+        HeaderView.prototype._navPeople = function (event) {
             event.preventDefault();
-            FoodParent.Router.getInstance().navigate("note", { trigger: true, replace: false });
+            FoodParent.Router.getInstance().navigate("people", { trigger: true, replace: false });
         };
         HeaderView.prototype._navAbout = function (event) {
             event.preventDefault();

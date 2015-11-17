@@ -11,10 +11,13 @@ var FoodParent;
             return Localization._instance;
         };
         Localization.prototype.getSiteText = function () {
-            return "FoodParent";
+            return "FoodParent&#153;";
         };
         Localization.prototype.getTreesText = function () {
             return "Trees";
+        };
+        Localization.prototype.getPeopleText = function () {
+            return "People";
         };
         Localization.prototype.getNoteText = function () {
             return "Note";
@@ -25,7 +28,7 @@ var FoodParent;
         Localization.prototype.getFlagText = function () {
             return "Flag";
         };
-        Localization.prototype.getTypeText = function () {
+        Localization.prototype.getOwnershipText = function () {
             return "Ownership";
         };
         Localization.prototype.getRecentText = function () {
@@ -37,11 +40,23 @@ var FoodParent;
         Localization.prototype.getTreeListText = function () {
             return "Tree List";
         };
+        Localization.prototype.getPeopleListText = function () {
+            return "People List";
+        };
         Localization.prototype.getDeleteConfirmText = function () {
             return "Are you sure to delete this item?";
         };
         Localization.prototype.getNoDataText = function () {
             return "No Data";
+        };
+        Localization.prototype.getNoteDetailText = function () {
+            return "Note Detail";
+        };
+        Localization.prototype.getAddNoteText = function () {
+            return "Add Note";
+        };
+        Localization.prototype.getDeleteNoteText = function () {
+            return "Delete Note";
         };
         Localization._instance = new Localization();
         return Localization;

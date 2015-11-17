@@ -22,7 +22,7 @@
             that.off("change");
             that.on("change", function (model: Tree, options) {
                 if (that.isSavable == false) return;
-                
+                /*
                 var attributes = model.attributes;
                 attributes.lat = parseFloat(attributes.lat);
                 attributes.lng = parseFloat(attributes.lng);
@@ -31,7 +31,8 @@
                 attributes.flag = parseInt(attributes.flag);
                 attributes.owner = parseInt(attributes.owner);
                 attributes.ownership = parseInt(attributes.ownership);
-                attributes.updated = moment(attributes.updated).format(Setting.getInstance().getDateTimeFormat());
+                //attributes.updated = moment(new Date()).format(Setting.getInstance().getDateTimeFormat());
+                */
                 that.isSavable = false;
                 model.save(
                     {},
@@ -39,22 +40,14 @@
                         wait: true,
                         success: function (model: Tree, response: any) {
                             console.log(model);
-                            that.resetSavable();
+                            that.isSavable = true;
                         },
                         error: function (error, response) {
-                            that.resetSavable();
                         },
                     }
                     );
             });
 
-        }
-
-        resetSavable(): void {
-            var that: Tree = this;
-            setTimeout(function () {
-                that.isSavable = true;
-            }, Setting.getInstance().getResetUpdateDelay());
         }
 
         parse(response: any, options?: any): any {
@@ -69,6 +62,8 @@
             response.owner = parseInt(response.owner);
             response.ownership = parseInt(response.ownership);
             response.updated = moment(response.updated).format(Setting.getInstance().getDateTimeFormat());
+
+            response.owners = Model.getInstance().getAdopts().getOwnerIds(response.id);
             return super.parse(response, options);
         }
         toJSON(options?: any): any {
@@ -76,6 +71,7 @@
             if (this.id != null) {
                 clone["id"] = this.id;
             }
+            delete clone["owners"];
             return clone;
         }
         public getFoodId(): number {
@@ -146,5 +142,48 @@
             return result;
         }
 
+        public filterById(idArray): Array<Tree> {
+            var that: Trees = this;
+            var trees: Trees = new Trees(that.models);
+            return trees.reset(_.map(idArray, function (id) { return this.get(id); }, this));
+        }
+
+        public getAssigned(trees: Trees): Trees {
+            var that: Trees = this;
+            $.each(that.models, function (index: number, model: Tree) {
+                if (model.get('owners').length >= 1) {
+                    if (trees.where({ id: model.getId() }) != undefined) {
+                        trees.add(model);
+                    }
+                    
+                }
+            });
+            return trees;
+        }
+
+        public getUnassigned(trees: Trees): Trees {
+            var that: Trees = this;
+            $.each(that.models, function (index: number, model: Tree) {
+                if (model.get('owners').length == 0) {
+                    if (trees.where({ id: model.getId() }) != undefined) {
+                        trees.add(model);
+                    }
+
+                }
+            });
+            return trees;
+        }
+
+        public getFromFoodId(trees: Trees, id: number): Trees {
+            var that: Trees = this;
+            $.each(that.models, function (index: number, model: Tree) {
+                if (model.getFoodId() == id) {
+                    if (trees.where({ id: model.getId() }) != undefined) {
+                        trees.add(model);
+                    }
+                }
+            });
+            return trees;
+        }
     }
 }

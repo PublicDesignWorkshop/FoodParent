@@ -168,8 +168,49 @@
             });
             grid.render();
             //grid.sort("name", "ascending");
-            that.$(".list-location").append(grid.el);
+            that.$(".list-location").html(grid.el);
 
+        }
+
+        public customRender(trees: Trees): any {
+            var that: MapView = this;
+
+            if (!that.bGraphicView) {
+                if (that.map) {
+                    that.map.remove();
+                    that.map = undefined;
+                    that.$el.removeClass('leaflet-container');
+                    that.$el.removeClass('leaflet-touch');
+                    that.$el.removeClass('leaflet-fade-anim');
+                    that.$el.removeAttr('tabindex');
+                }
+                
+
+                var template = _.template(Template.getInstance().getLocationTableTemplate());
+                var data = {
+                    title: Localization.getInstance().getTreeListText(),
+                }
+                that.$el.html(template(data));
+
+                // add grid instance for existing data
+                TreeColumn[1].cell = Backgrid.SelectCell.extend({
+                    optionValues: Model.getInstance().getFoods().toArray(),
+                })
+
+                //var trees: Trees = new Trees(Model.getInstance().getTrees().where({ type: 1 }));
+                //console.log(trees);
+                //console.log(trees.models[0].get('id'));
+                var grid = new Backgrid.Grid({
+                    columns: TreeColumn,
+                    collection: trees,
+                    emptyText: Localization.getInstance().getNoDataText(),
+                });
+                grid.render();
+                //grid.sort("name", "ascending");
+                that.$(".list-location").html(grid.el);
+            } else {
+
+            }
         }
 
         /*

@@ -50,11 +50,14 @@
                 "east" => $_GET['east'],
             );
         }
+        /*
         if ($params["id"] != -1) {
             $sql = "SELECT * FROM `tree` WHERE (`id` = '".$params["id"]."')";
         } else {
             $sql = "SELECT * FROM `tree` WHERE (`lat` BETWEEN ".$params["south"]." AND ".$params["north"].") AND (`lng` BETWEEN ".$params["west"]." AND ".$params["east"].")";
         }
+        */
+        $sql = "SELECT * FROM `tree`";
         
         
         try {

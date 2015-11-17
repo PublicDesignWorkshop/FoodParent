@@ -21,7 +21,7 @@
             //create();
             break;
         case 'GET':
-            read();
+            //read();
             break;
         case 'PUT':
             update();

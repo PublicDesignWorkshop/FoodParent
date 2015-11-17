@@ -1,41 +1,72 @@
 ﻿@media all {
-    .panel-sideinfo {
-        padding-top: 12px !important;
-        border-left: 1px dashed #878787;
-        overflow-y: scroll;
+    .panel-left-split {
+        border-right: 1px dashed #878787;
         overflow-x: hidden;
+        overflow-y: scroll;
     }
+
+    .panel-right-split {
+        border-left: 1px dashed #878787;
+        overflow-x: hidden;
+        overflow-y: scroll;
+    }
+    .panel-sideinfo {
+        padding-top: 6px !important;
+        text-align: left;
+    }
+
     .panel-sideinfo .split {
         height: 30px;
         text-align: left;
     }
 
     .panel-sideinfo .split-rect {
-        height: 6px;
-        background-color: #ffffff;
+        height: 2px;
+        background-color: #878787;
         margin-top: 12px;
     }
 
     .panel-sideinfo h1 {
         font-size: x-large;
         font-weight: 700;
-        margin-top: 0;
+        margin-top: 12px;
+        margin-bottom: 4px;
     }
     .panel-sideinfo h2 {
         font-weight: 700;
         font-size: large;
         margin: 8px;
         margin-left: 0;
+        text-align: left;
     }
-    .panel-sideinfo div {
-        font-size: medium;
-    }
+
     .group-radio {
         text-align: left;
     }
     .label-radio {
-        font-size: medium;
+        font-size: small;
         font-weight: 400;
+    }
+
+    .panel-sideinfo .wrapper-recent-activity {
+        font-size: small;
+    }
+
+    .location {
+        font-size: small;
+    }
+
+    .btn-group label {
+        font-size: medium !important;
+        line-height: 0 !important;
+    }
+
+    .toggle-collapse[aria-expanded="false"]::before {
+        content: "\f114";
+    }
+
+    .toggle-collapse[aria-expanded="true"]::before {
+        content: "\f115";
     }
 
 }

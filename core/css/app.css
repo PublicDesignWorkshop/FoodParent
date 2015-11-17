@@ -52,11 +52,19 @@
         clear: both;
     }
     .center {
-        text-align: center;
+        text-align: center !important;
     }
 
     .left {
         text-align: right;
+    }
+
+    .pointer {
+        cursor: pointer;
+    }
+
+    .inactive {
+        opacity: 0.25;
     }
 
 }

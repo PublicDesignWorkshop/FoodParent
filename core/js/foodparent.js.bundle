@@ -30,28 +30,19 @@
     <!-- Main -->
     <file>/core/js/app.js</file>
     
-    <!-- View -->
-    <file>/core/js/view/gridformat.js</file>
-    <file>/core/js/view/view.js</file>
-    <file>/core/js/view/template.js</file>
-    <file>/core/js/view/headerview.js</file>
-    <file>/core/js/view/localization.js</file>
-    <file>/core/js/view/treesview.js</file>
-    <file>/core/js/view/mapview.js</file>
-    <file>/core/js/view/markerview.js</file>
-    <file>/core/js/view/sideinfoview.js</file>
-    <file>/core/js/view/treeview.js</file>
-    <file>/core/js/view/treeinfoview.js</file>
-    <file>/core/js/view/coverflowview.js</file>
+    
     
 
     <!-- Model -->
-    <file>/core/js/model/model.js</file>
     <file>/core/js/model/food.js</file>
     <file>/core/js/model/tree.js</file>
     <file>/core/js/model/flag.js</file>
     <file>/core/js/model/type.js</file>
     <file>/core/js/model/note.js</file>
+    <file>/core/js/model/auth.js</file>
+    <file>/core/js/model/model.js</file>
+    <file>/core/js/model/person.js</file>
+    <file>/core/js/model/adopt.js</file>
 
 
     <!-- Controller -->
@@ -65,11 +56,30 @@
     <file>/core/js/controller/treeviewfactory.js</file>
     <file>/core/js/controller/treeinfoviewfactory.js</file>
     <file>/core/js/controller/coverflowviewfactory.js</file>
+    <file>/core/js/controller/peopleviewfactory.js</file>
+    <file>/core/js/controller/treedetailviewfactory.js</file>
+    <file>/core/js/controller/popupviewfactory.js</file>
+
+
+    <!-- View -->
     
-    
-    
-    
-    
+    <file>/core/js/view/view.js</file>
+    <file>/core/js/view/template.js</file>
+    <file>/core/js/view/headerview.js</file>
+    <file>/core/js/view/localization.js</file>
+    <file>/core/js/view/treesview.js</file>
+    <file>/core/js/view/mapview.js</file>
+    <file>/core/js/view/markerview.js</file>
+    <file>/core/js/view/sideinfoview.js</file>
+    <file>/core/js/view/treeview.js</file>
+    <file>/core/js/view/treeinfoview.js</file>
+    <file>/core/js/view/coverflowview.js</file>
+    <file>/core/js/view/peopleview.js</file>
+    <file>/core/js/view/personsview.js</file>
+    <file>/core/js/view/treedetailview.js</file>
+    <file>/core/js/view/popupview.js</file>
+
+    <file>/core/js/view/gridformat.js</file>
     
   </files>
 </bundle>

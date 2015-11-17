@@ -15,19 +15,43 @@
         padding-top: 2px;
     }
 
-    .backgrid .food {
+    .backgrid .select-cell {
+        text-align: left;
+    }
+
+    .list-location .backgrid .food {
         width: 15%;
     }
-    .backgrid .lat {
+    .list-location .backgrid .lat {
         width: 10%;
     }
-    .backgrid .lng {
+    .list-location .backgrid .lng {
         width: 10%;
     }
-    .backgrid .address {
-        width: 40%;
+    .list-location .backgrid .address {
+        width: 35%;
     }
-    .backgrid .updated {
+    .list-location .backgrid .updated {
         width: 15%;
     }
+
+    .list-people .backgrid .auth {
+        width: 15%;
+    }
+    .list-people .backgrid .name {
+        width: 15%;
+    }
+    .list-people .backgrid .address {
+        width: 15%;
+    }
+    .list-people .backgrid .contact {
+        width: 15%;
+    }
+    .list-people .backgrid .neighborhood {
+        width: 10%;
+    }
+    .list-people .backgrid .updated {
+        width: 15%;
+    }
+    
 }

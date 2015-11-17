@@ -13,10 +13,13 @@
         }
 
         public getSiteText(): string {
-            return "FoodParent";
+            return "FoodParent&#153;";
         }
         public getTreesText(): string {
             return "Trees";
+        }
+        public getPeopleText(): string {
+            return "People";
         }
         public getNoteText(): string {
             return "Note";
@@ -27,7 +30,7 @@
         public getFlagText(): string {
             return "Flag";
         }
-        public getTypeText(): string {
+        public getOwnershipText(): string {
             return "Ownership";
         }
         public getRecentText(): string {
@@ -39,11 +42,23 @@
         public getTreeListText(): string {
             return "Tree List";
         }
+        public getPeopleListText(): string {
+            return "People List";
+        }
         public getDeleteConfirmText(): string {
             return "Are you sure to delete this item?";
         }
         public getNoDataText(): string {
             return "No Data";
+        }
+        public getNoteDetailText(): string {
+            return "Note Detail";
+        }
+        public getAddNoteText(): string {
+            return "Add Note";
+        }
+        public getDeleteNoteText(): string {
+            return "Delete Note";
         }
     }
 }

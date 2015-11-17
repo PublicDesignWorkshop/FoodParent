@@ -21,6 +21,7 @@
     <file>/core/lib/bootstrap-toggle/css/bootstrap-toggle.css</file>
     <file>/core/lib/bootstrap-datetimepicker/css/bootstrap-datetimepicker.css</file>
     <file>/core/lib/bootstrap-select/css/bootstrap-select.css</file>
+    <file>/core/lib/font-awesome/css/font-awesome.css</file>
 
     
     <file>/core/css/app.css</file>
@@ -30,5 +31,6 @@
     <file>/core/css/sideinfo.css</file>
     <file>/core/css/tree.css</file>
     <file>/core/css/table.css</file>
+    <file>/core/css/coverflow.css</file>
   </files>
 </bundle>

@@ -25,6 +25,7 @@
             that.views.push(MapViewFactory.getInstance().create2(that.$('.panel-tree-map'), false).render());
             that.views.push(TreeInfoViewFactory.getInstance().create(that.$('.panel-tree-info')).render());
             that.views.push(CoverflowViewFactory.getInstance().create(that.$('.panel-tree-coverflow')).render());
+            that.views.push(TreeDetailViewFactory.getInstance().create(that.$('.panel-tree-detail')).render());
             
             Controller.getInstance().fetchTree(that.current, that.renderTree);
 
@@ -49,6 +50,7 @@
             var validView: MapView;
             var validView2: TreeInfoView;
             var validView3: CoverflowView;
+            var validView4: TreeDetailView;
             
             $.each(that.views, function (index: number, view: Backbone.View<Backbone.Model>) {
                 if (view instanceof MapView) {
@@ -60,6 +62,9 @@
                 if (view instanceof CoverflowView) {
                     validView3 = <CoverflowView> view;
                 }
+                if (view instanceof TreeDetailView) {
+                    validView4 = <TreeDetailView> view;
+                }
             });
             validView.setZoom(Setting.getInstance().getDefaultSmallMapZoomLevel());
             validView.setIsClosePopupOnClick(false);
@@ -67,6 +72,7 @@
 
             validView2.customRender(tree);
             validView3.customRender(tree);
+            validView4.customRender(tree);
 
         }
 

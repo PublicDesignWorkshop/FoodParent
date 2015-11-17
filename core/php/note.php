@@ -18,7 +18,7 @@
 
     switch($_SERVER['REQUEST_METHOD']){
         case 'POST':
-            //update();
+            create();
             break;
         case 'GET':
             read();
@@ -51,6 +51,42 @@
             $result = $stmt->fetchAll(PDO::FETCH_OBJ);
             $pdo = null;
             echo json_encode($result);
+        } catch(PDOException $e) {
+            echo '{"error":{"text":'. $e->getMessage() .'}}';
+        }
+    }
+    
+    function create() {
+        $data = json_decode(file_get_contents('php://input'));
+        $params = array(
+            "type" => $data->{'type'},
+            "tree" => $data->{'tree'},
+            "person" => $data->{'person'},
+            "comment" => $data->{'comment'},
+            "picture" => $data->{'picture'},
+            "rate" => $data->{'rate'},
+            "date" => date("Y-m-d H:i:s"),
+        );
+        $sql = "INSERT INTO `note` VALUES ( NULL, :type, :tree, :person, :comment, :picture, :rate, :date )";
+        
+        try {
+            $pdo = getConnection();
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute($params);
+            
+            $sql = "SELECT * FROM `note` WHERE `id` = :id";
+            $params = array(
+                "id" => $pdo->lastInsertId(),
+            );
+            try {
+               $stmt = $pdo->prepare($sql);
+                $stmt->execute($params);
+                $result = $stmt->fetchAll(PDO::FETCH_OBJ);
+                $pdo = null;
+                echo json_encode($result[0]);
+            } catch(PDOException $e) {
+                echo '{"error":{"text":'. $e->getMessage() .'}}';
+            }
         } catch(PDOException $e) {
             echo '{"error":{"text":'. $e->getMessage() .'}}';
         }

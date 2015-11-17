@@ -35,10 +35,10 @@ var FoodParent;
             FoodParent.View.getInstance().SetViewType(2 /* TREE */);
             FoodParent.View.getInstance().render();
         };
-        Controller.prototype.loadNotePage = function () {
+        Controller.prototype.loadPeoplePage = function () {
             if (this.bDebug)
                 console.log("loadNotePage()");
-            FoodParent.View.getInstance().SetViewType(3 /* NOTE */);
+            FoodParent.View.getInstance().SetViewType(3 /* PEOPLE */);
             FoodParent.View.getInstance().render();
         };
         Controller.prototype.updateGeoLocation = function (callback) {
@@ -85,7 +85,7 @@ var FoodParent;
                 "": "home",
                 "trees": "trees",
                 "tree/:id": "tree",
-                "note": "note",
+                "people": "people",
                 "about": "about",
             };
             _super.call(this, options);
@@ -104,9 +104,9 @@ var FoodParent;
             console.log("we have loaded the tree id: " + id);
             Controller.getInstance().loadTreePage(id);
         };
-        Router.prototype.note = function () {
-            console.log("we have loaded the note");
-            Controller.getInstance().loadNotePage();
+        Router.prototype.people = function () {
+            console.log("we have loaded the people");
+            Controller.getInstance().loadPeoplePage();
         };
         Router.prototype.about = function () {
             console.log("we have loaded the note");
