@@ -24104,6 +24104,49 @@ $(document).ready(function () {
     Backbone.history.start();
 });
 
+///#source 1 1 /core/js/controller/setting.js
+var FoodParent;
+(function (FoodParent) {
+    var Setting = (function () {
+        function Setting(args) {
+            if (Setting._instance) {
+                throw new Error("Error: Instantiation failed: Use Setting.getInstance() instead of new.");
+            }
+            Setting._instance = this;
+        }
+        Setting.getInstance = function () {
+            return Setting._instance;
+        };
+        Setting.setBaseUrl = function (url) {
+            return Setting._instance._baseUrl = url;
+        };
+        Setting.getBaseUrl = function () {
+            return Setting._instance._baseUrl;
+        };
+        Setting.getPhpDir = function () {
+            return Setting._instance._baseUrl + "core/php/";
+        };
+        Setting.getContentsImageDir = function () {
+            return Setting._instance._baseUrl + "content/image/";
+        };
+        Setting.getCoreImageDir = function () {
+            return Setting._instance._baseUrl + "core/image/";
+        };
+        Setting.getNavWrapperElement = function () {
+            return $('#wrapper-nav');
+        };
+        Setting.getMainWrapperElement = function () {
+            return $('#wrapper-main');
+        };
+        Setting.getPopWrapperElement = function () {
+            return $('#wrapper-pop');
+        };
+        Setting._instance = new Setting();
+        return Setting;
+    })();
+    FoodParent.Setting = Setting;
+})(FoodParent || (FoodParent = {}));
+
 ///#source 1 1 /core/js/controller/controller.js
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -24146,7 +24189,7 @@ var FoodParent;
         };
         Router.prototype.home = function () {
             console.log(Router.TAG + "we have loaded the home page.");
-            FoodParent.View.addChild(FoodParent.HomeViewFractory.create($('#wrapper-main')).render());
+            FoodParent.EventHandler.handleNavigate(FoodParent.VIEW_STATUS.HOME);
         };
         Router._instance = new Router();
         Router.TAG = "Router - ";
@@ -24182,11 +24225,29 @@ var FoodParent;
         EventHandler.getInstance = function () {
             return EventHandler._instance;
         };
-        EventHandler.handleClickInput = function () {
+        EventHandler.handleClick = function () {
             return null;
         };
-        EventHandler.handleNavigate = function () {
+        EventHandler.handleNavigate = function (viewStatus, option) {
             if (FoodParent.View.getViewStatus() == VIEW_STATUS.NONE) {
+            }
+            new FoodParent.CreateNavViewCommand({ el: FoodParent.Setting.getNavWrapperElement() }).execute();
+            new FoodParent.CreateHomeViewCommand({ el: FoodParent.Setting.getMainWrapperElement() }).execute();
+            FoodParent.View.setViewStatus(viewStatus);
+            return null;
+        };
+        EventHandler.handleMouseOver = function (el, view) {
+            switch (FoodParent.View.getViewStatus()) {
+                case VIEW_STATUS.NONE:
+                    break;
+                case VIEW_STATUS.HOME:
+                    if (el.hasClass('home-menu-left')) {
+                        new FoodParent.FocusMenuLeftCommand().execute();
+                    }
+                    else if (el.hasClass('home-menu-right')) {
+                        new FoodParent.FocusMenuRightCommand().execute();
+                    }
+                    break;
             }
             return null;
         };
@@ -24201,25 +24262,67 @@ var FoodParent;
 var FoodParent;
 (function (FoodParent) {
     var Command = (function () {
-        function Command(args) {
+        function Command() {
         }
-        Command.prototype.execute = function (args) {
+        Command.prototype.execute = function () {
         };
         Command.prototype.undo = function () {
         };
         return Command;
     })();
     FoodParent.Command = Command;
-    var ViewCommand = (function () {
-        function ViewCommand(args) {
+    var CreateHomeViewCommand = (function () {
+        function CreateHomeViewCommand(args) {
+            var self = this;
+            self._el = args.el;
         }
-        ViewCommand.prototype.execute = function (el) {
+        CreateHomeViewCommand.prototype.execute = function () {
+            var self = this;
+            FoodParent.View.addChild(FoodParent.HomeViewFractory.create(self._el).render());
         };
-        ViewCommand.prototype.undo = function () {
+        CreateHomeViewCommand.prototype.undo = function () {
         };
-        return ViewCommand;
+        return CreateHomeViewCommand;
     })();
-    FoodParent.ViewCommand = ViewCommand;
+    FoodParent.CreateHomeViewCommand = CreateHomeViewCommand;
+    var CreateNavViewCommand = (function () {
+        function CreateNavViewCommand(args) {
+            var self = this;
+            self._el = args.el;
+        }
+        CreateNavViewCommand.prototype.execute = function () {
+            var self = this;
+            FoodParent.View.setNavView(FoodParent.NavViewFractory.create(self._el).render());
+        };
+        CreateNavViewCommand.prototype.undo = function () {
+        };
+        return CreateNavViewCommand;
+    })();
+    FoodParent.CreateNavViewCommand = CreateNavViewCommand;
+    var FocusMenuLeftCommand = (function () {
+        function FocusMenuLeftCommand() {
+        }
+        FocusMenuLeftCommand.prototype.execute = function () {
+            var self = this;
+            FoodParent.View.getNavView().focusOnLeft();
+        };
+        FocusMenuLeftCommand.prototype.undo = function () {
+        };
+        return FocusMenuLeftCommand;
+    })();
+    FoodParent.FocusMenuLeftCommand = FocusMenuLeftCommand;
+    var FocusMenuRightCommand = (function () {
+        function FocusMenuRightCommand() {
+        }
+        FocusMenuRightCommand.prototype.execute = function () {
+            var self = this;
+            FoodParent.View.getNavView().focusOnRight();
+        };
+        FocusMenuRightCommand.prototype.undo = function () {
+        };
+        return FocusMenuRightCommand;
+    })();
+    FoodParent.FocusMenuRightCommand = FocusMenuRightCommand;
 })(FoodParent || (FoodParent = {}));
 
 ///#source 1 1 /core/js/view/template.js
@@ -24236,8 +24339,24 @@ var FoodParent;
             return Template._instance;
         };
         Template.getHomeViewTemplate = function () {
-            var template = "";
+            var template = '';
             template += '<div id="wrapper-home">';
+            template += '<div class="home-menu-left">';
+            template += '<div class="title-left">Food</div>';
+            template += '<div class="enter-left"><i class="fa fa-angle-left"></i> manage food assets</div>';
+            template += '</div>';
+            template += '<div class="home-menu-right">';
+            template += '<div class="title-right">Parent</div>';
+            template += '<div class="enter-left">parent food assets <i class="fa fa-angle-right"></i></div>';
+            template += '</div>';
+            template += '</div>';
+            return template;
+        };
+        Template.getNavViewTemplate = function () {
+            var template = '';
+            template += '<div id="background-nav-right">';
+            template += '</div>';
+            template += '<div id="background-nav-left">';
             template += '</div>';
             return template;
         };
@@ -24358,6 +24477,8 @@ var FoodParent;
         __extends(View, _super);
         function View(options) {
             _super.call(this, options);
+            this._viewStatus = FoodParent.VIEW_STATUS.NONE;
+            this._actionStatus = FoodParent.ACTION_STATUS.NONE;
             if (View._instance) {
                 throw new Error("Error: Instantiation failed: Use View.getInstance() instead of new.");
             }
@@ -24373,16 +24494,16 @@ var FoodParent;
             View._instance.setElement(options.el);
         };
         View.setViewStatus = function (viewStatus) {
-            View._viewStatus = viewStatus;
+            View._instance._viewStatus = viewStatus;
         };
         View.getViewStatus = function () {
-            return View._viewStatus;
+            return View._instance._viewStatus;
         };
         View.setActionStatus = function (actionStatus) {
-            View._actionStatus = actionStatus;
+            View._instance._actionStatus = actionStatus;
         };
         View.getActionStatus = function () {
-            return View._actionStatus;
+            return View._instance._actionStatus;
         };
         View.addChild = function (view) {
             var self = View._instance;
@@ -24392,13 +24513,21 @@ var FoodParent;
             self.children.push(view);
         };
         View.getChildren = function () {
+            return View._instance.children;
+        };
+        View.setNavView = function (view) {
+            View._instance._navView = view;
+        };
+        View.getNavView = function () {
+            return View._instance._navView;
+        };
+        View.removeNavView = function () {
             var self = View._instance;
-            return self.children;
+            self._navView.destroy();
+            self._navView = null;
         };
         View._instance = new View();
         View.TAG = "View - ";
-        View._viewStatus = FoodParent.VIEW_STATUS.NONE;
-        View._actionStatus = FoodParent.ACTION_STATUS.NONE;
         return View;
     })(FoodParent.BaseView);
     FoodParent.View = View;
@@ -24437,12 +24566,20 @@ var FoodParent;
             var self = this;
             self.bDebug = true;
             //$(window).resize(_.debounce(that.customResize, Setting.getInstance().getResizeTimeout()));
+            self.events = {
+                "mouseover .home-menu-left": "_mouseOver",
+                "mouseover .home-menu-right": "_mouseOver",
+            };
+            self.delegateEvents();
         }
         HomeView.prototype.render = function (args) {
             _super.prototype.render.call(this);
             var self = this;
             if (self.bDebug)
                 console.log(HomeView.TAG + "render()");
+            var template = _.template(FoodParent.Template.getHomeViewTemplate());
+            var data = {};
+            self.$el.html(template(data));
             return self;
         };
         HomeView.prototype.update = function (args) {
@@ -24452,9 +24589,80 @@ var FoodParent;
                 console.log(HomeView.TAG + "update()");
             return self;
         };
+        HomeView.prototype._mouseOver = function (event) {
+            var self = this;
+            FoodParent.EventHandler.handleMouseOver($(event.currentTarget), self);
+        };
         HomeView.TAG = "HomeView - ";
         return HomeView;
     })(FoodParent.BaseView);
     FoodParent.HomeView = HomeView;
+})(FoodParent || (FoodParent = {}));
+
+///#source 1 1 /core/js/view/navview.js
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var FoodParent;
+(function (FoodParent) {
+    var NavViewFractory = (function () {
+        function NavViewFractory(args) {
+            if (NavViewFractory._instance) {
+                throw new Error("Error: Instantiation failed: Use NavViewFractory.getInstance() instead of new.");
+            }
+            NavViewFractory._instance = this;
+        }
+        NavViewFractory.getInstance = function () {
+            return NavViewFractory._instance;
+        };
+        NavViewFractory.create = function (el) {
+            var view = new NavView({ el: el });
+            return view;
+        };
+        NavViewFractory._instance = new NavViewFractory();
+        return NavViewFractory;
+    })();
+    FoodParent.NavViewFractory = NavViewFractory;
+    var NavView = (function (_super) {
+        __extends(NavView, _super);
+        function NavView(options) {
+            _super.call(this, options);
+            var self = this;
+            self.bDebug = true;
+            //$(window).resize(_.debounce(that.customResize, Setting.getInstance().getResizeTimeout()));
+        }
+        NavView.prototype.render = function (args) {
+            _super.prototype.render.call(this);
+            var self = this;
+            if (self.bDebug)
+                console.log(NavView.TAG + "render()");
+            var template = _.template(FoodParent.Template.getNavViewTemplate());
+            var data = {};
+            self.$el.html(template(data));
+            return self;
+        };
+        NavView.prototype.update = function (args) {
+            _super.prototype.update.call(this);
+            var self = this;
+            if (self.bDebug)
+                console.log(NavView.TAG + "update()");
+            return self;
+        };
+        NavView.prototype.focusOnLeft = function () {
+            var self = this;
+            self.$('#background-nav-left').removeClass('nav-focus-right');
+            self.$('#background-nav-left').addClass('nav-focus-left');
+        };
+        NavView.prototype.focusOnRight = function () {
+            var self = this;
+            self.$('#background-nav-left').removeClass('nav-focus-left');
+            self.$('#background-nav-left').addClass('nav-focus-right');
+        };
+        NavView.TAG = "NavView - ";
+        return NavView;
+    })(FoodParent.BaseView);
+    FoodParent.NavView = NavView;
 })(FoodParent || (FoodParent = {}));
 

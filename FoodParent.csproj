@@ -26,6 +26,8 @@
     <Content Include="core\css\foodparent.min.css">
       <DependentUpon>foodparent.css</DependentUpon>
     </Content>
+    <Content Include="core\css\home.css" />
+    <Content Include="core\css\nav.css" />
     <Content Include="core\js\foodparent.js">
       <DependentUpon>foodparent.js.bundle</DependentUpon>
     </Content>
@@ -127,9 +129,11 @@
     <TypeScriptCompile Include="core\js\controller\command\command.ts" />
     <TypeScriptCompile Include="core\js\controller\controller.ts" />
     <TypeScriptCompile Include="core\js\controller\eventhandler.ts" />
+    <TypeScriptCompile Include="core\js\controller\setting.ts" />
     <TypeScriptCompile Include="core\js\view\homeview.ts" />
     <TypeScriptCompile Include="core\js\model\model.ts" />
     <TypeScriptCompile Include="core\js\view\baseview.ts" />
+    <TypeScriptCompile Include="core\js\view\navview.ts" />
     <TypeScriptCompile Include="core\js\view\template.ts" />
     <TypeScriptCompile Include="core\js\view\view.ts" />
     <TypeScriptCompile Include="Scripts\typings\backbone\backbone.d.ts" />

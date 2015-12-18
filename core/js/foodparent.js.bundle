@@ -31,6 +31,7 @@
     <file>/core/js/app.js</file>
     
     <!-- Controller -->
+    <file>/core/js/controller/setting.js</file>
     <file>/core/js/controller/controller.js</file>
     <file>/core/js/controller/eventhandler.js</file>
 
@@ -42,6 +43,7 @@
     <file>/core/js/view/baseview.js</file>
     <file>/core/js/view/view.js</file>
     <file>/core/js/view/homeview.js</file>
+    <file>/core/js/view/navview.js</file>
     
     
     

@@ -1,0 +1,50 @@
+﻿@media all {
+    #background-nav-left {
+        position: absolute;
+        top: 0;
+        left: -69%;
+        width: 120%;
+        height: 100%;
+        background-color: #5e4e51;
+        -moz-transform: skew(-10deg, 0);
+        -ms-transform: skew(-10deg, 0);
+        -o-transform: skew(-10deg, 0);
+        -webkit-transform: skew(-10deg, 0);
+        transform: skew(-10deg, 0);
+        animation: focus-center 0.15s forwards; 
+    }
+    #background-nav-right {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: #83a656;
+    }
+    .nav-focus-left {
+        animation: focus-left 0.15s forwards !important;
+        /*left: -67% !important;*/
+    }
+    .nav-focus-right {
+        animation: focus-right 0.15s forwards !important;
+        /*left: -71% !important;*/
+    }
+    @keyframes focus-center {
+        100% {
+            left: -69%;
+        }
+        /* declare animation actions here */
+    }
+    @keyframes focus-left {
+        100% {
+            left: -66%;
+        }
+        /* declare animation actions here */
+    }
+    @keyframes focus-right {
+        100% {
+            left: -71%;
+        }
+        /* declare animation actions here */
+    }
+}

@@ -39,7 +39,7 @@ var FoodParent;
         };
         Router.prototype.home = function () {
             console.log(Router.TAG + "we have loaded the home page.");
-            FoodParent.View.addChild(FoodParent.HomeViewFractory.create($('#wrapper-main')).render());
+            FoodParent.EventHandler.handleNavigate(FoodParent.VIEW_STATUS.HOME);
         };
         Router._instance = new Router();
         Router.TAG = "Router - ";

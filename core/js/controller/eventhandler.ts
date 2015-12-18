@@ -19,14 +19,35 @@
             return EventHandler._instance;
         }
 
-        public static handleClickInput(): Command {
+        public static handleClick(): Command {
 
             return null;
         }
 
-        public static handleNavigate(): Command {
-            if (View.getViewStatus() == VIEW_STATUS.NONE) { // if first loading
+        public static handleNavigate(viewStatus: VIEW_STATUS, option?: any): Command {
+            if (View.getViewStatus() == VIEW_STATUS.NONE) { // if it's the first time loading
 
+            }
+            
+            new CreateNavViewCommand({ el: Setting.getNavWrapperElement() }).execute();
+            new CreateHomeViewCommand({ el: Setting.getMainWrapperElement() }).execute();
+
+            View.setViewStatus(viewStatus);
+
+            return null;
+        }
+
+        public static handleMouseOver(el: JQuery, view: BaseView): Command {
+            switch (View.getViewStatus()) {
+                case VIEW_STATUS.NONE:
+                    break;
+                case VIEW_STATUS.HOME:
+                    if (el.hasClass('home-menu-left')) {
+                        new FocusMenuLeftCommand().execute();
+                    } else if (el.hasClass('home-menu-right')) {
+                        new FocusMenuRightCommand().execute();
+                    }
+                    break;
             }
             return null;
         }

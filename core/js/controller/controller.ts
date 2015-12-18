@@ -33,7 +33,7 @@
         }
         home() {
             console.log(Router.TAG + "we have loaded the home page.");
-            View.addChild(HomeViewFractory.create($('#wrapper-main')).render());
+            EventHandler.handleNavigate(VIEW_STATUS.HOME);
         }
     }
 } 

@@ -24,11 +24,29 @@ var FoodParent;
         EventHandler.getInstance = function () {
             return EventHandler._instance;
         };
-        EventHandler.handleClickInput = function () {
+        EventHandler.handleClick = function () {
             return null;
         };
-        EventHandler.handleNavigate = function () {
+        EventHandler.handleNavigate = function (viewStatus, option) {
             if (FoodParent.View.getViewStatus() == VIEW_STATUS.NONE) {
+            }
+            new FoodParent.CreateNavViewCommand({ el: FoodParent.Setting.getNavWrapperElement() }).execute();
+            new FoodParent.CreateHomeViewCommand({ el: FoodParent.Setting.getMainWrapperElement() }).execute();
+            FoodParent.View.setViewStatus(viewStatus);
+            return null;
+        };
+        EventHandler.handleMouseOver = function (el, view) {
+            switch (FoodParent.View.getViewStatus()) {
+                case VIEW_STATUS.NONE:
+                    break;
+                case VIEW_STATUS.HOME:
+                    if (el.hasClass('home-menu-left')) {
+                        new FoodParent.FocusMenuLeftCommand().execute();
+                    }
+                    else if (el.hasClass('home-menu-right')) {
+                        new FoodParent.FocusMenuRightCommand().execute();
+                    }
+                    break;
             }
             return null;
         };

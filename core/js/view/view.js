@@ -9,6 +9,8 @@ var FoodParent;
         __extends(View, _super);
         function View(options) {
             _super.call(this, options);
+            this._viewStatus = FoodParent.VIEW_STATUS.NONE;
+            this._actionStatus = FoodParent.ACTION_STATUS.NONE;
             if (View._instance) {
                 throw new Error("Error: Instantiation failed: Use View.getInstance() instead of new.");
             }
@@ -24,16 +26,16 @@ var FoodParent;
             View._instance.setElement(options.el);
         };
         View.setViewStatus = function (viewStatus) {
-            View._viewStatus = viewStatus;
+            View._instance._viewStatus = viewStatus;
         };
         View.getViewStatus = function () {
-            return View._viewStatus;
+            return View._instance._viewStatus;
         };
         View.setActionStatus = function (actionStatus) {
-            View._actionStatus = actionStatus;
+            View._instance._actionStatus = actionStatus;
         };
         View.getActionStatus = function () {
-            return View._actionStatus;
+            return View._instance._actionStatus;
         };
         View.addChild = function (view) {
             var self = View._instance;
@@ -43,13 +45,21 @@ var FoodParent;
             self.children.push(view);
         };
         View.getChildren = function () {
+            return View._instance.children;
+        };
+        View.setNavView = function (view) {
+            View._instance._navView = view;
+        };
+        View.getNavView = function () {
+            return View._instance._navView;
+        };
+        View.removeNavView = function () {
             var self = View._instance;
-            return self.children;
+            self._navView.destroy();
+            self._navView = null;
         };
         View._instance = new View();
         View.TAG = "View - ";
-        View._viewStatus = FoodParent.VIEW_STATUS.NONE;
-        View._actionStatus = FoodParent.ACTION_STATUS.NONE;
         return View;
     })(FoodParent.BaseView);
     FoodParent.View = View;

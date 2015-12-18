@@ -24,11 +24,22 @@
             var self: HomeView = this;
             self.bDebug = true;
             //$(window).resize(_.debounce(that.customResize, Setting.getInstance().getResizeTimeout()));
+            self.events = <any>{
+                "mouseover .home-menu-left": "_mouseOver",
+                "mouseover .home-menu-right": "_mouseOver",
+            };
+            self.delegateEvents();
         }
         public render(args?: any): any {
             super.render();
             var self: HomeView = this;
             if (self.bDebug) console.log(HomeView.TAG + "render()");
+
+            var template = _.template(Template.getHomeViewTemplate());
+            var data = {
+                
+            }
+            self.$el.html(template(data));
             return self;
         }
 
@@ -37,6 +48,10 @@
             var self: HomeView = this;
             if (self.bDebug) console.log(HomeView.TAG + "update()");
             return self;
+        }
+        private _mouseOver(event: Event): void {
+            var self: HomeView = this;
+            EventHandler.handleMouseOver($(event.currentTarget), self);
         }
     }
 }
