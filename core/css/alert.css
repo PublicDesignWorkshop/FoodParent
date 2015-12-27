@@ -1,0 +1,12 @@
+﻿@media all {
+    #wrapper-pop .outer-frame {
+        background-color: #d4d0cf;
+        padding: 6px;
+    }
+
+    #wrapper-pop .inner-frame {
+        border: 3px solid rgba(255, 255, 255, 0.75);
+        padding: 60px 120px 80px 120px;
+        color: #262121;
+    }
+}
