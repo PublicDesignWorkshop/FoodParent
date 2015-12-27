@@ -32,31 +32,83 @@ var FoodParent;
             //$(window).resize(_.debounce(that.customResize, Setting.getInstance().getResizeTimeout()));
         }
         NavView.prototype.render = function (args) {
-            _super.prototype.render.call(this);
+            if (this.bRendered) {
+                this.update(args);
+                return;
+            }
+            this.bRendered = true;
+            ////
             var self = this;
             if (self.bDebug)
                 console.log(NavView.TAG + "render()");
-            var template = _.template(FoodParent.Template.getNavViewTemplate());
-            var data = {};
+            var template;
+            var data;
+            if (args.viewStatus == FoodParent.VIEW_STATUS.HOME) {
+                template = _.template(FoodParent.Template.getNavViewHomeTemplate());
+                data = {};
+            }
+            else if (args.viewStatus == FoodParent.VIEW_STATUS.MANAGE_TREES) {
+                template = _.template(FoodParent.Template.getNavViewManageTemplate());
+                data = {};
+            }
             self.$el.html(template(data));
+            if (args.viewStatus == FoodParent.VIEW_STATUS.HOME) {
+                self.urenderNavItems();
+                self.$('#background-nav-left').css({ left: '-69%' });
+            }
+            else if (args.viewStatus == FoodParent.VIEW_STATUS.MANAGE_TREES) {
+                self.renderNavManageItems();
+                self.$('#background-nav-left').css({ left: '-40%' });
+            }
             return self;
         };
         NavView.prototype.update = function (args) {
-            _super.prototype.update.call(this);
+            if (!this.bRendered) {
+                this.render(args);
+                return;
+            }
+            ////
             var self = this;
             if (self.bDebug)
                 console.log(NavView.TAG + "update()");
+            if (args.viewStatus == FoodParent.VIEW_STATUS.HOME) {
+                self.urenderNavItems();
+                self.$('#background-nav-left').animate({ left: '-69%' }, FoodParent.Setting.getNavAnimDuration());
+            }
+            else if (args.viewStatus == FoodParent.VIEW_STATUS.MANAGE_TREES) {
+                self.renderNavManageItems();
+                self.$('#background-nav-left').animate({ left: '-40%' }, FoodParent.Setting.getNavAnimDuration());
+            }
             return self;
         };
         NavView.prototype.focusOnLeft = function () {
             var self = this;
-            self.$('#background-nav-left').removeClass('nav-focus-right');
-            self.$('#background-nav-left').addClass('nav-focus-left');
+            self.$('#background-nav-left').animate({ left: '-65%' }, FoodParent.Setting.getNavAnimDuration());
         };
         NavView.prototype.focusOnRight = function () {
             var self = this;
-            self.$('#background-nav-left').removeClass('nav-focus-left');
-            self.$('#background-nav-left').addClass('nav-focus-right');
+            self.$('#background-nav-left').animate({ left: '-70%' }, FoodParent.Setting.getNavAnimDuration());
+        };
+        NavView.prototype.urenderNavItems = function () {
+            var self = this;
+            self.$('#list-nav').html("");
+        };
+        NavView.prototype.renderNavManageItems = function () {
+            var self = this;
+            var template;
+            var data;
+            template = _.template(FoodParent.Template.getNavViewManageItemsTemplate());
+            data = {};
+            self.$('#list-nav').html(template(data));
+        };
+        NavView.prototype.setActiveNavItem = function (viewStatus) {
+            var self = this;
+            switch (viewStatus) {
+                case FoodParent.VIEW_STATUS.MANAGE_TREES:
+                    self.$('.item-nav').removeClass('active');
+                    self.$('.trees').addClass('active');
+                    break;
+            }
         };
         NavView.TAG = "NavView - ";
         return NavView;

@@ -1,8 +1,14 @@
 ﻿@media all {
+    #wrapper-nav {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+    }
     #background-nav-left {
         position: absolute;
         top: 0;
-        left: -69%;
         width: 120%;
         height: 100%;
         background-color: #5e4e51;
@@ -11,7 +17,7 @@
         -o-transform: skew(-10deg, 0);
         -webkit-transform: skew(-10deg, 0);
         transform: skew(-10deg, 0);
-        animation: focus-center 0.15s forwards; 
+        left: -69%;
     }
     #background-nav-right {
         position: absolute;
@@ -21,30 +27,73 @@
         height: 100%;
         background-color: #83a656;
     }
-    .nav-focus-left {
-        animation: focus-left 0.15s forwards !important;
-        /*left: -67% !important;*/
+
+    #list-nav {
+        position: absolute;
+        width: 100%;
+        height: 60px;
+        z-index: 5000;
+        display: flex;
+        -ms-flex-direction: row;
+        -webkit-flex-direction: row;
+        flex-direction: row;
+        justify-content: space-around;
+        align-items: center;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        -webkit-user-select: none;
+        user-select: none;
     }
-    .nav-focus-right {
-        animation: focus-right 0.15s forwards !important;
-        /*left: -71% !important;*/
+
+    #list-nav .item-nav {
+        font-size: 24px;
+        letter-spacing: 2px;
+        font-weight: 700;
+        padding: 20px 20px;
     }
-    @keyframes focus-center {
-        100% {
-            left: -69%;
-        }
-        /* declare animation actions here */
+
+    #list-nav .item-manage-title {
+        color: #ebece6;
+        cursor: pointer;
     }
-    @keyframes focus-left {
-        100% {
-            left: -66%;
-        }
-        /* declare animation actions here */
+
+    #list-nav .item-manage-title:hover {
+        color: #83a656;
     }
-    @keyframes focus-right {
-        100% {
-            left: -71%;
-        }
-        /* declare animation actions here */
+
+    #list-nav .item-manage {
+        font-size: large;
+        cursor: pointer;
+    }
+
+    #list-nav .item-manage:hover {
+        color: rgba(131, 166, 86, 0.75);
+        /*
+        -webkit-text-fill-color: #83a656;
+        -webkit-text-stroke-width: 0;
+        -webkit-text-stroke-color: #83a656;
+        */
+    }
+
+    #list-nav .item-manage:active {
+        text-shadow: -1px -1px 1px #28331b;
+    }
+
+    #list-nav .item-manage.active {
+        color: #83a656;
+        text-shadow: -1px -1px 1px #28331b;
+    }
+
+    #list-nav .item-manage-parent {
+        font-size: large;
+        color: #5e4e51;
+        cursor: pointer;
+    }
+
+    #list-nav .item-manage-parent:hover {
+        color: rgba(255,255,255,0.75);
+    }
+    #list-nav .item-manage-parent:active {
+        text-shadow: -1px -1px 1px #403537;
     }
 }

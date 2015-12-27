@@ -24,12 +24,56 @@ var FoodParent;
             template += '</div>';
             return template;
         };
-        Template.getNavViewTemplate = function () {
+        Template.getManageTreesMapViewTemplate = function () {
+            var template = '';
+            template += '<div id="wrapper-mtrees">';
+            template += '</div>';
+            return template;
+        };
+        Template.getNavViewHomeTemplate = function () {
             var template = '';
             template += '<div id="background-nav-right">';
             template += '</div>';
             template += '<div id="background-nav-left">';
             template += '</div>';
+            template += '<div id="list-nav">';
+            template += '</div>';
+            return template;
+        };
+        Template.getNavViewManageTemplate = function () {
+            var template = '';
+            template += '<div id="background-nav-right">';
+            template += '</div>';
+            template += '<div id="background-nav-left">';
+            template += '</div>';
+            template += '<div id="list-nav">';
+            template += '</div>';
+            return template;
+        };
+        Template.getNavViewManageItemsTemplate = function () {
+            var template = '';
+            template += '<div class="item-nav item-manage-title">FoodParent&#8482;</div>';
+            template += '<div class="item-nav item-manage trees">TREES</div>';
+            template += '<div class="item-nav item-manage people">PEOPLE</div>';
+            template += '<div class="item-nav item-manage adops">ADOPTS</div>';
+            template += '<div class="item-nav item-manage donations">DONATIONS</div>';
+            template += '<div class="item-nav item-manage-parent parent">PARENT</div>';
+            return template;
+        };
+        Template.getAlertViewTemplate = function () {
+            var template = '';
+            template += '<div id="wrapper-alert">';
+            template += '<div class="outer-frame">';
+            template += '<div class="inner-frame">';
+            template += '<%= content %>';
+            template += '</div>';
+            template += '</div>';
+            template += '</div>';
+            return template;
+        };
+        Template.getManageTreesPopupTemplate = function () {
+            var template = '';
+            template += '#<%= id %> - <%= name %>';
             return template;
         };
         Template._instance = new Template();

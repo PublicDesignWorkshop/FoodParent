@@ -64,6 +64,9 @@ declare module Backbone {
 
     interface CollectionFetchOptions extends PersistenceOptions, Parseable {
         reset?: boolean;
+        remove?: boolean;
+        processData?: boolean;
+        data?: any;
     }
 
     class Events {

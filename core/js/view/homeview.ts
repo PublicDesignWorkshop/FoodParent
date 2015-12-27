@@ -25,8 +25,10 @@
             self.bDebug = true;
             //$(window).resize(_.debounce(that.customResize, Setting.getInstance().getResizeTimeout()));
             self.events = <any>{
-                "mouseover .home-menu-left": "_mouseOver",
-                "mouseover .home-menu-right": "_mouseOver",
+                "mouseenter .home-menu-left": "_mouseEnter",
+                "mouseenter .home-menu-right": "_mouseEnter",
+                "click .home-menu-left": "_mouseClick",
+                "click .home-menu-right": "_mouseClick",
             };
             self.delegateEvents();
         }
@@ -40,6 +42,7 @@
                 
             }
             self.$el.html(template(data));
+            self.setElement(self.$('#wrapper-home'));
             return self;
         }
 
@@ -49,9 +52,13 @@
             if (self.bDebug) console.log(HomeView.TAG + "update()");
             return self;
         }
-        private _mouseOver(event: Event): void {
+        private _mouseEnter(event: Event): void {
             var self: HomeView = this;
-            EventHandler.handleMouseOver($(event.currentTarget), self);
+            EventHandler.handleMouseEnter($(event.currentTarget), self);
+        }
+        private _mouseClick(event: Event): void {
+            var self: HomeView = this;
+            EventHandler.handleMouseClick($(event.currentTarget), self);
         }
     }
 }

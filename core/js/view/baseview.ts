@@ -1,4 +1,8 @@
-﻿Backbone.View.prototype.destroy = function () {
+﻿function destroyView(obj: FoodParent.BaseView) {
+    obj.destroy();
+}
+
+Backbone.View.prototype.destroy = function () {
     // chain call for removing all children views under curent view.
     if (this.children != undefined) {
         _.invoke(this.children, 'destroy');
@@ -31,7 +35,7 @@
 module FoodParent {
     export class BaseView extends Backbone.View<Backbone.Model> {
         protected bDebug: boolean = false;
-        private bRendered: boolean = false; // Check whether this view is rendered or not. This status will be used for indicator either to create dom elements or just update contents.
+        protected bRendered: boolean = false; // Check whether this view is rendered or not. This status will be used for indicator either to create dom elements or just update contents.
         protected children: Array<BaseView>; // children views tree list
         constructor(options?: Backbone.ViewOptions<Backbone.Model>) {
             super(options);
@@ -67,9 +71,11 @@ module FoodParent {
         // execute the callback before traversing the children
         public traverse(callback: (obj: BaseView) => void) {
             callback(this);
-            this.children.forEach(function (view) {
-                view.traverse(callback);
-            });
+            if (this.children) {
+                this.children.forEach(function (view) {
+                    view.traverse(callback);
+                });
+            }
         }
 
         public addChild(view: BaseView) {
@@ -83,6 +89,15 @@ module FoodParent {
         public getChildren(): Array<BaseView> {
             var self: BaseView = this;
             return self.children;
+        }
+
+        public removeAllChildren(): void {
+            var self: BaseView = this;
+            if (self.children) {
+                self.children.forEach(function (view) {
+                    view.traverse(destroyView);
+                });
+            }
         }
 
         public animActive(): void {

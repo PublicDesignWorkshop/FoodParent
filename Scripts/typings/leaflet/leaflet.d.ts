@@ -2862,6 +2862,8 @@ declare module L {
           * Default value: 250.
           */
         riseOffset?: number;
+
+        id?: number;
     }
 }
  

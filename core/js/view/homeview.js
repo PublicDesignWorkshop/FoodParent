@@ -31,8 +31,10 @@ var FoodParent;
             self.bDebug = true;
             //$(window).resize(_.debounce(that.customResize, Setting.getInstance().getResizeTimeout()));
             self.events = {
-                "mouseover .home-menu-left": "_mouseOver",
-                "mouseover .home-menu-right": "_mouseOver",
+                "mouseenter .home-menu-left": "_mouseEnter",
+                "mouseenter .home-menu-right": "_mouseEnter",
+                "click .home-menu-left": "_mouseClick",
+                "click .home-menu-right": "_mouseClick",
             };
             self.delegateEvents();
         }
@@ -44,6 +46,7 @@ var FoodParent;
             var template = _.template(FoodParent.Template.getHomeViewTemplate());
             var data = {};
             self.$el.html(template(data));
+            self.setElement(self.$('#wrapper-home'));
             return self;
         };
         HomeView.prototype.update = function (args) {
@@ -53,9 +56,13 @@ var FoodParent;
                 console.log(HomeView.TAG + "update()");
             return self;
         };
-        HomeView.prototype._mouseOver = function (event) {
+        HomeView.prototype._mouseEnter = function (event) {
             var self = this;
-            FoodParent.EventHandler.handleMouseOver($(event.currentTarget), self);
+            FoodParent.EventHandler.handleMouseEnter($(event.currentTarget), self);
+        };
+        HomeView.prototype._mouseClick = function (event) {
+            var self = this;
+            FoodParent.EventHandler.handleMouseClick($(event.currentTarget), self);
         };
         HomeView.TAG = "HomeView - ";
         return HomeView;

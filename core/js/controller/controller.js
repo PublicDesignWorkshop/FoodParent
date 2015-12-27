@@ -12,9 +12,53 @@ var FoodParent;
                 throw new Error("Error: Instantiation failed: Use Controller.getInstance() instead of new.");
             }
             Controller._instance = this;
+            Controller._instance.xhrPool = new Array();
         }
         Controller.getInstance = function () {
             return Controller._instance;
+        };
+        Controller.pushXHR = function (xhr) {
+            var self = Controller._instance;
+            self.xhrPool.push(xhr);
+        };
+        Controller.removeXHR = function (xhr) {
+            var self = Controller._instance;
+            var index = self.xhrPool.indexOf(xhr);
+            if (index > -1) {
+                self.xhrPool.splice(index, 1);
+            }
+        };
+        Controller.abortAllXHR = function () {
+            var self = Controller._instance;
+            console.log(self.xhrPool);
+            $.each(self.xhrPool, function (index, xhr) {
+                if (xhr != undefined) {
+                    xhr.abort();
+                }
+            });
+            self.xhrPool = new Array();
+        };
+        Controller.updateGeoLocation = function (success, error) {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(success, error);
+            }
+            else {
+            }
+        };
+        Controller.fetchAllTrees = function (success, error) {
+            var xhr1 = FoodParent.Model.fetchAllFoods();
+            var xhr2 = FoodParent.Model.fetchAllTrees();
+            Controller.pushXHR(xhr1);
+            Controller.pushXHR(xhr2);
+            $.when(xhr1, xhr2).then(function () {
+                Controller.removeXHR(xhr1);
+                Controller.removeXHR(xhr2);
+                success();
+            }, function () {
+                Controller.removeXHR(xhr1);
+                Controller.removeXHR(xhr2);
+                error(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+            });
         };
         Controller._instance = new Controller();
         Controller.TAG = "Controller - ";
@@ -31,6 +75,8 @@ var FoodParent;
             // Setup Router parameters
             this.routes = {
                 "": "home",
+                "mtrees": "manageTrees",
+                "ptrees": "parentTrees",
             };
             _super.call(this, options);
         }
@@ -40,6 +86,10 @@ var FoodParent;
         Router.prototype.home = function () {
             console.log(Router.TAG + "we have loaded the home page.");
             FoodParent.EventHandler.handleNavigate(FoodParent.VIEW_STATUS.HOME);
+        };
+        Router.prototype.manageTrees = function () {
+            console.log(Router.TAG + "we have loaded the manage trees page.");
+            FoodParent.EventHandler.handleNavigate(FoodParent.VIEW_STATUS.MANAGE_TREES);
         };
         Router._instance = new Router();
         Router.TAG = "Router - ";

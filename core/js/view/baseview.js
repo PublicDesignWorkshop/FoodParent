@@ -3,6 +3,9 @@ var __extends = (this && this.__extends) || function (d, b) {
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
+function destroyView(obj) {
+    obj.destroy();
+}
 Backbone.View.prototype.destroy = function () {
     // chain call for removing all children views under curent view.
     if (this.children != undefined) {
@@ -62,9 +65,11 @@ var FoodParent;
         // execute the callback before traversing the children
         BaseView.prototype.traverse = function (callback) {
             callback(this);
-            this.children.forEach(function (view) {
-                view.traverse(callback);
-            });
+            if (this.children) {
+                this.children.forEach(function (view) {
+                    view.traverse(callback);
+                });
+            }
         };
         BaseView.prototype.addChild = function (view) {
             var self = this;
@@ -76,6 +81,14 @@ var FoodParent;
         BaseView.prototype.getChildren = function () {
             var self = this;
             return self.children;
+        };
+        BaseView.prototype.removeAllChildren = function () {
+            var self = this;
+            if (self.children) {
+                self.children.forEach(function (view) {
+                    view.traverse(destroyView);
+                });
+            }
         };
         BaseView.prototype.animActive = function () {
         };
