@@ -35,5 +35,29 @@
         public static getPopWrapperElement(): JQuery {
             return $('#wrapper-pop');
         }
+        public static getNavAnimDuration(): number {
+            return 100;
+        }
+        public static getRemovePopupDuration(): number {
+            return 500;
+        }
+
+        public static getDefaultMapZoomLevel(): number {
+            return 10;
+        }
+        public static getTileMapAddress(): string {
+            return 'http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png';
+            //return 'http://{s}.tile.stamen.com/watercolor/{z}/{x}/{y}.jpg'
+            //return 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+        }
+        public static getMapMinZoomLevel(): number {
+            return 5;
+        }
+        public static getMapMaxZoomLevel(): number {
+            return 19;
+        }
+        public static getDateTimeFormat(): string {
+            return "YYYY-MM-DD HH:mm:ss";
+        }
     }
 }

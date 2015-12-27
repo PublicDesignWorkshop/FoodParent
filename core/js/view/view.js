@@ -9,7 +9,6 @@ var FoodParent;
         __extends(View, _super);
         function View(options) {
             _super.call(this, options);
-            this._viewStatus = FoodParent.VIEW_STATUS.NONE;
             this._actionStatus = FoodParent.ACTION_STATUS.NONE;
             if (View._instance) {
                 throw new Error("Error: Instantiation failed: Use View.getInstance() instead of new.");
@@ -17,6 +16,7 @@ var FoodParent;
             View._instance = this;
             var self = View._instance;
             self.bDebug = true;
+            self._viewStatus = new Array();
             //$(window).resize(_.debounce(that.customResize, Setting.getInstance().getResizeTimeout()));
         }
         View.getInstance = function () {
@@ -26,10 +26,14 @@ var FoodParent;
             View._instance.setElement(options.el);
         };
         View.setViewStatus = function (viewStatus) {
-            View._instance._viewStatus = viewStatus;
+            View._instance._viewStatus.push(viewStatus);
+        };
+        View.popViewStatus = function () {
+            console.log(View.TAG + "popViewStatus()");
+            View._instance._viewStatus.pop();
         };
         View.getViewStatus = function () {
-            return View._instance._viewStatus;
+            return View._instance._viewStatus[View._instance._viewStatus.length - 1];
         };
         View.setActionStatus = function (actionStatus) {
             View._instance._actionStatus = actionStatus;
@@ -47,11 +51,40 @@ var FoodParent;
         View.getChildren = function () {
             return View._instance.children;
         };
+        View.traverse = function (callback) {
+            callback(View._instance);
+            if (View._instance.children) {
+                View._instance.children.forEach(function (view) {
+                    view.traverse(callback);
+                });
+            }
+        };
+        View.removeAllChildren = function () {
+            var self = View._instance;
+            if (View._instance.children) {
+                View._instance.children.forEach(function (view) {
+                    view.traverse(destroyView);
+                });
+            }
+            View._instance._manageTreesView = null;
+        };
         View.setNavView = function (view) {
             View._instance._navView = view;
         };
         View.getNavView = function () {
             return View._instance._navView;
+        };
+        View.setPopupView = function (view) {
+            View._instance._popupView = view;
+        };
+        View.getPopupView = function () {
+            return View._instance._popupView;
+        };
+        View.setManageTreesView = function (view) {
+            View._instance._manageTreesView = view;
+        };
+        View.getManageTreesView = function () {
+            return View._instance._manageTreesView;
         };
         View.removeNavView = function () {
             var self = View._instance;

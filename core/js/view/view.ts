@@ -2,9 +2,11 @@
     export class View extends BaseView {
         private static _instance: View = new View();
         private static TAG: string = "View - ";
-        private _viewStatus: VIEW_STATUS = VIEW_STATUS.NONE;
+        private _viewStatus: Array<VIEW_STATUS>;
         private _actionStatus: ACTION_STATUS = ACTION_STATUS.NONE;
         private _navView: NavView;
+        private _popupView: PopupView;
+        private _manageTreesView: ManageTreesView;
 
         constructor(options?: Backbone.ViewOptions<Backbone.Model>) {
             super(options);
@@ -14,6 +16,7 @@
             View._instance = this;
             var self: View = View._instance;
             self.bDebug = true;
+            self._viewStatus = new Array<VIEW_STATUS>();
             //$(window).resize(_.debounce(that.customResize, Setting.getInstance().getResizeTimeout()));
         }
         public static getInstance(): View {
@@ -23,10 +26,14 @@
             View._instance.setElement(options.el);
         }
         public static setViewStatus(viewStatus: VIEW_STATUS): void {
-            View._instance._viewStatus = viewStatus;
+            View._instance._viewStatus.push(viewStatus);
+        }
+        public static popViewStatus(): void {
+            console.log(View.TAG + "popViewStatus()");
+            View._instance._viewStatus.pop();
         }
         public static getViewStatus(): VIEW_STATUS {
-            return View._instance._viewStatus;
+            return View._instance._viewStatus[View._instance._viewStatus.length - 1];
         }
         public static setActionStatus(actionStatus: ACTION_STATUS): void {
             View._instance._actionStatus = actionStatus;
@@ -44,11 +51,41 @@
         public static getChildren(): Array<BaseView> {
             return View._instance.children;
         }
+        public static traverse(callback: (obj: BaseView) => void) {
+            callback(View._instance);
+            if (View._instance.children) {
+                View._instance.children.forEach(function (view) {
+                    view.traverse(callback);
+                });
+            }
+        }
+        public static removeAllChildren(): void {
+            var self: View = View._instance;
+            if (View._instance.children) {
+                View._instance.children.forEach(function (view) {
+                    view.traverse(destroyView);
+                });
+            }
+            View._instance._manageTreesView = null;
+        }
+
         public static setNavView(view: NavView): void {
             View._instance._navView = view;
         }
         public static getNavView(): NavView {
             return View._instance._navView;
+        }
+        public static setPopupView(view: PopupView): void {
+            View._instance._popupView = view;
+        }
+        public static getPopupView(): PopupView {
+            return View._instance._popupView;
+        }
+        public static setManageTreesView(view: ManageTreesView): void {
+            View._instance._manageTreesView = view;
+        }
+        public static getManageTreesView(): ManageTreesView {
+            return View._instance._manageTreesView;
         }
         public static removeNavView(): void {
             var self: View = View._instance;

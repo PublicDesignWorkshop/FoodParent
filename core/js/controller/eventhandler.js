@@ -11,8 +11,23 @@ var FoodParent;
     (function (VIEW_STATUS) {
         VIEW_STATUS[VIEW_STATUS["NONE"] = 0] = "NONE";
         VIEW_STATUS[VIEW_STATUS["HOME"] = 1] = "HOME";
+        VIEW_STATUS[VIEW_STATUS["MANAGE_TREES"] = 2] = "MANAGE_TREES";
+        VIEW_STATUS[VIEW_STATUS["PARENT_TREES"] = 3] = "PARENT_TREES";
+        VIEW_STATUS[VIEW_STATUS["GEO_ERROR"] = 4] = "GEO_ERROR";
     })(FoodParent.VIEW_STATUS || (FoodParent.VIEW_STATUS = {}));
     var VIEW_STATUS = FoodParent.VIEW_STATUS;
+    (function (VIEW_MODE) {
+        VIEW_MODE[VIEW_MODE["NONE"] = 0] = "NONE";
+        VIEW_MODE[VIEW_MODE["MAP"] = 1] = "MAP";
+        VIEW_MODE[VIEW_MODE["GRAPHIC"] = 2] = "GRAPHIC";
+        VIEW_MODE[VIEW_MODE["TABLE"] = 3] = "TABLE";
+    })(FoodParent.VIEW_MODE || (FoodParent.VIEW_MODE = {}));
+    var VIEW_MODE = FoodParent.VIEW_MODE;
+    (function (ERROR_MODE) {
+        ERROR_MODE[ERROR_MODE["NONE"] = 0] = "NONE";
+        ERROR_MODE[ERROR_MODE["GEO_PERMISSION_ERROR"] = 1] = "GEO_PERMISSION_ERROR";
+    })(FoodParent.ERROR_MODE || (FoodParent.ERROR_MODE = {}));
+    var ERROR_MODE = FoodParent.ERROR_MODE;
     var EventHandler = (function () {
         function EventHandler(args) {
             this.bDebug = true;
@@ -24,18 +39,42 @@ var FoodParent;
         EventHandler.getInstance = function () {
             return EventHandler._instance;
         };
-        EventHandler.handleClick = function () {
-            return null;
-        };
         EventHandler.handleNavigate = function (viewStatus, option) {
-            if (FoodParent.View.getViewStatus() == VIEW_STATUS.NONE) {
+            if (FoodParent.View.getViewStatus() != viewStatus) {
+                new FoodParent.RemoveChildViewCommand({ parent: FoodParent.View }).execute();
             }
-            new FoodParent.CreateNavViewCommand({ el: FoodParent.Setting.getNavWrapperElement() }).execute();
-            new FoodParent.CreateHomeViewCommand({ el: FoodParent.Setting.getMainWrapperElement() }).execute();
+            new FoodParent.RenderNavViewCommand({ el: FoodParent.Setting.getNavWrapperElement(), viewStatus: viewStatus }).execute();
+            if (viewStatus == VIEW_STATUS.HOME) {
+                new FoodParent.MovePaceBarToTop().execute();
+                new FoodParent.RenderHomeViewCommand({ el: FoodParent.Setting.getMainWrapperElement() }).execute();
+            }
+            else if (viewStatus == VIEW_STATUS.MANAGE_TREES) {
+                new FoodParent.MovePaceBarToUnderNav().execute();
+                new FoodParent.RenderManageTreesViewCommand({ el: FoodParent.Setting.getMainWrapperElement(), viewMode: VIEW_MODE.MAP }).execute();
+            }
+            FoodParent.View.getNavView().setActiveNavItem(viewStatus);
             FoodParent.View.setViewStatus(viewStatus);
-            return null;
         };
-        EventHandler.handleMouseOver = function (el, view) {
+        EventHandler.handleMouseClick = function (el, view) {
+            switch (FoodParent.View.getViewStatus()) {
+                case VIEW_STATUS.NONE:
+                    break;
+                case VIEW_STATUS.HOME:
+                    if (el.hasClass('home-menu-left')) {
+                        new FoodParent.NavigateCommand({ hash: 'mtrees' }).execute();
+                    }
+                    else if (el.hasClass('home-menu-right')) {
+                        new FoodParent.NavigateCommand({ hash: 'ptrees' }).execute();
+                    }
+                    break;
+                case VIEW_STATUS.GEO_ERROR:
+                    if (el.hasClass('alert-confirm')) {
+                        new FoodParent.RemoveAlertViewCommand().execute();
+                    }
+                    break;
+            }
+        };
+        EventHandler.handleMouseEnter = function (el, view) {
             switch (FoodParent.View.getViewStatus()) {
                 case VIEW_STATUS.NONE:
                     break;
@@ -48,7 +87,9 @@ var FoodParent;
                     }
                     break;
             }
-            return null;
+        };
+        EventHandler.handleError = function (errorMode) {
+            new FoodParent.RenderAlertViewCommand({ el: FoodParent.Setting.getPopWrapperElement(), errorMode: errorMode }).execute();
         };
         EventHandler._instance = new EventHandler();
         EventHandler.TAG = "Controller - ";

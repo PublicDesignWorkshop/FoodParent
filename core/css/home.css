@@ -10,7 +10,7 @@
         align-items: center;
     }
     .home-menu-left {
-        padding: 0 80px 80px 0;
+        padding: 0 80px 120px 0;
         color: #eeeeee;
         cursor: pointer;
     }
@@ -18,7 +18,7 @@
         color: #83a656;
     }
     .home-menu-right {
-        padding: 0 0 80px 80px;
+        padding: 0 0 120px 80px;
         color: #eeeeee;
         cursor: pointer;
     }
@@ -26,12 +26,12 @@
         color: #5e4e51;
     }
     .title-left {
-        font-size: 180px;
+        font-size: 150px;
     }
     .title-right {
-        font-size: 180px;
+        font-size: 150px;
     }
     .enter-left {
-        font-size: 60px;
+        font-size: 50px;
     }
 }

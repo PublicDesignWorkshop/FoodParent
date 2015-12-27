@@ -17,11 +17,18 @@
     <file>/core/lib/backgrid-moment-cell/backgrid-moment-cell.css</file>
     <file>/core/lib/bootstrap/css/bootstrap.css</file>
     <file>/core/lib/font-awesome/css/font-awesome.css</file>
-    
+    <file>/core/lib/leaflet/leaflet.css</file>
+
     <!-- App -->
     <file>/core/css/app.css</file>
     <file>/core/css/base.css</file>
+
+    <file>/core/css/pace.css</file>
     <file>/core/css/home.css</file>
     <file>/core/css/nav.css</file>
+    <file>/core/css/pop.css</file>
+    <file>/core/css/button.css</file>
+    <file>/core/css/alert.css</file>
+    <file>/core/css/mtrees.css</file>
   </files>
 </bundle>

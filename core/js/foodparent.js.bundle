@@ -12,6 +12,7 @@
   <files>
     <!-- Libraries -->
     <file>/core/lib/jquery/jquery-2.1.4.js</file>
+    <file>/core/lib/jquery-easing/jquery.easing.1.3.js</file>
     <file>/core/lib/underscore/underscore.js</file>
     <file>/core/lib/momentjs/moment.js</file>
     <file>/core/lib/backbone/backbone.js</file>
@@ -22,14 +23,15 @@
     <file>/core/lib/bootstrap-select/js/bootstrap-select.js</file>
     <file>/core/lib/bootstrap-list-filter/bootstrap-list-filter.src.js</file>
     <file>/core/lib/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js</file>
-    
-    
+
+    <file>/core/lib/leaflet/leaflet-src.js</file>
+    <file>/core/lib/pace/pace.js</file>
     <file>/core/lib/howler/howler.js</file>
-    
-    
+
+
     <!-- App -->
     <file>/core/js/app.js</file>
-    
+
     <!-- Controller -->
     <file>/core/js/controller/setting.js</file>
     <file>/core/js/controller/controller.js</file>
@@ -44,8 +46,16 @@
     <file>/core/js/view/view.js</file>
     <file>/core/js/view/homeview.js</file>
     <file>/core/js/view/navview.js</file>
-    
-    
+    <file>/core/js/view/alertview.js</file>
+    <file>/core/js/view/mtreesview.js</file>
+
+    <!-- Model -->
+    <file>/core/js/model/model.js</file>
+    <file>/core/js/model/adopt.js</file>
+    <file>/core/js/model/auth.js</file>
+    <file>/core/js/model/food.js</file>
+    <file>/core/js/model/ownership.js</file>
+    <file>/core/js/model/tree.js</file>
     
   </files>
 </bundle>

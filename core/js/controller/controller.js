@@ -16,6 +16,19 @@ var FoodParent;
         Controller.getInstance = function () {
             return Controller._instance;
         };
+        Controller.updateGeoLocation = function (success, error) {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(success, error);
+            }
+            else {
+            }
+        };
+        Controller.fetchAllTrees = function (success, error) {
+            $.when(FoodParent.Model.fetchAllFoods(), FoodParent.Model.fetchAllTrees()).then(function () {
+                //console.log(Model.getTrees());
+                //console.log(Model.getFoods());
+            });
+        };
         Controller._instance = new Controller();
         Controller.TAG = "Controller - ";
         return Controller;
@@ -31,6 +44,8 @@ var FoodParent;
             // Setup Router parameters
             this.routes = {
                 "": "home",
+                "mtrees": "manageTrees",
+                "ptrees": "parentTrees",
             };
             _super.call(this, options);
         }
@@ -40,6 +55,10 @@ var FoodParent;
         Router.prototype.home = function () {
             console.log(Router.TAG + "we have loaded the home page.");
             FoodParent.EventHandler.handleNavigate(FoodParent.VIEW_STATUS.HOME);
+        };
+        Router.prototype.manageTrees = function () {
+            console.log(Router.TAG + "we have loaded the manage trees page.");
+            FoodParent.EventHandler.handleNavigate(FoodParent.VIEW_STATUS.MANAGE_TREES);
         };
         Router._instance = new Router();
         Router.TAG = "Router - ";

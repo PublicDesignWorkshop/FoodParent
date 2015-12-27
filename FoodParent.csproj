@@ -18,8 +18,10 @@
     <IISExpressUseClassicPipelineMode />
   </PropertyGroup>
   <ItemGroup>
+    <Content Include="core\css\alert.css" />
     <Content Include="core\css\app.css" />
     <Content Include="core\css\base.css" />
+    <Content Include="core\css\button.css" />
     <Content Include="core\css\foodparent.css">
       <DependentUpon>foodparent.css.bundle</DependentUpon>
     </Content>
@@ -27,12 +29,18 @@
       <DependentUpon>foodparent.css</DependentUpon>
     </Content>
     <Content Include="core\css\home.css" />
+    <Content Include="core\css\mtrees.css" />
     <Content Include="core\css\nav.css" />
+    <Content Include="core\css\pace.css" />
+    <Content Include="core\css\pop.css" />
     <Content Include="core\js\foodparent.js">
       <DependentUpon>foodparent.js.bundle</DependentUpon>
     </Content>
     <Content Include="core\js\foodparent.min.js">
       <DependentUpon>foodparent.js</DependentUpon>
+    </Content>
+    <Content Include="core\js\foodparent.min.js.map">
+      <DependentUpon>foodparent.min.js</DependentUpon>
     </Content>
     <Content Include="core\lib\backbone\backbone.js" />
     <Content Include="core\lib\backgrid-moment-cell\backgrid-moment-cell.css" />
@@ -65,8 +73,18 @@
     <Content Include="core\lib\font-awesome\fonts\fontawesome-webfont.svg" />
     <Content Include="core\lib\font-awesome\HELP-US-OUT.txt" />
     <Content Include="core\lib\howler\howler.js" />
+    <Content Include="core\lib\jquery-easing\jquery.easing.1.3.js" />
     <Content Include="core\lib\jquery\jquery-2.1.4.js" />
+    <Content Include="core\lib\leaflet\images\layers-2x.png" />
+    <Content Include="core\lib\leaflet\images\layers.png" />
+    <Content Include="core\lib\leaflet\images\marker-icon-2x.png" />
+    <Content Include="core\lib\leaflet\images\marker-icon.png" />
+    <Content Include="core\lib\leaflet\images\marker-shadow.png" />
+    <Content Include="core\lib\leaflet\leaflet-src.js" />
+    <Content Include="core\lib\leaflet\leaflet.css" />
+    <Content Include="core\lib\leaflet\leaflet.js" />
     <Content Include="core\lib\momentjs\moment.js" />
+    <Content Include="core\lib\pace\pace.js" />
     <Content Include="core\lib\underscore\underscore.js" />
     <Content Include="index.html" />
     <Content Include="web.config" />
@@ -112,10 +130,12 @@
     <Content Include="core\lib\font-awesome\scss\_stacked.scss" />
     <Content Include="core\lib\font-awesome\scss\_variables.scss" />
     <Content Include="core\js\foodparent.js.bundle" />
-    <Content Include="core\js\foodparent.min.js.map">
-      <DependentUpon>foodparent.min.js</DependentUpon>
-    </Content>
     <Content Include="core\css\foodparent.css.bundle" />
+    <Content Include="core\php\food.php" />
+    <Content Include="core\php\foods.php" />
+    <Content Include="core\php\tree.php" />
+    <Content Include="core\php\trees.php" />
+    <Content Include="core\php\database.php" />
     <None Include="web.Debug.config">
       <DependentUpon>web.config</DependentUpon>
     </None>
@@ -130,9 +150,16 @@
     <TypeScriptCompile Include="core\js\controller\controller.ts" />
     <TypeScriptCompile Include="core\js\controller\eventhandler.ts" />
     <TypeScriptCompile Include="core\js\controller\setting.ts" />
+    <TypeScriptCompile Include="core\js\model\adopt.ts" />
+    <TypeScriptCompile Include="core\js\model\auth.ts" />
+    <TypeScriptCompile Include="core\js\model\food.ts" />
+    <TypeScriptCompile Include="core\js\model\ownership.ts" />
+    <TypeScriptCompile Include="core\js\model\tree.ts" />
+    <TypeScriptCompile Include="core\js\view\alertview.ts" />
     <TypeScriptCompile Include="core\js\view\homeview.ts" />
     <TypeScriptCompile Include="core\js\model\model.ts" />
     <TypeScriptCompile Include="core\js\view\baseview.ts" />
+    <TypeScriptCompile Include="core\js\view\mtreesview.ts" />
     <TypeScriptCompile Include="core\js\view\navview.ts" />
     <TypeScriptCompile Include="core\js\view\template.ts" />
     <TypeScriptCompile Include="core\js\view\view.ts" />
