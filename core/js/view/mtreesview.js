@@ -39,7 +39,7 @@ var FoodParent;
         function ManageTreesMapView(options) {
             var _this = this;
             _super.call(this, options);
-            this.bClosePopupOnClick = true;
+            this._bClosePopupOnClick = true;
             this.renderMapError = function (error) {
                 var self = _this;
                 switch (error.code) {
@@ -57,24 +57,49 @@ var FoodParent;
             this.renderMap = function (position) {
                 var self = _this;
                 var accuracy = position.coords.accuracy;
-                self.location = new L.LatLng(position.coords.latitude, position.coords.longitude);
-                if (self.map == undefined) {
+                self._location = new L.LatLng(position.coords.latitude, position.coords.longitude);
+                if (self._map == undefined) {
                     self.setLocation(new L.LatLng(position.coords.latitude, position.coords.longitude));
-                    self.map = L.map(self.$el[0].id, {
+                    self._map = L.map(self.$el[0].id, {
                         zoomControl: false,
-                        closePopupOnClick: self.bClosePopupOnClick,
+                        closePopupOnClick: self._bClosePopupOnClick,
                         doubleClickZoom: true,
                         touchZoom: true,
                         zoomAnimation: true,
                         markerZoomAnimation: true,
-                    }).setView(self.location, self.zoom);
+                    }).setView(self._location, self._zoom);
                     L.tileLayer(FoodParent.Setting.getTileMapAddress(), {
                         minZoom: FoodParent.Setting.getMapMinZoomLevel(),
                         maxZoom: FoodParent.Setting.getMapMaxZoomLevel(),
-                    }).addTo(self.map);
-                    self.map.invalidateSize(false);
+                    }).addTo(self._map);
+                    self._map.invalidateSize(false);
                     // add event listener for finishing map creation.
-                    self.map.whenReady(self.renderTrees);
+                    self._map.whenReady(self.renderTrees);
+                    // add event listener for dragging map
+                    self._map.on("moveend", self.afterMoveMap);
+                    //Controller.fetchAllTrees();
+                    self._map.on('popupopen', function (event) {
+                        var marker = event.popup._source;
+                        marker._bringToFront();
+                        self._selectedMarker = marker;
+                        if (self._map.getZoom() < FoodParent.Setting.getMapCenterZoomLevel()) {
+                            self._map.setView(marker.getLatLng(), FoodParent.Setting.getMapCenterZoomLevel(), { animate: true });
+                        }
+                        else {
+                            self._map.setView(marker.getLatLng(), self._map.getZoom(), { animate: true });
+                        }
+                    });
+                    self._map.on('popupclose', function (event) {
+                        var marker = event.popup._source;
+                        marker._resetZIndex();
+                        self._selectedMarker = null;
+                    });
+                }
+            };
+            this.afterMoveMap = function () {
+                var self = _this;
+                if (self._selectedMarker) {
+                    self._selectedMarker._bringToFront();
                 }
             };
             this.renderTrees = function () {
@@ -84,6 +109,18 @@ var FoodParent;
             this.renderMarkers = function () {
                 var self = _this;
                 console.log(ManageTreesMapView.TAG + "renderMarkers()");
+                console.log(FoodParent.Model.getTrees());
+                $.each(FoodParent.Model.getTrees().models, function (index, tree) {
+                    var bFound = false;
+                    for (var j = 0; j < self._markers.length && !bFound; j++) {
+                        if (tree.getId() == self._markers[j].options.id) {
+                            bFound = true;
+                        }
+                    }
+                    if (!bFound) {
+                        self.addMarker(tree);
+                    }
+                });
             };
             this.renderMarkersError = function (errorMode) {
                 var self = _this;
@@ -92,7 +129,8 @@ var FoodParent;
             };
             var self = this;
             self.bDebug = true;
-            self.zoom = FoodParent.Setting.getDefaultMapZoomLevel();
+            self._zoom = FoodParent.Setting.getDefaultMapZoomLevel();
+            self._markers = new Array();
             //$(window).resize(_.debounce(that.customResize, Setting.getInstance().getResizeTimeout()));
             self.events = {};
             self.delegateEvents();
@@ -116,9 +154,15 @@ var FoodParent;
                 console.log(ManageTreesMapView.TAG + "update()");
             return self;
         };
+        ManageTreesMapView.prototype.addMarker = function (tree) {
+            var self = this;
+            var marker = FoodParent.MarkerFractory.create(tree, true);
+            self._markers.push(marker);
+            marker.addTo(self._map);
+        };
         ManageTreesMapView.prototype.setLocation = function (location) {
             var self = this;
-            self.location = location;
+            self._location = location;
         };
         ManageTreesMapView.prototype._mouseOver = function (event) {
             var self = this;

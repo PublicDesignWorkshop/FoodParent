@@ -2704,6 +2704,7 @@ declare module L {
           * can also open the bound popup with the Marker openPopup method.
           */
         bindPopup(popup: Popup, options?: PopupOptions): Marker;
+        bindLabel(label: string, option?: any): Marker;
 
         /**
           * Unbinds the popup previously bound to the marker with bindPopup.
@@ -2782,6 +2783,11 @@ declare module L {
         on(eventMap: any, context?: any): Marker;
         off(eventMap?: any, context?: any): Marker;
         bounce(option?: any, callbackFunction?: any): any;
+        options: any;
+        label: any;
+        _popup: any;
+        _bringToFront(): any;
+        _resetZIndex(): any;
     }
 }
  

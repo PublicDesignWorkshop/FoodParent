@@ -19,11 +19,17 @@ var FoodParent;
         Setting.getPhpDir = function () {
             return Setting._instance._baseUrl + "core/php/";
         };
-        Setting.getContentsImageDir = function () {
-            return Setting._instance._baseUrl + "content/image/";
+        Setting.getContentPictureDir = function () {
+            return Setting._instance._baseUrl + "content/picture/";
+        };
+        Setting.getContentIconDir = function () {
+            return Setting._instance._baseUrl + "content/icon/";
         };
         Setting.getCoreImageDir = function () {
             return Setting._instance._baseUrl + "core/image/";
+        };
+        Setting.getMarkerShadowPath = function () {
+            return Setting.getCoreImageDir() + "marker-shadow.png";
         };
         Setting.getNavWrapperElement = function () {
             return $('#wrapper-nav');
@@ -53,6 +59,9 @@ var FoodParent;
         };
         Setting.getMapMaxZoomLevel = function () {
             return 19;
+        };
+        Setting.getMapCenterZoomLevel = function () {
+            return 15;
         };
         Setting.getDateTimeFormat = function () {
             return "YYYY-MM-DD HH:mm:ss";

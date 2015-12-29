@@ -33,7 +33,7 @@
             return this.get('name');
         }
         public getIconPath(): string {
-            return Setting.getCoreImageDir() + this.get('icon');
+            return Setting.getContentIconDir() + this.get('icon');
         }
     }
     export class Foods extends Backbone.Collection<Food> {

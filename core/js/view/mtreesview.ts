@@ -26,16 +26,19 @@
     }
 
     export class ManageTreesMapView extends ManageTreesView {
-        private map: L.Map;
-        private location: L.LatLng;
-        private zoom: number;
-        private bClosePopupOnClick: boolean = true;
+        private _map: L.Map;
+        private _location: L.LatLng;
+        private _zoom: number;
+        private _bClosePopupOnClick: boolean = true;
+        private _markers: Array<L.Marker>;
+        private _selectedMarker: L.Marker;
         private static TAG: string = "ManageTreesMapView - ";
         constructor(options?: Backbone.ViewOptions<Backbone.Model>) {
             super(options);
             var self: ManageTreesMapView = this;
             self.bDebug = true;
-            self.zoom = Setting.getDefaultMapZoomLevel();
+            self._zoom = Setting.getDefaultMapZoomLevel();
+            self._markers = new Array<L.Marker>();
             //$(window).resize(_.debounce(that.customResize, Setting.getInstance().getResizeTimeout()));
             self.events = <any>{
                 //"mouseover .home-menu-left": "_mouseOver",
@@ -88,35 +91,57 @@
         public renderMap = (position: Position) => {
             var self: ManageTreesMapView = this;
             var accuracy = position.coords.accuracy;
-            self.location = new L.LatLng(position.coords.latitude, position.coords.longitude);
+            self._location = new L.LatLng(position.coords.latitude, position.coords.longitude);
 
-            if (self.map == undefined) {
+            if (self._map == undefined) {
                 self.setLocation(new L.LatLng(position.coords.latitude, position.coords.longitude));
-                self.map = L.map(self.$el[0].id, {
+                self._map = L.map(self.$el[0].id, {
                     zoomControl: false,
-                    closePopupOnClick: self.bClosePopupOnClick,
+                    closePopupOnClick: self._bClosePopupOnClick,
                     doubleClickZoom: true,
                     touchZoom: true,
                     zoomAnimation: true,
                     markerZoomAnimation: true,
-                }).setView(self.location, self.zoom);
+                }).setView(self._location, self._zoom);
                 L.tileLayer(Setting.getTileMapAddress(), {
                     minZoom: Setting.getMapMinZoomLevel(),
                     maxZoom: Setting.getMapMaxZoomLevel(),
-                }).addTo(self.map);
-                self.map.invalidateSize(false);
+                }).addTo(self._map);
+                self._map.invalidateSize(false);
 
                 // add event listener for finishing map creation.
-                self.map.whenReady(self.renderTrees);
+                self._map.whenReady(self.renderTrees);
                 // add event listener for dragging map
-                //self.map.on("moveend", null);
-
-                // remove leaflet thumbnail
-                //that.$('.leaflet-control-attribution.leaflet-control').html('');
+                self._map.on("moveend", self.afterMoveMap);
 
                 //Controller.fetchAllTrees();
+                self._map.on('popupopen', function (event: any) {
+                    var marker: L.Marker = event.popup._source;
+                    marker._bringToFront();
+                    self._selectedMarker = marker;
+                    if (self._map.getZoom() < Setting.getMapCenterZoomLevel()) {
+                        self._map.setView(marker.getLatLng(), Setting.getMapCenterZoomLevel(), { animate: true });
+                    } else {
+                        self._map.setView(marker.getLatLng(), self._map.getZoom() , { animate: true });
+                    }
+                });
+                self._map.on('popupclose', function (event: any) {
+                    var marker: L.Marker = event.popup._source;
+                    marker._resetZIndex();
+                    self._selectedMarker = null;
+                });
             }
         }
+
+        private afterMoveMap = () => {
+            var self: ManageTreesMapView = this;
+            if (self._selectedMarker) {
+                self._selectedMarker._bringToFront();
+            }
+        }
+
+
+
         private renderTrees = () => {
             var self: ManageTreesMapView = this;
             Controller.fetchAllTrees(self.renderMarkers, self.renderMarkersError);
@@ -125,6 +150,27 @@
         private renderMarkers = () => {
             var self: ManageTreesMapView = this;
             console.log(ManageTreesMapView.TAG + "renderMarkers()");
+            console.log(Model.getTrees());
+            $.each(Model.getTrees().models, function (index: number, tree: Tree) {
+                var bFound: boolean = false;
+                for (var j = 0; j < self._markers.length && !bFound; j++) {
+                    if (tree.getId() == self._markers[j].options.id) {
+                        bFound = true;
+                    }
+                }
+                if (!bFound) {
+                    self.addMarker(tree);
+                }
+            });
+            
+        }
+
+        private addMarker(tree: Tree): void {
+            var self: ManageTreesMapView = this;
+            var marker: L.Marker = MarkerFractory.create(tree, true);
+            self._markers.push(marker);
+            marker.addTo(self._map);
+
         }
 
         private renderMarkersError = (errorMode: ERROR_MODE) => {
@@ -135,7 +181,7 @@
 
         public setLocation(location: L.LatLng): void {
             var self: ManageTreesMapView = this;
-            self.location = location;
+            self._location = location;
         }
 
         private _mouseOver(event: Event): void {

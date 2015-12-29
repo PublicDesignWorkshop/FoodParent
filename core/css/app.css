@@ -99,33 +99,4 @@
     .uppercase {
         text-transform: uppercase;
     }
-
-    .row-2 {
-        height: 16.66%;
-    }
-    .row-3 {
-        height: 25%;
-    }
-    .row-4 {
-        height: 33.33%;
-    }
-    .row-5 {
-        height: 41.66%;
-    }
-    .row-6 {
-        height: 50%;
-    }
-    .row-7 {
-        height: 58.33%;
-    }
-    .row-8 {
-        height: 66.66%;
-    }
-    .row-9 {
-        height: 75%;
-    }
-    .row-10 {
-        height: 83.33%;
-    }
-
 }

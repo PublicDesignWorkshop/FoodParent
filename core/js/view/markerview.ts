@@ -11,16 +11,25 @@
         public static getInstance(): MarkerFractory {
             return MarkerFractory._instance;
         }
-        public static create(id: number, name: string, icon: L.Icon, location: L.LatLng, bCloseOnClick: boolean): L.Marker {
+        public static create(tree: Tree, bCloseOnClick: boolean): L.Marker {
+            var food: Food = Model.getFoods().findWhere({ id: tree.getFoodId() });
+            var icon: L.Icon = new L.Icon({
+                iconUrl: food.getIconPath(),
+                shadowUrl: Setting.getMarkerShadowPath(),
+                iconSize: new L.Point(40, 40),
+                iconAnchor: new L.Point(20, 40),
+                shadowAnchor: new L.Point(9, 38),
+                popupAnchor: new L.Point(0, 48),
+            });
+
             var template = _.template(Template.getManageTreesPopupTemplate());
             var data = {
-                id: id,
-                name: name,
+                id: tree.getId()
             }
-            return new L.Marker(
-                location,
+            var marker: L.Marker = new L.Marker(
+                tree.getLocation(),
                 {
-                    id: id,
+                    id: tree.getId(),
                     icon: icon,
                     draggable: false,
                     riseOnHover: true,
@@ -29,7 +38,14 @@
                 {
                     closeButton: false,
                     closeOnClick: bCloseOnClick,
+                })
+                .bindLabel('' + food.getName() + " " + tree.getName() + '', {
+                    clickable: true,
+                    noHide: true,
+                    direction: 'right'
                 });
+            L.DomEvent.addListener(marker.label, 'click', function (e) { this.togglePopup() }, marker);
+            return marker;
         }
     }
 }

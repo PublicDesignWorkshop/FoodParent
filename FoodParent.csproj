@@ -18,13 +18,15 @@
     <IISExpressUseClassicPipelineMode />
   </PropertyGroup>
   <ItemGroup>
+    <Content Include="content\icon\marker-blackberry.png" />
+    <Content Include="content\icon\marker-crabapples.png" />
+    <Content Include="content\icon\marker-mulberries.png" />
+    <Content Include="content\icon\marker-pear.png" />
     <Content Include="core\css\alert.css" />
     <Content Include="core\css\app.css" />
     <Content Include="core\css\base.css" />
     <Content Include="core\css\button.css" />
-    <Content Include="core\css\foodparent.css">
-      <DependentUpon>foodparent.css.bundle</DependentUpon>
-    </Content>
+    <Content Include="core\css\foodparent.css" />
     <Content Include="core\css\foodparent.min.css">
       <DependentUpon>foodparent.css</DependentUpon>
     </Content>
@@ -33,14 +35,11 @@
     <Content Include="core\css\nav.css" />
     <Content Include="core\css\pace.css" />
     <Content Include="core\css\pop.css" />
-    <Content Include="core\js\foodparent.js">
-      <DependentUpon>foodparent.js.bundle</DependentUpon>
-    </Content>
+    <Content Include="core\css\leaflet.css" />
+    <Content Include="core\image\marker-shadow.png" />
+    <Content Include="core\js\foodparent.js" />
     <Content Include="core\js\foodparent.min.js">
       <DependentUpon>foodparent.js</DependentUpon>
-    </Content>
-    <Content Include="core\js\foodparent.min.js.map">
-      <DependentUpon>foodparent.min.js</DependentUpon>
     </Content>
     <Content Include="core\lib\backbone\backbone.js" />
     <Content Include="core\lib\backgrid-moment-cell\backgrid-moment-cell.css" />
@@ -75,6 +74,9 @@
     <Content Include="core\lib\howler\howler.js" />
     <Content Include="core\lib\jquery-easing\jquery.easing.1.3.js" />
     <Content Include="core\lib\jquery\jquery-2.1.4.js" />
+    <Content Include="core\lib\leaflet-label\images\death.png" />
+    <Content Include="core\lib\leaflet-label\leaflet.label-src.js" />
+    <Content Include="core\lib\leaflet-label\leaflet.label.css" />
     <Content Include="core\lib\leaflet\images\layers-2x.png" />
     <Content Include="core\lib\leaflet\images\layers.png" />
     <Content Include="core\lib\leaflet\images\marker-icon-2x.png" />
@@ -129,13 +131,15 @@
     <Content Include="core\lib\font-awesome\scss\_rotated-flipped.scss" />
     <Content Include="core\lib\font-awesome\scss\_stacked.scss" />
     <Content Include="core\lib\font-awesome\scss\_variables.scss" />
-    <Content Include="core\js\foodparent.js.bundle" />
-    <Content Include="core\css\foodparent.css.bundle" />
     <Content Include="core\php\food.php" />
     <Content Include="core\php\foods.php" />
     <Content Include="core\php\tree.php" />
     <Content Include="core\php\trees.php" />
     <Content Include="core\php\database.php" />
+    <None Include="bundleconfig.json" />
+    <Content Include="bundleconfig.json.bindings">
+      <DependentUpon>bundleconfig.json</DependentUpon>
+    </Content>
     <None Include="web.Debug.config">
       <DependentUpon>web.config</DependentUpon>
     </None>
@@ -143,7 +147,9 @@
       <DependentUpon>web.config</DependentUpon>
     </None>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="content\picture\" />
+  </ItemGroup>
   <ItemGroup>
     <TypeScriptCompile Include="core\js\app.ts" />
     <TypeScriptCompile Include="core\js\controller\command\command.ts" />

@@ -1,4 +1,3 @@
-﻿///#source 1 1 /core/lib/jquery/jquery-2.1.4.js
 /*!
  * jQuery JavaScript Library v2.1.4
  * http://jquery.com/
@@ -9210,7 +9209,6 @@ return jQuery;
 
 }));
 
-///#source 1 1 /core/lib/jquery-easing/jquery.easing.1.3.js
 /*
  * jQuery Easing v1.3 - http://gsgd.co.uk/sandbox/jquery/easing/
  *
@@ -9416,7 +9414,6 @@ jQuery.extend( jQuery.easing,
  * OF THE POSSIBILITY OF SUCH DAMAGE. 
  *
  */
-///#source 1 1 /core/lib/underscore/underscore.js
 //     Underscore.js 1.7.0
 //     http://underscorejs.org
 //     (c) 2009-2014 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
@@ -10833,7 +10830,6 @@ jQuery.extend( jQuery.easing,
   }
 }.call(this));
 
-///#source 1 1 /core/lib/momentjs/moment.js
 //! moment.js
 //! version : 2.10.6
 //! authors : Tim Wood, Iskren Chernev, Moment.js contributors
@@ -14029,7 +14025,6 @@ jQuery.extend( jQuery.easing,
     return _moment;
 
 }));
-///#source 1 1 /core/lib/backbone/backbone.js
 //     Backbone.js 1.2.3
 
 //     (c) 2010-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
@@ -15925,7 +15920,6 @@ jQuery.extend( jQuery.easing,
 
 }));
 
-///#source 1 1 /core/lib/backgrid/backgrid.js
 /*!
   backgrid 0.3.5
   http://github.com/wyuenho/backgrid
@@ -18818,7 +18812,6 @@ var Grid = Backgrid.Grid = Backbone.View.extend({
 });
   return Backgrid;
 }));
-///#source 1 1 /core/lib/bootstrap/js/bootstrap.js
 /*!
  * Bootstrap v3.3.5 (http://getbootstrap.com)
  * Copyright 2011-2015 Twitter, Inc.
@@ -21183,7 +21176,6 @@ if (typeof jQuery === 'undefined') {
 
 }(jQuery);
 
-///#source 1 1 /core/lib/backgrid-moment-cell/backgrid-moment-cell.js
 /*
   backgrid-moment-cell
   http://github.com/wyuenho/backgrid
@@ -21374,7 +21366,6 @@ if (typeof jQuery === 'undefined') {
 
 }));
 
-///#source 1 1 /core/lib/bootstrap-toggle/js/bootstrap-toggle.js
 /*! ========================================================================
  * Bootstrap Toggle: bootstrap-toggle.js v2.2.0
  * http://www.bootstraptoggle.com
@@ -21556,7 +21547,6 @@ if (typeof jQuery === 'undefined') {
 
 }(jQuery);
 
-///#source 1 1 /core/lib/bootstrap-select/js/bootstrap-select.js
 /*!
  * Bootstrap-select v1.6.3 (http://silviomoreto.github.io/bootstrap-select/)
  *
@@ -22773,7 +22763,6 @@ if (typeof jQuery === 'undefined') {
   });
 })(jQuery);
 
-///#source 1 1 /core/lib/bootstrap-list-filter/bootstrap-list-filter.src.js
 
 (function($) {
 	$.fn.btsListFilter = function(inputEl, opts) {
@@ -22934,7 +22923,6 @@ if (typeof jQuery === 'undefined') {
 
 })(jQuery);
 
-///#source 1 1 /core/lib/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js
 /*! version : 4.17.37
  =========================================================
  bootstrap-datetimejs
@@ -22944,7 +22932,2296 @@ if (typeof jQuery === 'undefined') {
  */
 !function(a){"use strict";if("function"==typeof define&&define.amd)define(["jquery","moment"],a);else if("object"==typeof exports)a(require("jquery"),require("moment"));else{if("undefined"==typeof jQuery)throw"bootstrap-datetimepicker requires jQuery to be loaded first";if("undefined"==typeof moment)throw"bootstrap-datetimepicker requires Moment.js to be loaded first";a(jQuery,moment)}}(function(a,b){"use strict";if(!b)throw new Error("bootstrap-datetimepicker requires Moment.js to be loaded first");var c=function(c,d){var e,f,g,h,i,j,k,l={},m=!0,n=!1,o=!1,p=0,q=[{clsName:"days",navFnc:"M",navStep:1},{clsName:"months",navFnc:"y",navStep:1},{clsName:"years",navFnc:"y",navStep:10},{clsName:"decades",navFnc:"y",navStep:100}],r=["days","months","years","decades"],s=["top","bottom","auto"],t=["left","right","auto"],u=["default","top","bottom"],v={up:38,38:"up",down:40,40:"down",left:37,37:"left",right:39,39:"right",tab:9,9:"tab",escape:27,27:"escape",enter:13,13:"enter",pageUp:33,33:"pageUp",pageDown:34,34:"pageDown",shift:16,16:"shift",control:17,17:"control",space:32,32:"space",t:84,84:"t","delete":46,46:"delete"},w={},x=function(a){var c,e,f,g,h,i=!1;return void 0!==b.tz&&void 0!==d.timeZone&&null!==d.timeZone&&""!==d.timeZone&&(i=!0),void 0===a||null===a?c=i?b().tz(d.timeZone).startOf("d"):b().startOf("d"):i?(e=b().tz(d.timeZone).utcOffset(),f=b(a,j,d.useStrict).utcOffset(),f!==e?(g=b().tz(d.timeZone).format("Z"),h=b(a,j,d.useStrict).format("YYYY-MM-DD[T]HH:mm:ss")+g,c=b(h,j,d.useStrict).tz(d.timeZone)):c=b(a,j,d.useStrict).tz(d.timeZone)):c=b(a,j,d.useStrict),c},y=function(a){if("string"!=typeof a||a.length>1)throw new TypeError("isEnabled expects a single character string parameter");switch(a){case"y":return-1!==i.indexOf("Y");case"M":return-1!==i.indexOf("M");case"d":return-1!==i.toLowerCase().indexOf("d");case"h":case"H":return-1!==i.toLowerCase().indexOf("h");case"m":return-1!==i.indexOf("m");case"s":return-1!==i.indexOf("s");default:return!1}},z=function(){return y("h")||y("m")||y("s")},A=function(){return y("y")||y("M")||y("d")},B=function(){var b=a("<thead>").append(a("<tr>").append(a("<th>").addClass("prev").attr("data-action","previous").append(a("<span>").addClass(d.icons.previous))).append(a("<th>").addClass("picker-switch").attr("data-action","pickerSwitch").attr("colspan",d.calendarWeeks?"6":"5")).append(a("<th>").addClass("next").attr("data-action","next").append(a("<span>").addClass(d.icons.next)))),c=a("<tbody>").append(a("<tr>").append(a("<td>").attr("colspan",d.calendarWeeks?"8":"7")));return[a("<div>").addClass("datepicker-days").append(a("<table>").addClass("table-condensed").append(b).append(a("<tbody>"))),a("<div>").addClass("datepicker-months").append(a("<table>").addClass("table-condensed").append(b.clone()).append(c.clone())),a("<div>").addClass("datepicker-years").append(a("<table>").addClass("table-condensed").append(b.clone()).append(c.clone())),a("<div>").addClass("datepicker-decades").append(a("<table>").addClass("table-condensed").append(b.clone()).append(c.clone()))]},C=function(){var b=a("<tr>"),c=a("<tr>"),e=a("<tr>");return y("h")&&(b.append(a("<td>").append(a("<a>").attr({href:"#",tabindex:"-1",title:d.tooltips.incrementHour}).addClass("btn").attr("data-action","incrementHours").append(a("<span>").addClass(d.icons.up)))),c.append(a("<td>").append(a("<span>").addClass("timepicker-hour").attr({"data-time-component":"hours",title:d.tooltips.pickHour}).attr("data-action","showHours"))),e.append(a("<td>").append(a("<a>").attr({href:"#",tabindex:"-1",title:d.tooltips.decrementHour}).addClass("btn").attr("data-action","decrementHours").append(a("<span>").addClass(d.icons.down))))),y("m")&&(y("h")&&(b.append(a("<td>").addClass("separator")),c.append(a("<td>").addClass("separator").html(":")),e.append(a("<td>").addClass("separator"))),b.append(a("<td>").append(a("<a>").attr({href:"#",tabindex:"-1",title:d.tooltips.incrementMinute}).addClass("btn").attr("data-action","incrementMinutes").append(a("<span>").addClass(d.icons.up)))),c.append(a("<td>").append(a("<span>").addClass("timepicker-minute").attr({"data-time-component":"minutes",title:d.tooltips.pickMinute}).attr("data-action","showMinutes"))),e.append(a("<td>").append(a("<a>").attr({href:"#",tabindex:"-1",title:d.tooltips.decrementMinute}).addClass("btn").attr("data-action","decrementMinutes").append(a("<span>").addClass(d.icons.down))))),y("s")&&(y("m")&&(b.append(a("<td>").addClass("separator")),c.append(a("<td>").addClass("separator").html(":")),e.append(a("<td>").addClass("separator"))),b.append(a("<td>").append(a("<a>").attr({href:"#",tabindex:"-1",title:d.tooltips.incrementSecond}).addClass("btn").attr("data-action","incrementSeconds").append(a("<span>").addClass(d.icons.up)))),c.append(a("<td>").append(a("<span>").addClass("timepicker-second").attr({"data-time-component":"seconds",title:d.tooltips.pickSecond}).attr("data-action","showSeconds"))),e.append(a("<td>").append(a("<a>").attr({href:"#",tabindex:"-1",title:d.tooltips.decrementSecond}).addClass("btn").attr("data-action","decrementSeconds").append(a("<span>").addClass(d.icons.down))))),h||(b.append(a("<td>").addClass("separator")),c.append(a("<td>").append(a("<button>").addClass("btn btn-primary").attr({"data-action":"togglePeriod",tabindex:"-1",title:d.tooltips.togglePeriod}))),e.append(a("<td>").addClass("separator"))),a("<div>").addClass("timepicker-picker").append(a("<table>").addClass("table-condensed").append([b,c,e]))},D=function(){var b=a("<div>").addClass("timepicker-hours").append(a("<table>").addClass("table-condensed")),c=a("<div>").addClass("timepicker-minutes").append(a("<table>").addClass("table-condensed")),d=a("<div>").addClass("timepicker-seconds").append(a("<table>").addClass("table-condensed")),e=[C()];return y("h")&&e.push(b),y("m")&&e.push(c),y("s")&&e.push(d),e},E=function(){var b=[];return d.showTodayButton&&b.push(a("<td>").append(a("<a>").attr({"data-action":"today",title:d.tooltips.today}).append(a("<span>").addClass(d.icons.today)))),!d.sideBySide&&A()&&z()&&b.push(a("<td>").append(a("<a>").attr({"data-action":"togglePicker",title:d.tooltips.selectTime}).append(a("<span>").addClass(d.icons.time)))),d.showClear&&b.push(a("<td>").append(a("<a>").attr({"data-action":"clear",title:d.tooltips.clear}).append(a("<span>").addClass(d.icons.clear)))),d.showClose&&b.push(a("<td>").append(a("<a>").attr({"data-action":"close",title:d.tooltips.close}).append(a("<span>").addClass(d.icons.close)))),a("<table>").addClass("table-condensed").append(a("<tbody>").append(a("<tr>").append(b)))},F=function(){var b=a("<div>").addClass("bootstrap-datetimepicker-widget dropdown-menu"),c=a("<div>").addClass("datepicker").append(B()),e=a("<div>").addClass("timepicker").append(D()),f=a("<ul>").addClass("list-unstyled"),g=a("<li>").addClass("picker-switch"+(d.collapse?" accordion-toggle":"")).append(E());return d.inline&&b.removeClass("dropdown-menu"),h&&b.addClass("usetwentyfour"),y("s")&&!h&&b.addClass("wider"),d.sideBySide&&A()&&z()?(b.addClass("timepicker-sbs"),"top"===d.toolbarPlacement&&b.append(g),b.append(a("<div>").addClass("row").append(c.addClass("col-md-6")).append(e.addClass("col-md-6"))),"bottom"===d.toolbarPlacement&&b.append(g),b):("top"===d.toolbarPlacement&&f.append(g),A()&&f.append(a("<li>").addClass(d.collapse&&z()?"collapse in":"").append(c)),"default"===d.toolbarPlacement&&f.append(g),z()&&f.append(a("<li>").addClass(d.collapse&&A()?"collapse":"").append(e)),"bottom"===d.toolbarPlacement&&f.append(g),b.append(f))},G=function(){var b,e={};return b=c.is("input")||d.inline?c.data():c.find("input").data(),b.dateOptions&&b.dateOptions instanceof Object&&(e=a.extend(!0,e,b.dateOptions)),a.each(d,function(a){var c="date"+a.charAt(0).toUpperCase()+a.slice(1);void 0!==b[c]&&(e[a]=b[c])}),e},H=function(){var b,e=(n||c).position(),f=(n||c).offset(),g=d.widgetPositioning.vertical,h=d.widgetPositioning.horizontal;if(d.widgetParent)b=d.widgetParent.append(o);else if(c.is("input"))b=c.after(o).parent();else{if(d.inline)return void(b=c.append(o));b=c,c.children().first().after(o)}if("auto"===g&&(g=f.top+1.5*o.height()>=a(window).height()+a(window).scrollTop()&&o.height()+c.outerHeight()<f.top?"top":"bottom"),"auto"===h&&(h=b.width()<f.left+o.outerWidth()/2&&f.left+o.outerWidth()>a(window).width()?"right":"left"),"top"===g?o.addClass("top").removeClass("bottom"):o.addClass("bottom").removeClass("top"),"right"===h?o.addClass("pull-right"):o.removeClass("pull-right"),"relative"!==b.css("position")&&(b=b.parents().filter(function(){return"relative"===a(this).css("position")}).first()),0===b.length)throw new Error("datetimepicker component should be placed within a relative positioned container");o.css({top:"top"===g?"auto":e.top+c.outerHeight(),bottom:"top"===g?e.top+c.outerHeight():"auto",left:"left"===h?b===c?0:e.left:"auto",right:"left"===h?"auto":b.outerWidth()-c.outerWidth()-(b===c?0:e.left)})},I=function(a){"dp.change"===a.type&&(a.date&&a.date.isSame(a.oldDate)||!a.date&&!a.oldDate)||c.trigger(a)},J=function(a){"y"===a&&(a="YYYY"),I({type:"dp.update",change:a,viewDate:f.clone()})},K=function(a){o&&(a&&(k=Math.max(p,Math.min(3,k+a))),o.find(".datepicker > div").hide().filter(".datepicker-"+q[k].clsName).show())},L=function(){var b=a("<tr>"),c=f.clone().startOf("w").startOf("d");for(d.calendarWeeks===!0&&b.append(a("<th>").addClass("cw").text("#"));c.isBefore(f.clone().endOf("w"));)b.append(a("<th>").addClass("dow").text(c.format("dd"))),c.add(1,"d");o.find(".datepicker-days thead").append(b)},M=function(a){return d.disabledDates[a.format("YYYY-MM-DD")]===!0},N=function(a){return d.enabledDates[a.format("YYYY-MM-DD")]===!0},O=function(a){return d.disabledHours[a.format("H")]===!0},P=function(a){return d.enabledHours[a.format("H")]===!0},Q=function(b,c){if(!b.isValid())return!1;if(d.disabledDates&&"d"===c&&M(b))return!1;if(d.enabledDates&&"d"===c&&!N(b))return!1;if(d.minDate&&b.isBefore(d.minDate,c))return!1;if(d.maxDate&&b.isAfter(d.maxDate,c))return!1;if(d.daysOfWeekDisabled&&"d"===c&&-1!==d.daysOfWeekDisabled.indexOf(b.day()))return!1;if(d.disabledHours&&("h"===c||"m"===c||"s"===c)&&O(b))return!1;if(d.enabledHours&&("h"===c||"m"===c||"s"===c)&&!P(b))return!1;if(d.disabledTimeIntervals&&("h"===c||"m"===c||"s"===c)){var e=!1;if(a.each(d.disabledTimeIntervals,function(){return b.isBetween(this[0],this[1])?(e=!0,!1):void 0}),e)return!1}return!0},R=function(){for(var b=[],c=f.clone().startOf("y").startOf("d");c.isSame(f,"y");)b.push(a("<span>").attr("data-action","selectMonth").addClass("month").text(c.format("MMM"))),c.add(1,"M");o.find(".datepicker-months td").empty().append(b)},S=function(){var b=o.find(".datepicker-months"),c=b.find("th"),g=b.find("tbody").find("span");c.eq(0).find("span").attr("title",d.tooltips.prevYear),c.eq(1).attr("title",d.tooltips.selectYear),c.eq(2).find("span").attr("title",d.tooltips.nextYear),b.find(".disabled").removeClass("disabled"),Q(f.clone().subtract(1,"y"),"y")||c.eq(0).addClass("disabled"),c.eq(1).text(f.year()),Q(f.clone().add(1,"y"),"y")||c.eq(2).addClass("disabled"),g.removeClass("active"),e.isSame(f,"y")&&!m&&g.eq(e.month()).addClass("active"),g.each(function(b){Q(f.clone().month(b),"M")||a(this).addClass("disabled")})},T=function(){var a=o.find(".datepicker-years"),b=a.find("th"),c=f.clone().subtract(5,"y"),g=f.clone().add(6,"y"),h="";for(b.eq(0).find("span").attr("title",d.tooltips.prevDecade),b.eq(1).attr("title",d.tooltips.selectDecade),b.eq(2).find("span").attr("title",d.tooltips.nextDecade),a.find(".disabled").removeClass("disabled"),d.minDate&&d.minDate.isAfter(c,"y")&&b.eq(0).addClass("disabled"),b.eq(1).text(c.year()+"-"+g.year()),d.maxDate&&d.maxDate.isBefore(g,"y")&&b.eq(2).addClass("disabled");!c.isAfter(g,"y");)h+='<span data-action="selectYear" class="year'+(c.isSame(e,"y")&&!m?" active":"")+(Q(c,"y")?"":" disabled")+'">'+c.year()+"</span>",c.add(1,"y");a.find("td").html(h)},U=function(){var a=o.find(".datepicker-decades"),c=a.find("th"),g=b({y:f.year()-f.year()%100-1}),h=g.clone().add(100,"y"),i=g.clone(),j="";for(c.eq(0).find("span").attr("title",d.tooltips.prevCentury),c.eq(2).find("span").attr("title",d.tooltips.nextCentury),a.find(".disabled").removeClass("disabled"),(g.isSame(b({y:1900}))||d.minDate&&d.minDate.isAfter(g,"y"))&&c.eq(0).addClass("disabled"),c.eq(1).text(g.year()+"-"+h.year()),(g.isSame(b({y:2e3}))||d.maxDate&&d.maxDate.isBefore(h,"y"))&&c.eq(2).addClass("disabled");!g.isAfter(h,"y");)j+='<span data-action="selectDecade" class="decade'+(g.isSame(e,"y")?" active":"")+(Q(g,"y")?"":" disabled")+'" data-selection="'+(g.year()+6)+'">'+(g.year()+1)+" - "+(g.year()+12)+"</span>",g.add(12,"y");j+="<span></span><span></span><span></span>",a.find("td").html(j),c.eq(1).text(i.year()+1+"-"+g.year())},V=function(){var b,c,g,h,i=o.find(".datepicker-days"),j=i.find("th"),k=[];if(A()){for(j.eq(0).find("span").attr("title",d.tooltips.prevMonth),j.eq(1).attr("title",d.tooltips.selectMonth),j.eq(2).find("span").attr("title",d.tooltips.nextMonth),i.find(".disabled").removeClass("disabled"),j.eq(1).text(f.format(d.dayViewHeaderFormat)),Q(f.clone().subtract(1,"M"),"M")||j.eq(0).addClass("disabled"),Q(f.clone().add(1,"M"),"M")||j.eq(2).addClass("disabled"),b=f.clone().startOf("M").startOf("w").startOf("d"),h=0;42>h;h++)0===b.weekday()&&(c=a("<tr>"),d.calendarWeeks&&c.append('<td class="cw">'+b.week()+"</td>"),k.push(c)),g="",b.isBefore(f,"M")&&(g+=" old"),b.isAfter(f,"M")&&(g+=" new"),b.isSame(e,"d")&&!m&&(g+=" active"),Q(b,"d")||(g+=" disabled"),b.isSame(x(),"d")&&(g+=" today"),(0===b.day()||6===b.day())&&(g+=" weekend"),c.append('<td data-action="selectDay" data-day="'+b.format("L")+'" class="day'+g+'">'+b.date()+"</td>"),b.add(1,"d");i.find("tbody").empty().append(k),S(),T(),U()}},W=function(){var b=o.find(".timepicker-hours table"),c=f.clone().startOf("d"),d=[],e=a("<tr>");for(f.hour()>11&&!h&&c.hour(12);c.isSame(f,"d")&&(h||f.hour()<12&&c.hour()<12||f.hour()>11);)c.hour()%4===0&&(e=a("<tr>"),d.push(e)),e.append('<td data-action="selectHour" class="hour'+(Q(c,"h")?"":" disabled")+'">'+c.format(h?"HH":"hh")+"</td>"),c.add(1,"h");b.empty().append(d)},X=function(){for(var b=o.find(".timepicker-minutes table"),c=f.clone().startOf("h"),e=[],g=a("<tr>"),h=1===d.stepping?5:d.stepping;f.isSame(c,"h");)c.minute()%(4*h)===0&&(g=a("<tr>"),e.push(g)),g.append('<td data-action="selectMinute" class="minute'+(Q(c,"m")?"":" disabled")+'">'+c.format("mm")+"</td>"),c.add(h,"m");b.empty().append(e)},Y=function(){for(var b=o.find(".timepicker-seconds table"),c=f.clone().startOf("m"),d=[],e=a("<tr>");f.isSame(c,"m");)c.second()%20===0&&(e=a("<tr>"),d.push(e)),e.append('<td data-action="selectSecond" class="second'+(Q(c,"s")?"":" disabled")+'">'+c.format("ss")+"</td>"),c.add(5,"s");b.empty().append(d)},Z=function(){var a,b,c=o.find(".timepicker span[data-time-component]");h||(a=o.find(".timepicker [data-action=togglePeriod]"),b=e.clone().add(e.hours()>=12?-12:12,"h"),a.text(e.format("A")),Q(b,"h")?a.removeClass("disabled"):a.addClass("disabled")),c.filter("[data-time-component=hours]").text(e.format(h?"HH":"hh")),c.filter("[data-time-component=minutes]").text(e.format("mm")),c.filter("[data-time-component=seconds]").text(e.format("ss")),W(),X(),Y()},$=function(){o&&(V(),Z())},_=function(a){var b=m?null:e;return a?(a=a.clone().locale(d.locale),1!==d.stepping&&a.minutes(Math.round(a.minutes()/d.stepping)*d.stepping%60).seconds(0),void(Q(a)?(e=a,f=e.clone(),g.val(e.format(i)),c.data("date",e.format(i)),m=!1,$(),I({type:"dp.change",date:e.clone(),oldDate:b})):(d.keepInvalid||g.val(m?"":e.format(i)),I({type:"dp.error",date:a})))):(m=!0,g.val(""),c.data("date",""),I({type:"dp.change",date:!1,oldDate:b}),void $())},aa=function(){var b=!1;return o?(o.find(".collapse").each(function(){var c=a(this).data("collapse");return c&&c.transitioning?(b=!0,!1):!0}),b?l:(n&&n.hasClass("btn")&&n.toggleClass("active"),o.hide(),a(window).off("resize",H),o.off("click","[data-action]"),o.off("mousedown",!1),o.remove(),o=!1,I({type:"dp.hide",date:e.clone()}),g.blur(),l)):l},ba=function(){_(null)},ca={next:function(){var a=q[k].navFnc;f.add(q[k].navStep,a),V(),J(a)},previous:function(){var a=q[k].navFnc;f.subtract(q[k].navStep,a),V(),J(a)},pickerSwitch:function(){K(1)},selectMonth:function(b){var c=a(b.target).closest("tbody").find("span").index(a(b.target));f.month(c),k===p?(_(e.clone().year(f.year()).month(f.month())),d.inline||aa()):(K(-1),V()),J("M")},selectYear:function(b){var c=parseInt(a(b.target).text(),10)||0;f.year(c),k===p?(_(e.clone().year(f.year())),d.inline||aa()):(K(-1),V()),J("YYYY")},selectDecade:function(b){var c=parseInt(a(b.target).data("selection"),10)||0;f.year(c),k===p?(_(e.clone().year(f.year())),d.inline||aa()):(K(-1),V()),J("YYYY")},selectDay:function(b){var c=f.clone();a(b.target).is(".old")&&c.subtract(1,"M"),a(b.target).is(".new")&&c.add(1,"M"),_(c.date(parseInt(a(b.target).text(),10))),z()||d.keepOpen||d.inline||aa()},incrementHours:function(){var a=e.clone().add(1,"h");Q(a,"h")&&_(a)},incrementMinutes:function(){var a=e.clone().add(d.stepping,"m");Q(a,"m")&&_(a)},incrementSeconds:function(){var a=e.clone().add(1,"s");Q(a,"s")&&_(a)},decrementHours:function(){var a=e.clone().subtract(1,"h");Q(a,"h")&&_(a)},decrementMinutes:function(){var a=e.clone().subtract(d.stepping,"m");Q(a,"m")&&_(a)},decrementSeconds:function(){var a=e.clone().subtract(1,"s");Q(a,"s")&&_(a)},togglePeriod:function(){_(e.clone().add(e.hours()>=12?-12:12,"h"))},togglePicker:function(b){var c,e=a(b.target),f=e.closest("ul"),g=f.find(".in"),h=f.find(".collapse:not(.in)");if(g&&g.length){if(c=g.data("collapse"),c&&c.transitioning)return;g.collapse?(g.collapse("hide"),h.collapse("show")):(g.removeClass("in"),h.addClass("in")),e.is("span")?e.toggleClass(d.icons.time+" "+d.icons.date):e.find("span").toggleClass(d.icons.time+" "+d.icons.date)}},showPicker:function(){o.find(".timepicker > div:not(.timepicker-picker)").hide(),o.find(".timepicker .timepicker-picker").show()},showHours:function(){o.find(".timepicker .timepicker-picker").hide(),o.find(".timepicker .timepicker-hours").show()},showMinutes:function(){o.find(".timepicker .timepicker-picker").hide(),o.find(".timepicker .timepicker-minutes").show()},showSeconds:function(){o.find(".timepicker .timepicker-picker").hide(),o.find(".timepicker .timepicker-seconds").show()},selectHour:function(b){var c=parseInt(a(b.target).text(),10);h||(e.hours()>=12?12!==c&&(c+=12):12===c&&(c=0)),_(e.clone().hours(c)),ca.showPicker.call(l)},selectMinute:function(b){_(e.clone().minutes(parseInt(a(b.target).text(),10))),ca.showPicker.call(l)},selectSecond:function(b){_(e.clone().seconds(parseInt(a(b.target).text(),10))),ca.showPicker.call(l)},clear:ba,today:function(){var a=x();Q(a,"d")&&_(a)},close:aa},da=function(b){return a(b.currentTarget).is(".disabled")?!1:(ca[a(b.currentTarget).data("action")].apply(l,arguments),!1)},ea=function(){var b,c={year:function(a){return a.month(0).date(1).hours(0).seconds(0).minutes(0)},month:function(a){return a.date(1).hours(0).seconds(0).minutes(0)},day:function(a){return a.hours(0).seconds(0).minutes(0)},hour:function(a){return a.seconds(0).minutes(0)},minute:function(a){return a.seconds(0)}};return g.prop("disabled")||!d.ignoreReadonly&&g.prop("readonly")||o?l:(void 0!==g.val()&&0!==g.val().trim().length?_(ga(g.val().trim())):d.useCurrent&&m&&(g.is("input")&&0===g.val().trim().length||d.inline)&&(b=x(),"string"==typeof d.useCurrent&&(b=c[d.useCurrent](b)),_(b)),o=F(),L(),R(),o.find(".timepicker-hours").hide(),o.find(".timepicker-minutes").hide(),o.find(".timepicker-seconds").hide(),$(),K(),a(window).on("resize",H),o.on("click","[data-action]",da),o.on("mousedown",!1),n&&n.hasClass("btn")&&n.toggleClass("active"),o.show(),H(),d.focusOnShow&&!g.is(":focus")&&g.focus(),I({type:"dp.show"}),l)},fa=function(){return o?aa():ea()},ga=function(a){return a=void 0===d.parseInputDate?b.isMoment(a)||a instanceof Date?b(a):x(a):d.parseInputDate(a),a.locale(d.locale),a},ha=function(a){var b,c,e,f,g=null,h=[],i={},j=a.which,k="p";w[j]=k;for(b in w)w.hasOwnProperty(b)&&w[b]===k&&(h.push(b),parseInt(b,10)!==j&&(i[b]=!0));for(b in d.keyBinds)if(d.keyBinds.hasOwnProperty(b)&&"function"==typeof d.keyBinds[b]&&(e=b.split(" "),e.length===h.length&&v[j]===e[e.length-1])){for(f=!0,c=e.length-2;c>=0;c--)if(!(v[e[c]]in i)){f=!1;break}if(f){g=d.keyBinds[b];break}}g&&(g.call(l,o),a.stopPropagation(),a.preventDefault())},ia=function(a){w[a.which]="r",a.stopPropagation(),a.preventDefault()},ja=function(b){var c=a(b.target).val().trim(),d=c?ga(c):null;return _(d),b.stopImmediatePropagation(),!1},ka=function(){g.on({change:ja,blur:d.debug?"":aa,keydown:ha,keyup:ia,focus:d.allowInputToggle?ea:""}),c.is("input")?g.on({focus:ea}):n&&(n.on("click",fa),n.on("mousedown",!1))},la=function(){g.off({change:ja,blur:blur,keydown:ha,keyup:ia,focus:d.allowInputToggle?aa:""}),c.is("input")?g.off({focus:ea}):n&&(n.off("click",fa),n.off("mousedown",!1))},ma=function(b){var c={};return a.each(b,function(){var a=ga(this);a.isValid()&&(c[a.format("YYYY-MM-DD")]=!0)}),Object.keys(c).length?c:!1},na=function(b){var c={};return a.each(b,function(){c[this]=!0}),Object.keys(c).length?c:!1},oa=function(){var a=d.format||"L LT";i=a.replace(/(\[[^\[]*\])|(\\)?(LTS|LT|LL?L?L?|l{1,4})/g,function(a){var b=e.localeData().longDateFormat(a)||a;return b.replace(/(\[[^\[]*\])|(\\)?(LTS|LT|LL?L?L?|l{1,4})/g,function(a){return e.localeData().longDateFormat(a)||a})}),j=d.extraFormats?d.extraFormats.slice():[],j.indexOf(a)<0&&j.indexOf(i)<0&&j.push(i),h=i.toLowerCase().indexOf("a")<1&&i.replace(/\[.*?\]/g,"").indexOf("h")<1,y("y")&&(p=2),y("M")&&(p=1),y("d")&&(p=0),k=Math.max(p,k),m||_(e)};if(l.destroy=function(){aa(),la(),c.removeData("DateTimePicker"),c.removeData("date")},l.toggle=fa,l.show=ea,l.hide=aa,l.disable=function(){return aa(),n&&n.hasClass("btn")&&n.addClass("disabled"),g.prop("disabled",!0),l},l.enable=function(){return n&&n.hasClass("btn")&&n.removeClass("disabled"),g.prop("disabled",!1),l},l.ignoreReadonly=function(a){if(0===arguments.length)return d.ignoreReadonly;if("boolean"!=typeof a)throw new TypeError("ignoreReadonly () expects a boolean parameter");return d.ignoreReadonly=a,l},l.options=function(b){if(0===arguments.length)return a.extend(!0,{},d);if(!(b instanceof Object))throw new TypeError("options() options parameter should be an object");return a.extend(!0,d,b),a.each(d,function(a,b){if(void 0===l[a])throw new TypeError("option "+a+" is not recognized!");l[a](b)}),l},l.date=function(a){if(0===arguments.length)return m?null:e.clone();if(!(null===a||"string"==typeof a||b.isMoment(a)||a instanceof Date))throw new TypeError("date() parameter must be one of [null, string, moment or Date]");return _(null===a?null:ga(a)),l},l.format=function(a){if(0===arguments.length)return d.format;if("string"!=typeof a&&("boolean"!=typeof a||a!==!1))throw new TypeError("format() expects a sting or boolean:false parameter "+a);return d.format=a,i&&oa(),l},l.timeZone=function(a){return 0===arguments.length?d.timeZone:(d.timeZone=a,l)},l.dayViewHeaderFormat=function(a){if(0===arguments.length)return d.dayViewHeaderFormat;if("string"!=typeof a)throw new TypeError("dayViewHeaderFormat() expects a string parameter");return d.dayViewHeaderFormat=a,l},l.extraFormats=function(a){if(0===arguments.length)return d.extraFormats;if(a!==!1&&!(a instanceof Array))throw new TypeError("extraFormats() expects an array or false parameter");return d.extraFormats=a,j&&oa(),l},l.disabledDates=function(b){if(0===arguments.length)return d.disabledDates?a.extend({},d.disabledDates):d.disabledDates;if(!b)return d.disabledDates=!1,$(),l;if(!(b instanceof Array))throw new TypeError("disabledDates() expects an array parameter");return d.disabledDates=ma(b),d.enabledDates=!1,$(),l},l.enabledDates=function(b){if(0===arguments.length)return d.enabledDates?a.extend({},d.enabledDates):d.enabledDates;if(!b)return d.enabledDates=!1,$(),l;if(!(b instanceof Array))throw new TypeError("enabledDates() expects an array parameter");return d.enabledDates=ma(b),d.disabledDates=!1,$(),l},l.daysOfWeekDisabled=function(a){if(0===arguments.length)return d.daysOfWeekDisabled.splice(0);if("boolean"==typeof a&&!a)return d.daysOfWeekDisabled=!1,$(),l;if(!(a instanceof Array))throw new TypeError("daysOfWeekDisabled() expects an array parameter");if(d.daysOfWeekDisabled=a.reduce(function(a,b){return b=parseInt(b,10),b>6||0>b||isNaN(b)?a:(-1===a.indexOf(b)&&a.push(b),a)},[]).sort(),d.useCurrent&&!d.keepInvalid){for(var b=0;!Q(e,"d");){if(e.add(1,"d"),7===b)throw"Tried 7 times to find a valid date";b++}_(e)}return $(),l},l.maxDate=function(a){if(0===arguments.length)return d.maxDate?d.maxDate.clone():d.maxDate;if("boolean"==typeof a&&a===!1)return d.maxDate=!1,$(),l;"string"==typeof a&&("now"===a||"moment"===a)&&(a=x());var b=ga(a);if(!b.isValid())throw new TypeError("maxDate() Could not parse date parameter: "+a);if(d.minDate&&b.isBefore(d.minDate))throw new TypeError("maxDate() date parameter is before options.minDate: "+b.format(i));return d.maxDate=b,d.useCurrent&&!d.keepInvalid&&e.isAfter(a)&&_(d.maxDate),f.isAfter(b)&&(f=b.clone().subtract(d.stepping,"m")),$(),l},l.minDate=function(a){if(0===arguments.length)return d.minDate?d.minDate.clone():d.minDate;if("boolean"==typeof a&&a===!1)return d.minDate=!1,$(),l;"string"==typeof a&&("now"===a||"moment"===a)&&(a=x());var b=ga(a);if(!b.isValid())throw new TypeError("minDate() Could not parse date parameter: "+a);if(d.maxDate&&b.isAfter(d.maxDate))throw new TypeError("minDate() date parameter is after options.maxDate: "+b.format(i));return d.minDate=b,d.useCurrent&&!d.keepInvalid&&e.isBefore(a)&&_(d.minDate),f.isBefore(b)&&(f=b.clone().add(d.stepping,"m")),$(),l},l.defaultDate=function(a){if(0===arguments.length)return d.defaultDate?d.defaultDate.clone():d.defaultDate;if(!a)return d.defaultDate=!1,l;"string"==typeof a&&("now"===a||"moment"===a)&&(a=x());var b=ga(a);if(!b.isValid())throw new TypeError("defaultDate() Could not parse date parameter: "+a);if(!Q(b))throw new TypeError("defaultDate() date passed is invalid according to component setup validations");return d.defaultDate=b,(d.defaultDate&&d.inline||""===g.val().trim())&&_(d.defaultDate),l},l.locale=function(a){if(0===arguments.length)return d.locale;if(!b.localeData(a))throw new TypeError("locale() locale "+a+" is not loaded from moment locales!");return d.locale=a,e.locale(d.locale),f.locale(d.locale),i&&oa(),o&&(aa(),ea()),l},l.stepping=function(a){return 0===arguments.length?d.stepping:(a=parseInt(a,10),(isNaN(a)||1>a)&&(a=1),d.stepping=a,l)},l.useCurrent=function(a){var b=["year","month","day","hour","minute"];if(0===arguments.length)return d.useCurrent;if("boolean"!=typeof a&&"string"!=typeof a)throw new TypeError("useCurrent() expects a boolean or string parameter");if("string"==typeof a&&-1===b.indexOf(a.toLowerCase()))throw new TypeError("useCurrent() expects a string parameter of "+b.join(", "));return d.useCurrent=a,l},l.collapse=function(a){if(0===arguments.length)return d.collapse;if("boolean"!=typeof a)throw new TypeError("collapse() expects a boolean parameter");return d.collapse===a?l:(d.collapse=a,o&&(aa(),ea()),l)},l.icons=function(b){if(0===arguments.length)return a.extend({},d.icons);if(!(b instanceof Object))throw new TypeError("icons() expects parameter to be an Object");return a.extend(d.icons,b),o&&(aa(),ea()),l},l.tooltips=function(b){if(0===arguments.length)return a.extend({},d.tooltips);if(!(b instanceof Object))throw new TypeError("tooltips() expects parameter to be an Object");return a.extend(d.tooltips,b),o&&(aa(),ea()),l},l.useStrict=function(a){if(0===arguments.length)return d.useStrict;if("boolean"!=typeof a)throw new TypeError("useStrict() expects a boolean parameter");return d.useStrict=a,l},l.sideBySide=function(a){if(0===arguments.length)return d.sideBySide;if("boolean"!=typeof a)throw new TypeError("sideBySide() expects a boolean parameter");return d.sideBySide=a,o&&(aa(),ea()),l},l.viewMode=function(a){if(0===arguments.length)return d.viewMode;if("string"!=typeof a)throw new TypeError("viewMode() expects a string parameter");if(-1===r.indexOf(a))throw new TypeError("viewMode() parameter must be one of ("+r.join(", ")+") value");return d.viewMode=a,k=Math.max(r.indexOf(a),p),K(),l},l.toolbarPlacement=function(a){if(0===arguments.length)return d.toolbarPlacement;if("string"!=typeof a)throw new TypeError("toolbarPlacement() expects a string parameter");if(-1===u.indexOf(a))throw new TypeError("toolbarPlacement() parameter must be one of ("+u.join(", ")+") value");return d.toolbarPlacement=a,o&&(aa(),ea()),l},l.widgetPositioning=function(b){if(0===arguments.length)return a.extend({},d.widgetPositioning);if("[object Object]"!=={}.toString.call(b))throw new TypeError("widgetPositioning() expects an object variable");if(b.horizontal){if("string"!=typeof b.horizontal)throw new TypeError("widgetPositioning() horizontal variable must be a string");if(b.horizontal=b.horizontal.toLowerCase(),-1===t.indexOf(b.horizontal))throw new TypeError("widgetPositioning() expects horizontal parameter to be one of ("+t.join(", ")+")");d.widgetPositioning.horizontal=b.horizontal}if(b.vertical){if("string"!=typeof b.vertical)throw new TypeError("widgetPositioning() vertical variable must be a string");if(b.vertical=b.vertical.toLowerCase(),-1===s.indexOf(b.vertical))throw new TypeError("widgetPositioning() expects vertical parameter to be one of ("+s.join(", ")+")");d.widgetPositioning.vertical=b.vertical}return $(),l},l.calendarWeeks=function(a){if(0===arguments.length)return d.calendarWeeks;if("boolean"!=typeof a)throw new TypeError("calendarWeeks() expects parameter to be a boolean value");return d.calendarWeeks=a,$(),l},l.showTodayButton=function(a){if(0===arguments.length)return d.showTodayButton;if("boolean"!=typeof a)throw new TypeError("showTodayButton() expects a boolean parameter");return d.showTodayButton=a,o&&(aa(),ea()),l},l.showClear=function(a){if(0===arguments.length)return d.showClear;if("boolean"!=typeof a)throw new TypeError("showClear() expects a boolean parameter");return d.showClear=a,o&&(aa(),ea()),l},l.widgetParent=function(b){if(0===arguments.length)return d.widgetParent;if("string"==typeof b&&(b=a(b)),null!==b&&"string"!=typeof b&&!(b instanceof a))throw new TypeError("widgetParent() expects a string or a jQuery object parameter");return d.widgetParent=b,o&&(aa(),ea()),l},l.keepOpen=function(a){if(0===arguments.length)return d.keepOpen;if("boolean"!=typeof a)throw new TypeError("keepOpen() expects a boolean parameter");return d.keepOpen=a,l},l.focusOnShow=function(a){if(0===arguments.length)return d.focusOnShow;if("boolean"!=typeof a)throw new TypeError("focusOnShow() expects a boolean parameter");return d.focusOnShow=a,l},l.inline=function(a){if(0===arguments.length)return d.inline;if("boolean"!=typeof a)throw new TypeError("inline() expects a boolean parameter");return d.inline=a,l},l.clear=function(){return ba(),l},l.keyBinds=function(a){return d.keyBinds=a,l},l.getMoment=function(a){return x(a)},l.debug=function(a){if("boolean"!=typeof a)throw new TypeError("debug() expects a boolean parameter");return d.debug=a,l},l.allowInputToggle=function(a){if(0===arguments.length)return d.allowInputToggle;if("boolean"!=typeof a)throw new TypeError("allowInputToggle() expects a boolean parameter");return d.allowInputToggle=a,l},l.showClose=function(a){if(0===arguments.length)return d.showClose;if("boolean"!=typeof a)throw new TypeError("showClose() expects a boolean parameter");return d.showClose=a,l},l.keepInvalid=function(a){if(0===arguments.length)return d.keepInvalid;if("boolean"!=typeof a)throw new TypeError("keepInvalid() expects a boolean parameter");return d.keepInvalid=a,l},l.datepickerInput=function(a){if(0===arguments.length)return d.datepickerInput;if("string"!=typeof a)throw new TypeError("datepickerInput() expects a string parameter");return d.datepickerInput=a,l},l.parseInputDate=function(a){if(0===arguments.length)return d.parseInputDate;
 if("function"!=typeof a)throw new TypeError("parseInputDate() sholud be as function");return d.parseInputDate=a,l},l.disabledTimeIntervals=function(b){if(0===arguments.length)return d.disabledTimeIntervals?a.extend({},d.disabledTimeIntervals):d.disabledTimeIntervals;if(!b)return d.disabledTimeIntervals=!1,$(),l;if(!(b instanceof Array))throw new TypeError("disabledTimeIntervals() expects an array parameter");return d.disabledTimeIntervals=b,$(),l},l.disabledHours=function(b){if(0===arguments.length)return d.disabledHours?a.extend({},d.disabledHours):d.disabledHours;if(!b)return d.disabledHours=!1,$(),l;if(!(b instanceof Array))throw new TypeError("disabledHours() expects an array parameter");if(d.disabledHours=na(b),d.enabledHours=!1,d.useCurrent&&!d.keepInvalid){for(var c=0;!Q(e,"h");){if(e.add(1,"h"),24===c)throw"Tried 24 times to find a valid date";c++}_(e)}return $(),l},l.enabledHours=function(b){if(0===arguments.length)return d.enabledHours?a.extend({},d.enabledHours):d.enabledHours;if(!b)return d.enabledHours=!1,$(),l;if(!(b instanceof Array))throw new TypeError("enabledHours() expects an array parameter");if(d.enabledHours=na(b),d.disabledHours=!1,d.useCurrent&&!d.keepInvalid){for(var c=0;!Q(e,"h");){if(e.add(1,"h"),24===c)throw"Tried 24 times to find a valid date";c++}_(e)}return $(),l},l.viewDate=function(a){if(0===arguments.length)return f.clone();if(!a)return f=e.clone(),l;if(!("string"==typeof a||b.isMoment(a)||a instanceof Date))throw new TypeError("viewDate() parameter must be one of [string, moment or Date]");return f=ga(a),J(),l},c.is("input"))g=c;else if(g=c.find(d.datepickerInput),0===g.size())g=c.find("input");else if(!g.is("input"))throw new Error('CSS class "'+d.datepickerInput+'" cannot be applied to non input element');if(c.hasClass("input-group")&&(n=0===c.find(".datepickerbutton").size()?c.find(".input-group-addon"):c.find(".datepickerbutton")),!d.inline&&!g.is("input"))throw new Error("Could not initialize DateTimePicker without an input element");return e=x(),f=e.clone(),a.extend(!0,d,G()),l.options(d),oa(),ka(),g.prop("disabled")&&l.disable(),g.is("input")&&0!==g.val().trim().length?_(ga(g.val().trim())):d.defaultDate&&void 0===g.attr("placeholder")&&_(d.defaultDate),d.inline&&ea(),l};a.fn.datetimepicker=function(b){return this.each(function(){var d=a(this);d.data("DateTimePicker")||(b=a.extend(!0,{},a.fn.datetimepicker.defaults,b),d.data("DateTimePicker",c(d,b)))})},a.fn.datetimepicker.defaults={timeZone:"Etc/UTC",format:!1,dayViewHeaderFormat:"MMMM YYYY",extraFormats:!1,stepping:1,minDate:!1,maxDate:!1,useCurrent:!0,collapse:!0,locale:b.locale(),defaultDate:!1,disabledDates:!1,enabledDates:!1,icons:{time:"glyphicon glyphicon-time",date:"glyphicon glyphicon-calendar",up:"glyphicon glyphicon-chevron-up",down:"glyphicon glyphicon-chevron-down",previous:"glyphicon glyphicon-chevron-left",next:"glyphicon glyphicon-chevron-right",today:"glyphicon glyphicon-screenshot",clear:"glyphicon glyphicon-trash",close:"glyphicon glyphicon-remove"},tooltips:{today:"Go to today",clear:"Clear selection",close:"Close the picker",selectMonth:"Select Month",prevMonth:"Previous Month",nextMonth:"Next Month",selectYear:"Select Year",prevYear:"Previous Year",nextYear:"Next Year",selectDecade:"Select Decade",prevDecade:"Previous Decade",nextDecade:"Next Decade",prevCentury:"Previous Century",nextCentury:"Next Century",pickHour:"Pick Hour",incrementHour:"Increment Hour",decrementHour:"Decrement Hour",pickMinute:"Pick Minute",incrementMinute:"Increment Minute",decrementMinute:"Decrement Minute",pickSecond:"Pick Second",incrementSecond:"Increment Second",decrementSecond:"Decrement Second",togglePeriod:"Toggle Period",selectTime:"Select Time"},useStrict:!1,sideBySide:!1,daysOfWeekDisabled:!1,calendarWeeks:!1,viewMode:"days",toolbarPlacement:"default",showTodayButton:!1,showClear:!1,showClose:!1,widgetPositioning:{horizontal:"auto",vertical:"auto"},widgetParent:null,ignoreReadonly:!1,keepOpen:!1,focusOnShow:!0,inline:!1,keepInvalid:!1,datepickerInput:".datepickerinput",keyBinds:{up:function(a){if(a){var b=this.date()||this.getMoment();a.find(".datepicker").is(":visible")?this.date(b.clone().subtract(7,"d")):this.date(b.clone().add(this.stepping(),"m"))}},down:function(a){if(!a)return void this.show();var b=this.date()||this.getMoment();a.find(".datepicker").is(":visible")?this.date(b.clone().add(7,"d")):this.date(b.clone().subtract(this.stepping(),"m"))},"control up":function(a){if(a){var b=this.date()||this.getMoment();a.find(".datepicker").is(":visible")?this.date(b.clone().subtract(1,"y")):this.date(b.clone().add(1,"h"))}},"control down":function(a){if(a){var b=this.date()||this.getMoment();a.find(".datepicker").is(":visible")?this.date(b.clone().add(1,"y")):this.date(b.clone().subtract(1,"h"))}},left:function(a){if(a){var b=this.date()||this.getMoment();a.find(".datepicker").is(":visible")&&this.date(b.clone().subtract(1,"d"))}},right:function(a){if(a){var b=this.date()||this.getMoment();a.find(".datepicker").is(":visible")&&this.date(b.clone().add(1,"d"))}},pageUp:function(a){if(a){var b=this.date()||this.getMoment();a.find(".datepicker").is(":visible")&&this.date(b.clone().subtract(1,"M"))}},pageDown:function(a){if(a){var b=this.date()||this.getMoment();a.find(".datepicker").is(":visible")&&this.date(b.clone().add(1,"M"))}},enter:function(){this.hide()},escape:function(){this.hide()},"control space":function(a){a.find(".timepicker").is(":visible")&&a.find('.btn[data-action="togglePeriod"]').click()},t:function(){this.date(this.getMoment())},"delete":function(){this.clear()}},debug:!1,allowInputToggle:!1,disabledTimeIntervals:!1,disabledHours:!1,enabledHours:!1,viewDate:!1}});
-///#source 1 1 /core/lib/leaflet/leaflet-src.js
+(function() {
+  var AjaxMonitor, Bar, DocumentMonitor, ElementMonitor, ElementTracker, EventLagMonitor, Evented, Events, NoTargetError, Pace, RequestIntercept, SOURCE_KEYS, Scaler, SocketRequestTracker, XHRRequestTracker, animation, avgAmplitude, bar, cancelAnimation, cancelAnimationFrame, defaultOptions, extend, extendNative, getFromDOM, getIntercept, handlePushState, ignoreStack, init, now, options, requestAnimationFrame, result, runAnimation, scalers, shouldIgnoreURL, shouldTrack, source, sources, uniScaler, _WebSocket, _XDomainRequest, _XMLHttpRequest, _i, _intercept, _len, _pushState, _ref, _ref1, _replaceState,
+    __slice = [].slice,
+    __hasProp = {}.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+    __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
+
+  defaultOptions = {
+    catchupTime: 100,
+    initialRate: .03,
+    minTime: 250,
+    ghostTime: 100,
+    maxProgressPerFrame: 20,
+    easeFactor: 1.25,
+    startOnPageLoad: true,
+    restartOnPushState: true,
+    restartOnRequestAfter: true,
+    target: 'body',
+    elements: {
+      checkInterval: 100,
+      selectors: ['body']
+    },
+    eventLag: {
+      minSamples: 10,
+      sampleCount: 3,
+      lagThreshold: 3
+    },
+    ajax: {
+      trackMethods: ['GET'],
+      trackWebSockets: true,
+      ignoreURLs: []
+    }
+  };
+
+  now = function() {
+    var _ref;
+    return (_ref = typeof performance !== "undefined" && performance !== null ? typeof performance.now === "function" ? performance.now() : void 0 : void 0) != null ? _ref : +(new Date);
+  };
+
+  requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
+
+  cancelAnimationFrame = window.cancelAnimationFrame || window.mozCancelAnimationFrame;
+
+  if (requestAnimationFrame == null) {
+    requestAnimationFrame = function(fn) {
+      return setTimeout(fn, 50);
+    };
+    cancelAnimationFrame = function(id) {
+      return clearTimeout(id);
+    };
+  }
+
+  runAnimation = function(fn) {
+    var last, tick;
+    last = now();
+    tick = function() {
+      var diff;
+      diff = now() - last;
+      if (diff >= 33) {
+        last = now();
+        return fn(diff, function() {
+          return requestAnimationFrame(tick);
+        });
+      } else {
+        return setTimeout(tick, 33 - diff);
+      }
+    };
+    return tick();
+  };
+
+  result = function() {
+    var args, key, obj;
+    obj = arguments[0], key = arguments[1], args = 3 <= arguments.length ? __slice.call(arguments, 2) : [];
+    if (typeof obj[key] === 'function') {
+      return obj[key].apply(obj, args);
+    } else {
+      return obj[key];
+    }
+  };
+
+  extend = function() {
+    var key, out, source, sources, val, _i, _len;
+    out = arguments[0], sources = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
+    for (_i = 0, _len = sources.length; _i < _len; _i++) {
+      source = sources[_i];
+      if (source) {
+        for (key in source) {
+          if (!__hasProp.call(source, key)) continue;
+          val = source[key];
+          if ((out[key] != null) && typeof out[key] === 'object' && (val != null) && typeof val === 'object') {
+            extend(out[key], val);
+          } else {
+            out[key] = val;
+          }
+        }
+      }
+    }
+    return out;
+  };
+
+  avgAmplitude = function(arr) {
+    var count, sum, v, _i, _len;
+    sum = count = 0;
+    for (_i = 0, _len = arr.length; _i < _len; _i++) {
+      v = arr[_i];
+      sum += Math.abs(v);
+      count++;
+    }
+    return sum / count;
+  };
+
+  getFromDOM = function(key, json) {
+    var data, e, el;
+    if (key == null) {
+      key = 'options';
+    }
+    if (json == null) {
+      json = true;
+    }
+    el = document.querySelector("[data-pace-" + key + "]");
+    if (!el) {
+      return;
+    }
+    data = el.getAttribute("data-pace-" + key);
+    if (!json) {
+      return data;
+    }
+    try {
+      return JSON.parse(data);
+    } catch (_error) {
+      e = _error;
+      return typeof console !== "undefined" && console !== null ? console.error("Error parsing inline pace options", e) : void 0;
+    }
+  };
+
+  Evented = (function() {
+    function Evented() {}
+
+    Evented.prototype.on = function(event, handler, ctx, once) {
+      var _base;
+      if (once == null) {
+        once = false;
+      }
+      if (this.bindings == null) {
+        this.bindings = {};
+      }
+      if ((_base = this.bindings)[event] == null) {
+        _base[event] = [];
+      }
+      return this.bindings[event].push({
+        handler: handler,
+        ctx: ctx,
+        once: once
+      });
+    };
+
+    Evented.prototype.once = function(event, handler, ctx) {
+      return this.on(event, handler, ctx, true);
+    };
+
+    Evented.prototype.off = function(event, handler) {
+      var i, _ref, _results;
+      if (((_ref = this.bindings) != null ? _ref[event] : void 0) == null) {
+        return;
+      }
+      if (handler == null) {
+        return delete this.bindings[event];
+      } else {
+        i = 0;
+        _results = [];
+        while (i < this.bindings[event].length) {
+          if (this.bindings[event][i].handler === handler) {
+            _results.push(this.bindings[event].splice(i, 1));
+          } else {
+            _results.push(i++);
+          }
+        }
+        return _results;
+      }
+    };
+
+    Evented.prototype.trigger = function() {
+      var args, ctx, event, handler, i, once, _ref, _ref1, _results;
+      event = arguments[0], args = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
+      if ((_ref = this.bindings) != null ? _ref[event] : void 0) {
+        i = 0;
+        _results = [];
+        while (i < this.bindings[event].length) {
+          _ref1 = this.bindings[event][i], handler = _ref1.handler, ctx = _ref1.ctx, once = _ref1.once;
+          handler.apply(ctx != null ? ctx : this, args);
+          if (once) {
+            _results.push(this.bindings[event].splice(i, 1));
+          } else {
+            _results.push(i++);
+          }
+        }
+        return _results;
+      }
+    };
+
+    return Evented;
+
+  })();
+
+  Pace = window.Pace || {};
+
+  window.Pace = Pace;
+
+  extend(Pace, Evented.prototype);
+
+  options = Pace.options = extend({}, defaultOptions, window.paceOptions, getFromDOM());
+
+  _ref = ['ajax', 'document', 'eventLag', 'elements'];
+  for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+    source = _ref[_i];
+    if (options[source] === true) {
+      options[source] = defaultOptions[source];
+    }
+  }
+
+  NoTargetError = (function(_super) {
+    __extends(NoTargetError, _super);
+
+    function NoTargetError() {
+      _ref1 = NoTargetError.__super__.constructor.apply(this, arguments);
+      return _ref1;
+    }
+
+    return NoTargetError;
+
+  })(Error);
+
+  Bar = (function() {
+    function Bar() {
+      this.progress = 0;
+    }
+
+    Bar.prototype.getElement = function() {
+      var targetElement;
+      if (this.el == null) {
+        targetElement = document.querySelector(options.target);
+        if (!targetElement) {
+          throw new NoTargetError;
+        }
+        this.el = document.createElement('div');
+        this.el.className = "pace pace-active";
+        document.body.className = document.body.className.replace(/pace-done/g, '');
+        document.body.className += ' pace-running';
+        this.el.innerHTML = '<div class="pace-progress">\n  <div class="pace-progress-inner"></div>\n</div>\n<div class="pace-activity"></div>';
+        if (targetElement.firstChild != null) {
+          targetElement.insertBefore(this.el, targetElement.firstChild);
+        } else {
+          targetElement.appendChild(this.el);
+        }
+      }
+      return this.el;
+    };
+
+    Bar.prototype.finish = function() {
+      var el;
+      el = this.getElement();
+      el.className = el.className.replace('pace-active', '');
+      el.className += ' pace-inactive';
+      document.body.className = document.body.className.replace('pace-running', '');
+      return document.body.className += ' pace-done';
+    };
+
+    Bar.prototype.update = function(prog) {
+      this.progress = prog;
+      return this.render();
+    };
+
+    Bar.prototype.destroy = function() {
+      try {
+        this.getElement().parentNode.removeChild(this.getElement());
+      } catch (_error) {
+        NoTargetError = _error;
+      }
+      return this.el = void 0;
+    };
+
+    Bar.prototype.render = function() {
+      var el, key, progressStr, transform, _j, _len1, _ref2;
+      if (document.querySelector(options.target) == null) {
+        return false;
+      }
+      el = this.getElement();
+      transform = "translate3d(" + this.progress + "%, 0, 0)";
+      _ref2 = ['webkitTransform', 'msTransform', 'transform'];
+      for (_j = 0, _len1 = _ref2.length; _j < _len1; _j++) {
+        key = _ref2[_j];
+        el.children[0].style[key] = transform;
+      }
+      if (!this.lastRenderedProgress || this.lastRenderedProgress | 0 !== this.progress | 0) {
+        el.children[0].setAttribute('data-progress-text', "" + (this.progress | 0) + "%");
+        if (this.progress >= 100) {
+          progressStr = '99';
+        } else {
+          progressStr = this.progress < 10 ? "0" : "";
+          progressStr += this.progress | 0;
+        }
+        el.children[0].setAttribute('data-progress', "" + progressStr);
+      }
+      return this.lastRenderedProgress = this.progress;
+    };
+
+    Bar.prototype.done = function() {
+      return this.progress >= 100;
+    };
+
+    return Bar;
+
+  })();
+
+  Events = (function() {
+    function Events() {
+      this.bindings = {};
+    }
+
+    Events.prototype.trigger = function(name, val) {
+      var binding, _j, _len1, _ref2, _results;
+      if (this.bindings[name] != null) {
+        _ref2 = this.bindings[name];
+        _results = [];
+        for (_j = 0, _len1 = _ref2.length; _j < _len1; _j++) {
+          binding = _ref2[_j];
+          _results.push(binding.call(this, val));
+        }
+        return _results;
+      }
+    };
+
+    Events.prototype.on = function(name, fn) {
+      var _base;
+      if ((_base = this.bindings)[name] == null) {
+        _base[name] = [];
+      }
+      return this.bindings[name].push(fn);
+    };
+
+    return Events;
+
+  })();
+
+  _XMLHttpRequest = window.XMLHttpRequest;
+
+  _XDomainRequest = window.XDomainRequest;
+
+  _WebSocket = window.WebSocket;
+
+  extendNative = function(to, from) {
+    var e, key, _results;
+    _results = [];
+    for (key in from.prototype) {
+      try {
+        if ((to[key] == null) && typeof from[key] !== 'function') {
+          if (typeof Object.defineProperty === 'function') {
+            _results.push(Object.defineProperty(to, key, {
+              get: function() {
+                return from.prototype[key];
+              },
+              configurable: true,
+              enumerable: true
+            }));
+          } else {
+            _results.push(to[key] = from.prototype[key]);
+          }
+        } else {
+          _results.push(void 0);
+        }
+      } catch (_error) {
+        e = _error;
+      }
+    }
+    return _results;
+  };
+
+  ignoreStack = [];
+
+  Pace.ignore = function() {
+    var args, fn, ret;
+    fn = arguments[0], args = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
+    ignoreStack.unshift('ignore');
+    ret = fn.apply(null, args);
+    ignoreStack.shift();
+    return ret;
+  };
+
+  Pace.track = function() {
+    var args, fn, ret;
+    fn = arguments[0], args = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
+    ignoreStack.unshift('track');
+    ret = fn.apply(null, args);
+    ignoreStack.shift();
+    return ret;
+  };
+
+  shouldTrack = function(method) {
+    var _ref2;
+    if (method == null) {
+      method = 'GET';
+    }
+    if (ignoreStack[0] === 'track') {
+      return 'force';
+    }
+    if (!ignoreStack.length && options.ajax) {
+      if (method === 'socket' && options.ajax.trackWebSockets) {
+        return true;
+      } else if (_ref2 = method.toUpperCase(), __indexOf.call(options.ajax.trackMethods, _ref2) >= 0) {
+        return true;
+      }
+    }
+    return false;
+  };
+
+  RequestIntercept = (function(_super) {
+    __extends(RequestIntercept, _super);
+
+    function RequestIntercept() {
+      var monitorXHR,
+        _this = this;
+      RequestIntercept.__super__.constructor.apply(this, arguments);
+      monitorXHR = function(req) {
+        var _open;
+        _open = req.open;
+        return req.open = function(type, url, async) {
+          if (shouldTrack(type)) {
+            _this.trigger('request', {
+              type: type,
+              url: url,
+              request: req
+            });
+          }
+          return _open.apply(req, arguments);
+        };
+      };
+      window.XMLHttpRequest = function(flags) {
+        var req;
+        req = new _XMLHttpRequest(flags);
+        monitorXHR(req);
+        return req;
+      };
+      try {
+        extendNative(window.XMLHttpRequest, _XMLHttpRequest);
+      } catch (_error) {}
+      if (_XDomainRequest != null) {
+        window.XDomainRequest = function() {
+          var req;
+          req = new _XDomainRequest;
+          monitorXHR(req);
+          return req;
+        };
+        try {
+          extendNative(window.XDomainRequest, _XDomainRequest);
+        } catch (_error) {}
+      }
+      if ((_WebSocket != null) && options.ajax.trackWebSockets) {
+        window.WebSocket = function(url, protocols) {
+          var req;
+          if (protocols != null) {
+            req = new _WebSocket(url, protocols);
+          } else {
+            req = new _WebSocket(url);
+          }
+          if (shouldTrack('socket')) {
+            _this.trigger('request', {
+              type: 'socket',
+              url: url,
+              protocols: protocols,
+              request: req
+            });
+          }
+          return req;
+        };
+        try {
+          extendNative(window.WebSocket, _WebSocket);
+        } catch (_error) {}
+      }
+    }
+
+    return RequestIntercept;
+
+  })(Events);
+
+  _intercept = null;
+
+  getIntercept = function() {
+    if (_intercept == null) {
+      _intercept = new RequestIntercept;
+    }
+    return _intercept;
+  };
+
+  shouldIgnoreURL = function(url) {
+    var pattern, _j, _len1, _ref2;
+    _ref2 = options.ajax.ignoreURLs;
+    for (_j = 0, _len1 = _ref2.length; _j < _len1; _j++) {
+      pattern = _ref2[_j];
+      if (typeof pattern === 'string') {
+        if (url.indexOf(pattern) !== -1) {
+          return true;
+        }
+      } else {
+        if (pattern.test(url)) {
+          return true;
+        }
+      }
+    }
+    return false;
+  };
+
+  getIntercept().on('request', function(_arg) {
+    var after, args, request, type, url;
+    type = _arg.type, request = _arg.request, url = _arg.url;
+    if (shouldIgnoreURL(url)) {
+      return;
+    }
+    if (!Pace.running && (options.restartOnRequestAfter !== false || shouldTrack(type) === 'force')) {
+      args = arguments;
+      after = options.restartOnRequestAfter || 0;
+      if (typeof after === 'boolean') {
+        after = 0;
+      }
+      return setTimeout(function() {
+        var stillActive, _j, _len1, _ref2, _ref3, _results;
+        if (type === 'socket') {
+          stillActive = request.readyState < 2;
+        } else {
+          stillActive = (0 < (_ref2 = request.readyState) && _ref2 < 4);
+        }
+        if (stillActive) {
+          Pace.restart();
+          _ref3 = Pace.sources;
+          _results = [];
+          for (_j = 0, _len1 = _ref3.length; _j < _len1; _j++) {
+            source = _ref3[_j];
+            if (source instanceof AjaxMonitor) {
+              source.watch.apply(source, args);
+              break;
+            } else {
+              _results.push(void 0);
+            }
+          }
+          return _results;
+        }
+      }, after);
+    }
+  });
+
+  AjaxMonitor = (function() {
+    function AjaxMonitor() {
+      var _this = this;
+      this.elements = [];
+      getIntercept().on('request', function() {
+        return _this.watch.apply(_this, arguments);
+      });
+    }
+
+    AjaxMonitor.prototype.watch = function(_arg) {
+      var request, tracker, type, url;
+      type = _arg.type, request = _arg.request, url = _arg.url;
+      if (shouldIgnoreURL(url)) {
+        return;
+      }
+      if (type === 'socket') {
+        tracker = new SocketRequestTracker(request);
+      } else {
+        tracker = new XHRRequestTracker(request);
+      }
+      return this.elements.push(tracker);
+    };
+
+    return AjaxMonitor;
+
+  })();
+
+  XHRRequestTracker = (function() {
+    function XHRRequestTracker(request) {
+      var event, size, _j, _len1, _onreadystatechange, _ref2,
+        _this = this;
+      this.progress = 0;
+      if (window.ProgressEvent != null) {
+        size = null;
+        request.addEventListener('progress', function(evt) {
+          if (evt.lengthComputable) {
+            return _this.progress = 100 * evt.loaded / evt.total;
+          } else {
+            return _this.progress = _this.progress + (100 - _this.progress) / 2;
+          }
+        }, false);
+        _ref2 = ['load', 'abort', 'timeout', 'error'];
+        for (_j = 0, _len1 = _ref2.length; _j < _len1; _j++) {
+          event = _ref2[_j];
+          request.addEventListener(event, function() {
+            return _this.progress = 100;
+          }, false);
+        }
+      } else {
+        _onreadystatechange = request.onreadystatechange;
+        request.onreadystatechange = function() {
+          var _ref3;
+          if ((_ref3 = request.readyState) === 0 || _ref3 === 4) {
+            _this.progress = 100;
+          } else if (request.readyState === 3) {
+            _this.progress = 50;
+          }
+          return typeof _onreadystatechange === "function" ? _onreadystatechange.apply(null, arguments) : void 0;
+        };
+      }
+    }
+
+    return XHRRequestTracker;
+
+  })();
+
+  SocketRequestTracker = (function() {
+    function SocketRequestTracker(request) {
+      var event, _j, _len1, _ref2,
+        _this = this;
+      this.progress = 0;
+      _ref2 = ['error', 'open'];
+      for (_j = 0, _len1 = _ref2.length; _j < _len1; _j++) {
+        event = _ref2[_j];
+        request.addEventListener(event, function() {
+          return _this.progress = 100;
+        }, false);
+      }
+    }
+
+    return SocketRequestTracker;
+
+  })();
+
+  ElementMonitor = (function() {
+    function ElementMonitor(options) {
+      var selector, _j, _len1, _ref2;
+      if (options == null) {
+        options = {};
+      }
+      this.elements = [];
+      if (options.selectors == null) {
+        options.selectors = [];
+      }
+      _ref2 = options.selectors;
+      for (_j = 0, _len1 = _ref2.length; _j < _len1; _j++) {
+        selector = _ref2[_j];
+        this.elements.push(new ElementTracker(selector));
+      }
+    }
+
+    return ElementMonitor;
+
+  })();
+
+  ElementTracker = (function() {
+    function ElementTracker(selector) {
+      this.selector = selector;
+      this.progress = 0;
+      this.check();
+    }
+
+    ElementTracker.prototype.check = function() {
+      var _this = this;
+      if (document.querySelector(this.selector)) {
+        return this.done();
+      } else {
+        return setTimeout((function() {
+          return _this.check();
+        }), options.elements.checkInterval);
+      }
+    };
+
+    ElementTracker.prototype.done = function() {
+      return this.progress = 100;
+    };
+
+    return ElementTracker;
+
+  })();
+
+  DocumentMonitor = (function() {
+    DocumentMonitor.prototype.states = {
+      loading: 0,
+      interactive: 50,
+      complete: 100
+    };
+
+    function DocumentMonitor() {
+      var _onreadystatechange, _ref2,
+        _this = this;
+      this.progress = (_ref2 = this.states[document.readyState]) != null ? _ref2 : 100;
+      _onreadystatechange = document.onreadystatechange;
+      document.onreadystatechange = function() {
+        if (_this.states[document.readyState] != null) {
+          _this.progress = _this.states[document.readyState];
+        }
+        return typeof _onreadystatechange === "function" ? _onreadystatechange.apply(null, arguments) : void 0;
+      };
+    }
+
+    return DocumentMonitor;
+
+  })();
+
+  EventLagMonitor = (function() {
+    function EventLagMonitor() {
+      var avg, interval, last, points, samples,
+        _this = this;
+      this.progress = 0;
+      avg = 0;
+      samples = [];
+      points = 0;
+      last = now();
+      interval = setInterval(function() {
+        var diff;
+        diff = now() - last - 50;
+        last = now();
+        samples.push(diff);
+        if (samples.length > options.eventLag.sampleCount) {
+          samples.shift();
+        }
+        avg = avgAmplitude(samples);
+        if (++points >= options.eventLag.minSamples && avg < options.eventLag.lagThreshold) {
+          _this.progress = 100;
+          return clearInterval(interval);
+        } else {
+          return _this.progress = 100 * (3 / (avg + 3));
+        }
+      }, 50);
+    }
+
+    return EventLagMonitor;
+
+  })();
+
+  Scaler = (function() {
+    function Scaler(source) {
+      this.source = source;
+      this.last = this.sinceLastUpdate = 0;
+      this.rate = options.initialRate;
+      this.catchup = 0;
+      this.progress = this.lastProgress = 0;
+      if (this.source != null) {
+        this.progress = result(this.source, 'progress');
+      }
+    }
+
+    Scaler.prototype.tick = function(frameTime, val) {
+      var scaling;
+      if (val == null) {
+        val = result(this.source, 'progress');
+      }
+      if (val >= 100) {
+        this.done = true;
+      }
+      if (val === this.last) {
+        this.sinceLastUpdate += frameTime;
+      } else {
+        if (this.sinceLastUpdate) {
+          this.rate = (val - this.last) / this.sinceLastUpdate;
+        }
+        this.catchup = (val - this.progress) / options.catchupTime;
+        this.sinceLastUpdate = 0;
+        this.last = val;
+      }
+      if (val > this.progress) {
+        this.progress += this.catchup * frameTime;
+      }
+      scaling = 1 - Math.pow(this.progress / 100, options.easeFactor);
+      this.progress += scaling * this.rate * frameTime;
+      this.progress = Math.min(this.lastProgress + options.maxProgressPerFrame, this.progress);
+      this.progress = Math.max(0, this.progress);
+      this.progress = Math.min(100, this.progress);
+      this.lastProgress = this.progress;
+      return this.progress;
+    };
+
+    return Scaler;
+
+  })();
+
+  sources = null;
+
+  scalers = null;
+
+  bar = null;
+
+  uniScaler = null;
+
+  animation = null;
+
+  cancelAnimation = null;
+
+  Pace.running = false;
+
+  handlePushState = function() {
+    if (options.restartOnPushState) {
+      return Pace.restart();
+    }
+  };
+
+  if (window.history.pushState != null) {
+    _pushState = window.history.pushState;
+    window.history.pushState = function() {
+      handlePushState();
+      return _pushState.apply(window.history, arguments);
+    };
+  }
+
+  if (window.history.replaceState != null) {
+    _replaceState = window.history.replaceState;
+    window.history.replaceState = function() {
+      handlePushState();
+      return _replaceState.apply(window.history, arguments);
+    };
+  }
+
+  SOURCE_KEYS = {
+    ajax: AjaxMonitor,
+    elements: ElementMonitor,
+    document: DocumentMonitor,
+    eventLag: EventLagMonitor
+  };
+
+  (init = function() {
+    var type, _j, _k, _len1, _len2, _ref2, _ref3, _ref4;
+    Pace.sources = sources = [];
+    _ref2 = ['ajax', 'elements', 'document', 'eventLag'];
+    for (_j = 0, _len1 = _ref2.length; _j < _len1; _j++) {
+      type = _ref2[_j];
+      if (options[type] !== false) {
+        sources.push(new SOURCE_KEYS[type](options[type]));
+      }
+    }
+    _ref4 = (_ref3 = options.extraSources) != null ? _ref3 : [];
+    for (_k = 0, _len2 = _ref4.length; _k < _len2; _k++) {
+      source = _ref4[_k];
+      sources.push(new source(options));
+    }
+    Pace.bar = bar = new Bar;
+    scalers = [];
+    return uniScaler = new Scaler;
+  })();
+
+  Pace.stop = function() {
+    Pace.trigger('stop');
+    Pace.running = false;
+    bar.destroy();
+    cancelAnimation = true;
+    if (animation != null) {
+      if (typeof cancelAnimationFrame === "function") {
+        cancelAnimationFrame(animation);
+      }
+      animation = null;
+    }
+    return init();
+  };
+
+  Pace.restart = function() {
+    Pace.trigger('restart');
+    Pace.stop();
+    return Pace.start();
+  };
+
+  Pace.go = function() {
+    var start;
+    Pace.running = true;
+    bar.render();
+    start = now();
+    cancelAnimation = false;
+    return animation = runAnimation(function(frameTime, enqueueNextFrame) {
+      var avg, count, done, element, elements, i, j, remaining, scaler, scalerList, sum, _j, _k, _len1, _len2, _ref2;
+      remaining = 100 - bar.progress;
+      count = sum = 0;
+      done = true;
+      for (i = _j = 0, _len1 = sources.length; _j < _len1; i = ++_j) {
+        source = sources[i];
+        scalerList = scalers[i] != null ? scalers[i] : scalers[i] = [];
+        elements = (_ref2 = source.elements) != null ? _ref2 : [source];
+        for (j = _k = 0, _len2 = elements.length; _k < _len2; j = ++_k) {
+          element = elements[j];
+          scaler = scalerList[j] != null ? scalerList[j] : scalerList[j] = new Scaler(element);
+          done &= scaler.done;
+          if (scaler.done) {
+            continue;
+          }
+          count++;
+          sum += scaler.tick(frameTime);
+        }
+      }
+      avg = sum / count;
+      bar.update(uniScaler.tick(frameTime, avg));
+      if (bar.done() || done || cancelAnimation) {
+        bar.update(100);
+        Pace.trigger('done');
+        return setTimeout(function() {
+          bar.finish();
+          Pace.running = false;
+          return Pace.trigger('hide');
+        }, Math.max(options.ghostTime, Math.max(options.minTime - (now() - start), 0)));
+      } else {
+        return enqueueNextFrame();
+      }
+    });
+  };
+
+  Pace.start = function(_options) {
+    extend(options, _options);
+    Pace.running = true;
+    try {
+      bar.render();
+    } catch (_error) {
+      NoTargetError = _error;
+    }
+    if (!document.querySelector('.pace')) {
+      return setTimeout(Pace.start, 50);
+    } else {
+      Pace.trigger('start');
+      return Pace.go();
+    }
+  };
+
+  if (typeof define === 'function' && define.amd) {
+    define(['pace'], function() {
+      return Pace;
+    });
+  } else if (typeof exports === 'object') {
+    module.exports = Pace;
+  } else {
+    if (options.startOnPageLoad) {
+      Pace.start();
+    }
+  }
+
+}).call(this);
+
+/*!
+ *  howler.js v1.1.28
+ *  howlerjs.com
+ *
+ *  (c) 2013-2015, James Simpson of GoldFire Studios
+ *  goldfirestudios.com
+ *
+ *  MIT License
+ */
+
+(function() {
+  // setup
+  var cache = {};
+
+  // setup the audio context
+  var ctx = null,
+    usingWebAudio = true,
+    noAudio = false;
+  try {
+    if (typeof AudioContext !== 'undefined') {
+      ctx = new AudioContext();
+    } else if (typeof webkitAudioContext !== 'undefined') {
+      ctx = new webkitAudioContext();
+    } else {
+      usingWebAudio = false;
+    }
+  } catch(e) {
+    usingWebAudio = false;
+  }
+
+  if (!usingWebAudio) {
+    if (typeof Audio !== 'undefined') {
+      try {
+        new Audio();
+      } catch(e) {
+        noAudio = true;
+      }
+    } else {
+      noAudio = true;
+    }
+  }
+
+  // create a master gain node
+  if (usingWebAudio) {
+    var masterGain = (typeof ctx.createGain === 'undefined') ? ctx.createGainNode() : ctx.createGain();
+    masterGain.gain.value = 1;
+    masterGain.connect(ctx.destination);
+  }
+
+  // create global controller
+  var HowlerGlobal = function(codecs) {
+    this._volume = 1;
+    this._muted = false;
+    this.usingWebAudio = usingWebAudio;
+    this.ctx = ctx;
+    this.noAudio = noAudio;
+    this._howls = [];
+    this._codecs = codecs;
+    this.iOSAutoEnable = true;
+  };
+  HowlerGlobal.prototype = {
+    /**
+     * Get/set the global volume for all sounds.
+     * @param  {Float} vol Volume from 0.0 to 1.0.
+     * @return {Howler/Float}     Returns self or current volume.
+     */
+    volume: function(vol) {
+      var self = this;
+
+      // make sure volume is a number
+      vol = parseFloat(vol);
+
+      if (vol >= 0 && vol <= 1) {
+        self._volume = vol;
+
+        if (usingWebAudio) {
+          masterGain.gain.value = vol;
+        }
+
+        // loop through cache and change volume of all nodes that are using HTML5 Audio
+        for (var key in self._howls) {
+          if (self._howls.hasOwnProperty(key) && self._howls[key]._webAudio === false) {
+            // loop through the audio nodes
+            for (var i=0; i<self._howls[key]._audioNode.length; i++) {
+              self._howls[key]._audioNode[i].volume = self._howls[key]._volume * self._volume;
+            }
+          }
+        }
+
+        return self;
+      }
+
+      // return the current global volume
+      return (usingWebAudio) ? masterGain.gain.value : self._volume;
+    },
+
+    /**
+     * Mute all sounds.
+     * @return {Howler}
+     */
+    mute: function() {
+      this._setMuted(true);
+
+      return this;
+    },
+
+    /**
+     * Unmute all sounds.
+     * @return {Howler}
+     */
+    unmute: function() {
+      this._setMuted(false);
+
+      return this;
+    },
+
+    /**
+     * Handle muting and unmuting globally.
+     * @param  {Boolean} muted Is muted or not.
+     */
+    _setMuted: function(muted) {
+      var self = this;
+
+      self._muted = muted;
+
+      if (usingWebAudio) {
+        masterGain.gain.value = muted ? 0 : self._volume;
+      }
+
+      for (var key in self._howls) {
+        if (self._howls.hasOwnProperty(key) && self._howls[key]._webAudio === false) {
+          // loop through the audio nodes
+          for (var i=0; i<self._howls[key]._audioNode.length; i++) {
+            self._howls[key]._audioNode[i].muted = muted;
+          }
+        }
+      }
+    },
+
+    /**
+     * Check for codec support.
+     * @param  {String} ext Audio file extention.
+     * @return {Boolean}
+     */
+    codecs: function(ext) {
+      return this._codecs[ext];
+    },
+
+    /**
+     * iOS will only allow audio to be played after a user interaction.
+     * Attempt to automatically unlock audio on the first user interaction.
+     * Concept from: http://paulbakaus.com/tutorials/html5/web-audio-on-ios/
+     * @return {Howler}
+     */
+    _enableiOSAudio: function() {
+      var self = this;
+
+      // only run this on iOS if audio isn't already eanbled
+      if (ctx && (self._iOSEnabled || !/iPhone|iPad|iPod/i.test(navigator.userAgent))) {
+        return;
+      }
+
+      self._iOSEnabled = false;
+
+      // call this method on touch start to create and play a buffer,
+      // then check if the audio actually played to determine if
+      // audio has now been unlocked on iOS
+      var unlock = function() {
+        // create an empty buffer
+        var buffer = ctx.createBuffer(1, 1, 22050);
+        var source = ctx.createBufferSource();
+        source.buffer = buffer;
+        source.connect(ctx.destination);
+
+        // play the empty buffer
+        if (typeof source.start === 'undefined') {
+          source.noteOn(0);
+        } else {
+          source.start(0);
+        }
+
+        // setup a timeout to check that we are unlocked on the next event loop
+        setTimeout(function() {
+          if ((source.playbackState === source.PLAYING_STATE || source.playbackState === source.FINISHED_STATE)) {
+            // update the unlocked state and prevent this check from happening again
+            self._iOSEnabled = true;
+            self.iOSAutoEnable = false;
+
+            // remove the touch start listener
+            window.removeEventListener('touchend', unlock, false);
+          }
+        }, 0);
+      };
+
+      // setup a touch start listener to attempt an unlock in
+      window.addEventListener('touchend', unlock, false);
+
+      return self;
+    }
+  };
+
+  // check for browser codec support
+  var audioTest = null;
+  var codecs = {};
+  if (!noAudio) {
+    audioTest = new Audio();
+    codecs = {
+      mp3: !!audioTest.canPlayType('audio/mpeg;').replace(/^no$/, ''),
+      opus: !!audioTest.canPlayType('audio/ogg; codecs="opus"').replace(/^no$/, ''),
+      ogg: !!audioTest.canPlayType('audio/ogg; codecs="vorbis"').replace(/^no$/, ''),
+      wav: !!audioTest.canPlayType('audio/wav; codecs="1"').replace(/^no$/, ''),
+      aac: !!audioTest.canPlayType('audio/aac;').replace(/^no$/, ''),
+      m4a: !!(audioTest.canPlayType('audio/x-m4a;') || audioTest.canPlayType('audio/m4a;') || audioTest.canPlayType('audio/aac;')).replace(/^no$/, ''),
+      mp4: !!(audioTest.canPlayType('audio/x-mp4;') || audioTest.canPlayType('audio/mp4;') || audioTest.canPlayType('audio/aac;')).replace(/^no$/, ''),
+      weba: !!audioTest.canPlayType('audio/webm; codecs="vorbis"').replace(/^no$/, '')
+    };
+  }
+
+  // allow access to the global audio controls
+  var Howler = new HowlerGlobal(codecs);
+
+  // setup the audio object
+  var Howl = function(o) {
+    var self = this;
+
+    // setup the defaults
+    self._autoplay = o.autoplay || false;
+    self._buffer = o.buffer || false;
+    self._duration = o.duration || 0;
+    self._format = o.format || null;
+    self._loop = o.loop || false;
+    self._loaded = false;
+    self._sprite = o.sprite || {};
+    self._src = o.src || '';
+    self._pos3d = o.pos3d || [0, 0, -0.5];
+    self._volume = o.volume !== undefined ? o.volume : 1;
+    self._urls = o.urls || [];
+    self._rate = o.rate || 1;
+
+    // allow forcing of a specific panningModel ('equalpower' or 'HRTF'),
+    // if none is specified, defaults to 'equalpower' and switches to 'HRTF'
+    // if 3d sound is used
+    self._model = o.model || null;
+
+    // setup event functions
+    self._onload = [o.onload || function() {}];
+    self._onloaderror = [o.onloaderror || function() {}];
+    self._onend = [o.onend || function() {}];
+    self._onpause = [o.onpause || function() {}];
+    self._onplay = [o.onplay || function() {}];
+
+    self._onendTimer = [];
+
+    // Web Audio or HTML5 Audio?
+    self._webAudio = usingWebAudio && !self._buffer;
+
+    // check if we need to fall back to HTML5 Audio
+    self._audioNode = [];
+    if (self._webAudio) {
+      self._setupAudioNode();
+    }
+
+    // automatically try to enable audio on iOS
+    if (typeof ctx !== 'undefined' && ctx && Howler.iOSAutoEnable) {
+      Howler._enableiOSAudio();
+    }
+
+    // add this to an array of Howl's to allow global control
+    Howler._howls.push(self);
+
+    // load the track
+    self.load();
+  };
+
+  // setup all of the methods
+  Howl.prototype = {
+    /**
+     * Load an audio file.
+     * @return {Howl}
+     */
+    load: function() {
+      var self = this,
+        url = null;
+
+      // if no audio is available, quit immediately
+      if (noAudio) {
+        self.on('loaderror');
+        return;
+      }
+
+      // loop through source URLs and pick the first one that is compatible
+      for (var i=0; i<self._urls.length; i++) {
+        var ext, urlItem;
+
+        if (self._format) {
+          // use specified audio format if available
+          ext = self._format;
+        } else {
+          // figure out the filetype (whether an extension or base64 data)
+          urlItem = self._urls[i];
+          ext = /^data:audio\/([^;,]+);/i.exec(urlItem);
+          if (!ext) {
+            ext = /\.([^.]+)$/.exec(urlItem.split('?', 1)[0]);
+          }
+
+          if (ext) {
+            ext = ext[1].toLowerCase();
+          } else {
+            self.on('loaderror');
+            return;
+          }
+        }
+
+        if (codecs[ext]) {
+          url = self._urls[i];
+          break;
+        }
+      }
+
+      if (!url) {
+        self.on('loaderror');
+        return;
+      }
+
+      self._src = url;
+
+      if (self._webAudio) {
+        loadBuffer(self, url);
+      } else {
+        var newNode = new Audio();
+
+        // listen for errors with HTML5 audio (http://dev.w3.org/html5/spec-author-view/spec.html#mediaerror)
+        newNode.addEventListener('error', function () {
+          if (newNode.error && newNode.error.code === 4) {
+            HowlerGlobal.noAudio = true;
+          }
+
+          self.on('loaderror', {type: newNode.error ? newNode.error.code : 0});
+        }, false);
+
+        self._audioNode.push(newNode);
+
+        // setup the new audio node
+        newNode.src = url;
+        newNode._pos = 0;
+        newNode.preload = 'auto';
+        newNode.volume = (Howler._muted) ? 0 : self._volume * Howler.volume();
+
+        // setup the event listener to start playing the sound
+        // as soon as it has buffered enough
+        var listener = function() {
+          // round up the duration when using HTML5 Audio to account for the lower precision
+          self._duration = Math.ceil(newNode.duration * 10) / 10;
+
+          // setup a sprite if none is defined
+          if (Object.getOwnPropertyNames(self._sprite).length === 0) {
+            self._sprite = {_default: [0, self._duration * 1000]};
+          }
+
+          if (!self._loaded) {
+            self._loaded = true;
+            self.on('load');
+          }
+
+          if (self._autoplay) {
+            self.play();
+          }
+
+          // clear the event listener
+          newNode.removeEventListener('canplaythrough', listener, false);
+        };
+        newNode.addEventListener('canplaythrough', listener, false);
+        newNode.load();
+      }
+
+      return self;
+    },
+
+    /**
+     * Get/set the URLs to be pulled from to play in this source.
+     * @param  {Array} urls  Arry of URLs to load from
+     * @return {Howl}        Returns self or the current URLs
+     */
+    urls: function(urls) {
+      var self = this;
+
+      if (urls) {
+        self.stop();
+        self._urls = (typeof urls === 'string') ? [urls] : urls;
+        self._loaded = false;
+        self.load();
+
+        return self;
+      } else {
+        return self._urls;
+      }
+    },
+
+    /**
+     * Play a sound from the current time (0 by default).
+     * @param  {String}   sprite   (optional) Plays from the specified position in the sound sprite definition.
+     * @param  {Function} callback (optional) Returns the unique playback id for this sound instance.
+     * @return {Howl}
+     */
+    play: function(sprite, callback) {
+      var self = this;
+
+      // if no sprite was passed but a callback was, update the variables
+      if (typeof sprite === 'function') {
+        callback = sprite;
+      }
+
+      // use the default sprite if none is passed
+      if (!sprite || typeof sprite === 'function') {
+        sprite = '_default';
+      }
+
+      // if the sound hasn't been loaded, add it to the event queue
+      if (!self._loaded) {
+        self.on('load', function() {
+          self.play(sprite, callback);
+        });
+
+        return self;
+      }
+
+      // if the sprite doesn't exist, play nothing
+      if (!self._sprite[sprite]) {
+        if (typeof callback === 'function') callback();
+        return self;
+      }
+
+      // get the node to playback
+      self._inactiveNode(function(node) {
+        // persist the sprite being played
+        node._sprite = sprite;
+
+        // determine where to start playing from
+        var pos = (node._pos > 0) ? node._pos : self._sprite[sprite][0] / 1000;
+
+        // determine how long to play for
+        var duration = 0;
+        if (self._webAudio) {
+          duration = self._sprite[sprite][1] / 1000 - node._pos;
+          if (node._pos > 0) {
+            pos = self._sprite[sprite][0] / 1000 + pos;
+          }
+        } else {
+          duration = self._sprite[sprite][1] / 1000 - (pos - self._sprite[sprite][0] / 1000);
+        }
+
+        // determine if this sound should be looped
+        var loop = !!(self._loop || self._sprite[sprite][2]);
+
+        // set timer to fire the 'onend' event
+        var soundId = (typeof callback === 'string') ? callback : Math.round(Date.now() * Math.random()) + '',
+          timerId;
+        (function() {
+          var data = {
+            id: soundId,
+            sprite: sprite,
+            loop: loop
+          };
+          timerId = setTimeout(function() {
+            // if looping, restart the track
+            if (!self._webAudio && loop) {
+              self.stop(data.id).play(sprite, data.id);
+            }
+
+            // set web audio node to paused at end
+            if (self._webAudio && !loop) {
+              self._nodeById(data.id).paused = true;
+              self._nodeById(data.id)._pos = 0;
+
+              // clear the end timer
+              self._clearEndTimer(data.id);
+            }
+
+            // end the track if it is HTML audio and a sprite
+            if (!self._webAudio && !loop) {
+              self.stop(data.id);
+            }
+
+            // fire ended event
+            self.on('end', soundId);
+          }, duration * 1000);
+
+          // store the reference to the timer
+          self._onendTimer.push({timer: timerId, id: data.id});
+        })();
+
+        if (self._webAudio) {
+          var loopStart = self._sprite[sprite][0] / 1000,
+            loopEnd = self._sprite[sprite][1] / 1000;
+
+          // set the play id to this node and load into context
+          node.id = soundId;
+          node.paused = false;
+          refreshBuffer(self, [loop, loopStart, loopEnd], soundId);
+          self._playStart = ctx.currentTime;
+          node.gain.value = self._volume;
+
+          if (typeof node.bufferSource.start === 'undefined') {
+            loop ? node.bufferSource.noteGrainOn(0, pos, 86400) : node.bufferSource.noteGrainOn(0, pos, duration);
+          } else {
+            loop ? node.bufferSource.start(0, pos, 86400) : node.bufferSource.start(0, pos, duration);
+          }
+        } else {
+          if (node.readyState === 4 || !node.readyState && navigator.isCocoonJS) {
+            node.readyState = 4;
+            node.id = soundId;
+            node.currentTime = pos;
+            node.muted = Howler._muted || node.muted;
+            node.volume = self._volume * Howler.volume();
+            setTimeout(function() { node.play(); }, 0);
+          } else {
+            self._clearEndTimer(soundId);
+
+            (function(){
+              var sound = self,
+                playSprite = sprite,
+                fn = callback,
+                newNode = node;
+              var listener = function() {
+                sound.play(playSprite, fn);
+
+                // clear the event listener
+                newNode.removeEventListener('canplaythrough', listener, false);
+              };
+              newNode.addEventListener('canplaythrough', listener, false);
+            })();
+
+            return self;
+          }
+        }
+
+        // fire the play event and send the soundId back in the callback
+        self.on('play');
+        if (typeof callback === 'function') callback(soundId);
+
+        return self;
+      });
+
+      return self;
+    },
+
+    /**
+     * Pause playback and save the current position.
+     * @param {String} id (optional) The play instance ID.
+     * @return {Howl}
+     */
+    pause: function(id) {
+      var self = this;
+
+      // if the sound hasn't been loaded, add it to the event queue
+      if (!self._loaded) {
+        self.on('play', function() {
+          self.pause(id);
+        });
+
+        return self;
+      }
+
+      // clear 'onend' timer
+      self._clearEndTimer(id);
+
+      var activeNode = (id) ? self._nodeById(id) : self._activeNode();
+      if (activeNode) {
+        activeNode._pos = self.pos(null, id);
+
+        if (self._webAudio) {
+          // make sure the sound has been created
+          if (!activeNode.bufferSource || activeNode.paused) {
+            return self;
+          }
+
+          activeNode.paused = true;
+          if (typeof activeNode.bufferSource.stop === 'undefined') {
+            activeNode.bufferSource.noteOff(0);
+          } else {
+            activeNode.bufferSource.stop(0);
+          }
+        } else {
+          activeNode.pause();
+        }
+      }
+
+      self.on('pause');
+
+      return self;
+    },
+
+    /**
+     * Stop playback and reset to start.
+     * @param  {String} id  (optional) The play instance ID.
+     * @return {Howl}
+     */
+    stop: function(id) {
+      var self = this;
+
+      // if the sound hasn't been loaded, add it to the event queue
+      if (!self._loaded) {
+        self.on('play', function() {
+          self.stop(id);
+        });
+
+        return self;
+      }
+
+      // clear 'onend' timer
+      self._clearEndTimer(id);
+
+      var activeNode = (id) ? self._nodeById(id) : self._activeNode();
+      if (activeNode) {
+        activeNode._pos = 0;
+
+        if (self._webAudio) {
+          // make sure the sound has been created
+          if (!activeNode.bufferSource || activeNode.paused) {
+            return self;
+          }
+
+          activeNode.paused = true;
+
+          if (typeof activeNode.bufferSource.stop === 'undefined') {
+            activeNode.bufferSource.noteOff(0);
+          } else {
+            activeNode.bufferSource.stop(0);
+          }
+        } else if (!isNaN(activeNode.duration)) {
+          activeNode.pause();
+          activeNode.currentTime = 0;
+        }
+      }
+
+      return self;
+    },
+
+    /**
+     * Mute this sound.
+     * @param  {String} id (optional) The play instance ID.
+     * @return {Howl}
+     */
+    mute: function(id) {
+      var self = this;
+
+      // if the sound hasn't been loaded, add it to the event queue
+      if (!self._loaded) {
+        self.on('play', function() {
+          self.mute(id);
+        });
+
+        return self;
+      }
+
+      var activeNode = (id) ? self._nodeById(id) : self._activeNode();
+      if (activeNode) {
+        if (self._webAudio) {
+          activeNode.gain.value = 0;
+        } else {
+          activeNode.muted = true;
+        }
+      }
+
+      return self;
+    },
+
+    /**
+     * Unmute this sound.
+     * @param  {String} id (optional) The play instance ID.
+     * @return {Howl}
+     */
+    unmute: function(id) {
+      var self = this;
+
+      // if the sound hasn't been loaded, add it to the event queue
+      if (!self._loaded) {
+        self.on('play', function() {
+          self.unmute(id);
+        });
+
+        return self;
+      }
+
+      var activeNode = (id) ? self._nodeById(id) : self._activeNode();
+      if (activeNode) {
+        if (self._webAudio) {
+          activeNode.gain.value = self._volume;
+        } else {
+          activeNode.muted = false;
+        }
+      }
+
+      return self;
+    },
+
+    /**
+     * Get/set volume of this sound.
+     * @param  {Float}  vol Volume from 0.0 to 1.0.
+     * @param  {String} id  (optional) The play instance ID.
+     * @return {Howl/Float}     Returns self or current volume.
+     */
+    volume: function(vol, id) {
+      var self = this;
+
+      // make sure volume is a number
+      vol = parseFloat(vol);
+
+      if (vol >= 0 && vol <= 1) {
+        self._volume = vol;
+
+        // if the sound hasn't been loaded, add it to the event queue
+        if (!self._loaded) {
+          self.on('play', function() {
+            self.volume(vol, id);
+          });
+
+          return self;
+        }
+
+        var activeNode = (id) ? self._nodeById(id) : self._activeNode();
+        if (activeNode) {
+          if (self._webAudio) {
+            activeNode.gain.value = vol;
+          } else {
+            activeNode.volume = vol * Howler.volume();
+          }
+        }
+
+        return self;
+      } else {
+        return self._volume;
+      }
+    },
+
+    /**
+     * Get/set whether to loop the sound.
+     * @param  {Boolean} loop To loop or not to loop, that is the question.
+     * @return {Howl/Boolean}      Returns self or current looping value.
+     */
+    loop: function(loop) {
+      var self = this;
+
+      if (typeof loop === 'boolean') {
+        self._loop = loop;
+
+        return self;
+      } else {
+        return self._loop;
+      }
+    },
+
+    /**
+     * Get/set sound sprite definition.
+     * @param  {Object} sprite Example: {spriteName: [offset, duration, loop]}
+     *                @param {Integer} offset   Where to begin playback in milliseconds
+     *                @param {Integer} duration How long to play in milliseconds
+     *                @param {Boolean} loop     (optional) Set true to loop this sprite
+     * @return {Howl}        Returns current sprite sheet or self.
+     */
+    sprite: function(sprite) {
+      var self = this;
+
+      if (typeof sprite === 'object') {
+        self._sprite = sprite;
+
+        return self;
+      } else {
+        return self._sprite;
+      }
+    },
+
+    /**
+     * Get/set the position of playback.
+     * @param  {Float}  pos The position to move current playback to.
+     * @param  {String} id  (optional) The play instance ID.
+     * @return {Howl/Float}      Returns self or current playback position.
+     */
+    pos: function(pos, id) {
+      var self = this;
+
+      // if the sound hasn't been loaded, add it to the event queue
+      if (!self._loaded) {
+        self.on('load', function() {
+          self.pos(pos);
+        });
+
+        return typeof pos === 'number' ? self : self._pos || 0;
+      }
+
+      // make sure we are dealing with a number for pos
+      pos = parseFloat(pos);
+
+      var activeNode = (id) ? self._nodeById(id) : self._activeNode();
+      if (activeNode) {
+        if (pos >= 0) {
+          self.pause(id);
+          activeNode._pos = pos;
+          self.play(activeNode._sprite, id);
+
+          return self;
+        } else {
+          return self._webAudio ? activeNode._pos + (ctx.currentTime - self._playStart) : activeNode.currentTime;
+        }
+      } else if (pos >= 0) {
+        return self;
+      } else {
+        // find the first inactive node to return the pos for
+        for (var i=0; i<self._audioNode.length; i++) {
+          if (self._audioNode[i].paused && self._audioNode[i].readyState === 4) {
+            return (self._webAudio) ? self._audioNode[i]._pos : self._audioNode[i].currentTime;
+          }
+        }
+      }
+    },
+
+    /**
+     * Get/set the 3D position of the audio source.
+     * The most common usage is to set the 'x' position
+     * to affect the left/right ear panning. Setting any value higher than
+     * 1.0 will begin to decrease the volume of the sound as it moves further away.
+     * NOTE: This only works with Web Audio API, HTML5 Audio playback
+     * will not be affected.
+     * @param  {Float}  x  The x-position of the playback from -1000.0 to 1000.0
+     * @param  {Float}  y  The y-position of the playback from -1000.0 to 1000.0
+     * @param  {Float}  z  The z-position of the playback from -1000.0 to 1000.0
+     * @param  {String} id (optional) The play instance ID.
+     * @return {Howl/Array}   Returns self or the current 3D position: [x, y, z]
+     */
+    pos3d: function(x, y, z, id) {
+      var self = this;
+
+      // set a default for the optional 'y' & 'z'
+      y = (typeof y === 'undefined' || !y) ? 0 : y;
+      z = (typeof z === 'undefined' || !z) ? -0.5 : z;
+
+      // if the sound hasn't been loaded, add it to the event queue
+      if (!self._loaded) {
+        self.on('play', function() {
+          self.pos3d(x, y, z, id);
+        });
+
+        return self;
+      }
+
+      if (x >= 0 || x < 0) {
+        if (self._webAudio) {
+          var activeNode = (id) ? self._nodeById(id) : self._activeNode();
+          if (activeNode) {
+            self._pos3d = [x, y, z];
+            activeNode.panner.setPosition(x, y, z);
+            activeNode.panner.panningModel = self._model || 'HRTF';
+          }
+        }
+      } else {
+        return self._pos3d;
+      }
+
+      return self;
+    },
+
+    /**
+     * Fade a currently playing sound between two volumes.
+     * @param  {Number}   from     The volume to fade from (0.0 to 1.0).
+     * @param  {Number}   to       The volume to fade to (0.0 to 1.0).
+     * @param  {Number}   len      Time in milliseconds to fade.
+     * @param  {Function} callback (optional) Fired when the fade is complete.
+     * @param  {String}   id       (optional) The play instance ID.
+     * @return {Howl}
+     */
+    fade: function(from, to, len, callback, id) {
+      var self = this,
+        diff = Math.abs(from - to),
+        dir = from > to ? 'down' : 'up',
+        steps = diff / 0.01,
+        stepTime = len / steps;
+
+      // if the sound hasn't been loaded, add it to the event queue
+      if (!self._loaded) {
+        self.on('load', function() {
+          self.fade(from, to, len, callback, id);
+        });
+
+        return self;
+      }
+
+      // set the volume to the start position
+      self.volume(from, id);
+
+      for (var i=1; i<=steps; i++) {
+        (function() {
+          var change = self._volume + (dir === 'up' ? 0.01 : -0.01) * i,
+            vol = Math.round(1000 * change) / 1000,
+            toVol = to;
+
+          setTimeout(function() {
+            self.volume(vol, id);
+
+            if (vol === toVol) {
+              if (callback) callback();
+            }
+          }, stepTime * i);
+        })();
+      }
+    },
+
+    /**
+     * [DEPRECATED] Fade in the current sound.
+     * @param  {Float}    to      Volume to fade to (0.0 to 1.0).
+     * @param  {Number}   len     Time in milliseconds to fade.
+     * @param  {Function} callback
+     * @return {Howl}
+     */
+    fadeIn: function(to, len, callback) {
+      return this.volume(0).play().fade(0, to, len, callback);
+    },
+
+    /**
+     * [DEPRECATED] Fade out the current sound and pause when finished.
+     * @param  {Float}    to       Volume to fade to (0.0 to 1.0).
+     * @param  {Number}   len      Time in milliseconds to fade.
+     * @param  {Function} callback
+     * @param  {String}   id       (optional) The play instance ID.
+     * @return {Howl}
+     */
+    fadeOut: function(to, len, callback, id) {
+      var self = this;
+
+      return self.fade(self._volume, to, len, function() {
+        if (callback) callback();
+        self.pause(id);
+
+        // fire ended event
+        self.on('end');
+      }, id);
+    },
+
+    /**
+     * Get an audio node by ID.
+     * @return {Howl} Audio node.
+     */
+    _nodeById: function(id) {
+      var self = this,
+        node = self._audioNode[0];
+
+      // find the node with this ID
+      for (var i=0; i<self._audioNode.length; i++) {
+        if (self._audioNode[i].id === id) {
+          node = self._audioNode[i];
+          break;
+        }
+      }
+
+      return node;
+    },
+
+    /**
+     * Get the first active audio node.
+     * @return {Howl} Audio node.
+     */
+    _activeNode: function() {
+      var self = this,
+        node = null;
+
+      // find the first playing node
+      for (var i=0; i<self._audioNode.length; i++) {
+        if (!self._audioNode[i].paused) {
+          node = self._audioNode[i];
+          break;
+        }
+      }
+
+      // remove excess inactive nodes
+      self._drainPool();
+
+      return node;
+    },
+
+    /**
+     * Get the first inactive audio node.
+     * If there is none, create a new one and add it to the pool.
+     * @param  {Function} callback Function to call when the audio node is ready.
+     */
+    _inactiveNode: function(callback) {
+      var self = this,
+        node = null;
+
+      // find first inactive node to recycle
+      for (var i=0; i<self._audioNode.length; i++) {
+        if (self._audioNode[i].paused && self._audioNode[i].readyState === 4) {
+          // send the node back for use by the new play instance
+          callback(self._audioNode[i]);
+          node = true;
+          break;
+        }
+      }
+
+      // remove excess inactive nodes
+      self._drainPool();
+
+      if (node) {
+        return;
+      }
+
+      // create new node if there are no inactives
+      var newNode;
+      if (self._webAudio) {
+        newNode = self._setupAudioNode();
+        callback(newNode);
+      } else {
+        self.load();
+        newNode = self._audioNode[self._audioNode.length - 1];
+
+        // listen for the correct load event and fire the callback
+        var listenerEvent = navigator.isCocoonJS ? 'canplaythrough' : 'loadedmetadata';
+        var listener = function() {
+          newNode.removeEventListener(listenerEvent, listener, false);
+          callback(newNode);
+        };
+        newNode.addEventListener(listenerEvent, listener, false);
+      }
+    },
+
+    /**
+     * If there are more than 5 inactive audio nodes in the pool, clear out the rest.
+     */
+    _drainPool: function() {
+      var self = this,
+        inactive = 0,
+        i;
+
+      // count the number of inactive nodes
+      for (i=0; i<self._audioNode.length; i++) {
+        if (self._audioNode[i].paused) {
+          inactive++;
+        }
+      }
+
+      // remove excess inactive nodes
+      for (i=self._audioNode.length-1; i>=0; i--) {
+        if (inactive <= 5) {
+          break;
+        }
+
+        if (self._audioNode[i].paused) {
+          // disconnect the audio source if using Web Audio
+          if (self._webAudio) {
+            self._audioNode[i].disconnect(0);
+          }
+
+          inactive--;
+          self._audioNode.splice(i, 1);
+        }
+      }
+    },
+
+    /**
+     * Clear 'onend' timeout before it ends.
+     * @param  {String} soundId  The play instance ID.
+     */
+    _clearEndTimer: function(soundId) {
+      var self = this,
+        index = 0;
+
+      // loop through the timers to find the one associated with this sound
+      for (var i=0; i<self._onendTimer.length; i++) {
+        if (self._onendTimer[i].id === soundId) {
+          index = i;
+          break;
+        }
+      }
+
+      var timer = self._onendTimer[index];
+      if (timer) {
+        clearTimeout(timer.timer);
+        self._onendTimer.splice(index, 1);
+      }
+    },
+
+    /**
+     * Setup the gain node and panner for a Web Audio instance.
+     * @return {Object} The new audio node.
+     */
+    _setupAudioNode: function() {
+      var self = this,
+        node = self._audioNode,
+        index = self._audioNode.length;
+
+      // create gain node
+      node[index] = (typeof ctx.createGain === 'undefined') ? ctx.createGainNode() : ctx.createGain();
+      node[index].gain.value = self._volume;
+      node[index].paused = true;
+      node[index]._pos = 0;
+      node[index].readyState = 4;
+      node[index].connect(masterGain);
+
+      // create the panner
+      node[index].panner = ctx.createPanner();
+      node[index].panner.panningModel = self._model || 'equalpower';
+      node[index].panner.setPosition(self._pos3d[0], self._pos3d[1], self._pos3d[2]);
+      node[index].panner.connect(node[index]);
+
+      return node[index];
+    },
+
+    /**
+     * Call/set custom events.
+     * @param  {String}   event Event type.
+     * @param  {Function} fn    Function to call.
+     * @return {Howl}
+     */
+    on: function(event, fn) {
+      var self = this,
+        events = self['_on' + event];
+
+      if (typeof fn === 'function') {
+        events.push(fn);
+      } else {
+        for (var i=0; i<events.length; i++) {
+          if (fn) {
+            events[i].call(self, fn);
+          } else {
+            events[i].call(self);
+          }
+        }
+      }
+
+      return self;
+    },
+
+    /**
+     * Remove a custom event.
+     * @param  {String}   event Event type.
+     * @param  {Function} fn    Listener to remove.
+     * @return {Howl}
+     */
+    off: function(event, fn) {
+      var self = this,
+        events = self['_on' + event],
+        fnString = fn ? fn.toString() : null;
+
+      if (fnString) {
+        // loop through functions in the event for comparison
+        for (var i=0; i<events.length; i++) {
+          if (fnString === events[i].toString()) {
+            events.splice(i, 1);
+            break;
+          }
+        }
+      } else {
+        self['_on' + event] = [];
+      }
+
+      return self;
+    },
+
+    /**
+     * Unload and destroy the current Howl object.
+     * This will immediately stop all play instances attached to this sound.
+     */
+    unload: function() {
+      var self = this;
+
+      // stop playing any active nodes
+      var nodes = self._audioNode;
+      for (var i=0; i<self._audioNode.length; i++) {
+        // stop the sound if it is currently playing
+        if (!nodes[i].paused) {
+          self.stop(nodes[i].id);
+          self.on('end', nodes[i].id);
+        }
+
+        if (!self._webAudio) {
+          // remove the source if using HTML5 Audio
+          nodes[i].src = '';
+        } else {
+          // disconnect the output from the master gain
+          nodes[i].disconnect(0);
+        }
+      }
+
+      // make sure all timeouts are cleared
+      for (i=0; i<self._onendTimer.length; i++) {
+        clearTimeout(self._onendTimer[i].timer);
+      }
+
+      // remove the reference in the global Howler object
+      var index = Howler._howls.indexOf(self);
+      if (index !== null && index >= 0) {
+        Howler._howls.splice(index, 1);
+      }
+
+      // delete this sound from the cache
+      delete cache[self._src];
+      self = null;
+    }
+
+  };
+
+  // only define these functions when using WebAudio
+  if (usingWebAudio) {
+
+    /**
+     * Buffer a sound from URL (or from cache) and decode to audio source (Web Audio API).
+     * @param  {Object} obj The Howl object for the sound to load.
+     * @param  {String} url The path to the sound file.
+     */
+    var loadBuffer = function(obj, url) {
+      // check if the buffer has already been cached
+      if (url in cache) {
+        // set the duration from the cache
+        obj._duration = cache[url].duration;
+
+        // load the sound into this object
+        loadSound(obj);
+        return;
+      }
+      
+      if (/^data:[^;]+;base64,/.test(url)) {
+        // Decode base64 data-URIs because some browsers cannot load data-URIs with XMLHttpRequest.
+        var data = atob(url.split(',')[1]);
+        var dataView = new Uint8Array(data.length);
+        for (var i=0; i<data.length; ++i) {
+          dataView[i] = data.charCodeAt(i);
+        }
+        
+        decodeAudioData(dataView.buffer, obj, url);
+      } else {
+        // load the buffer from the URL
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', url, true);
+        xhr.responseType = 'arraybuffer';
+        xhr.onload = function() {
+          decodeAudioData(xhr.response, obj, url);
+        };
+        xhr.onerror = function() {
+          // if there is an error, switch the sound to HTML Audio
+          if (obj._webAudio) {
+            obj._buffer = true;
+            obj._webAudio = false;
+            obj._audioNode = [];
+            delete obj._gainNode;
+            delete cache[url];
+            obj.load();
+          }
+        };
+        try {
+          xhr.send();
+        } catch (e) {
+          xhr.onerror();
+        }
+      }
+    };
+
+    /**
+     * Decode audio data from an array buffer.
+     * @param  {ArrayBuffer} arraybuffer The audio data.
+     * @param  {Object} obj The Howl object for the sound to load.
+     * @param  {String} url The path to the sound file.
+     */
+    var decodeAudioData = function(arraybuffer, obj, url) {
+      // decode the buffer into an audio source
+      ctx.decodeAudioData(
+        arraybuffer,
+        function(buffer) {
+          if (buffer) {
+            cache[url] = buffer;
+            loadSound(obj, buffer);
+          }
+        },
+        function(err) {
+          obj.on('loaderror');
+        }
+      );
+    };
+
+    /**
+     * Finishes loading the Web Audio API sound and fires the loaded event
+     * @param  {Object}  obj    The Howl object for the sound to load.
+     * @param  {Objecct} buffer The decoded buffer sound source.
+     */
+    var loadSound = function(obj, buffer) {
+      // set the duration
+      obj._duration = (buffer) ? buffer.duration : obj._duration;
+
+      // setup a sprite if none is defined
+      if (Object.getOwnPropertyNames(obj._sprite).length === 0) {
+        obj._sprite = {_default: [0, obj._duration * 1000]};
+      }
+
+      // fire the loaded event
+      if (!obj._loaded) {
+        obj._loaded = true;
+        obj.on('load');
+      }
+
+      if (obj._autoplay) {
+        obj.play();
+      }
+    };
+
+    /**
+     * Load the sound back into the buffer source.
+     * @param  {Object} obj   The sound to load.
+     * @param  {Array}  loop  Loop boolean, pos, and duration.
+     * @param  {String} id    (optional) The play instance ID.
+     */
+    var refreshBuffer = function(obj, loop, id) {
+      // determine which node to connect to
+      var node = obj._nodeById(id);
+
+      // setup the buffer source for playback
+      node.bufferSource = ctx.createBufferSource();
+      node.bufferSource.buffer = cache[obj._src];
+      node.bufferSource.connect(node.panner);
+      node.bufferSource.loop = loop[0];
+      if (loop[0]) {
+        node.bufferSource.loopStart = loop[1];
+        node.bufferSource.loopEnd = loop[1] + loop[2];
+      }
+      node.bufferSource.playbackRate.value = obj._rate;
+    };
+
+  }
+
+  /**
+   * Add support for AMD (Asynchronous Module Definition) libraries such as require.js.
+   */
+  if (typeof define === 'function' && define.amd) {
+    define(function() {
+      return {
+        Howler: Howler,
+        Howl: Howl
+      };
+    });
+  }
+
+  /**
+   * Add support for CommonJS libraries such as browserify.
+   */
+  if (typeof exports !== 'undefined') {
+    exports.Howler = Howler;
+    exports.Howl = Howl;
+  }
+
+  // define globally in case AMD is not available or available but not used
+
+  if (typeof window !== 'undefined') {
+    window.Howler = Howler;
+    window.Howl = Howl;
+  }
+
+})();
+
 /*
  Leaflet, a JavaScript library for mobile-friendly interactive maps. http://leafletjs.com
  (c) 2010-2013, Vladimir Agafonkin
@@ -26526,7 +28803,11 @@ L.Marker = L.Class.extend({
 		if (options.riseOnHover) {
 			L.DomEvent
 				.on(icon, 'mouseover', this._bringToFront, this)
-				.on(icon, 'mouseout', this._resetZIndex, this);
+				.on(icon, 'mouseout', function () {
+				    if (this._popup && !this._popup._isOpen) {
+                        this._resetZIndex();
+				    }
+				}, this);
 		}
 
 		var newShadow = options.icon.createShadow(this._shadow),
@@ -26923,6 +29204,9 @@ L.Popup = L.Class.extend({
 			L.DomEvent.on(closeButton, 'click', this._onCloseButtonClick, this);
 		}
 
+		this._tipContainer = L.DomUtil.create('div', prefix + '-tip-container', container);
+		this._tip = L.DomUtil.create('div', prefix + '-tip', this._tipContainer);
+
 		var wrapper = this._wrapper =
 		        L.DomUtil.create('div', prefix + '-content-wrapper', container);
 		L.DomEvent.disableClickPropagation(wrapper);
@@ -26932,8 +29216,7 @@ L.Popup = L.Class.extend({
 		L.DomEvent.disableScrollPropagation(this._contentNode);
 		L.DomEvent.on(wrapper, 'contextmenu', L.DomEvent.stopPropagation);
 
-		this._tipContainer = L.DomUtil.create('div', prefix + '-tip-container', container);
-		this._tip = L.DomUtil.create('div', prefix + '-tip', this._tipContainer);
+		
 	},
 
 	_updateContent: function () {
@@ -32107,2325 +34390,551 @@ L.Map.include({
 
 
 }(window, document));
-///#source 1 1 /core/lib/pace/pace.js
-(function() {
-  var AjaxMonitor, Bar, DocumentMonitor, ElementMonitor, ElementTracker, EventLagMonitor, Evented, Events, NoTargetError, Pace, RequestIntercept, SOURCE_KEYS, Scaler, SocketRequestTracker, XHRRequestTracker, animation, avgAmplitude, bar, cancelAnimation, cancelAnimationFrame, defaultOptions, extend, extendNative, getFromDOM, getIntercept, handlePushState, ignoreStack, init, now, options, requestAnimationFrame, result, runAnimation, scalers, shouldIgnoreURL, shouldTrack, source, sources, uniScaler, _WebSocket, _XDomainRequest, _XMLHttpRequest, _i, _intercept, _len, _pushState, _ref, _ref1, _replaceState,
-    __slice = [].slice,
-    __hasProp = {}.hasOwnProperty,
-    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
-    __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
-
-  defaultOptions = {
-    catchupTime: 100,
-    initialRate: .03,
-    minTime: 250,
-    ghostTime: 100,
-    maxProgressPerFrame: 20,
-    easeFactor: 1.25,
-    startOnPageLoad: true,
-    restartOnPushState: true,
-    restartOnRequestAfter: true,
-    target: 'body',
-    elements: {
-      checkInterval: 100,
-      selectors: ['body']
-    },
-    eventLag: {
-      minSamples: 10,
-      sampleCount: 3,
-      lagThreshold: 3
-    },
-    ajax: {
-      trackMethods: ['GET'],
-      trackWebSockets: true,
-      ignoreURLs: []
-    }
-  };
-
-  now = function() {
-    var _ref;
-    return (_ref = typeof performance !== "undefined" && performance !== null ? typeof performance.now === "function" ? performance.now() : void 0 : void 0) != null ? _ref : +(new Date);
-  };
-
-  requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
-
-  cancelAnimationFrame = window.cancelAnimationFrame || window.mozCancelAnimationFrame;
-
-  if (requestAnimationFrame == null) {
-    requestAnimationFrame = function(fn) {
-      return setTimeout(fn, 50);
-    };
-    cancelAnimationFrame = function(id) {
-      return clearTimeout(id);
-    };
-  }
-
-  runAnimation = function(fn) {
-    var last, tick;
-    last = now();
-    tick = function() {
-      var diff;
-      diff = now() - last;
-      if (diff >= 33) {
-        last = now();
-        return fn(diff, function() {
-          return requestAnimationFrame(tick);
-        });
-      } else {
-        return setTimeout(tick, 33 - diff);
-      }
-    };
-    return tick();
-  };
-
-  result = function() {
-    var args, key, obj;
-    obj = arguments[0], key = arguments[1], args = 3 <= arguments.length ? __slice.call(arguments, 2) : [];
-    if (typeof obj[key] === 'function') {
-      return obj[key].apply(obj, args);
-    } else {
-      return obj[key];
-    }
-  };
-
-  extend = function() {
-    var key, out, source, sources, val, _i, _len;
-    out = arguments[0], sources = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
-    for (_i = 0, _len = sources.length; _i < _len; _i++) {
-      source = sources[_i];
-      if (source) {
-        for (key in source) {
-          if (!__hasProp.call(source, key)) continue;
-          val = source[key];
-          if ((out[key] != null) && typeof out[key] === 'object' && (val != null) && typeof val === 'object') {
-            extend(out[key], val);
-          } else {
-            out[key] = val;
-          }
-        }
-      }
-    }
-    return out;
-  };
-
-  avgAmplitude = function(arr) {
-    var count, sum, v, _i, _len;
-    sum = count = 0;
-    for (_i = 0, _len = arr.length; _i < _len; _i++) {
-      v = arr[_i];
-      sum += Math.abs(v);
-      count++;
-    }
-    return sum / count;
-  };
-
-  getFromDOM = function(key, json) {
-    var data, e, el;
-    if (key == null) {
-      key = 'options';
-    }
-    if (json == null) {
-      json = true;
-    }
-    el = document.querySelector("[data-pace-" + key + "]");
-    if (!el) {
-      return;
-    }
-    data = el.getAttribute("data-pace-" + key);
-    if (!json) {
-      return data;
-    }
-    try {
-      return JSON.parse(data);
-    } catch (_error) {
-      e = _error;
-      return typeof console !== "undefined" && console !== null ? console.error("Error parsing inline pace options", e) : void 0;
-    }
-  };
-
-  Evented = (function() {
-    function Evented() {}
-
-    Evented.prototype.on = function(event, handler, ctx, once) {
-      var _base;
-      if (once == null) {
-        once = false;
-      }
-      if (this.bindings == null) {
-        this.bindings = {};
-      }
-      if ((_base = this.bindings)[event] == null) {
-        _base[event] = [];
-      }
-      return this.bindings[event].push({
-        handler: handler,
-        ctx: ctx,
-        once: once
-      });
-    };
-
-    Evented.prototype.once = function(event, handler, ctx) {
-      return this.on(event, handler, ctx, true);
-    };
-
-    Evented.prototype.off = function(event, handler) {
-      var i, _ref, _results;
-      if (((_ref = this.bindings) != null ? _ref[event] : void 0) == null) {
-        return;
-      }
-      if (handler == null) {
-        return delete this.bindings[event];
-      } else {
-        i = 0;
-        _results = [];
-        while (i < this.bindings[event].length) {
-          if (this.bindings[event][i].handler === handler) {
-            _results.push(this.bindings[event].splice(i, 1));
-          } else {
-            _results.push(i++);
-          }
-        }
-        return _results;
-      }
-    };
-
-    Evented.prototype.trigger = function() {
-      var args, ctx, event, handler, i, once, _ref, _ref1, _results;
-      event = arguments[0], args = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
-      if ((_ref = this.bindings) != null ? _ref[event] : void 0) {
-        i = 0;
-        _results = [];
-        while (i < this.bindings[event].length) {
-          _ref1 = this.bindings[event][i], handler = _ref1.handler, ctx = _ref1.ctx, once = _ref1.once;
-          handler.apply(ctx != null ? ctx : this, args);
-          if (once) {
-            _results.push(this.bindings[event].splice(i, 1));
-          } else {
-            _results.push(i++);
-          }
-        }
-        return _results;
-      }
-    };
-
-    return Evented;
-
-  })();
-
-  Pace = window.Pace || {};
-
-  window.Pace = Pace;
-
-  extend(Pace, Evented.prototype);
-
-  options = Pace.options = extend({}, defaultOptions, window.paceOptions, getFromDOM());
-
-  _ref = ['ajax', 'document', 'eventLag', 'elements'];
-  for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-    source = _ref[_i];
-    if (options[source] === true) {
-      options[source] = defaultOptions[source];
-    }
-  }
-
-  NoTargetError = (function(_super) {
-    __extends(NoTargetError, _super);
-
-    function NoTargetError() {
-      _ref1 = NoTargetError.__super__.constructor.apply(this, arguments);
-      return _ref1;
-    }
-
-    return NoTargetError;
-
-  })(Error);
-
-  Bar = (function() {
-    function Bar() {
-      this.progress = 0;
-    }
-
-    Bar.prototype.getElement = function() {
-      var targetElement;
-      if (this.el == null) {
-        targetElement = document.querySelector(options.target);
-        if (!targetElement) {
-          throw new NoTargetError;
-        }
-        this.el = document.createElement('div');
-        this.el.className = "pace pace-active";
-        document.body.className = document.body.className.replace(/pace-done/g, '');
-        document.body.className += ' pace-running';
-        this.el.innerHTML = '<div class="pace-progress">\n  <div class="pace-progress-inner"></div>\n</div>\n<div class="pace-activity"></div>';
-        if (targetElement.firstChild != null) {
-          targetElement.insertBefore(this.el, targetElement.firstChild);
-        } else {
-          targetElement.appendChild(this.el);
-        }
-      }
-      return this.el;
-    };
-
-    Bar.prototype.finish = function() {
-      var el;
-      el = this.getElement();
-      el.className = el.className.replace('pace-active', '');
-      el.className += ' pace-inactive';
-      document.body.className = document.body.className.replace('pace-running', '');
-      return document.body.className += ' pace-done';
-    };
-
-    Bar.prototype.update = function(prog) {
-      this.progress = prog;
-      return this.render();
-    };
-
-    Bar.prototype.destroy = function() {
-      try {
-        this.getElement().parentNode.removeChild(this.getElement());
-      } catch (_error) {
-        NoTargetError = _error;
-      }
-      return this.el = void 0;
-    };
-
-    Bar.prototype.render = function() {
-      var el, key, progressStr, transform, _j, _len1, _ref2;
-      if (document.querySelector(options.target) == null) {
-        return false;
-      }
-      el = this.getElement();
-      transform = "translate3d(" + this.progress + "%, 0, 0)";
-      _ref2 = ['webkitTransform', 'msTransform', 'transform'];
-      for (_j = 0, _len1 = _ref2.length; _j < _len1; _j++) {
-        key = _ref2[_j];
-        el.children[0].style[key] = transform;
-      }
-      if (!this.lastRenderedProgress || this.lastRenderedProgress | 0 !== this.progress | 0) {
-        el.children[0].setAttribute('data-progress-text', "" + (this.progress | 0) + "%");
-        if (this.progress >= 100) {
-          progressStr = '99';
-        } else {
-          progressStr = this.progress < 10 ? "0" : "";
-          progressStr += this.progress | 0;
-        }
-        el.children[0].setAttribute('data-progress', "" + progressStr);
-      }
-      return this.lastRenderedProgress = this.progress;
-    };
-
-    Bar.prototype.done = function() {
-      return this.progress >= 100;
-    };
-
-    return Bar;
-
-  })();
-
-  Events = (function() {
-    function Events() {
-      this.bindings = {};
-    }
-
-    Events.prototype.trigger = function(name, val) {
-      var binding, _j, _len1, _ref2, _results;
-      if (this.bindings[name] != null) {
-        _ref2 = this.bindings[name];
-        _results = [];
-        for (_j = 0, _len1 = _ref2.length; _j < _len1; _j++) {
-          binding = _ref2[_j];
-          _results.push(binding.call(this, val));
-        }
-        return _results;
-      }
-    };
-
-    Events.prototype.on = function(name, fn) {
-      var _base;
-      if ((_base = this.bindings)[name] == null) {
-        _base[name] = [];
-      }
-      return this.bindings[name].push(fn);
-    };
-
-    return Events;
-
-  })();
-
-  _XMLHttpRequest = window.XMLHttpRequest;
-
-  _XDomainRequest = window.XDomainRequest;
-
-  _WebSocket = window.WebSocket;
-
-  extendNative = function(to, from) {
-    var e, key, _results;
-    _results = [];
-    for (key in from.prototype) {
-      try {
-        if ((to[key] == null) && typeof from[key] !== 'function') {
-          if (typeof Object.defineProperty === 'function') {
-            _results.push(Object.defineProperty(to, key, {
-              get: function() {
-                return from.prototype[key];
-              },
-              configurable: true,
-              enumerable: true
-            }));
-          } else {
-            _results.push(to[key] = from.prototype[key]);
-          }
-        } else {
-          _results.push(void 0);
-        }
-      } catch (_error) {
-        e = _error;
-      }
-    }
-    return _results;
-  };
-
-  ignoreStack = [];
-
-  Pace.ignore = function() {
-    var args, fn, ret;
-    fn = arguments[0], args = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
-    ignoreStack.unshift('ignore');
-    ret = fn.apply(null, args);
-    ignoreStack.shift();
-    return ret;
-  };
-
-  Pace.track = function() {
-    var args, fn, ret;
-    fn = arguments[0], args = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
-    ignoreStack.unshift('track');
-    ret = fn.apply(null, args);
-    ignoreStack.shift();
-    return ret;
-  };
-
-  shouldTrack = function(method) {
-    var _ref2;
-    if (method == null) {
-      method = 'GET';
-    }
-    if (ignoreStack[0] === 'track') {
-      return 'force';
-    }
-    if (!ignoreStack.length && options.ajax) {
-      if (method === 'socket' && options.ajax.trackWebSockets) {
-        return true;
-      } else if (_ref2 = method.toUpperCase(), __indexOf.call(options.ajax.trackMethods, _ref2) >= 0) {
-        return true;
-      }
-    }
-    return false;
-  };
-
-  RequestIntercept = (function(_super) {
-    __extends(RequestIntercept, _super);
-
-    function RequestIntercept() {
-      var monitorXHR,
-        _this = this;
-      RequestIntercept.__super__.constructor.apply(this, arguments);
-      monitorXHR = function(req) {
-        var _open;
-        _open = req.open;
-        return req.open = function(type, url, async) {
-          if (shouldTrack(type)) {
-            _this.trigger('request', {
-              type: type,
-              url: url,
-              request: req
-            });
-          }
-          return _open.apply(req, arguments);
-        };
-      };
-      window.XMLHttpRequest = function(flags) {
-        var req;
-        req = new _XMLHttpRequest(flags);
-        monitorXHR(req);
-        return req;
-      };
-      try {
-        extendNative(window.XMLHttpRequest, _XMLHttpRequest);
-      } catch (_error) {}
-      if (_XDomainRequest != null) {
-        window.XDomainRequest = function() {
-          var req;
-          req = new _XDomainRequest;
-          monitorXHR(req);
-          return req;
-        };
-        try {
-          extendNative(window.XDomainRequest, _XDomainRequest);
-        } catch (_error) {}
-      }
-      if ((_WebSocket != null) && options.ajax.trackWebSockets) {
-        window.WebSocket = function(url, protocols) {
-          var req;
-          if (protocols != null) {
-            req = new _WebSocket(url, protocols);
-          } else {
-            req = new _WebSocket(url);
-          }
-          if (shouldTrack('socket')) {
-            _this.trigger('request', {
-              type: 'socket',
-              url: url,
-              protocols: protocols,
-              request: req
-            });
-          }
-          return req;
-        };
-        try {
-          extendNative(window.WebSocket, _WebSocket);
-        } catch (_error) {}
-      }
-    }
-
-    return RequestIntercept;
-
-  })(Events);
-
-  _intercept = null;
-
-  getIntercept = function() {
-    if (_intercept == null) {
-      _intercept = new RequestIntercept;
-    }
-    return _intercept;
-  };
-
-  shouldIgnoreURL = function(url) {
-    var pattern, _j, _len1, _ref2;
-    _ref2 = options.ajax.ignoreURLs;
-    for (_j = 0, _len1 = _ref2.length; _j < _len1; _j++) {
-      pattern = _ref2[_j];
-      if (typeof pattern === 'string') {
-        if (url.indexOf(pattern) !== -1) {
-          return true;
-        }
-      } else {
-        if (pattern.test(url)) {
-          return true;
-        }
-      }
-    }
-    return false;
-  };
-
-  getIntercept().on('request', function(_arg) {
-    var after, args, request, type, url;
-    type = _arg.type, request = _arg.request, url = _arg.url;
-    if (shouldIgnoreURL(url)) {
-      return;
-    }
-    if (!Pace.running && (options.restartOnRequestAfter !== false || shouldTrack(type) === 'force')) {
-      args = arguments;
-      after = options.restartOnRequestAfter || 0;
-      if (typeof after === 'boolean') {
-        after = 0;
-      }
-      return setTimeout(function() {
-        var stillActive, _j, _len1, _ref2, _ref3, _results;
-        if (type === 'socket') {
-          stillActive = request.readyState < 2;
-        } else {
-          stillActive = (0 < (_ref2 = request.readyState) && _ref2 < 4);
-        }
-        if (stillActive) {
-          Pace.restart();
-          _ref3 = Pace.sources;
-          _results = [];
-          for (_j = 0, _len1 = _ref3.length; _j < _len1; _j++) {
-            source = _ref3[_j];
-            if (source instanceof AjaxMonitor) {
-              source.watch.apply(source, args);
-              break;
-            } else {
-              _results.push(void 0);
-            }
-          }
-          return _results;
-        }
-      }, after);
-    }
-  });
-
-  AjaxMonitor = (function() {
-    function AjaxMonitor() {
-      var _this = this;
-      this.elements = [];
-      getIntercept().on('request', function() {
-        return _this.watch.apply(_this, arguments);
-      });
-    }
-
-    AjaxMonitor.prototype.watch = function(_arg) {
-      var request, tracker, type, url;
-      type = _arg.type, request = _arg.request, url = _arg.url;
-      if (shouldIgnoreURL(url)) {
-        return;
-      }
-      if (type === 'socket') {
-        tracker = new SocketRequestTracker(request);
-      } else {
-        tracker = new XHRRequestTracker(request);
-      }
-      return this.elements.push(tracker);
-    };
-
-    return AjaxMonitor;
-
-  })();
-
-  XHRRequestTracker = (function() {
-    function XHRRequestTracker(request) {
-      var event, size, _j, _len1, _onreadystatechange, _ref2,
-        _this = this;
-      this.progress = 0;
-      if (window.ProgressEvent != null) {
-        size = null;
-        request.addEventListener('progress', function(evt) {
-          if (evt.lengthComputable) {
-            return _this.progress = 100 * evt.loaded / evt.total;
-          } else {
-            return _this.progress = _this.progress + (100 - _this.progress) / 2;
-          }
-        }, false);
-        _ref2 = ['load', 'abort', 'timeout', 'error'];
-        for (_j = 0, _len1 = _ref2.length; _j < _len1; _j++) {
-          event = _ref2[_j];
-          request.addEventListener(event, function() {
-            return _this.progress = 100;
-          }, false);
-        }
-      } else {
-        _onreadystatechange = request.onreadystatechange;
-        request.onreadystatechange = function() {
-          var _ref3;
-          if ((_ref3 = request.readyState) === 0 || _ref3 === 4) {
-            _this.progress = 100;
-          } else if (request.readyState === 3) {
-            _this.progress = 50;
-          }
-          return typeof _onreadystatechange === "function" ? _onreadystatechange.apply(null, arguments) : void 0;
-        };
-      }
-    }
-
-    return XHRRequestTracker;
-
-  })();
-
-  SocketRequestTracker = (function() {
-    function SocketRequestTracker(request) {
-      var event, _j, _len1, _ref2,
-        _this = this;
-      this.progress = 0;
-      _ref2 = ['error', 'open'];
-      for (_j = 0, _len1 = _ref2.length; _j < _len1; _j++) {
-        event = _ref2[_j];
-        request.addEventListener(event, function() {
-          return _this.progress = 100;
-        }, false);
-      }
-    }
-
-    return SocketRequestTracker;
-
-  })();
-
-  ElementMonitor = (function() {
-    function ElementMonitor(options) {
-      var selector, _j, _len1, _ref2;
-      if (options == null) {
-        options = {};
-      }
-      this.elements = [];
-      if (options.selectors == null) {
-        options.selectors = [];
-      }
-      _ref2 = options.selectors;
-      for (_j = 0, _len1 = _ref2.length; _j < _len1; _j++) {
-        selector = _ref2[_j];
-        this.elements.push(new ElementTracker(selector));
-      }
-    }
-
-    return ElementMonitor;
-
-  })();
-
-  ElementTracker = (function() {
-    function ElementTracker(selector) {
-      this.selector = selector;
-      this.progress = 0;
-      this.check();
-    }
-
-    ElementTracker.prototype.check = function() {
-      var _this = this;
-      if (document.querySelector(this.selector)) {
-        return this.done();
-      } else {
-        return setTimeout((function() {
-          return _this.check();
-        }), options.elements.checkInterval);
-      }
-    };
-
-    ElementTracker.prototype.done = function() {
-      return this.progress = 100;
-    };
-
-    return ElementTracker;
-
-  })();
-
-  DocumentMonitor = (function() {
-    DocumentMonitor.prototype.states = {
-      loading: 0,
-      interactive: 50,
-      complete: 100
-    };
-
-    function DocumentMonitor() {
-      var _onreadystatechange, _ref2,
-        _this = this;
-      this.progress = (_ref2 = this.states[document.readyState]) != null ? _ref2 : 100;
-      _onreadystatechange = document.onreadystatechange;
-      document.onreadystatechange = function() {
-        if (_this.states[document.readyState] != null) {
-          _this.progress = _this.states[document.readyState];
-        }
-        return typeof _onreadystatechange === "function" ? _onreadystatechange.apply(null, arguments) : void 0;
-      };
-    }
-
-    return DocumentMonitor;
-
-  })();
-
-  EventLagMonitor = (function() {
-    function EventLagMonitor() {
-      var avg, interval, last, points, samples,
-        _this = this;
-      this.progress = 0;
-      avg = 0;
-      samples = [];
-      points = 0;
-      last = now();
-      interval = setInterval(function() {
-        var diff;
-        diff = now() - last - 50;
-        last = now();
-        samples.push(diff);
-        if (samples.length > options.eventLag.sampleCount) {
-          samples.shift();
-        }
-        avg = avgAmplitude(samples);
-        if (++points >= options.eventLag.minSamples && avg < options.eventLag.lagThreshold) {
-          _this.progress = 100;
-          return clearInterval(interval);
-        } else {
-          return _this.progress = 100 * (3 / (avg + 3));
-        }
-      }, 50);
-    }
-
-    return EventLagMonitor;
-
-  })();
-
-  Scaler = (function() {
-    function Scaler(source) {
-      this.source = source;
-      this.last = this.sinceLastUpdate = 0;
-      this.rate = options.initialRate;
-      this.catchup = 0;
-      this.progress = this.lastProgress = 0;
-      if (this.source != null) {
-        this.progress = result(this.source, 'progress');
-      }
-    }
-
-    Scaler.prototype.tick = function(frameTime, val) {
-      var scaling;
-      if (val == null) {
-        val = result(this.source, 'progress');
-      }
-      if (val >= 100) {
-        this.done = true;
-      }
-      if (val === this.last) {
-        this.sinceLastUpdate += frameTime;
-      } else {
-        if (this.sinceLastUpdate) {
-          this.rate = (val - this.last) / this.sinceLastUpdate;
-        }
-        this.catchup = (val - this.progress) / options.catchupTime;
-        this.sinceLastUpdate = 0;
-        this.last = val;
-      }
-      if (val > this.progress) {
-        this.progress += this.catchup * frameTime;
-      }
-      scaling = 1 - Math.pow(this.progress / 100, options.easeFactor);
-      this.progress += scaling * this.rate * frameTime;
-      this.progress = Math.min(this.lastProgress + options.maxProgressPerFrame, this.progress);
-      this.progress = Math.max(0, this.progress);
-      this.progress = Math.min(100, this.progress);
-      this.lastProgress = this.progress;
-      return this.progress;
-    };
-
-    return Scaler;
-
-  })();
-
-  sources = null;
-
-  scalers = null;
-
-  bar = null;
-
-  uniScaler = null;
-
-  animation = null;
-
-  cancelAnimation = null;
-
-  Pace.running = false;
-
-  handlePushState = function() {
-    if (options.restartOnPushState) {
-      return Pace.restart();
-    }
-  };
-
-  if (window.history.pushState != null) {
-    _pushState = window.history.pushState;
-    window.history.pushState = function() {
-      handlePushState();
-      return _pushState.apply(window.history, arguments);
-    };
-  }
-
-  if (window.history.replaceState != null) {
-    _replaceState = window.history.replaceState;
-    window.history.replaceState = function() {
-      handlePushState();
-      return _replaceState.apply(window.history, arguments);
-    };
-  }
-
-  SOURCE_KEYS = {
-    ajax: AjaxMonitor,
-    elements: ElementMonitor,
-    document: DocumentMonitor,
-    eventLag: EventLagMonitor
-  };
-
-  (init = function() {
-    var type, _j, _k, _len1, _len2, _ref2, _ref3, _ref4;
-    Pace.sources = sources = [];
-    _ref2 = ['ajax', 'elements', 'document', 'eventLag'];
-    for (_j = 0, _len1 = _ref2.length; _j < _len1; _j++) {
-      type = _ref2[_j];
-      if (options[type] !== false) {
-        sources.push(new SOURCE_KEYS[type](options[type]));
-      }
-    }
-    _ref4 = (_ref3 = options.extraSources) != null ? _ref3 : [];
-    for (_k = 0, _len2 = _ref4.length; _k < _len2; _k++) {
-      source = _ref4[_k];
-      sources.push(new source(options));
-    }
-    Pace.bar = bar = new Bar;
-    scalers = [];
-    return uniScaler = new Scaler;
-  })();
-
-  Pace.stop = function() {
-    Pace.trigger('stop');
-    Pace.running = false;
-    bar.destroy();
-    cancelAnimation = true;
-    if (animation != null) {
-      if (typeof cancelAnimationFrame === "function") {
-        cancelAnimationFrame(animation);
-      }
-      animation = null;
-    }
-    return init();
-  };
-
-  Pace.restart = function() {
-    Pace.trigger('restart');
-    Pace.stop();
-    return Pace.start();
-  };
-
-  Pace.go = function() {
-    var start;
-    Pace.running = true;
-    bar.render();
-    start = now();
-    cancelAnimation = false;
-    return animation = runAnimation(function(frameTime, enqueueNextFrame) {
-      var avg, count, done, element, elements, i, j, remaining, scaler, scalerList, sum, _j, _k, _len1, _len2, _ref2;
-      remaining = 100 - bar.progress;
-      count = sum = 0;
-      done = true;
-      for (i = _j = 0, _len1 = sources.length; _j < _len1; i = ++_j) {
-        source = sources[i];
-        scalerList = scalers[i] != null ? scalers[i] : scalers[i] = [];
-        elements = (_ref2 = source.elements) != null ? _ref2 : [source];
-        for (j = _k = 0, _len2 = elements.length; _k < _len2; j = ++_k) {
-          element = elements[j];
-          scaler = scalerList[j] != null ? scalerList[j] : scalerList[j] = new Scaler(element);
-          done &= scaler.done;
-          if (scaler.done) {
-            continue;
-          }
-          count++;
-          sum += scaler.tick(frameTime);
-        }
-      }
-      avg = sum / count;
-      bar.update(uniScaler.tick(frameTime, avg));
-      if (bar.done() || done || cancelAnimation) {
-        bar.update(100);
-        Pace.trigger('done');
-        return setTimeout(function() {
-          bar.finish();
-          Pace.running = false;
-          return Pace.trigger('hide');
-        }, Math.max(options.ghostTime, Math.max(options.minTime - (now() - start), 0)));
-      } else {
-        return enqueueNextFrame();
-      }
-    });
-  };
-
-  Pace.start = function(_options) {
-    extend(options, _options);
-    Pace.running = true;
-    try {
-      bar.render();
-    } catch (_error) {
-      NoTargetError = _error;
-    }
-    if (!document.querySelector('.pace')) {
-      return setTimeout(Pace.start, 50);
-    } else {
-      Pace.trigger('start');
-      return Pace.go();
-    }
-  };
-
-  if (typeof define === 'function' && define.amd) {
-    define(['pace'], function() {
-      return Pace;
-    });
-  } else if (typeof exports === 'object') {
-    module.exports = Pace;
-  } else {
-    if (options.startOnPageLoad) {
-      Pace.start();
-    }
-  }
-
-}).call(this);
-
-///#source 1 1 /core/lib/howler/howler.js
-/*!
- *  howler.js v1.1.28
- *  howlerjs.com
- *
- *  (c) 2013-2015, James Simpson of GoldFire Studios
- *  goldfirestudios.com
- *
- *  MIT License
+/*
+	Leaflet.label, a plugin that adds labels to markers and vectors for Leaflet powered maps.
+	(c) 2012-2013, Jacob Toye, Smartrak
+
+	https://github.com/Leaflet/Leaflet.label
+	http://leafletjs.com
+	https://github.com/jacobtoye
+*/
+(function (window, document, undefined) {
+var L = window.L;/*
+ * Leaflet.label assumes that you have already included the Leaflet library.
  */
 
-(function() {
-  // setup
-  var cache = {};
-
-  // setup the audio context
-  var ctx = null,
-    usingWebAudio = true,
-    noAudio = false;
-  try {
-    if (typeof AudioContext !== 'undefined') {
-      ctx = new AudioContext();
-    } else if (typeof webkitAudioContext !== 'undefined') {
-      ctx = new webkitAudioContext();
-    } else {
-      usingWebAudio = false;
-    }
-  } catch(e) {
-    usingWebAudio = false;
-  }
-
-  if (!usingWebAudio) {
-    if (typeof Audio !== 'undefined') {
-      try {
-        new Audio();
-      } catch(e) {
-        noAudio = true;
-      }
-    } else {
-      noAudio = true;
-    }
-  }
-
-  // create a master gain node
-  if (usingWebAudio) {
-    var masterGain = (typeof ctx.createGain === 'undefined') ? ctx.createGainNode() : ctx.createGain();
-    masterGain.gain.value = 1;
-    masterGain.connect(ctx.destination);
-  }
-
-  // create global controller
-  var HowlerGlobal = function(codecs) {
-    this._volume = 1;
-    this._muted = false;
-    this.usingWebAudio = usingWebAudio;
-    this.ctx = ctx;
-    this.noAudio = noAudio;
-    this._howls = [];
-    this._codecs = codecs;
-    this.iOSAutoEnable = true;
-  };
-  HowlerGlobal.prototype = {
-    /**
-     * Get/set the global volume for all sounds.
-     * @param  {Float} vol Volume from 0.0 to 1.0.
-     * @return {Howler/Float}     Returns self or current volume.
-     */
-    volume: function(vol) {
-      var self = this;
-
-      // make sure volume is a number
-      vol = parseFloat(vol);
-
-      if (vol >= 0 && vol <= 1) {
-        self._volume = vol;
-
-        if (usingWebAudio) {
-          masterGain.gain.value = vol;
-        }
-
-        // loop through cache and change volume of all nodes that are using HTML5 Audio
-        for (var key in self._howls) {
-          if (self._howls.hasOwnProperty(key) && self._howls[key]._webAudio === false) {
-            // loop through the audio nodes
-            for (var i=0; i<self._howls[key]._audioNode.length; i++) {
-              self._howls[key]._audioNode[i].volume = self._howls[key]._volume * self._volume;
-            }
-          }
-        }
-
-        return self;
-      }
-
-      // return the current global volume
-      return (usingWebAudio) ? masterGain.gain.value : self._volume;
-    },
-
-    /**
-     * Mute all sounds.
-     * @return {Howler}
-     */
-    mute: function() {
-      this._setMuted(true);
-
-      return this;
-    },
-
-    /**
-     * Unmute all sounds.
-     * @return {Howler}
-     */
-    unmute: function() {
-      this._setMuted(false);
-
-      return this;
-    },
-
-    /**
-     * Handle muting and unmuting globally.
-     * @param  {Boolean} muted Is muted or not.
-     */
-    _setMuted: function(muted) {
-      var self = this;
-
-      self._muted = muted;
-
-      if (usingWebAudio) {
-        masterGain.gain.value = muted ? 0 : self._volume;
-      }
-
-      for (var key in self._howls) {
-        if (self._howls.hasOwnProperty(key) && self._howls[key]._webAudio === false) {
-          // loop through the audio nodes
-          for (var i=0; i<self._howls[key]._audioNode.length; i++) {
-            self._howls[key]._audioNode[i].muted = muted;
-          }
-        }
-      }
-    },
-
-    /**
-     * Check for codec support.
-     * @param  {String} ext Audio file extention.
-     * @return {Boolean}
-     */
-    codecs: function(ext) {
-      return this._codecs[ext];
-    },
-
-    /**
-     * iOS will only allow audio to be played after a user interaction.
-     * Attempt to automatically unlock audio on the first user interaction.
-     * Concept from: http://paulbakaus.com/tutorials/html5/web-audio-on-ios/
-     * @return {Howler}
-     */
-    _enableiOSAudio: function() {
-      var self = this;
-
-      // only run this on iOS if audio isn't already eanbled
-      if (ctx && (self._iOSEnabled || !/iPhone|iPad|iPod/i.test(navigator.userAgent))) {
-        return;
-      }
-
-      self._iOSEnabled = false;
-
-      // call this method on touch start to create and play a buffer,
-      // then check if the audio actually played to determine if
-      // audio has now been unlocked on iOS
-      var unlock = function() {
-        // create an empty buffer
-        var buffer = ctx.createBuffer(1, 1, 22050);
-        var source = ctx.createBufferSource();
-        source.buffer = buffer;
-        source.connect(ctx.destination);
-
-        // play the empty buffer
-        if (typeof source.start === 'undefined') {
-          source.noteOn(0);
-        } else {
-          source.start(0);
-        }
-
-        // setup a timeout to check that we are unlocked on the next event loop
-        setTimeout(function() {
-          if ((source.playbackState === source.PLAYING_STATE || source.playbackState === source.FINISHED_STATE)) {
-            // update the unlocked state and prevent this check from happening again
-            self._iOSEnabled = true;
-            self.iOSAutoEnable = false;
-
-            // remove the touch start listener
-            window.removeEventListener('touchend', unlock, false);
-          }
-        }, 0);
-      };
-
-      // setup a touch start listener to attempt an unlock in
-      window.addEventListener('touchend', unlock, false);
-
-      return self;
-    }
-  };
-
-  // check for browser codec support
-  var audioTest = null;
-  var codecs = {};
-  if (!noAudio) {
-    audioTest = new Audio();
-    codecs = {
-      mp3: !!audioTest.canPlayType('audio/mpeg;').replace(/^no$/, ''),
-      opus: !!audioTest.canPlayType('audio/ogg; codecs="opus"').replace(/^no$/, ''),
-      ogg: !!audioTest.canPlayType('audio/ogg; codecs="vorbis"').replace(/^no$/, ''),
-      wav: !!audioTest.canPlayType('audio/wav; codecs="1"').replace(/^no$/, ''),
-      aac: !!audioTest.canPlayType('audio/aac;').replace(/^no$/, ''),
-      m4a: !!(audioTest.canPlayType('audio/x-m4a;') || audioTest.canPlayType('audio/m4a;') || audioTest.canPlayType('audio/aac;')).replace(/^no$/, ''),
-      mp4: !!(audioTest.canPlayType('audio/x-mp4;') || audioTest.canPlayType('audio/mp4;') || audioTest.canPlayType('audio/aac;')).replace(/^no$/, ''),
-      weba: !!audioTest.canPlayType('audio/webm; codecs="vorbis"').replace(/^no$/, '')
-    };
-  }
-
-  // allow access to the global audio controls
-  var Howler = new HowlerGlobal(codecs);
-
-  // setup the audio object
-  var Howl = function(o) {
-    var self = this;
-
-    // setup the defaults
-    self._autoplay = o.autoplay || false;
-    self._buffer = o.buffer || false;
-    self._duration = o.duration || 0;
-    self._format = o.format || null;
-    self._loop = o.loop || false;
-    self._loaded = false;
-    self._sprite = o.sprite || {};
-    self._src = o.src || '';
-    self._pos3d = o.pos3d || [0, 0, -0.5];
-    self._volume = o.volume !== undefined ? o.volume : 1;
-    self._urls = o.urls || [];
-    self._rate = o.rate || 1;
-
-    // allow forcing of a specific panningModel ('equalpower' or 'HRTF'),
-    // if none is specified, defaults to 'equalpower' and switches to 'HRTF'
-    // if 3d sound is used
-    self._model = o.model || null;
-
-    // setup event functions
-    self._onload = [o.onload || function() {}];
-    self._onloaderror = [o.onloaderror || function() {}];
-    self._onend = [o.onend || function() {}];
-    self._onpause = [o.onpause || function() {}];
-    self._onplay = [o.onplay || function() {}];
-
-    self._onendTimer = [];
-
-    // Web Audio or HTML5 Audio?
-    self._webAudio = usingWebAudio && !self._buffer;
-
-    // check if we need to fall back to HTML5 Audio
-    self._audioNode = [];
-    if (self._webAudio) {
-      self._setupAudioNode();
-    }
-
-    // automatically try to enable audio on iOS
-    if (typeof ctx !== 'undefined' && ctx && Howler.iOSAutoEnable) {
-      Howler._enableiOSAudio();
-    }
-
-    // add this to an array of Howl's to allow global control
-    Howler._howls.push(self);
-
-    // load the track
-    self.load();
-  };
-
-  // setup all of the methods
-  Howl.prototype = {
-    /**
-     * Load an audio file.
-     * @return {Howl}
-     */
-    load: function() {
-      var self = this,
-        url = null;
-
-      // if no audio is available, quit immediately
-      if (noAudio) {
-        self.on('loaderror');
-        return;
-      }
-
-      // loop through source URLs and pick the first one that is compatible
-      for (var i=0; i<self._urls.length; i++) {
-        var ext, urlItem;
-
-        if (self._format) {
-          // use specified audio format if available
-          ext = self._format;
-        } else {
-          // figure out the filetype (whether an extension or base64 data)
-          urlItem = self._urls[i];
-          ext = /^data:audio\/([^;,]+);/i.exec(urlItem);
-          if (!ext) {
-            ext = /\.([^.]+)$/.exec(urlItem.split('?', 1)[0]);
-          }
-
-          if (ext) {
-            ext = ext[1].toLowerCase();
-          } else {
-            self.on('loaderror');
-            return;
-          }
-        }
-
-        if (codecs[ext]) {
-          url = self._urls[i];
-          break;
-        }
-      }
-
-      if (!url) {
-        self.on('loaderror');
-        return;
-      }
-
-      self._src = url;
-
-      if (self._webAudio) {
-        loadBuffer(self, url);
-      } else {
-        var newNode = new Audio();
-
-        // listen for errors with HTML5 audio (http://dev.w3.org/html5/spec-author-view/spec.html#mediaerror)
-        newNode.addEventListener('error', function () {
-          if (newNode.error && newNode.error.code === 4) {
-            HowlerGlobal.noAudio = true;
-          }
-
-          self.on('loaderror', {type: newNode.error ? newNode.error.code : 0});
-        }, false);
-
-        self._audioNode.push(newNode);
-
-        // setup the new audio node
-        newNode.src = url;
-        newNode._pos = 0;
-        newNode.preload = 'auto';
-        newNode.volume = (Howler._muted) ? 0 : self._volume * Howler.volume();
-
-        // setup the event listener to start playing the sound
-        // as soon as it has buffered enough
-        var listener = function() {
-          // round up the duration when using HTML5 Audio to account for the lower precision
-          self._duration = Math.ceil(newNode.duration * 10) / 10;
-
-          // setup a sprite if none is defined
-          if (Object.getOwnPropertyNames(self._sprite).length === 0) {
-            self._sprite = {_default: [0, self._duration * 1000]};
-          }
-
-          if (!self._loaded) {
-            self._loaded = true;
-            self.on('load');
-          }
-
-          if (self._autoplay) {
-            self.play();
-          }
-
-          // clear the event listener
-          newNode.removeEventListener('canplaythrough', listener, false);
-        };
-        newNode.addEventListener('canplaythrough', listener, false);
-        newNode.load();
-      }
-
-      return self;
-    },
-
-    /**
-     * Get/set the URLs to be pulled from to play in this source.
-     * @param  {Array} urls  Arry of URLs to load from
-     * @return {Howl}        Returns self or the current URLs
-     */
-    urls: function(urls) {
-      var self = this;
-
-      if (urls) {
-        self.stop();
-        self._urls = (typeof urls === 'string') ? [urls] : urls;
-        self._loaded = false;
-        self.load();
-
-        return self;
-      } else {
-        return self._urls;
-      }
-    },
-
-    /**
-     * Play a sound from the current time (0 by default).
-     * @param  {String}   sprite   (optional) Plays from the specified position in the sound sprite definition.
-     * @param  {Function} callback (optional) Returns the unique playback id for this sound instance.
-     * @return {Howl}
-     */
-    play: function(sprite, callback) {
-      var self = this;
-
-      // if no sprite was passed but a callback was, update the variables
-      if (typeof sprite === 'function') {
-        callback = sprite;
-      }
-
-      // use the default sprite if none is passed
-      if (!sprite || typeof sprite === 'function') {
-        sprite = '_default';
-      }
-
-      // if the sound hasn't been loaded, add it to the event queue
-      if (!self._loaded) {
-        self.on('load', function() {
-          self.play(sprite, callback);
-        });
-
-        return self;
-      }
-
-      // if the sprite doesn't exist, play nothing
-      if (!self._sprite[sprite]) {
-        if (typeof callback === 'function') callback();
-        return self;
-      }
-
-      // get the node to playback
-      self._inactiveNode(function(node) {
-        // persist the sprite being played
-        node._sprite = sprite;
-
-        // determine where to start playing from
-        var pos = (node._pos > 0) ? node._pos : self._sprite[sprite][0] / 1000;
-
-        // determine how long to play for
-        var duration = 0;
-        if (self._webAudio) {
-          duration = self._sprite[sprite][1] / 1000 - node._pos;
-          if (node._pos > 0) {
-            pos = self._sprite[sprite][0] / 1000 + pos;
-          }
-        } else {
-          duration = self._sprite[sprite][1] / 1000 - (pos - self._sprite[sprite][0] / 1000);
-        }
-
-        // determine if this sound should be looped
-        var loop = !!(self._loop || self._sprite[sprite][2]);
-
-        // set timer to fire the 'onend' event
-        var soundId = (typeof callback === 'string') ? callback : Math.round(Date.now() * Math.random()) + '',
-          timerId;
-        (function() {
-          var data = {
-            id: soundId,
-            sprite: sprite,
-            loop: loop
-          };
-          timerId = setTimeout(function() {
-            // if looping, restart the track
-            if (!self._webAudio && loop) {
-              self.stop(data.id).play(sprite, data.id);
-            }
-
-            // set web audio node to paused at end
-            if (self._webAudio && !loop) {
-              self._nodeById(data.id).paused = true;
-              self._nodeById(data.id)._pos = 0;
-
-              // clear the end timer
-              self._clearEndTimer(data.id);
-            }
-
-            // end the track if it is HTML audio and a sprite
-            if (!self._webAudio && !loop) {
-              self.stop(data.id);
-            }
-
-            // fire ended event
-            self.on('end', soundId);
-          }, duration * 1000);
-
-          // store the reference to the timer
-          self._onendTimer.push({timer: timerId, id: data.id});
-        })();
-
-        if (self._webAudio) {
-          var loopStart = self._sprite[sprite][0] / 1000,
-            loopEnd = self._sprite[sprite][1] / 1000;
-
-          // set the play id to this node and load into context
-          node.id = soundId;
-          node.paused = false;
-          refreshBuffer(self, [loop, loopStart, loopEnd], soundId);
-          self._playStart = ctx.currentTime;
-          node.gain.value = self._volume;
-
-          if (typeof node.bufferSource.start === 'undefined') {
-            loop ? node.bufferSource.noteGrainOn(0, pos, 86400) : node.bufferSource.noteGrainOn(0, pos, duration);
-          } else {
-            loop ? node.bufferSource.start(0, pos, 86400) : node.bufferSource.start(0, pos, duration);
-          }
-        } else {
-          if (node.readyState === 4 || !node.readyState && navigator.isCocoonJS) {
-            node.readyState = 4;
-            node.id = soundId;
-            node.currentTime = pos;
-            node.muted = Howler._muted || node.muted;
-            node.volume = self._volume * Howler.volume();
-            setTimeout(function() { node.play(); }, 0);
-          } else {
-            self._clearEndTimer(soundId);
-
-            (function(){
-              var sound = self,
-                playSprite = sprite,
-                fn = callback,
-                newNode = node;
-              var listener = function() {
-                sound.play(playSprite, fn);
-
-                // clear the event listener
-                newNode.removeEventListener('canplaythrough', listener, false);
-              };
-              newNode.addEventListener('canplaythrough', listener, false);
-            })();
-
-            return self;
-          }
-        }
-
-        // fire the play event and send the soundId back in the callback
-        self.on('play');
-        if (typeof callback === 'function') callback(soundId);
-
-        return self;
-      });
-
-      return self;
-    },
-
-    /**
-     * Pause playback and save the current position.
-     * @param {String} id (optional) The play instance ID.
-     * @return {Howl}
-     */
-    pause: function(id) {
-      var self = this;
-
-      // if the sound hasn't been loaded, add it to the event queue
-      if (!self._loaded) {
-        self.on('play', function() {
-          self.pause(id);
-        });
-
-        return self;
-      }
-
-      // clear 'onend' timer
-      self._clearEndTimer(id);
-
-      var activeNode = (id) ? self._nodeById(id) : self._activeNode();
-      if (activeNode) {
-        activeNode._pos = self.pos(null, id);
-
-        if (self._webAudio) {
-          // make sure the sound has been created
-          if (!activeNode.bufferSource || activeNode.paused) {
-            return self;
-          }
-
-          activeNode.paused = true;
-          if (typeof activeNode.bufferSource.stop === 'undefined') {
-            activeNode.bufferSource.noteOff(0);
-          } else {
-            activeNode.bufferSource.stop(0);
-          }
-        } else {
-          activeNode.pause();
-        }
-      }
-
-      self.on('pause');
-
-      return self;
-    },
-
-    /**
-     * Stop playback and reset to start.
-     * @param  {String} id  (optional) The play instance ID.
-     * @return {Howl}
-     */
-    stop: function(id) {
-      var self = this;
-
-      // if the sound hasn't been loaded, add it to the event queue
-      if (!self._loaded) {
-        self.on('play', function() {
-          self.stop(id);
-        });
-
-        return self;
-      }
-
-      // clear 'onend' timer
-      self._clearEndTimer(id);
-
-      var activeNode = (id) ? self._nodeById(id) : self._activeNode();
-      if (activeNode) {
-        activeNode._pos = 0;
-
-        if (self._webAudio) {
-          // make sure the sound has been created
-          if (!activeNode.bufferSource || activeNode.paused) {
-            return self;
-          }
-
-          activeNode.paused = true;
-
-          if (typeof activeNode.bufferSource.stop === 'undefined') {
-            activeNode.bufferSource.noteOff(0);
-          } else {
-            activeNode.bufferSource.stop(0);
-          }
-        } else if (!isNaN(activeNode.duration)) {
-          activeNode.pause();
-          activeNode.currentTime = 0;
-        }
-      }
-
-      return self;
-    },
-
-    /**
-     * Mute this sound.
-     * @param  {String} id (optional) The play instance ID.
-     * @return {Howl}
-     */
-    mute: function(id) {
-      var self = this;
-
-      // if the sound hasn't been loaded, add it to the event queue
-      if (!self._loaded) {
-        self.on('play', function() {
-          self.mute(id);
-        });
-
-        return self;
-      }
-
-      var activeNode = (id) ? self._nodeById(id) : self._activeNode();
-      if (activeNode) {
-        if (self._webAudio) {
-          activeNode.gain.value = 0;
-        } else {
-          activeNode.muted = true;
-        }
-      }
-
-      return self;
-    },
-
-    /**
-     * Unmute this sound.
-     * @param  {String} id (optional) The play instance ID.
-     * @return {Howl}
-     */
-    unmute: function(id) {
-      var self = this;
-
-      // if the sound hasn't been loaded, add it to the event queue
-      if (!self._loaded) {
-        self.on('play', function() {
-          self.unmute(id);
-        });
-
-        return self;
-      }
-
-      var activeNode = (id) ? self._nodeById(id) : self._activeNode();
-      if (activeNode) {
-        if (self._webAudio) {
-          activeNode.gain.value = self._volume;
-        } else {
-          activeNode.muted = false;
-        }
-      }
-
-      return self;
-    },
-
-    /**
-     * Get/set volume of this sound.
-     * @param  {Float}  vol Volume from 0.0 to 1.0.
-     * @param  {String} id  (optional) The play instance ID.
-     * @return {Howl/Float}     Returns self or current volume.
-     */
-    volume: function(vol, id) {
-      var self = this;
-
-      // make sure volume is a number
-      vol = parseFloat(vol);
-
-      if (vol >= 0 && vol <= 1) {
-        self._volume = vol;
-
-        // if the sound hasn't been loaded, add it to the event queue
-        if (!self._loaded) {
-          self.on('play', function() {
-            self.volume(vol, id);
-          });
-
-          return self;
-        }
-
-        var activeNode = (id) ? self._nodeById(id) : self._activeNode();
-        if (activeNode) {
-          if (self._webAudio) {
-            activeNode.gain.value = vol;
-          } else {
-            activeNode.volume = vol * Howler.volume();
-          }
-        }
-
-        return self;
-      } else {
-        return self._volume;
-      }
-    },
-
-    /**
-     * Get/set whether to loop the sound.
-     * @param  {Boolean} loop To loop or not to loop, that is the question.
-     * @return {Howl/Boolean}      Returns self or current looping value.
-     */
-    loop: function(loop) {
-      var self = this;
-
-      if (typeof loop === 'boolean') {
-        self._loop = loop;
-
-        return self;
-      } else {
-        return self._loop;
-      }
-    },
-
-    /**
-     * Get/set sound sprite definition.
-     * @param  {Object} sprite Example: {spriteName: [offset, duration, loop]}
-     *                @param {Integer} offset   Where to begin playback in milliseconds
-     *                @param {Integer} duration How long to play in milliseconds
-     *                @param {Boolean} loop     (optional) Set true to loop this sprite
-     * @return {Howl}        Returns current sprite sheet or self.
-     */
-    sprite: function(sprite) {
-      var self = this;
-
-      if (typeof sprite === 'object') {
-        self._sprite = sprite;
-
-        return self;
-      } else {
-        return self._sprite;
-      }
-    },
-
-    /**
-     * Get/set the position of playback.
-     * @param  {Float}  pos The position to move current playback to.
-     * @param  {String} id  (optional) The play instance ID.
-     * @return {Howl/Float}      Returns self or current playback position.
-     */
-    pos: function(pos, id) {
-      var self = this;
-
-      // if the sound hasn't been loaded, add it to the event queue
-      if (!self._loaded) {
-        self.on('load', function() {
-          self.pos(pos);
-        });
-
-        return typeof pos === 'number' ? self : self._pos || 0;
-      }
-
-      // make sure we are dealing with a number for pos
-      pos = parseFloat(pos);
-
-      var activeNode = (id) ? self._nodeById(id) : self._activeNode();
-      if (activeNode) {
-        if (pos >= 0) {
-          self.pause(id);
-          activeNode._pos = pos;
-          self.play(activeNode._sprite, id);
-
-          return self;
-        } else {
-          return self._webAudio ? activeNode._pos + (ctx.currentTime - self._playStart) : activeNode.currentTime;
-        }
-      } else if (pos >= 0) {
-        return self;
-      } else {
-        // find the first inactive node to return the pos for
-        for (var i=0; i<self._audioNode.length; i++) {
-          if (self._audioNode[i].paused && self._audioNode[i].readyState === 4) {
-            return (self._webAudio) ? self._audioNode[i]._pos : self._audioNode[i].currentTime;
-          }
-        }
-      }
-    },
-
-    /**
-     * Get/set the 3D position of the audio source.
-     * The most common usage is to set the 'x' position
-     * to affect the left/right ear panning. Setting any value higher than
-     * 1.0 will begin to decrease the volume of the sound as it moves further away.
-     * NOTE: This only works with Web Audio API, HTML5 Audio playback
-     * will not be affected.
-     * @param  {Float}  x  The x-position of the playback from -1000.0 to 1000.0
-     * @param  {Float}  y  The y-position of the playback from -1000.0 to 1000.0
-     * @param  {Float}  z  The z-position of the playback from -1000.0 to 1000.0
-     * @param  {String} id (optional) The play instance ID.
-     * @return {Howl/Array}   Returns self or the current 3D position: [x, y, z]
-     */
-    pos3d: function(x, y, z, id) {
-      var self = this;
-
-      // set a default for the optional 'y' & 'z'
-      y = (typeof y === 'undefined' || !y) ? 0 : y;
-      z = (typeof z === 'undefined' || !z) ? -0.5 : z;
-
-      // if the sound hasn't been loaded, add it to the event queue
-      if (!self._loaded) {
-        self.on('play', function() {
-          self.pos3d(x, y, z, id);
-        });
-
-        return self;
-      }
-
-      if (x >= 0 || x < 0) {
-        if (self._webAudio) {
-          var activeNode = (id) ? self._nodeById(id) : self._activeNode();
-          if (activeNode) {
-            self._pos3d = [x, y, z];
-            activeNode.panner.setPosition(x, y, z);
-            activeNode.panner.panningModel = self._model || 'HRTF';
-          }
-        }
-      } else {
-        return self._pos3d;
-      }
-
-      return self;
-    },
-
-    /**
-     * Fade a currently playing sound between two volumes.
-     * @param  {Number}   from     The volume to fade from (0.0 to 1.0).
-     * @param  {Number}   to       The volume to fade to (0.0 to 1.0).
-     * @param  {Number}   len      Time in milliseconds to fade.
-     * @param  {Function} callback (optional) Fired when the fade is complete.
-     * @param  {String}   id       (optional) The play instance ID.
-     * @return {Howl}
-     */
-    fade: function(from, to, len, callback, id) {
-      var self = this,
-        diff = Math.abs(from - to),
-        dir = from > to ? 'down' : 'up',
-        steps = diff / 0.01,
-        stepTime = len / steps;
-
-      // if the sound hasn't been loaded, add it to the event queue
-      if (!self._loaded) {
-        self.on('load', function() {
-          self.fade(from, to, len, callback, id);
-        });
-
-        return self;
-      }
-
-      // set the volume to the start position
-      self.volume(from, id);
-
-      for (var i=1; i<=steps; i++) {
-        (function() {
-          var change = self._volume + (dir === 'up' ? 0.01 : -0.01) * i,
-            vol = Math.round(1000 * change) / 1000,
-            toVol = to;
-
-          setTimeout(function() {
-            self.volume(vol, id);
-
-            if (vol === toVol) {
-              if (callback) callback();
-            }
-          }, stepTime * i);
-        })();
-      }
-    },
-
-    /**
-     * [DEPRECATED] Fade in the current sound.
-     * @param  {Float}    to      Volume to fade to (0.0 to 1.0).
-     * @param  {Number}   len     Time in milliseconds to fade.
-     * @param  {Function} callback
-     * @return {Howl}
-     */
-    fadeIn: function(to, len, callback) {
-      return this.volume(0).play().fade(0, to, len, callback);
-    },
-
-    /**
-     * [DEPRECATED] Fade out the current sound and pause when finished.
-     * @param  {Float}    to       Volume to fade to (0.0 to 1.0).
-     * @param  {Number}   len      Time in milliseconds to fade.
-     * @param  {Function} callback
-     * @param  {String}   id       (optional) The play instance ID.
-     * @return {Howl}
-     */
-    fadeOut: function(to, len, callback, id) {
-      var self = this;
-
-      return self.fade(self._volume, to, len, function() {
-        if (callback) callback();
-        self.pause(id);
-
-        // fire ended event
-        self.on('end');
-      }, id);
-    },
-
-    /**
-     * Get an audio node by ID.
-     * @return {Howl} Audio node.
-     */
-    _nodeById: function(id) {
-      var self = this,
-        node = self._audioNode[0];
-
-      // find the node with this ID
-      for (var i=0; i<self._audioNode.length; i++) {
-        if (self._audioNode[i].id === id) {
-          node = self._audioNode[i];
-          break;
-        }
-      }
-
-      return node;
-    },
-
-    /**
-     * Get the first active audio node.
-     * @return {Howl} Audio node.
-     */
-    _activeNode: function() {
-      var self = this,
-        node = null;
-
-      // find the first playing node
-      for (var i=0; i<self._audioNode.length; i++) {
-        if (!self._audioNode[i].paused) {
-          node = self._audioNode[i];
-          break;
-        }
-      }
-
-      // remove excess inactive nodes
-      self._drainPool();
-
-      return node;
-    },
-
-    /**
-     * Get the first inactive audio node.
-     * If there is none, create a new one and add it to the pool.
-     * @param  {Function} callback Function to call when the audio node is ready.
-     */
-    _inactiveNode: function(callback) {
-      var self = this,
-        node = null;
-
-      // find first inactive node to recycle
-      for (var i=0; i<self._audioNode.length; i++) {
-        if (self._audioNode[i].paused && self._audioNode[i].readyState === 4) {
-          // send the node back for use by the new play instance
-          callback(self._audioNode[i]);
-          node = true;
-          break;
-        }
-      }
-
-      // remove excess inactive nodes
-      self._drainPool();
-
-      if (node) {
-        return;
-      }
-
-      // create new node if there are no inactives
-      var newNode;
-      if (self._webAudio) {
-        newNode = self._setupAudioNode();
-        callback(newNode);
-      } else {
-        self.load();
-        newNode = self._audioNode[self._audioNode.length - 1];
-
-        // listen for the correct load event and fire the callback
-        var listenerEvent = navigator.isCocoonJS ? 'canplaythrough' : 'loadedmetadata';
-        var listener = function() {
-          newNode.removeEventListener(listenerEvent, listener, false);
-          callback(newNode);
-        };
-        newNode.addEventListener(listenerEvent, listener, false);
-      }
-    },
-
-    /**
-     * If there are more than 5 inactive audio nodes in the pool, clear out the rest.
-     */
-    _drainPool: function() {
-      var self = this,
-        inactive = 0,
-        i;
-
-      // count the number of inactive nodes
-      for (i=0; i<self._audioNode.length; i++) {
-        if (self._audioNode[i].paused) {
-          inactive++;
-        }
-      }
-
-      // remove excess inactive nodes
-      for (i=self._audioNode.length-1; i>=0; i--) {
-        if (inactive <= 5) {
-          break;
-        }
-
-        if (self._audioNode[i].paused) {
-          // disconnect the audio source if using Web Audio
-          if (self._webAudio) {
-            self._audioNode[i].disconnect(0);
-          }
-
-          inactive--;
-          self._audioNode.splice(i, 1);
-        }
-      }
-    },
-
-    /**
-     * Clear 'onend' timeout before it ends.
-     * @param  {String} soundId  The play instance ID.
-     */
-    _clearEndTimer: function(soundId) {
-      var self = this,
-        index = 0;
-
-      // loop through the timers to find the one associated with this sound
-      for (var i=0; i<self._onendTimer.length; i++) {
-        if (self._onendTimer[i].id === soundId) {
-          index = i;
-          break;
-        }
-      }
-
-      var timer = self._onendTimer[index];
-      if (timer) {
-        clearTimeout(timer.timer);
-        self._onendTimer.splice(index, 1);
-      }
-    },
-
-    /**
-     * Setup the gain node and panner for a Web Audio instance.
-     * @return {Object} The new audio node.
-     */
-    _setupAudioNode: function() {
-      var self = this,
-        node = self._audioNode,
-        index = self._audioNode.length;
-
-      // create gain node
-      node[index] = (typeof ctx.createGain === 'undefined') ? ctx.createGainNode() : ctx.createGain();
-      node[index].gain.value = self._volume;
-      node[index].paused = true;
-      node[index]._pos = 0;
-      node[index].readyState = 4;
-      node[index].connect(masterGain);
-
-      // create the panner
-      node[index].panner = ctx.createPanner();
-      node[index].panner.panningModel = self._model || 'equalpower';
-      node[index].panner.setPosition(self._pos3d[0], self._pos3d[1], self._pos3d[2]);
-      node[index].panner.connect(node[index]);
-
-      return node[index];
-    },
-
-    /**
-     * Call/set custom events.
-     * @param  {String}   event Event type.
-     * @param  {Function} fn    Function to call.
-     * @return {Howl}
-     */
-    on: function(event, fn) {
-      var self = this,
-        events = self['_on' + event];
-
-      if (typeof fn === 'function') {
-        events.push(fn);
-      } else {
-        for (var i=0; i<events.length; i++) {
-          if (fn) {
-            events[i].call(self, fn);
-          } else {
-            events[i].call(self);
-          }
-        }
-      }
-
-      return self;
-    },
-
-    /**
-     * Remove a custom event.
-     * @param  {String}   event Event type.
-     * @param  {Function} fn    Listener to remove.
-     * @return {Howl}
-     */
-    off: function(event, fn) {
-      var self = this,
-        events = self['_on' + event],
-        fnString = fn ? fn.toString() : null;
-
-      if (fnString) {
-        // loop through functions in the event for comparison
-        for (var i=0; i<events.length; i++) {
-          if (fnString === events[i].toString()) {
-            events.splice(i, 1);
-            break;
-          }
-        }
-      } else {
-        self['_on' + event] = [];
-      }
-
-      return self;
-    },
-
-    /**
-     * Unload and destroy the current Howl object.
-     * This will immediately stop all play instances attached to this sound.
-     */
-    unload: function() {
-      var self = this;
-
-      // stop playing any active nodes
-      var nodes = self._audioNode;
-      for (var i=0; i<self._audioNode.length; i++) {
-        // stop the sound if it is currently playing
-        if (!nodes[i].paused) {
-          self.stop(nodes[i].id);
-          self.on('end', nodes[i].id);
-        }
-
-        if (!self._webAudio) {
-          // remove the source if using HTML5 Audio
-          nodes[i].src = '';
-        } else {
-          // disconnect the output from the master gain
-          nodes[i].disconnect(0);
-        }
-      }
-
-      // make sure all timeouts are cleared
-      for (i=0; i<self._onendTimer.length; i++) {
-        clearTimeout(self._onendTimer[i].timer);
-      }
-
-      // remove the reference in the global Howler object
-      var index = Howler._howls.indexOf(self);
-      if (index !== null && index >= 0) {
-        Howler._howls.splice(index, 1);
-      }
-
-      // delete this sound from the cache
-      delete cache[self._src];
-      self = null;
-    }
-
-  };
-
-  // only define these functions when using WebAudio
-  if (usingWebAudio) {
-
-    /**
-     * Buffer a sound from URL (or from cache) and decode to audio source (Web Audio API).
-     * @param  {Object} obj The Howl object for the sound to load.
-     * @param  {String} url The path to the sound file.
-     */
-    var loadBuffer = function(obj, url) {
-      // check if the buffer has already been cached
-      if (url in cache) {
-        // set the duration from the cache
-        obj._duration = cache[url].duration;
-
-        // load the sound into this object
-        loadSound(obj);
-        return;
-      }
-      
-      if (/^data:[^;]+;base64,/.test(url)) {
-        // Decode base64 data-URIs because some browsers cannot load data-URIs with XMLHttpRequest.
-        var data = atob(url.split(',')[1]);
-        var dataView = new Uint8Array(data.length);
-        for (var i=0; i<data.length; ++i) {
-          dataView[i] = data.charCodeAt(i);
-        }
-        
-        decodeAudioData(dataView.buffer, obj, url);
-      } else {
-        // load the buffer from the URL
-        var xhr = new XMLHttpRequest();
-        xhr.open('GET', url, true);
-        xhr.responseType = 'arraybuffer';
-        xhr.onload = function() {
-          decodeAudioData(xhr.response, obj, url);
-        };
-        xhr.onerror = function() {
-          // if there is an error, switch the sound to HTML Audio
-          if (obj._webAudio) {
-            obj._buffer = true;
-            obj._webAudio = false;
-            obj._audioNode = [];
-            delete obj._gainNode;
-            delete cache[url];
-            obj.load();
-          }
-        };
-        try {
-          xhr.send();
-        } catch (e) {
-          xhr.onerror();
-        }
-      }
-    };
-
-    /**
-     * Decode audio data from an array buffer.
-     * @param  {ArrayBuffer} arraybuffer The audio data.
-     * @param  {Object} obj The Howl object for the sound to load.
-     * @param  {String} url The path to the sound file.
-     */
-    var decodeAudioData = function(arraybuffer, obj, url) {
-      // decode the buffer into an audio source
-      ctx.decodeAudioData(
-        arraybuffer,
-        function(buffer) {
-          if (buffer) {
-            cache[url] = buffer;
-            loadSound(obj, buffer);
-          }
-        },
-        function(err) {
-          obj.on('loaderror');
-        }
-      );
-    };
-
-    /**
-     * Finishes loading the Web Audio API sound and fires the loaded event
-     * @param  {Object}  obj    The Howl object for the sound to load.
-     * @param  {Objecct} buffer The decoded buffer sound source.
-     */
-    var loadSound = function(obj, buffer) {
-      // set the duration
-      obj._duration = (buffer) ? buffer.duration : obj._duration;
-
-      // setup a sprite if none is defined
-      if (Object.getOwnPropertyNames(obj._sprite).length === 0) {
-        obj._sprite = {_default: [0, obj._duration * 1000]};
-      }
-
-      // fire the loaded event
-      if (!obj._loaded) {
-        obj._loaded = true;
-        obj.on('load');
-      }
-
-      if (obj._autoplay) {
-        obj.play();
-      }
-    };
-
-    /**
-     * Load the sound back into the buffer source.
-     * @param  {Object} obj   The sound to load.
-     * @param  {Array}  loop  Loop boolean, pos, and duration.
-     * @param  {String} id    (optional) The play instance ID.
-     */
-    var refreshBuffer = function(obj, loop, id) {
-      // determine which node to connect to
-      var node = obj._nodeById(id);
-
-      // setup the buffer source for playback
-      node.bufferSource = ctx.createBufferSource();
-      node.bufferSource.buffer = cache[obj._src];
-      node.bufferSource.connect(node.panner);
-      node.bufferSource.loop = loop[0];
-      if (loop[0]) {
-        node.bufferSource.loopStart = loop[1];
-        node.bufferSource.loopEnd = loop[1] + loop[2];
-      }
-      node.bufferSource.playbackRate.value = obj._rate;
-    };
-
-  }
-
-  /**
-   * Add support for AMD (Asynchronous Module Definition) libraries such as require.js.
-   */
-  if (typeof define === 'function' && define.amd) {
-    define(function() {
-      return {
-        Howler: Howler,
-        Howl: Howl
-      };
-    });
-  }
-
-  /**
-   * Add support for CommonJS libraries such as browserify.
-   */
-  if (typeof exports !== 'undefined') {
-    exports.Howler = Howler;
-    exports.Howl = Howl;
-  }
-
-  // define globally in case AMD is not available or available but not used
-
-  if (typeof window !== 'undefined') {
-    window.Howler = Howler;
-    window.Howl = Howl;
-  }
-
-})();
-
-///#source 1 1 /core/js/app.js
-function CCSStylesheetRuleStyle(selectorText, style, value) {
-    /* returns the value of the element style of the rule in the stylesheet
-    *  If no value is given, reads the value
-    *  If value is given, the value is changed and returned
-    *  If '' (empty string) is given, erases the value.
-    *  The browser will apply the default one
-    *
-    * string stylesheet: part of the .css name to be recognized, e.g. 'default'
-    * string selectorText: css selector, e.g. '#myId', '.myClass', 'thead td'
-    * string style: camelCase element style, e.g. 'fontSize'
-    * string value optionnal : the new value
-    */
-    var CCSstyle = undefined, rules;
-    rules = document.styleSheets[0][document.all ? 'rules' : 'cssRules'];
-    for (var n in rules) {
-        console.log(rules[n].selectorText);
-        if (rules[n].selectorText == selectorText) {
-            CCSstyle = rules[n].style;
-            break;
-        }
-    }
-    if (value == undefined)
-        return CCSstyle[style];
-    else
-        return CCSstyle[style] = value;
-}
+L.labelVersion = '0.2.2-dev';
+
+L.Label = (L.Layer ? L.Layer : L.Class).extend({
+
+	includes: L.Mixin.Events,
+
+	options: {
+		className: '',
+		clickable: false,
+		direction: 'right',
+		noHide: false,
+		offset: [12, -15], // 6 (width of the label triangle) + 6 (padding)
+		opacity: 1,
+		zoomAnimation: true
+	},
+
+	initialize: function (options, source) {
+		L.setOptions(this, options);
+
+		this._source = source;
+		this._animated = L.Browser.any3d && this.options.zoomAnimation;
+		this._isOpen = false;
+	},
+
+	onAdd: function (map) {
+		this._map = map;
+
+		this._pane = this.options.pane ? map._panes[this.options.pane] :
+			this._source instanceof L.Marker ? map._panes.markerPane : map._panes.popupPane;
+
+		if (!this._container) {
+			this._initLayout();
+		}
+
+		this._pane.appendChild(this._container);
+
+		this._initInteraction();
+
+		this._update();
+
+		this.setOpacity(this.options.opacity);
+
+		map
+			.on('moveend', this._onMoveEnd, this)
+			.on('viewreset', this._onViewReset, this);
+
+		if (this._animated) {
+			map.on('zoomanim', this._zoomAnimation, this);
+		}
+
+		if (L.Browser.touch && !this.options.noHide) {
+			L.DomEvent.on(this._container, 'click', this.close, this);
+			map.on('click', this.close, this);
+		}
+	},
+
+	onRemove: function (map) {
+		this._pane.removeChild(this._container);
+
+		map.off({
+			zoomanim: this._zoomAnimation,
+			moveend: this._onMoveEnd,
+			viewreset: this._onViewReset
+		}, this);
+
+		this._removeInteraction();
+
+		this._map = null;
+	},
+
+	setLatLng: function (latlng) {
+		this._latlng = L.latLng(latlng);
+		if (this._map) {
+			this._updatePosition();
+		}
+		return this;
+	},
+
+	setContent: function (content) {
+		// Backup previous content and store new content
+		this._previousContent = this._content;
+		this._content = content;
+
+		this._updateContent();
+
+		return this;
+	},
+
+	close: function () {
+		var map = this._map;
+
+		if (map) {
+			if (L.Browser.touch && !this.options.noHide) {
+				L.DomEvent.off(this._container, 'click', this.close);
+				map.off('click', this.close, this);
+			}
+
+			map.removeLayer(this);
+		}
+	},
+
+	updateZIndex: function (zIndex) {
+		this._zIndex = zIndex;
+
+		if (this._container && this._zIndex) {
+			this._container.style.zIndex = zIndex;
+		}
+	},
+
+	setOpacity: function (opacity) {
+		this.options.opacity = opacity;
+
+		if (this._container) {
+			L.DomUtil.setOpacity(this._container, opacity);
+		}
+	},
+
+	_initLayout: function () {
+		this._container = L.DomUtil.create('div', 'leaflet-label ' + this.options.className + ' leaflet-zoom-animated');
+		this.updateZIndex(this._zIndex);
+	},
+
+	_update: function () {
+		if (!this._map) { return; }
+
+		this._container.style.visibility = 'hidden';
+
+		this._updateContent();
+		this._updatePosition();
+
+		this._container.style.visibility = '';
+	},
+
+	_updateContent: function () {
+		if (!this._content || !this._map || this._prevContent === this._content) {
+			return;
+		}
+
+		if (typeof this._content === 'string') {
+			this._container.innerHTML = this._content;
+
+			this._prevContent = this._content;
+
+			this._labelWidth = this._container.offsetWidth;
+		}
+	},
+
+	_updatePosition: function () {
+		var pos = this._map.latLngToLayerPoint(this._latlng);
+
+		this._setPosition(pos);
+	},
+
+	_setPosition: function (pos) {
+		var map = this._map,
+			container = this._container,
+			centerPoint = map.latLngToContainerPoint(map.getCenter()),
+			labelPoint = map.layerPointToContainerPoint(pos),
+			direction = this.options.direction,
+			labelWidth = this._labelWidth,
+			offset = L.point(this.options.offset);
+
+		// position to the right (right or auto & needs to)
+		if (direction === 'right' || direction === 'auto' && labelPoint.x < centerPoint.x) {
+			L.DomUtil.addClass(container, 'leaflet-label-right');
+			L.DomUtil.removeClass(container, 'leaflet-label-left');
+
+			pos = pos.add(offset);
+		} else { // position to the left
+			L.DomUtil.addClass(container, 'leaflet-label-left');
+			L.DomUtil.removeClass(container, 'leaflet-label-right');
+
+			pos = pos.add(L.point(-offset.x - labelWidth, offset.y));
+		}
+
+		L.DomUtil.setPosition(container, pos);
+	},
+
+	_zoomAnimation: function (opt) {
+		var pos = this._map._latLngToNewLayerPoint(this._latlng, opt.zoom, opt.center).round();
+
+		this._setPosition(pos);
+	},
+
+	_onMoveEnd: function () {
+		if (!this._animated || this.options.direction === 'auto') {
+			this._updatePosition();
+		}
+	},
+
+	_onViewReset: function (e) {
+		/* if map resets hard, we must update the label */
+		if (e && e.hard) {
+			this._update();
+		}
+	},
+
+	_initInteraction: function () {
+		if (!this.options.clickable) { return; }
+
+		var container = this._container,
+			events = ['dblclick', 'mousedown', 'mouseover', 'mouseout', 'contextmenu'];
+
+		L.DomUtil.addClass(container, 'leaflet-clickable');
+		L.DomEvent.on(container, 'click', this._onMouseClick, this);
+
+		for (var i = 0; i < events.length; i++) {
+			L.DomEvent.on(container, events[i], this._fireMouseEvent, this);
+		}
+	},
+
+	_removeInteraction: function () {
+		if (!this.options.clickable) { return; }
+
+		var container = this._container,
+			events = ['dblclick', 'mousedown', 'mouseover', 'mouseout', 'contextmenu'];
+
+		L.DomUtil.removeClass(container, 'leaflet-clickable');
+		L.DomEvent.off(container, 'click', this._onMouseClick, this);
+
+		for (var i = 0; i < events.length; i++) {
+			L.DomEvent.off(container, events[i], this._fireMouseEvent, this);
+		}
+	},
+
+	_onMouseClick: function (e) {
+		if (this.hasEventListeners(e.type)) {
+			L.DomEvent.stopPropagation(e);
+		}
+
+		this.fire(e.type, {
+			originalEvent: e
+		});
+	},
+
+	_fireMouseEvent: function (e) {
+		this.fire(e.type, {
+			originalEvent: e
+		});
+
+		// TODO proper custom event propagation
+		// this line will always be called if marker is in a FeatureGroup
+		if (e.type === 'contextmenu' && this.hasEventListeners(e.type)) {
+			L.DomEvent.preventDefault(e);
+		}
+		if (e.type !== 'mousedown') {
+			L.DomEvent.stopPropagation(e);
+		} else {
+			L.DomEvent.preventDefault(e);
+		}
+	}
+});
+
+
+// This object is a mixin for L.Marker and L.CircleMarker. We declare it here as both need to include the contents.
+L.BaseMarkerMethods = {
+	showLabel: function () {
+		if (this.label && this._map) {
+			this.label.setLatLng(this._latlng);
+			this._map.showLabel(this.label);
+		}
+
+		return this;
+	},
+
+	hideLabel: function () {
+		if (this.label) {
+			this.label.close();
+		}
+		return this;
+	},
+
+	setLabelNoHide: function (noHide) {
+		if (this._labelNoHide === noHide) {
+			return;
+		}
+
+		this._labelNoHide = noHide;
+
+		if (noHide) {
+			this._removeLabelRevealHandlers();
+			this.showLabel();
+		} else {
+			this._addLabelRevealHandlers();
+			this.hideLabel();
+		}
+	},
+
+	bindLabel: function (content, options) {
+		var labelAnchor = this.options.icon ? this.options.icon.options.labelAnchor : this.options.labelAnchor,
+			anchor = L.point(labelAnchor) || L.point(0, 0);
+
+		anchor = anchor.add(L.Label.prototype.options.offset);
+
+		if (options && options.offset) {
+			anchor = anchor.add(options.offset);
+		}
+
+		options = L.Util.extend({offset: anchor}, options);
+
+		this._labelNoHide = options.noHide;
+
+		if (!this.label) {
+			if (!this._labelNoHide) {
+				this._addLabelRevealHandlers();
+			}
+
+			this
+				.on('remove', this.hideLabel, this)
+				.on('move', this._moveLabel, this)
+				.on('add', this._onMarkerAdd, this);
+
+			this._hasLabelHandlers = true;
+		}
+
+		this.label = new L.Label(options, this)
+			.setContent(content);
+
+		return this;
+	},
+
+	unbindLabel: function () {
+		if (this.label) {
+			this.hideLabel();
+
+			this.label = null;
+
+			if (this._hasLabelHandlers) {
+				if (!this._labelNoHide) {
+					this._removeLabelRevealHandlers();
+				}
+
+				this
+					.off('remove', this.hideLabel, this)
+					.off('move', this._moveLabel, this)
+					.off('add', this._onMarkerAdd, this);
+			}
+
+			this._hasLabelHandlers = false;
+		}
+		return this;
+	},
+
+	updateLabelContent: function (content) {
+		if (this.label) {
+			this.label.setContent(content);
+		}
+	},
+
+	getLabel: function () {
+		return this.label;
+	},
+
+	_onMarkerAdd: function () {
+		if (this._labelNoHide) {
+			this.showLabel();
+		}
+	},
+
+	_addLabelRevealHandlers: function () {
+		this
+			.on('mouseover', this.showLabel, this)
+			.on('mouseout', this.hideLabel, this);
+
+		if (L.Browser.touch) {
+			this.on('click', this.showLabel, this);
+		}
+	},
+
+	_removeLabelRevealHandlers: function () {
+		this
+			.off('mouseover', this.showLabel, this)
+			.off('mouseout', this.hideLabel, this);
+
+		if (L.Browser.touch) {
+			this.off('click', this.showLabel, this);
+		}
+	},
+
+	_moveLabel: function (e) {
+		this.label.setLatLng(e.latlng);
+	}
+};
+
+// Add in an option to icon that is used to set where the label anchor is
+L.Icon.Default.mergeOptions({
+	labelAnchor: new L.Point(9, -20)
+});
+
+// Have to do this since Leaflet is loaded before this plugin and initializes
+// L.Marker.options.icon therefore missing our mixin above.
+L.Marker.mergeOptions({
+	icon: new L.Icon.Default()
+});
+
+L.Marker.include(L.BaseMarkerMethods);
+L.Marker.include({
+	_originalUpdateZIndex: L.Marker.prototype._updateZIndex,
+
+	_updateZIndex: function (offset) {
+		var zIndex = this._zIndex + offset;
+
+		this._originalUpdateZIndex(offset);
+
+		if (this.label) {
+			this.label.updateZIndex(zIndex);
+		}
+	},
+
+	_originalSetOpacity: L.Marker.prototype.setOpacity,
+
+	setOpacity: function (opacity, labelHasSemiTransparency) {
+		this.options.labelHasSemiTransparency = labelHasSemiTransparency;
+
+		this._originalSetOpacity(opacity);
+	},
+
+	_originalUpdateOpacity: L.Marker.prototype._updateOpacity,
+
+	_updateOpacity: function () {
+		var absoluteOpacity = this.options.opacity === 0 ? 0 : 1;
+
+		this._originalUpdateOpacity();
+
+		if (this.label) {
+			this.label.setOpacity(this.options.labelHasSemiTransparency ? this.options.opacity : absoluteOpacity);
+		}
+	},
+
+	_originalSetLatLng: L.Marker.prototype.setLatLng,
+
+	setLatLng: function (latlng) {
+		if (this.label && !this._labelNoHide) {
+			this.hideLabel();
+		}
+
+		return this._originalSetLatLng(latlng);
+	}
+});
+
+// Add in an option to icon that is used to set where the label anchor is
+L.CircleMarker.mergeOptions({
+	labelAnchor: new L.Point(0, 0)
+});
+
+
+L.CircleMarker.include(L.BaseMarkerMethods);
+
+L.Path.include({
+	bindLabel: function (content, options) {
+		if (!this.label || this.label.options !== options) {
+			this.label = new L.Label(options, this);
+		}
+
+		this.label.setContent(content);
+
+		if (!this._showLabelAdded) {
+			this
+				.on('mouseover', this._showLabel, this)
+				.on('mousemove', this._moveLabel, this)
+				.on('mouseout remove', this._hideLabel, this);
+
+			if (L.Browser.touch) {
+				this.on('click', this._showLabel, this);
+			}
+			this._showLabelAdded = true;
+		}
+
+		return this;
+	},
+
+	unbindLabel: function () {
+		if (this.label) {
+			this._hideLabel();
+			this.label = null;
+			this._showLabelAdded = false;
+			this
+				.off('mouseover', this._showLabel, this)
+				.off('mousemove', this._moveLabel, this)
+				.off('mouseout remove', this._hideLabel, this);
+		}
+		return this;
+	},
+
+	updateLabelContent: function (content) {
+		if (this.label) {
+			this.label.setContent(content);
+		}
+	},
+
+	_showLabel: function (e) {
+		this.label.setLatLng(e.latlng);
+		this._map.showLabel(this.label);
+	},
+
+	_moveLabel: function (e) {
+		this.label.setLatLng(e.latlng);
+	},
+
+	_hideLabel: function () {
+		this.label.close();
+	}
+});
+
+L.Map.include({
+	showLabel: function (label) {
+		return this.addLayer(label);
+	}
+});
+
+L.FeatureGroup.include({
+	// TODO: remove this when AOP is supported in Leaflet, need this as we cannot put code in removeLayer()
+	clearLayers: function () {
+		this.unbindLabel();
+		this.eachLayer(this.removeLayer, this);
+		return this;
+	},
+
+	bindLabel: function (content, options) {
+		return this.invoke('bindLabel', content, options);
+	},
+
+	unbindLabel: function () {
+		return this.invoke('unbindLabel');
+	},
+
+	updateLabelContent: function (content) {
+		this.invoke('updateLabelContent', content);
+	}
+});
+
+}(window, document));
 var replaceAt = function (str, index, character) {
     return str.substr(0, index) + character + str.substr(index + character.length);
 };
@@ -34437,7 +34946,6 @@ $(document).ready(function () {
     Backbone.history.start();
 });
 
-///#source 1 1 /core/js/controller/setting.js
 var FoodParent;
 (function (FoodParent) {
     var Setting = (function () {
@@ -34459,11 +34967,17 @@ var FoodParent;
         Setting.getPhpDir = function () {
             return Setting._instance._baseUrl + "core/php/";
         };
-        Setting.getContentsImageDir = function () {
-            return Setting._instance._baseUrl + "content/image/";
+        Setting.getContentPictureDir = function () {
+            return Setting._instance._baseUrl + "content/picture/";
+        };
+        Setting.getContentIconDir = function () {
+            return Setting._instance._baseUrl + "content/icon/";
         };
         Setting.getCoreImageDir = function () {
             return Setting._instance._baseUrl + "core/image/";
+        };
+        Setting.getMarkerShadowPath = function () {
+            return Setting.getCoreImageDir() + "marker-shadow.png";
         };
         Setting.getNavWrapperElement = function () {
             return $('#wrapper-nav');
@@ -34494,6 +35008,9 @@ var FoodParent;
         Setting.getMapMaxZoomLevel = function () {
             return 19;
         };
+        Setting.getMapCenterZoomLevel = function () {
+            return 15;
+        };
         Setting.getDateTimeFormat = function () {
             return "YYYY-MM-DD HH:mm:ss";
         };
@@ -34509,7 +35026,6 @@ var FoodParent;
     FoodParent.Setting = Setting;
 })(FoodParent || (FoodParent = {}));
 
-///#source 1 1 /core/js/controller/controller.js
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -34610,7 +35126,6 @@ var FoodParent;
     FoodParent.Router = Router;
 })(FoodParent || (FoodParent = {}));
 
-///#source 1 1 /core/js/controller/eventhandler.js
 var FoodParent;
 (function (FoodParent) {
     (function (ACTION_STATUS) {
@@ -34715,7 +35230,6 @@ var FoodParent;
     FoodParent.EventHandler = EventHandler;
 })(FoodParent || (FoodParent = {}));
 
-///#source 1 1 /core/js/controller/command/command.js
 var FoodParent;
 (function (FoodParent) {
     var Command = (function () {
@@ -34926,7 +35440,6 @@ var FoodParent;
     FoodParent.MovePaceBarToUnderNav = MovePaceBarToUnderNav;
 })(FoodParent || (FoodParent = {}));
 
-///#source 1 1 /core/js/view/template.js
 var FoodParent;
 (function (FoodParent) {
     var Template = (function () {
@@ -35002,7 +35515,17 @@ var FoodParent;
         };
         Template.getManageTreesPopupTemplate = function () {
             var template = '';
-            template += '#<%= id %> - <%= name %>';
+            template += '<div class="marker-control-wrapper">';
+            template += '<div class="marker-control-item">';
+            template += '<i class="fa fa-lock fa-2x"></i>';
+            template += '</div>';
+            template += '<div class="marker-control-item">';
+            template += '<i class="fa fa-info fa-2x"></i>';
+            template += '</div>';
+            template += '<div class="marker-control-item">';
+            template += '<i class="fa fa-remove fa-2x"></i>';
+            template += '</div>';
+            template += '</div>';
             return template;
         };
         Template._instance = new Template();
@@ -35011,7 +35534,6 @@ var FoodParent;
     FoodParent.Template = Template;
 })(FoodParent || (FoodParent = {}));
 
-///#source 1 1 /core/js/view/baseview.js
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -35123,7 +35645,6 @@ var FoodParent;
     FoodParent.BaseView = BaseView;
 })(FoodParent || (FoodParent = {}));
 
-///#source 1 1 /core/js/view/view.js
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -35224,7 +35745,6 @@ var FoodParent;
     FoodParent.View = View;
 })(FoodParent || (FoodParent = {}));
 
-///#source 1 1 /core/js/view/homeview.js
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -35297,7 +35817,6 @@ var FoodParent;
     FoodParent.HomeView = HomeView;
 })(FoodParent || (FoodParent = {}));
 
-///#source 1 1 /core/js/view/navview.js
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -35416,7 +35935,6 @@ var FoodParent;
     FoodParent.NavView = NavView;
 })(FoodParent || (FoodParent = {}));
 
-///#source 1 1 /core/js/view/alertview.js
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -35533,7 +36051,6 @@ var FoodParent;
     FoodParent.AlertView = AlertView;
 })(FoodParent || (FoodParent = {}));
 
-///#source 1 1 /core/js/view/mtreesview.js
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -35575,7 +36092,7 @@ var FoodParent;
         function ManageTreesMapView(options) {
             var _this = this;
             _super.call(this, options);
-            this.bClosePopupOnClick = true;
+            this._bClosePopupOnClick = true;
             this.renderMapError = function (error) {
                 var self = _this;
                 switch (error.code) {
@@ -35593,24 +36110,49 @@ var FoodParent;
             this.renderMap = function (position) {
                 var self = _this;
                 var accuracy = position.coords.accuracy;
-                self.location = new L.LatLng(position.coords.latitude, position.coords.longitude);
-                if (self.map == undefined) {
+                self._location = new L.LatLng(position.coords.latitude, position.coords.longitude);
+                if (self._map == undefined) {
                     self.setLocation(new L.LatLng(position.coords.latitude, position.coords.longitude));
-                    self.map = L.map(self.$el[0].id, {
+                    self._map = L.map(self.$el[0].id, {
                         zoomControl: false,
-                        closePopupOnClick: self.bClosePopupOnClick,
+                        closePopupOnClick: self._bClosePopupOnClick,
                         doubleClickZoom: true,
                         touchZoom: true,
                         zoomAnimation: true,
                         markerZoomAnimation: true,
-                    }).setView(self.location, self.zoom);
+                    }).setView(self._location, self._zoom);
                     L.tileLayer(FoodParent.Setting.getTileMapAddress(), {
                         minZoom: FoodParent.Setting.getMapMinZoomLevel(),
                         maxZoom: FoodParent.Setting.getMapMaxZoomLevel(),
-                    }).addTo(self.map);
-                    self.map.invalidateSize(false);
+                    }).addTo(self._map);
+                    self._map.invalidateSize(false);
                     // add event listener for finishing map creation.
-                    self.map.whenReady(self.renderTrees);
+                    self._map.whenReady(self.renderTrees);
+                    // add event listener for dragging map
+                    self._map.on("moveend", self.afterMoveMap);
+                    //Controller.fetchAllTrees();
+                    self._map.on('popupopen', function (event) {
+                        var marker = event.popup._source;
+                        marker._bringToFront();
+                        self._selectedMarker = marker;
+                        if (self._map.getZoom() < FoodParent.Setting.getMapCenterZoomLevel()) {
+                            self._map.setView(marker.getLatLng(), FoodParent.Setting.getMapCenterZoomLevel(), { animate: true });
+                        }
+                        else {
+                            self._map.setView(marker.getLatLng(), self._map.getZoom(), { animate: true });
+                        }
+                    });
+                    self._map.on('popupclose', function (event) {
+                        var marker = event.popup._source;
+                        marker._resetZIndex();
+                        self._selectedMarker = null;
+                    });
+                }
+            };
+            this.afterMoveMap = function () {
+                var self = _this;
+                if (self._selectedMarker) {
+                    self._selectedMarker._bringToFront();
                 }
             };
             this.renderTrees = function () {
@@ -35620,6 +36162,18 @@ var FoodParent;
             this.renderMarkers = function () {
                 var self = _this;
                 console.log(ManageTreesMapView.TAG + "renderMarkers()");
+                console.log(FoodParent.Model.getTrees());
+                $.each(FoodParent.Model.getTrees().models, function (index, tree) {
+                    var bFound = false;
+                    for (var j = 0; j < self._markers.length && !bFound; j++) {
+                        if (tree.getId() == self._markers[j].options.id) {
+                            bFound = true;
+                        }
+                    }
+                    if (!bFound) {
+                        self.addMarker(tree);
+                    }
+                });
             };
             this.renderMarkersError = function (errorMode) {
                 var self = _this;
@@ -35628,7 +36182,8 @@ var FoodParent;
             };
             var self = this;
             self.bDebug = true;
-            self.zoom = FoodParent.Setting.getDefaultMapZoomLevel();
+            self._zoom = FoodParent.Setting.getDefaultMapZoomLevel();
+            self._markers = new Array();
             //$(window).resize(_.debounce(that.customResize, Setting.getInstance().getResizeTimeout()));
             self.events = {};
             self.delegateEvents();
@@ -35652,9 +36207,15 @@ var FoodParent;
                 console.log(ManageTreesMapView.TAG + "update()");
             return self;
         };
+        ManageTreesMapView.prototype.addMarker = function (tree) {
+            var self = this;
+            var marker = FoodParent.MarkerFractory.create(tree, true);
+            self._markers.push(marker);
+            marker.addTo(self._map);
+        };
         ManageTreesMapView.prototype.setLocation = function (location) {
             var self = this;
-            self.location = location;
+            self._location = location;
         };
         ManageTreesMapView.prototype._mouseOver = function (event) {
             var self = this;
@@ -35670,7 +36231,56 @@ var FoodParent;
     FoodParent.ManageTreesMapView = ManageTreesMapView;
 })(FoodParent || (FoodParent = {}));
 
-///#source 1 1 /core/js/model/model.js
+var FoodParent;
+(function (FoodParent) {
+    var MarkerFractory = (function () {
+        function MarkerFractory(args) {
+            if (MarkerFractory._instance) {
+                throw new Error("Error: Instantiation failed: Use MarkerFractory.getInstance() instead of new.");
+            }
+            MarkerFractory._instance = this;
+        }
+        MarkerFractory.getInstance = function () {
+            return MarkerFractory._instance;
+        };
+        MarkerFractory.create = function (tree, bCloseOnClick) {
+            var food = FoodParent.Model.getFoods().findWhere({ id: tree.getFoodId() });
+            var icon = new L.Icon({
+                iconUrl: food.getIconPath(),
+                shadowUrl: FoodParent.Setting.getMarkerShadowPath(),
+                iconSize: new L.Point(40, 40),
+                iconAnchor: new L.Point(20, 40),
+                shadowAnchor: new L.Point(9, 38),
+                popupAnchor: new L.Point(0, 48),
+            });
+            var template = _.template(FoodParent.Template.getManageTreesPopupTemplate());
+            var data = {
+                id: tree.getId()
+            };
+            var marker = new L.Marker(tree.getLocation(), {
+                id: tree.getId(),
+                icon: icon,
+                draggable: false,
+                riseOnHover: true,
+            })
+                .bindPopup(template(data), {
+                closeButton: false,
+                closeOnClick: bCloseOnClick,
+            })
+                .bindLabel('' + food.getName() + " " + tree.getName() + '', {
+                clickable: true,
+                noHide: true,
+                direction: 'right'
+            });
+            L.DomEvent.addListener(marker.label, 'click', function (e) { this.togglePopup(); }, marker);
+            return marker;
+        };
+        MarkerFractory._instance = new MarkerFractory();
+        return MarkerFractory;
+    })();
+    FoodParent.MarkerFractory = MarkerFractory;
+})(FoodParent || (FoodParent = {}));
+
 var FoodParent;
 (function (FoodParent) {
     var Model = (function () {
@@ -35890,7 +36500,6 @@ var FoodParent;
     FoodParent.Model = Model;
 })(FoodParent || (FoodParent = {}));
 
-///#source 1 1 /core/js/model/adopt.js
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -36005,7 +36614,6 @@ var FoodParent;
     FoodParent.Adopts = Adopts;
 })(FoodParent || (FoodParent = {}));
 
-///#source 1 1 /core/js/model/auth.js
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -36067,7 +36675,6 @@ var FoodParent;
     FoodParent.Auths = Auths;
 })(FoodParent || (FoodParent = {}));
 
-///#source 1 1 /core/js/model/food.js
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -36110,7 +36717,7 @@ var FoodParent;
             return this.get('name');
         };
         Food.prototype.getIconPath = function () {
-            return FoodParent.Setting.getCoreImageDir() + this.get('icon');
+            return FoodParent.Setting.getContentIconDir() + this.get('icon');
         };
         return Food;
     })(Backbone.Model);
@@ -36148,7 +36755,6 @@ var FoodParent;
     FoodParent.Foods = Foods;
 })(FoodParent || (FoodParent = {}));
 
-///#source 1 1 /core/js/model/ownership.js
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -36202,7 +36808,6 @@ var FoodParent;
     FoodParent.Ownerships = Ownerships;
 })(FoodParent || (FoodParent = {}));
 
-///#source 1 1 /core/js/model/tree.js
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -36377,4 +36982,3 @@ var FoodParent;
     })(Backbone.Collection);
     FoodParent.Trees = Trees;
 })(FoodParent || (FoodParent = {}));
-

@@ -1,0 +1,76 @@
+[
+  {
+    "outputFileName": "core/js/foodparent.js",
+    "inputFiles": [
+      // Libraries
+      "core/lib/jquery/jquery-2.1.4.js",
+      "core/lib/jquery-easing/jquery.easing.1.3.js",
+      "core/lib/underscore/underscore.js",
+      "core/lib/momentjs/moment.js",
+      "core/lib/backbone/backbone.js",
+      "core/lib/backgrid/backgrid.js",
+      "core/lib/bootstrap/js/bootstrap.js",
+      "core/lib/backgrid-moment-cell/backgrid-moment-cell.js",
+      "core/lib/bootstrap-toggle/js/bootstrap-toggle.js",
+      "core/lib/bootstrap-select/js/bootstrap-select.js",
+      "core/lib/bootstrap-list-filter/bootstrap-list-filter.src.js",
+      "core/lib/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js",
+
+      "core/lib/pace/pace.js",
+      "core/lib/howler/howler.js",
+      // Leaflet
+      "core/lib/leaflet/leaflet-src.js",
+      "core/lib/leaflet-label/leaflet.label-src.js",
+      // App
+      "core/js/app.js",
+      // Controller
+      "core/js/controller/setting.js",
+      "core/js/controller/controller.js",
+      "core/js/controller/eventhandler.js",
+      // Command
+      "core/js/controller/command/command.js",
+      // View
+      "core/js/view/template.js",
+      "core/js/view/baseview.js",
+      "core/js/view/view.js",
+      "core/js/view/homeview.js",
+      "core/js/view/navview.js",
+      "core/js/view/alertview.js",
+      "core/js/view/mtreesview.js",
+      "core/js/view/markerview.js",
+      // Model
+      "core/js/model/model.js",
+      "core/js/model/adopt.js",
+      "core/js/model/auth.js",
+      "core/js/model/food.js",
+      "core/js/model/ownership.js",
+      "core/js/model/tree.js"
+    ]
+  },
+  {
+    "outputFileName": "core/css/foodparent.css",
+    "inputFiles": [
+      // Libraries
+      "core/lib/backgrid/backgrid.css",
+      "core/lib/backgrid-moment-cell/backgrid-moment-cell.css",
+      "core/lib/bootstrap/css/bootstrap.css",
+      "core/lib/font-awesome/css/font-awesome.css",
+      // Leaflet
+      "core/lib/leaflet/leaflet.css",
+      "core/lib/leaflet-label/leaflet.label.css",
+      // Font-Awesome
+      "core/lib/font-awesome/css/font-awesome.css",
+      // App
+      "core/css/app.css",
+      "core/css/base.css",
+      "core/css/pace.css",
+      "core/css/home.css",
+      "core/css/nav.css",
+      "core/css/pop.css",
+      "core/css/button.css",
+      "core/css/alert.css",
+      "core/css/mtrees.css",
+      "core/css/leaflet.css"
+    ]
+  }
+]

@@ -9,4 +9,7 @@
         height: 100%;
     }
     
+    .leaflet-popup-content {
+        color: #222222;
+    }
 }

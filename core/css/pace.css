@@ -2,25 +2,24 @@
     .pace {
         -webkit-pointer-events: none;
         pointer-events: none;
-
         -webkit-user-select: none;
         -moz-user-select: none;
+        -ms-user-select: none;
         user-select: none;
-
         position: fixed;
         top: 84px;
         left: 0;
         width: 100%;
-
         -webkit-transition: -webkit-transform .5s ease-out;
         -ms-transition: -webkit-transform .5s ease-out;
+        -moz-transition: transform .5s ease-out;
+        -o-transition: transform .5s ease-out;
         transition: transform .5s ease-out;
         z-index: 9999;
     }
 
-    .pace.pace-active {
-        
-    }
+        .pace.pace-active {
+        }
 
     .pace-progress {
         display: block;
@@ -35,6 +34,9 @@
     }
 
     .pace.pace-inactive {
+        -moz-animation: anim-invisible 0.5s forwards;
+        -o-animation: anim-invisible 0.5s forwards;
+        -webkit-animation: anim-invisible 0.5s forwards;
         animation: anim-invisible 0.5s forwards;
     }
 
@@ -42,9 +44,9 @@
         25% {
             opacity: 1;
         }
+
         100% {
             opacity: 0;
         }
-        /* declare animation actions here */
     }
 }

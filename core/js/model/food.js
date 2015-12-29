@@ -40,7 +40,7 @@ var FoodParent;
             return this.get('name');
         };
         Food.prototype.getIconPath = function () {
-            return FoodParent.Setting.getCoreImageDir() + this.get('icon');
+            return FoodParent.Setting.getContentIconDir() + this.get('icon');
         };
         return Food;
     })(Backbone.Model);

@@ -1,0 +1,35 @@
+﻿@media all {
+    .leaflet-popup-content {
+        margin: 2px;
+    }
+
+    .leaflet-popup-content-wrapper {
+        border-radius: 2px;
+    }
+
+    .marker-control-wrapper {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .marker-control-item {
+        width: 30px;
+        height: 30px;
+        margin: 2px;
+        padding: 2px;
+        text-align: center;
+        border-radius: 2px;
+        cursor: pointer;
+        color: rgba(0, 0, 0, 0.75);
+    }
+
+    .marker-control-item i {
+        padding: 0 0 0 1px;
+    }
+
+    .marker-control-item:hover {
+        box-shadow: inset 0 0 1px 1px rgba(0,0,0,0.25);
+        background-color: rgba(0, 0, 0, 0.05);
+    }
+}

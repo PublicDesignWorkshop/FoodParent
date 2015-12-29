@@ -20,11 +20,17 @@
         public static getPhpDir(): string {
             return Setting._instance._baseUrl + "core/php/";
         }
-        public static getContentsImageDir(): string {
-            return Setting._instance._baseUrl + "content/image/";
+        public static getContentPictureDir(): string {
+            return Setting._instance._baseUrl + "content/picture/";
+        }
+        public static getContentIconDir(): string {
+            return Setting._instance._baseUrl + "content/icon/";
         }
         public static getCoreImageDir(): string {
             return Setting._instance._baseUrl + "core/image/";
+        }
+        public static getMarkerShadowPath(): string {
+            return Setting.getCoreImageDir() + "marker-shadow.png";
         }
         public static getNavWrapperElement(): JQuery {
             return $('#wrapper-nav');
@@ -54,6 +60,9 @@
         }
         public static getMapMaxZoomLevel(): number {
             return 19;
+        }
+        public static getMapCenterZoomLevel(): number {
+            return 15;
         }
         public static getDateTimeFormat(): string {
             return "YYYY-MM-DD HH:mm:ss";

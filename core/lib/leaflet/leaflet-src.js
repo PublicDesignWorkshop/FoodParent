@@ -3579,7 +3579,11 @@ L.Marker = L.Class.extend({
 		if (options.riseOnHover) {
 			L.DomEvent
 				.on(icon, 'mouseover', this._bringToFront, this)
-				.on(icon, 'mouseout', this._resetZIndex, this);
+				.on(icon, 'mouseout', function () {
+				    if (this._popup && !this._popup._isOpen) {
+                        this._resetZIndex();
+				    }
+				}, this);
 		}
 
 		var newShadow = options.icon.createShadow(this._shadow),
@@ -3976,6 +3980,9 @@ L.Popup = L.Class.extend({
 			L.DomEvent.on(closeButton, 'click', this._onCloseButtonClick, this);
 		}
 
+		this._tipContainer = L.DomUtil.create('div', prefix + '-tip-container', container);
+		this._tip = L.DomUtil.create('div', prefix + '-tip', this._tipContainer);
+
 		var wrapper = this._wrapper =
 		        L.DomUtil.create('div', prefix + '-content-wrapper', container);
 		L.DomEvent.disableClickPropagation(wrapper);
@@ -3985,8 +3992,7 @@ L.Popup = L.Class.extend({
 		L.DomEvent.disableScrollPropagation(this._contentNode);
 		L.DomEvent.on(wrapper, 'contextmenu', L.DomEvent.stopPropagation);
 
-		this._tipContainer = L.DomUtil.create('div', prefix + '-tip-container', container);
-		this._tip = L.DomUtil.create('div', prefix + '-tip', this._tipContainer);
+		
 	},
 
 	_updateContent: function () {

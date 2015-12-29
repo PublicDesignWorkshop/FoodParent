@@ -73,7 +73,17 @@ var FoodParent;
         };
         Template.getManageTreesPopupTemplate = function () {
             var template = '';
-            template += '#<%= id %> - <%= name %>';
+            template += '<div class="marker-control-wrapper">';
+            template += '<div class="marker-control-item">';
+            template += '<i class="fa fa-lock fa-2x"></i>';
+            template += '</div>';
+            template += '<div class="marker-control-item">';
+            template += '<i class="fa fa-info fa-2x"></i>';
+            template += '</div>';
+            template += '<div class="marker-control-item">';
+            template += '<i class="fa fa-remove fa-2x"></i>';
+            template += '</div>';
+            template += '</div>';
             return template;
         };
         Template._instance = new Template();
