@@ -9,7 +9,6 @@ var FoodParent;
         __extends(View, _super);
         function View(options) {
             _super.call(this, options);
-            this._actionStatus = FoodParent.ACTION_STATUS.NONE;
             if (View._instance) {
                 throw new Error("Error: Instantiation failed: Use View.getInstance() instead of new.");
             }
@@ -35,12 +34,14 @@ var FoodParent;
         View.getViewStatus = function () {
             return View._instance._viewStatus[View._instance._viewStatus.length - 1];
         };
-        View.setActionStatus = function (actionStatus) {
+        /*
+        public static setActionStatus(actionStatus: ACTION_STATUS): void {
             View._instance._actionStatus = actionStatus;
-        };
-        View.getActionStatus = function () {
+        }
+        public static getActionStatus(): ACTION_STATUS {
             return View._instance._actionStatus;
-        };
+        }
+        */
         View.addChild = function (view) {
             var self = View._instance;
             if (self.children == undefined) {
@@ -67,6 +68,12 @@ var FoodParent;
                 });
             }
             View._instance._manageTreesView = null;
+        };
+        View.setMessageView = function (view) {
+            View._instance._messageView = view;
+        };
+        View.getMessageView = function () {
+            return View._instance._messageView;
         };
         View.setNavView = function (view) {
             View._instance._navView = view;

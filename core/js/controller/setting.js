@@ -40,6 +40,9 @@ var FoodParent;
         Setting.getPopWrapperElement = function () {
             return $('#wrapper-pop');
         };
+        Setting.getMessageWrapperElement = function () {
+            return $('#wrapper-message');
+        };
         Setting.getNavAnimDuration = function () {
             return 100;
         };
@@ -61,7 +64,7 @@ var FoodParent;
             return 19;
         };
         Setting.getMapCenterZoomLevel = function () {
-            return 15;
+            return 16;
         };
         Setting.getDateTimeFormat = function () {
             return "YYYY-MM-DD HH:mm:ss";

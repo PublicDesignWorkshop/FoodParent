@@ -93,7 +93,15 @@
             var self: RenderAlertViewCommand = this;
             var view: AlertView = AlertViewFractory.create(self._el, self._errorMode).render();
             View.setPopupView(view);
-            View.setViewStatus(VIEW_STATUS.GEO_ERROR);
+            switch (self._errorMode) {
+                case ERROR_MODE.GEO_PERMISSION_ERROR:
+                    View.setViewStatus(VIEW_STATUS.GEO_ERROR);
+                    break;
+                case ERROR_MODE.SEVER_CONNECTION_ERROR:
+                    View.setViewStatus(VIEW_STATUS.NETWORK_ERROR);
+                    break;
+            }
+            
         }
         public undo(): any {
 
@@ -193,6 +201,60 @@
                     new MovePaceBarToUnderNav().execute();
                 }, 100);
             }
+        }
+        public undo(): any {
+
+        }
+    }
+
+    export class UpdateTreeLocation implements Command {
+        private _tree: Tree;
+        private _marker: L.Marker;
+        private _location: L.LatLng;
+        private _prevLocation: L.LatLng;
+        constructor(args?: any) {
+            var self: UpdateTreeLocation = this;
+            if (args != undefined && args.location != undefined && args.tree != undefined) {
+                self._tree = args.tree;
+                self._marker = args.marker;
+                self._location = args.location;
+            }
+        }
+        public execute(): any {
+            var self: UpdateTreeLocation = this;
+            self._prevLocation = self._tree.getLocation();
+            self._tree.set({
+                'lat': self._location.lat,
+                'lng': self._location.lng
+            });
+        }
+        public undo(): any {
+            var self: UpdateTreeLocation = this;
+            self._tree.set({
+                'lat': self._prevLocation.lat,
+                'lng': self._prevLocation.lng
+            });
+            self._marker.setLatLng(self._prevLocation);
+        }
+    }
+
+    export class RenderMessageViewCommand implements Command {
+        private _el: JQuery;
+        private _message: string;
+        private _undoable: boolean;
+        constructor(args?: any) {
+            var self: RenderMessageViewCommand = this;
+            self._el = args.el;
+            self._message = args.message;
+            self._undoable = args.undoable;
+        }
+        public execute(): any {
+            var self: RenderMessageViewCommand = this;
+            if (View.getMessageView()) {
+                View.getMessageView().setInvisible();
+            }
+            var view: MessageView = MessageViewFractory.create(self._el, self._message, self._undoable).render();
+            View.setMessageView(view);
         }
         public undo(): any {
 

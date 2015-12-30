@@ -41,6 +41,9 @@
         public static getPopWrapperElement(): JQuery {
             return $('#wrapper-pop');
         }
+        public static getMessageWrapperElement(): JQuery {
+            return $('#wrapper-message');
+        }
         public static getNavAnimDuration(): number {
             return 100;
         }
@@ -62,7 +65,7 @@
             return 19;
         }
         public static getMapCenterZoomLevel(): number {
-            return 15;
+            return 16;
         }
         public static getDateTimeFormat(): string {
             return "YYYY-MM-DD HH:mm:ss";

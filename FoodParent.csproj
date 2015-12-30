@@ -31,6 +31,7 @@
       <DependentUpon>foodparent.css</DependentUpon>
     </Content>
     <Content Include="core\css\home.css" />
+    <Content Include="core\css\message.css" />
     <Content Include="core\css\mtrees.css" />
     <Content Include="core\css\nav.css" />
     <Content Include="core\css\pace.css" />
@@ -166,6 +167,7 @@
     <TypeScriptCompile Include="core\js\model\model.ts" />
     <TypeScriptCompile Include="core\js\view\baseview.ts" />
     <TypeScriptCompile Include="core\js\view\markerview.ts" />
+    <TypeScriptCompile Include="core\js\view\messageview.ts" />
     <TypeScriptCompile Include="core\js\view\mtreesview.ts" />
     <TypeScriptCompile Include="core\js\view\navview.ts" />
     <TypeScriptCompile Include="core\js\view\template.ts" />

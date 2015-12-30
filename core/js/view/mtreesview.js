@@ -81,17 +81,21 @@ var FoodParent;
                     self._map.on('popupopen', function (event) {
                         var marker = event.popup._source;
                         marker._bringToFront();
+                        /*
+                        
+                        */
+                        $(marker.label._container).addClass('active');
+                        //$('.leaflet-popup-content .marker-control-item').off('click');
+                        //$('.leaflet-popup-content .marker-control-item').on('click', function (event) {
+                        //    //console.log($('.leaflet-popup-content .glyphicon').attr('data-id'));
+                        //    Router.getInstance().navigate("tree/" + $('.leaflet-popup-content .glyphicon').attr('data-id'), { trigger: true });
+                        //});
                         self._selectedMarker = marker;
-                        if (self._map.getZoom() < FoodParent.Setting.getMapCenterZoomLevel()) {
-                            self._map.setView(marker.getLatLng(), FoodParent.Setting.getMapCenterZoomLevel(), { animate: true });
-                        }
-                        else {
-                            self._map.setView(marker.getLatLng(), self._map.getZoom(), { animate: true });
-                        }
                     });
                     self._map.on('popupclose', function (event) {
                         var marker = event.popup._source;
                         marker._resetZIndex();
+                        $(marker.label._container).removeClass('active');
                         self._selectedMarker = null;
                     });
                 }
@@ -132,7 +136,11 @@ var FoodParent;
             self._zoom = FoodParent.Setting.getDefaultMapZoomLevel();
             self._markers = new Array();
             //$(window).resize(_.debounce(that.customResize, Setting.getInstance().getResizeTimeout()));
-            self.events = {};
+            self.events = {
+                //"mouseover .home-menu-left": "_mouseOver",
+                //"mouseover .home-menu-right": "_mouseOver",
+                "click .marker-control-item": "_mouseClick",
+            };
             self.delegateEvents();
         }
         ManageTreesMapView.prototype.render = function (args) {
@@ -159,6 +167,50 @@ var FoodParent;
             var marker = FoodParent.MarkerFractory.create(tree, true);
             self._markers.push(marker);
             marker.addTo(self._map);
+            /*
+            marker.on('dblclick', function (event) {
+                if (self._map.getZoom() < Setting.getMapCenterZoomLevel()) {
+                    self._map.setView(marker.getLatLng(), Setting.getMapCenterZoomLevel(), { animate: true });
+                } else {
+                    self._map.setView(marker.getLatLng(), self._map.getZoom(), { animate: true });
+                }
+            });
+            */
+            marker.on("dragend", function (event) {
+                if (marker.options.id != undefined) {
+                    var tree = FoodParent.Model.getTrees().findWhere({
+                        id: marker.options.id
+                    });
+                    FoodParent.EventHandler.handleTreeData(tree, FoodParent.DATA_MODE.UPDATE_LOCATION, { marker: marker, location: marker.getLatLng() });
+                }
+                /*
+                if (item.get("type") == ItemType.None || item.id == undefined) {	// new item
+                    item.set({ lat: item.marker.getLatLng().lat, lng: item.marker.getLatLng().lng });
+                } else {                                    // existing item
+                    item.save(
+                        { lat: item.marker.getLatLng().lat, lng: item.marker.getLatLng().lng },
+                        {
+                            success: function (model, response) {
+                                FMV.getMsgView().renderSuccess("'" + model.get("name") + "' " + FML.getViewMarkerSaveSuccessMsg());
+                            },
+                            error: function (error) {
+                                FMV.getMsgView().renderError(FML.getViewMarkerSaveErrorMsg());
+                            }
+                        }
+                    );
+                }
+                
+                // update ui if UIMode is Info or Add
+                if (FMV.getUIView().getMode() == UIMode.INFO || FMV.getUIView().getMode() == UIMode.ADD) {
+                    FMV.getUIView().$("#item-info-lat").val(item.marker.getLatLng().lat.toString());
+                    FMV.getUIView().$("#item-info-lng").val(item.marker.getLatLng().lng.toString());
+                }
+                // open popup
+                if (item.marker != null) {
+                    item.marker.openPopup();
+                }
+                */
+            });
         };
         ManageTreesMapView.prototype.setLocation = function (location) {
             var self = this;
@@ -170,7 +222,7 @@ var FoodParent;
         };
         ManageTreesMapView.prototype._mouseClick = function (event) {
             var self = this;
-            //EventHandler.handleMouseClick($(event.currentTarget), self);
+            FoodParent.EventHandler.handleMouseClick($(event.currentTarget), self, { marker: self._selectedMarker });
         };
         ManageTreesMapView.TAG = "ManageTreesMapView - ";
         return ManageTreesMapView;

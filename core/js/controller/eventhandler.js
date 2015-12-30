@@ -1,19 +1,25 @@
 var FoodParent;
 (function (FoodParent) {
-    (function (ACTION_STATUS) {
-        ACTION_STATUS[ACTION_STATUS["NONE"] = 0] = "NONE";
-        ACTION_STATUS[ACTION_STATUS["IDLE"] = 1] = "IDLE";
-        ACTION_STATUS[ACTION_STATUS["LOADING"] = 2] = "LOADING";
-        ACTION_STATUS[ACTION_STATUS["LOADED"] = 3] = "LOADED";
-        ACTION_STATUS[ACTION_STATUS["ERROR"] = 4] = "ERROR";
-    })(FoodParent.ACTION_STATUS || (FoodParent.ACTION_STATUS = {}));
-    var ACTION_STATUS = FoodParent.ACTION_STATUS;
+    /*
+    export enum ACTION_STATUS {
+        NONE, IDLE, LOADING, LOADED, ERROR
+    }
+    */
+    (function (DATA_MODE) {
+        DATA_MODE[DATA_MODE["NONE"] = 0] = "NONE";
+        DATA_MODE[DATA_MODE["CREATE"] = 1] = "CREATE";
+        DATA_MODE[DATA_MODE["DELETE"] = 2] = "DELETE";
+        DATA_MODE[DATA_MODE["UPDATE_LOCATION"] = 3] = "UPDATE_LOCATION";
+        DATA_MODE[DATA_MODE["UPDATE_INFO"] = 4] = "UPDATE_INFO";
+    })(FoodParent.DATA_MODE || (FoodParent.DATA_MODE = {}));
+    var DATA_MODE = FoodParent.DATA_MODE;
     (function (VIEW_STATUS) {
         VIEW_STATUS[VIEW_STATUS["NONE"] = 0] = "NONE";
         VIEW_STATUS[VIEW_STATUS["HOME"] = 1] = "HOME";
         VIEW_STATUS[VIEW_STATUS["MANAGE_TREES"] = 2] = "MANAGE_TREES";
         VIEW_STATUS[VIEW_STATUS["PARENT_TREES"] = 3] = "PARENT_TREES";
         VIEW_STATUS[VIEW_STATUS["GEO_ERROR"] = 4] = "GEO_ERROR";
+        VIEW_STATUS[VIEW_STATUS["NETWORK_ERROR"] = 5] = "NETWORK_ERROR";
     })(FoodParent.VIEW_STATUS || (FoodParent.VIEW_STATUS = {}));
     var VIEW_STATUS = FoodParent.VIEW_STATUS;
     (function (VIEW_MODE) {
@@ -40,6 +46,13 @@ var FoodParent;
         EventHandler.getInstance = function () {
             return EventHandler._instance;
         };
+        EventHandler.undoLastCommand = function () {
+            var self = EventHandler._instance;
+            if (self._lastCommand) {
+                self._lastCommand.undo();
+                self._lastCommand = null;
+            }
+        };
         EventHandler.handleNavigate = function (viewStatus, option) {
             FoodParent.Controller.abortAllXHR();
             Pace.restart();
@@ -59,7 +72,16 @@ var FoodParent;
             FoodParent.View.getNavView().setActiveNavItem(viewStatus);
             FoodParent.View.setViewStatus(viewStatus);
         };
-        EventHandler.handleMouseClick = function (el, view) {
+        EventHandler.handleMouseClick = function (el, view, options) {
+            // Execute undo command.
+            if (el.hasClass('undo')) {
+                EventHandler.undoLastCommand();
+            }
+            // Make MessageView invisible.
+            if (FoodParent.View.getMessageView()) {
+                FoodParent.View.getMessageView().setInvisible();
+            }
+            // Handle specific event on each view status.
             switch (FoodParent.View.getViewStatus()) {
                 case VIEW_STATUS.NONE:
                     break;
@@ -72,8 +94,29 @@ var FoodParent;
                     }
                     break;
                 case VIEW_STATUS.GEO_ERROR:
+                case VIEW_STATUS.NETWORK_ERROR:
                     if (el.hasClass('alert-confirm')) {
                         new FoodParent.RemoveAlertViewCommand({ delay: FoodParent.Setting.getRemovePopupDuration() }).execute();
+                    }
+                    break;
+                case VIEW_STATUS.MANAGE_TREES:
+                    if (el.hasClass('marker-control-lock')) {
+                        if (!options.marker.options.draggable) {
+                            options.marker.options.draggable = true;
+                            options.marker.dragging.enable();
+                            el.html('<i class="fa fa-unlock-alt fa-2x"></i>');
+                            options.marker._popup.setContent('<div class="marker-control-wrapper">' + $('.marker-control-wrapper').html() + '</div>');
+                        }
+                        else {
+                            options.marker.options.draggable = false;
+                            options.marker.dragging.disable();
+                            el.html('<i class="fa fa-lock fa-2x"></i>');
+                            options.marker._popup.setContent('<div class="marker-control-wrapper">' + $('.marker-control-wrapper').html() + '</div>');
+                        }
+                    }
+                    else if (el.hasClass('marker-control-info')) {
+                    }
+                    else if (el.hasClass('marker-control-delete')) {
                     }
                     break;
             }
@@ -94,6 +137,21 @@ var FoodParent;
         };
         EventHandler.handleError = function (errorMode) {
             new FoodParent.RenderAlertViewCommand({ el: FoodParent.Setting.getPopWrapperElement(), errorMode: errorMode }).execute();
+        };
+        EventHandler.handleDataChange = function (message, undoable) {
+            var self = EventHandler._instance;
+            if (self._lastCommand) {
+                new FoodParent.RenderMessageViewCommand({ el: FoodParent.Setting.getMessageWrapperElement(), message: message, undoable: undoable }).execute();
+            }
+        };
+        EventHandler.handleTreeData = function (tree, dataMode, args) {
+            var self = EventHandler._instance;
+            switch (dataMode) {
+                case DATA_MODE.UPDATE_LOCATION:
+                    self._lastCommand = new FoodParent.UpdateTreeLocation({ tree: tree, marker: args.marker, location: args.location });
+                    break;
+            }
+            self._lastCommand.execute();
         };
         EventHandler._instance = new EventHandler();
         EventHandler.TAG = "Controller - ";

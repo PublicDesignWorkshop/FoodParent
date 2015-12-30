@@ -89,7 +89,14 @@ var FoodParent;
             var self = this;
             var view = FoodParent.AlertViewFractory.create(self._el, self._errorMode).render();
             FoodParent.View.setPopupView(view);
-            FoodParent.View.setViewStatus(FoodParent.VIEW_STATUS.GEO_ERROR);
+            switch (self._errorMode) {
+                case FoodParent.ERROR_MODE.GEO_PERMISSION_ERROR:
+                    FoodParent.View.setViewStatus(FoodParent.VIEW_STATUS.GEO_ERROR);
+                    break;
+                case FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR:
+                    FoodParent.View.setViewStatus(FoodParent.VIEW_STATUS.NETWORK_ERROR);
+                    break;
+            }
         };
         RenderAlertViewCommand.prototype.undo = function () {
         };
@@ -206,4 +213,52 @@ var FoodParent;
         return MovePaceBarToUnderNav;
     })();
     FoodParent.MovePaceBarToUnderNav = MovePaceBarToUnderNav;
+    var UpdateTreeLocation = (function () {
+        function UpdateTreeLocation(args) {
+            var self = this;
+            if (args != undefined && args.location != undefined && args.tree != undefined) {
+                self._tree = args.tree;
+                self._marker = args.marker;
+                self._location = args.location;
+            }
+        }
+        UpdateTreeLocation.prototype.execute = function () {
+            var self = this;
+            self._prevLocation = self._tree.getLocation();
+            self._tree.set({
+                'lat': self._location.lat,
+                'lng': self._location.lng
+            });
+        };
+        UpdateTreeLocation.prototype.undo = function () {
+            var self = this;
+            self._tree.set({
+                'lat': self._prevLocation.lat,
+                'lng': self._prevLocation.lng
+            });
+            self._marker.setLatLng(self._prevLocation);
+        };
+        return UpdateTreeLocation;
+    })();
+    FoodParent.UpdateTreeLocation = UpdateTreeLocation;
+    var RenderMessageViewCommand = (function () {
+        function RenderMessageViewCommand(args) {
+            var self = this;
+            self._el = args.el;
+            self._message = args.message;
+            self._undoable = args.undoable;
+        }
+        RenderMessageViewCommand.prototype.execute = function () {
+            var self = this;
+            if (FoodParent.View.getMessageView()) {
+                FoodParent.View.getMessageView().setInvisible();
+            }
+            var view = FoodParent.MessageViewFractory.create(self._el, self._message, self._undoable).render();
+            FoodParent.View.setMessageView(view);
+        };
+        RenderMessageViewCommand.prototype.undo = function () {
+        };
+        return RenderMessageViewCommand;
+    })();
+    FoodParent.RenderMessageViewCommand = RenderMessageViewCommand;
 })(FoodParent || (FoodParent = {}));

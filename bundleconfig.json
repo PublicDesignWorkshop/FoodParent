@@ -38,6 +38,7 @@
       "core/js/view/alertview.js",
       "core/js/view/mtreesview.js",
       "core/js/view/markerview.js",
+      "core/js/view/messageview.js",
       // Model
       "core/js/model/model.js",
       "core/js/model/adopt.js",
@@ -67,6 +68,7 @@
       "core/css/home.css",
       "core/css/nav.css",
       "core/css/pop.css",
+      "core/css/message.css",
       "core/css/button.css",
       "core/css/alert.css",
       "core/css/mtrees.css",

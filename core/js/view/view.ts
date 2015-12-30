@@ -3,9 +3,10 @@
         private static _instance: View = new View();
         private static TAG: string = "View - ";
         private _viewStatus: Array<VIEW_STATUS>;
-        private _actionStatus: ACTION_STATUS = ACTION_STATUS.NONE;
+        //private _actionStatus: ACTION_STATUS = ACTION_STATUS.NONE;
         private _navView: NavView;
         private _popupView: PopupView;
+        private _messageView: MessageView;
         private _manageTreesView: ManageTreesView;
 
         constructor(options?: Backbone.ViewOptions<Backbone.Model>) {
@@ -35,12 +36,14 @@
         public static getViewStatus(): VIEW_STATUS {
             return View._instance._viewStatus[View._instance._viewStatus.length - 1];
         }
+        /*
         public static setActionStatus(actionStatus: ACTION_STATUS): void {
             View._instance._actionStatus = actionStatus;
         }
         public static getActionStatus(): ACTION_STATUS {
             return View._instance._actionStatus;
         }
+        */
         public static addChild(view: BaseView): void {
             var self: View = View._instance;
             if (self.children == undefined) {
@@ -69,6 +72,12 @@
             View._instance._manageTreesView = null;
         }
 
+        public static setMessageView(view: MessageView): void {
+            View._instance._messageView = view;
+        }
+        public static getMessageView(): MessageView {
+            return View._instance._messageView;
+        }
         public static setNavView(view: NavView): void {
             View._instance._navView = view;
         }

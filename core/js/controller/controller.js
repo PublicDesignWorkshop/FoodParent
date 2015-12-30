@@ -53,11 +53,15 @@ var FoodParent;
             $.when(xhr1, xhr2).then(function () {
                 Controller.removeXHR(xhr1);
                 Controller.removeXHR(xhr2);
-                success();
+                if (success) {
+                    success();
+                }
             }, function () {
                 Controller.removeXHR(xhr1);
                 Controller.removeXHR(xhr2);
-                error(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+                if (error) {
+                    error(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+                }
             });
         };
         Controller._instance = new Controller();

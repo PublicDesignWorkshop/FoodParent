@@ -56,11 +56,15 @@
             ).then(function () {
                 Controller.removeXHR(xhr1);
                 Controller.removeXHR(xhr2);
-                success();
+                if (success) {
+                    success();
+                }
             }, function () {
                 Controller.removeXHR(xhr1);
                 Controller.removeXHR(xhr2);
-                error(ERROR_MODE.SEVER_CONNECTION_ERROR);
+                if (error) {
+                    error(ERROR_MODE.SEVER_CONNECTION_ERROR);
+                }
             });
         }
     }

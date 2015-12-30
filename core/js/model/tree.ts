@@ -27,11 +27,15 @@
                     {},
                     {
                         wait: true,
-                        success: function (model: Tree, response: any) {
-                            console.log(model);
+                        success: function (tree: Tree, response: any) {
+                            console.log(tree);
                             self.isSavable = true;
+                            var food: Food = Model.getFoods().findWhere({ id: tree.getFoodId() });
+                            EventHandler.handleDataChange("<i>" + food.getName() + " " + tree.getName() + "</i> has been changed successfully", true);
                         },
                         error: function (error, response) {
+                            self.isSavable = true;
+                            EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
                         },
                     }
                 );

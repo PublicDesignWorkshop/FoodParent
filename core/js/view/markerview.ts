@@ -39,11 +39,14 @@
                     closeButton: false,
                     closeOnClick: bCloseOnClick,
                 })
-                .bindLabel('' + food.getName() + " " + tree.getName() + '', {
+                .bindLabel(food.getName() + " " + tree.getName(), {
                     clickable: true,
                     noHide: true,
                     direction: 'right'
                 });
+            marker.on('dragend', function (e) {
+                this.openPopup();
+            });
             L.DomEvent.addListener(marker.label, 'click', function (e) { this.togglePopup() }, marker);
             return marker;
         }

@@ -11984,6 +11984,37 @@ button.close {
     }
 }
 @media all {
+    #wrapper-message {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 40px;
+        margin: 88px 0 0 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    #wrapper-message .outer-frame {
+        background-color: #d4d0cf;
+        padding: 6px;
+    }
+
+    #wrapper-message .inner-frame {
+        border: 3px solid rgba(255, 255, 255, 0.75);
+        padding: 6px 12px;
+        color: #262121;
+        font-size: medium;
+    }
+
+    #wrapper-message .undo {
+        font-weight: 700;
+        text-decoration: underline;
+        cursor: pointer;
+    }
+}
+@media all {
     .button-outer-frame {
         padding: 4px;
     }
@@ -12072,5 +12103,16 @@ button.close {
     .marker-control-item:hover {
         box-shadow: inset 0 0 1px 1px rgba(0,0,0,0.25);
         background-color: rgba(0, 0, 0, 0.05);
+    }
+
+    .leaflet-label {
+        color: rgba(0, 0, 0, 0.5);
+        background-color: rgba(255, 255, 255, 0.5);
+        font-weight: 700;
+    }
+
+    .leaflet-label:hover, .leaflet-label.active {
+        color: rgba(0, 0, 0, 0.75);
+        background-color: rgba(255, 255, 255, 0.75);
     }
 }

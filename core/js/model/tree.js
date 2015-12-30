@@ -32,11 +32,15 @@ var FoodParent;
                 self.isSavable = false;
                 model.save({}, {
                     wait: true,
-                    success: function (model, response) {
-                        console.log(model);
+                    success: function (tree, response) {
+                        console.log(tree);
                         self.isSavable = true;
+                        var food = FoodParent.Model.getFoods().findWhere({ id: tree.getFoodId() });
+                        FoodParent.EventHandler.handleDataChange("<i>" + food.getName() + " " + tree.getName() + "</i> has been changed successfully", true);
                     },
                     error: function (error, response) {
+                        self.isSavable = true;
+                        FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
                     },
                 });
             });

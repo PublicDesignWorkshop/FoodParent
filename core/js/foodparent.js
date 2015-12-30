@@ -22960,7 +22960,7 @@ if("function"!=typeof a)throw new TypeError("parseInputDate() sholud be as funct
       lagThreshold: 3
     },
     ajax: {
-      trackMethods: ['GET'],
+      trackMethods: ['GET', 'POST', 'PUT', 'DELETE'],
       trackWebSockets: true,
       ignoreURLs: []
     }
@@ -34988,6 +34988,9 @@ var FoodParent;
         Setting.getPopWrapperElement = function () {
             return $('#wrapper-pop');
         };
+        Setting.getMessageWrapperElement = function () {
+            return $('#wrapper-message');
+        };
         Setting.getNavAnimDuration = function () {
             return 100;
         };
@@ -35009,7 +35012,7 @@ var FoodParent;
             return 19;
         };
         Setting.getMapCenterZoomLevel = function () {
-            return 15;
+            return 16;
         };
         Setting.getDateTimeFormat = function () {
             return "YYYY-MM-DD HH:mm:ss";
@@ -35081,11 +35084,15 @@ var FoodParent;
             $.when(xhr1, xhr2).then(function () {
                 Controller.removeXHR(xhr1);
                 Controller.removeXHR(xhr2);
-                success();
+                if (success) {
+                    success();
+                }
             }, function () {
                 Controller.removeXHR(xhr1);
                 Controller.removeXHR(xhr2);
-                error(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+                if (error) {
+                    error(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+                }
             });
         };
         Controller._instance = new Controller();
@@ -35128,20 +35135,26 @@ var FoodParent;
 
 var FoodParent;
 (function (FoodParent) {
-    (function (ACTION_STATUS) {
-        ACTION_STATUS[ACTION_STATUS["NONE"] = 0] = "NONE";
-        ACTION_STATUS[ACTION_STATUS["IDLE"] = 1] = "IDLE";
-        ACTION_STATUS[ACTION_STATUS["LOADING"] = 2] = "LOADING";
-        ACTION_STATUS[ACTION_STATUS["LOADED"] = 3] = "LOADED";
-        ACTION_STATUS[ACTION_STATUS["ERROR"] = 4] = "ERROR";
-    })(FoodParent.ACTION_STATUS || (FoodParent.ACTION_STATUS = {}));
-    var ACTION_STATUS = FoodParent.ACTION_STATUS;
+    /*
+    export enum ACTION_STATUS {
+        NONE, IDLE, LOADING, LOADED, ERROR
+    }
+    */
+    (function (DATA_MODE) {
+        DATA_MODE[DATA_MODE["NONE"] = 0] = "NONE";
+        DATA_MODE[DATA_MODE["CREATE"] = 1] = "CREATE";
+        DATA_MODE[DATA_MODE["DELETE"] = 2] = "DELETE";
+        DATA_MODE[DATA_MODE["UPDATE_LOCATION"] = 3] = "UPDATE_LOCATION";
+        DATA_MODE[DATA_MODE["UPDATE_INFO"] = 4] = "UPDATE_INFO";
+    })(FoodParent.DATA_MODE || (FoodParent.DATA_MODE = {}));
+    var DATA_MODE = FoodParent.DATA_MODE;
     (function (VIEW_STATUS) {
         VIEW_STATUS[VIEW_STATUS["NONE"] = 0] = "NONE";
         VIEW_STATUS[VIEW_STATUS["HOME"] = 1] = "HOME";
         VIEW_STATUS[VIEW_STATUS["MANAGE_TREES"] = 2] = "MANAGE_TREES";
         VIEW_STATUS[VIEW_STATUS["PARENT_TREES"] = 3] = "PARENT_TREES";
         VIEW_STATUS[VIEW_STATUS["GEO_ERROR"] = 4] = "GEO_ERROR";
+        VIEW_STATUS[VIEW_STATUS["NETWORK_ERROR"] = 5] = "NETWORK_ERROR";
     })(FoodParent.VIEW_STATUS || (FoodParent.VIEW_STATUS = {}));
     var VIEW_STATUS = FoodParent.VIEW_STATUS;
     (function (VIEW_MODE) {
@@ -35168,6 +35181,13 @@ var FoodParent;
         EventHandler.getInstance = function () {
             return EventHandler._instance;
         };
+        EventHandler.undoLastCommand = function () {
+            var self = EventHandler._instance;
+            if (self._lastCommand) {
+                self._lastCommand.undo();
+                self._lastCommand = null;
+            }
+        };
         EventHandler.handleNavigate = function (viewStatus, option) {
             FoodParent.Controller.abortAllXHR();
             Pace.restart();
@@ -35187,7 +35207,16 @@ var FoodParent;
             FoodParent.View.getNavView().setActiveNavItem(viewStatus);
             FoodParent.View.setViewStatus(viewStatus);
         };
-        EventHandler.handleMouseClick = function (el, view) {
+        EventHandler.handleMouseClick = function (el, view, options) {
+            // Execute undo command.
+            if (el.hasClass('undo')) {
+                EventHandler.undoLastCommand();
+            }
+            // Make MessageView invisible.
+            if (FoodParent.View.getMessageView()) {
+                FoodParent.View.getMessageView().setInvisible();
+            }
+            // Handle specific event on each view status.
             switch (FoodParent.View.getViewStatus()) {
                 case VIEW_STATUS.NONE:
                     break;
@@ -35200,8 +35229,29 @@ var FoodParent;
                     }
                     break;
                 case VIEW_STATUS.GEO_ERROR:
+                case VIEW_STATUS.NETWORK_ERROR:
                     if (el.hasClass('alert-confirm')) {
                         new FoodParent.RemoveAlertViewCommand({ delay: FoodParent.Setting.getRemovePopupDuration() }).execute();
+                    }
+                    break;
+                case VIEW_STATUS.MANAGE_TREES:
+                    if (el.hasClass('marker-control-lock')) {
+                        if (!options.marker.options.draggable) {
+                            options.marker.options.draggable = true;
+                            options.marker.dragging.enable();
+                            el.html('<i class="fa fa-unlock-alt fa-2x"></i>');
+                            options.marker._popup.setContent('<div class="marker-control-wrapper">' + $('.marker-control-wrapper').html() + '</div>');
+                        }
+                        else {
+                            options.marker.options.draggable = false;
+                            options.marker.dragging.disable();
+                            el.html('<i class="fa fa-lock fa-2x"></i>');
+                            options.marker._popup.setContent('<div class="marker-control-wrapper">' + $('.marker-control-wrapper').html() + '</div>');
+                        }
+                    }
+                    else if (el.hasClass('marker-control-info')) {
+                    }
+                    else if (el.hasClass('marker-control-delete')) {
                     }
                     break;
             }
@@ -35222,6 +35272,21 @@ var FoodParent;
         };
         EventHandler.handleError = function (errorMode) {
             new FoodParent.RenderAlertViewCommand({ el: FoodParent.Setting.getPopWrapperElement(), errorMode: errorMode }).execute();
+        };
+        EventHandler.handleDataChange = function (message, undoable) {
+            var self = EventHandler._instance;
+            if (self._lastCommand) {
+                new FoodParent.RenderMessageViewCommand({ el: FoodParent.Setting.getMessageWrapperElement(), message: message, undoable: undoable }).execute();
+            }
+        };
+        EventHandler.handleTreeData = function (tree, dataMode, args) {
+            var self = EventHandler._instance;
+            switch (dataMode) {
+                case DATA_MODE.UPDATE_LOCATION:
+                    self._lastCommand = new FoodParent.UpdateTreeLocation({ tree: tree, marker: args.marker, location: args.location });
+                    break;
+            }
+            self._lastCommand.execute();
         };
         EventHandler._instance = new EventHandler();
         EventHandler.TAG = "Controller - ";
@@ -35321,7 +35386,14 @@ var FoodParent;
             var self = this;
             var view = FoodParent.AlertViewFractory.create(self._el, self._errorMode).render();
             FoodParent.View.setPopupView(view);
-            FoodParent.View.setViewStatus(FoodParent.VIEW_STATUS.GEO_ERROR);
+            switch (self._errorMode) {
+                case FoodParent.ERROR_MODE.GEO_PERMISSION_ERROR:
+                    FoodParent.View.setViewStatus(FoodParent.VIEW_STATUS.GEO_ERROR);
+                    break;
+                case FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR:
+                    FoodParent.View.setViewStatus(FoodParent.VIEW_STATUS.NETWORK_ERROR);
+                    break;
+            }
         };
         RenderAlertViewCommand.prototype.undo = function () {
         };
@@ -35438,6 +35510,54 @@ var FoodParent;
         return MovePaceBarToUnderNav;
     })();
     FoodParent.MovePaceBarToUnderNav = MovePaceBarToUnderNav;
+    var UpdateTreeLocation = (function () {
+        function UpdateTreeLocation(args) {
+            var self = this;
+            if (args != undefined && args.location != undefined && args.tree != undefined) {
+                self._tree = args.tree;
+                self._marker = args.marker;
+                self._location = args.location;
+            }
+        }
+        UpdateTreeLocation.prototype.execute = function () {
+            var self = this;
+            self._prevLocation = self._tree.getLocation();
+            self._tree.set({
+                'lat': self._location.lat,
+                'lng': self._location.lng
+            });
+        };
+        UpdateTreeLocation.prototype.undo = function () {
+            var self = this;
+            self._tree.set({
+                'lat': self._prevLocation.lat,
+                'lng': self._prevLocation.lng
+            });
+            self._marker.setLatLng(self._prevLocation);
+        };
+        return UpdateTreeLocation;
+    })();
+    FoodParent.UpdateTreeLocation = UpdateTreeLocation;
+    var RenderMessageViewCommand = (function () {
+        function RenderMessageViewCommand(args) {
+            var self = this;
+            self._el = args.el;
+            self._message = args.message;
+            self._undoable = args.undoable;
+        }
+        RenderMessageViewCommand.prototype.execute = function () {
+            var self = this;
+            if (FoodParent.View.getMessageView()) {
+                FoodParent.View.getMessageView().setInvisible();
+            }
+            var view = FoodParent.MessageViewFractory.create(self._el, self._message, self._undoable).render();
+            FoodParent.View.setMessageView(view);
+        };
+        RenderMessageViewCommand.prototype.undo = function () {
+        };
+        return RenderMessageViewCommand;
+    })();
+    FoodParent.RenderMessageViewCommand = RenderMessageViewCommand;
 })(FoodParent || (FoodParent = {}));
 
 var FoodParent;
@@ -35513,16 +35633,38 @@ var FoodParent;
             template += '</div>';
             return template;
         };
+        Template.getMessageViewTemplate = function () {
+            var template = '';
+            template += '<div class="outer-frame">';
+            template += '<div class="inner-frame">';
+            template += '<%= content %>';
+            template += '</div>';
+            template += '</div>';
+            return template;
+        };
+        Template.getMessageUndoableViewTemplate = function () {
+            var template = '';
+            template += '<div class="outer-frame">';
+            template += '<div class="inner-frame">';
+            template += '<%= content %>';
+            template += '<div class="undo">Undo change</div>';
+            template += '</div>';
+            template += '</div>';
+            return template;
+        };
         Template.getManageTreesPopupTemplate = function () {
             var template = '';
             template += '<div class="marker-control-wrapper">';
-            template += '<div class="marker-control-item">';
+            template += '<div class="marker-control-item marker-control-lock">';
             template += '<i class="fa fa-lock fa-2x"></i>';
             template += '</div>';
-            template += '<div class="marker-control-item">';
-            template += '<i class="fa fa-info fa-2x"></i>';
+            template += '<div class="marker-control-item marker-control-info">';
+            template += '<i class="fa fa-user fa-2x"></i>';
             template += '</div>';
-            template += '<div class="marker-control-item">';
+            template += '<div class="marker-control-item marker-control-info">';
+            template += '<i class="fa fa-sticky-note-o fa-2x"></i>';
+            template += '</div>';
+            template += '<div class="marker-control-item marker-control-delete">';
             template += '<i class="fa fa-remove fa-2x"></i>';
             template += '</div>';
             template += '</div>';
@@ -35656,7 +35798,6 @@ var FoodParent;
         __extends(View, _super);
         function View(options) {
             _super.call(this, options);
-            this._actionStatus = FoodParent.ACTION_STATUS.NONE;
             if (View._instance) {
                 throw new Error("Error: Instantiation failed: Use View.getInstance() instead of new.");
             }
@@ -35682,12 +35823,14 @@ var FoodParent;
         View.getViewStatus = function () {
             return View._instance._viewStatus[View._instance._viewStatus.length - 1];
         };
-        View.setActionStatus = function (actionStatus) {
+        /*
+        public static setActionStatus(actionStatus: ACTION_STATUS): void {
             View._instance._actionStatus = actionStatus;
-        };
-        View.getActionStatus = function () {
+        }
+        public static getActionStatus(): ACTION_STATUS {
             return View._instance._actionStatus;
-        };
+        }
+        */
         View.addChild = function (view) {
             var self = View._instance;
             if (self.children == undefined) {
@@ -35714,6 +35857,12 @@ var FoodParent;
                 });
             }
             View._instance._manageTreesView = null;
+        };
+        View.setMessageView = function (view) {
+            View._instance._messageView = view;
+        };
+        View.getMessageView = function () {
+            return View._instance._messageView;
         };
         View.setNavView = function (view) {
             View._instance._navView = view;
@@ -36134,17 +36283,21 @@ var FoodParent;
                     self._map.on('popupopen', function (event) {
                         var marker = event.popup._source;
                         marker._bringToFront();
+                        /*
+                        
+                        */
+                        $(marker.label._container).addClass('active');
+                        //$('.leaflet-popup-content .marker-control-item').off('click');
+                        //$('.leaflet-popup-content .marker-control-item').on('click', function (event) {
+                        //    //console.log($('.leaflet-popup-content .glyphicon').attr('data-id'));
+                        //    Router.getInstance().navigate("tree/" + $('.leaflet-popup-content .glyphicon').attr('data-id'), { trigger: true });
+                        //});
                         self._selectedMarker = marker;
-                        if (self._map.getZoom() < FoodParent.Setting.getMapCenterZoomLevel()) {
-                            self._map.setView(marker.getLatLng(), FoodParent.Setting.getMapCenterZoomLevel(), { animate: true });
-                        }
-                        else {
-                            self._map.setView(marker.getLatLng(), self._map.getZoom(), { animate: true });
-                        }
                     });
                     self._map.on('popupclose', function (event) {
                         var marker = event.popup._source;
                         marker._resetZIndex();
+                        $(marker.label._container).removeClass('active');
                         self._selectedMarker = null;
                     });
                 }
@@ -36185,7 +36338,11 @@ var FoodParent;
             self._zoom = FoodParent.Setting.getDefaultMapZoomLevel();
             self._markers = new Array();
             //$(window).resize(_.debounce(that.customResize, Setting.getInstance().getResizeTimeout()));
-            self.events = {};
+            self.events = {
+                //"mouseover .home-menu-left": "_mouseOver",
+                //"mouseover .home-menu-right": "_mouseOver",
+                "click .marker-control-item": "_mouseClick",
+            };
             self.delegateEvents();
         }
         ManageTreesMapView.prototype.render = function (args) {
@@ -36212,6 +36369,50 @@ var FoodParent;
             var marker = FoodParent.MarkerFractory.create(tree, true);
             self._markers.push(marker);
             marker.addTo(self._map);
+            /*
+            marker.on('dblclick', function (event) {
+                if (self._map.getZoom() < Setting.getMapCenterZoomLevel()) {
+                    self._map.setView(marker.getLatLng(), Setting.getMapCenterZoomLevel(), { animate: true });
+                } else {
+                    self._map.setView(marker.getLatLng(), self._map.getZoom(), { animate: true });
+                }
+            });
+            */
+            marker.on("dragend", function (event) {
+                if (marker.options.id != undefined) {
+                    var tree = FoodParent.Model.getTrees().findWhere({
+                        id: marker.options.id
+                    });
+                    FoodParent.EventHandler.handleTreeData(tree, FoodParent.DATA_MODE.UPDATE_LOCATION, { marker: marker, location: marker.getLatLng() });
+                }
+                /*
+                if (item.get("type") == ItemType.None || item.id == undefined) {	// new item
+                    item.set({ lat: item.marker.getLatLng().lat, lng: item.marker.getLatLng().lng });
+                } else {                                    // existing item
+                    item.save(
+                        { lat: item.marker.getLatLng().lat, lng: item.marker.getLatLng().lng },
+                        {
+                            success: function (model, response) {
+                                FMV.getMsgView().renderSuccess("'" + model.get("name") + "' " + FML.getViewMarkerSaveSuccessMsg());
+                            },
+                            error: function (error) {
+                                FMV.getMsgView().renderError(FML.getViewMarkerSaveErrorMsg());
+                            }
+                        }
+                    );
+                }
+                
+                // update ui if UIMode is Info or Add
+                if (FMV.getUIView().getMode() == UIMode.INFO || FMV.getUIView().getMode() == UIMode.ADD) {
+                    FMV.getUIView().$("#item-info-lat").val(item.marker.getLatLng().lat.toString());
+                    FMV.getUIView().$("#item-info-lng").val(item.marker.getLatLng().lng.toString());
+                }
+                // open popup
+                if (item.marker != null) {
+                    item.marker.openPopup();
+                }
+                */
+            });
         };
         ManageTreesMapView.prototype.setLocation = function (location) {
             var self = this;
@@ -36223,7 +36424,7 @@ var FoodParent;
         };
         ManageTreesMapView.prototype._mouseClick = function (event) {
             var self = this;
-            //EventHandler.handleMouseClick($(event.currentTarget), self);
+            FoodParent.EventHandler.handleMouseClick($(event.currentTarget), self, { marker: self._selectedMarker });
         };
         ManageTreesMapView.TAG = "ManageTreesMapView - ";
         return ManageTreesMapView;
@@ -36267,10 +36468,13 @@ var FoodParent;
                 closeButton: false,
                 closeOnClick: bCloseOnClick,
             })
-                .bindLabel('' + food.getName() + " " + tree.getName() + '', {
+                .bindLabel(food.getName() + " " + tree.getName(), {
                 clickable: true,
                 noHide: true,
                 direction: 'right'
+            });
+            marker.on('dragend', function (e) {
+                this.openPopup();
             });
             L.DomEvent.addListener(marker.label, 'click', function (e) { this.togglePopup(); }, marker);
             return marker;
@@ -36279,6 +36483,141 @@ var FoodParent;
         return MarkerFractory;
     })();
     FoodParent.MarkerFractory = MarkerFractory;
+})(FoodParent || (FoodParent = {}));
+
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var FoodParent;
+(function (FoodParent) {
+    var MessageViewFractory = (function () {
+        function MessageViewFractory(args) {
+            if (MessageViewFractory._instance) {
+                throw new Error("Error: Instantiation failed: Use MessageViewFractory.getInstance() instead of new.");
+            }
+            MessageViewFractory._instance = this;
+        }
+        MessageViewFractory.getInstance = function () {
+            return MessageViewFractory._instance;
+        };
+        MessageViewFractory.create = function (el, message, undoable) {
+            var view = new MessageView({ el: el });
+            view.setMessage(message);
+            view.setUndoable(undoable);
+            return view;
+        };
+        MessageViewFractory._instance = new MessageViewFractory();
+        return MessageViewFractory;
+    })();
+    FoodParent.MessageViewFractory = MessageViewFractory;
+    var MessageView = (function (_super) {
+        __extends(MessageView, _super);
+        function MessageView(options) {
+            _super.call(this, options);
+            var self = this;
+            self.bDebug = true;
+            //$(window).resize(_.debounce(that.customResize, Setting.getInstance().getResizeTimeout()));
+            self.events = {
+                "click .undo": "_mouseClick",
+            };
+            self.delegateEvents();
+        }
+        MessageView.prototype.render = function (args) {
+            if (this.bRendered) {
+                this.update(args);
+                return;
+            }
+            this.bRendered = true;
+            /////
+            var self = this;
+            if (self.bDebug)
+                console.log(MessageView.TAG + "render()");
+            /*
+            var template = _.template(Template.getAlertViewTemplate());
+            var data: any;
+            var tag: string = "";
+            switch (self._errorMode) {
+                case ERROR_MODE.GEO_PERMISSION_ERROR:
+                    tag += "<p>The device cannot find its's location information.<br />Please turn Geolocation setting on & refresh the page.</p>"
+                    tag += "<div class='button-outer-frame button1'><div class='button-inner-frame alert-confirm'>Confirm</div></div>";
+                    break;
+                case ERROR_MODE.SEVER_CONNECTION_ERROR:
+                    tag += "<p>There is a server connection error.<br/>If the issue won't be solved by the refreshing page,";
+                    tag += "<br/>please contact <a href='mailto:" + Setting.getDevContact() + "'>" + Setting.getDevContact() + "</a>.</p>";
+                    tag += "<div class='button-outer-frame button1'><div class='button-inner-frame alert-confirm'>Confirm</div></div>";
+                    break;
+            }
+            data = {
+                content: tag,
+            }
+            self.$el.html(template(data));
+            self.setElement(self.$('#wrapper-alert'));
+
+            self.setVisible();
+            */
+            var template;
+            if (self._undoable) {
+                template = _.template(FoodParent.Template.getMessageUndoableViewTemplate());
+            }
+            else {
+                template = _.template(FoodParent.Template.getMessageViewTemplate());
+            }
+            var data = {
+                content: self._message,
+            };
+            self.$el.html(template(data));
+            self.setElement(self.$('.outer-frame'));
+            self.setVisible();
+            if (self._timer) {
+                clearTimeout(self._timer);
+            }
+            self._timer = setTimeout(function () {
+                self.setInvisible();
+            }, 5000);
+            return self;
+        };
+        MessageView.prototype.update = function (args) {
+            if (!this.bRendered) {
+                this.render(args);
+                return;
+            }
+            /////
+            var self = this;
+            if (self.bDebug)
+                console.log(MessageView.TAG + "update()");
+            return self;
+        };
+        MessageView.prototype.setMessage = function (message) {
+            var self = this;
+            self._message = message;
+        };
+        MessageView.prototype.setUndoable = function (undoable) {
+            var self = this;
+            self._undoable = undoable;
+        };
+        MessageView.prototype._mouseEnter = function (event) {
+            var self = this;
+            FoodParent.EventHandler.handleMouseEnter($(event.currentTarget), self);
+        };
+        MessageView.prototype._mouseClick = function (event) {
+            var self = this;
+            FoodParent.EventHandler.handleMouseClick($(event.currentTarget), self);
+        };
+        MessageView.prototype.setVisible = function () {
+            var self = this;
+            FoodParent.Setting.getMessageWrapperElement().removeClass('hidden');
+        };
+        MessageView.prototype.setInvisible = function () {
+            var self = this;
+            FoodParent.Setting.getMessageWrapperElement().addClass('hidden');
+            clearTimeout(self._timer);
+        };
+        MessageView.TAG = "MessageView - ";
+        return MessageView;
+    })(FoodParent.BaseView);
+    FoodParent.MessageView = MessageView;
 })(FoodParent || (FoodParent = {}));
 
 var FoodParent;
@@ -36842,11 +37181,15 @@ var FoodParent;
                 self.isSavable = false;
                 model.save({}, {
                     wait: true,
-                    success: function (model, response) {
-                        console.log(model);
+                    success: function (tree, response) {
+                        console.log(tree);
                         self.isSavable = true;
+                        var food = FoodParent.Model.getFoods().findWhere({ id: tree.getFoodId() });
+                        FoodParent.EventHandler.handleDataChange("<i>" + food.getName() + " " + tree.getName() + "</i> has been changed successfully", true);
                     },
                     error: function (error, response) {
+                        self.isSavable = true;
+                        FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
                     },
                 });
             });

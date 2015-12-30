@@ -79,16 +79,40 @@
             return template;
         }
 
+        public static getMessageViewTemplate(): string {
+            var template = '';
+            template += '<div class="outer-frame">';
+            template += '<div class="inner-frame">';
+            template += '<%= content %>';
+            template += '</div>';
+            template += '</div>';
+            return template;
+        }
+
+        public static getMessageUndoableViewTemplate(): string {
+            var template = '';
+            template += '<div class="outer-frame">';
+            template += '<div class="inner-frame">';
+            template += '<%= content %>';
+            template += '<div class="undo">Undo change</div>';
+            template += '</div>';
+            template += '</div>';
+            return template;
+        }
+
         public static getManageTreesPopupTemplate(): string {
             var template = '';
             template += '<div class="marker-control-wrapper">';
-            template +=     '<div class="marker-control-item">';
+            template +=     '<div class="marker-control-item marker-control-lock">';
             template +=         '<i class="fa fa-lock fa-2x"></i>';
             template +=     '</div>';
-            template +=     '<div class="marker-control-item">';
-            template +=         '<i class="fa fa-info fa-2x"></i>';
+            template +=     '<div class="marker-control-item marker-control-info">';
+            template +=         '<i class="fa fa-user fa-2x"></i>';
             template +=     '</div>';
-            template +=     '<div class="marker-control-item">';
+            template +=     '<div class="marker-control-item marker-control-info">';
+            template +=         '<i class="fa fa-sticky-note-o fa-2x"></i>';
+            template +=     '</div>';
+            template +=     '<div class="marker-control-item marker-control-delete">';
             template +=         '<i class="fa fa-remove fa-2x"></i>';
             template +=     '</div>';
             template += '</div>';
