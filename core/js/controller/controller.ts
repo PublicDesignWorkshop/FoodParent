@@ -67,6 +67,27 @@
                 }
             });
         }
+        public static fetchAllFlagsAndOwners(success?: any, error?: any) {
+            var xhr1: JQueryXHR = Model.fetchAllFlags();
+            var xhr2: JQueryXHR = Model.fetchAllOwnerships();
+            Controller.pushXHR(xhr1);
+            Controller.pushXHR(xhr2);
+            $.when(
+                xhr1, xhr2
+            ).then(function () {
+                Controller.removeXHR(xhr1);
+                Controller.removeXHR(xhr2);
+                if (success) {
+                    success();
+                }
+            }, function () {
+                Controller.removeXHR(xhr1);
+                Controller.removeXHR(xhr2);
+                if (error) {
+                    error(ERROR_MODE.SEVER_CONNECTION_ERROR);
+                }
+            });
+        }
     }
 
     export class Router extends Backbone.Router {

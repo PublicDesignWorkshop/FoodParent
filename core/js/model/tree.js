@@ -25,25 +25,29 @@ var FoodParent;
                 "ownership": 0,
                 "updated": moment(new Date()).format(FoodParent.Setting.getDateTimeFormat()),
             };
+            /*
             self.off("change");
-            self.on("change", function (model, options) {
-                if (self.isSavable == false)
-                    return;
+            self.on("change", function (model: Tree, options) {
+                if (self.isSavable == false) return;
                 self.isSavable = false;
-                model.save({}, {
-                    wait: true,
-                    success: function (tree, response) {
-                        console.log(tree);
-                        self.isSavable = true;
-                        var food = FoodParent.Model.getFoods().findWhere({ id: tree.getFoodId() });
-                        FoodParent.EventHandler.handleDataChange("<i>" + food.getName() + " " + tree.getName() + "</i> has been changed successfully", true);
-                    },
-                    error: function (error, response) {
-                        self.isSavable = true;
-                        FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
-                    },
-                });
+                model.save(
+                    {},
+                    {
+                        wait: true,
+                        success: function (tree: Tree, response: any) {
+                            console.log(tree);
+                            self.isSavable = true;
+                            var food: Food = Model.getFoods().findWhere({ id: tree.getFoodId() });
+                            EventHandler.handleDataChange("<i>" + food.getName() + " " + tree.getName() + "</i> has been changed successfully", true);
+                        },
+                        error: function (error, response) {
+                            self.isSavable = true;
+                            EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
+                        },
+                    }
+                );
             });
+            */
         }
         Tree.prototype.parse = function (response, options) {
             if (response.id != null) {
@@ -134,10 +138,20 @@ var FoodParent;
             });
             return result;
         };
-        Trees.prototype.filterById = function (idArray) {
+        Trees.prototype.filterByIds = function (idArray) {
             var self = this;
             var trees = new Trees(self.models);
             return trees.reset(_.map(idArray, function (id) { return this.get(id); }, this));
+        };
+        Trees.prototype.filterByFoodIds = function (idArray) {
+            var self = this;
+            var trees = new Trees(self.models);
+            return new Trees(trees.filter(function (tree, index) {
+                if ($.inArray(tree.getFoodId(), idArray) > -1) {
+                    return true;
+                }
+                return false;
+            }));
         };
         Trees.prototype.getAssigned = function (trees) {
             var self = this;

@@ -10,7 +10,8 @@ var FoodParent;
         DATA_MODE[DATA_MODE["CREATE"] = 1] = "CREATE";
         DATA_MODE[DATA_MODE["DELETE"] = 2] = "DELETE";
         DATA_MODE[DATA_MODE["UPDATE_LOCATION"] = 3] = "UPDATE_LOCATION";
-        DATA_MODE[DATA_MODE["UPDATE_INFO"] = 4] = "UPDATE_INFO";
+        DATA_MODE[DATA_MODE["UPDATE_FLAG"] = 4] = "UPDATE_FLAG";
+        DATA_MODE[DATA_MODE["UPDATE_OWNERSHIP"] = 5] = "UPDATE_OWNERSHIP";
     })(FoodParent.DATA_MODE || (FoodParent.DATA_MODE = {}));
     var DATA_MODE = FoodParent.DATA_MODE;
     (function (VIEW_STATUS) {
@@ -144,11 +145,17 @@ var FoodParent;
                 new FoodParent.RenderMessageViewCommand({ el: FoodParent.Setting.getMessageWrapperElement(), message: message, undoable: undoable }).execute();
             }
         };
-        EventHandler.handleTreeData = function (tree, dataMode, args) {
+        EventHandler.handleTreeData = function (tree, dataMode, args, success, error) {
             var self = EventHandler._instance;
             switch (dataMode) {
                 case DATA_MODE.UPDATE_LOCATION:
-                    self._lastCommand = new FoodParent.UpdateTreeLocation({ tree: tree, marker: args.marker, location: args.location });
+                    self._lastCommand = new FoodParent.UpdateTreeLocation({ tree: tree, marker: args.marker, location: args.location }, success, error);
+                    break;
+                case DATA_MODE.UPDATE_FLAG:
+                    self._lastCommand = new FoodParent.UpdateTreeFlag({ tree: tree, flag: args.flag }, success, error);
+                    break;
+                case DATA_MODE.UPDATE_OWNERSHIP:
+                    self._lastCommand = new FoodParent.UpdateTreeOwnership({ tree: tree, ownership: args.ownership }, success, error);
                     break;
             }
             self._lastCommand.execute();

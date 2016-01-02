@@ -52,6 +52,8 @@ var FoodParent;
                 return;
             }
         };
+        BaseView.prototype.resize = function () {
+        };
         BaseView.prototype.getIsRendered = function () {
             return this.bRendered;
         };

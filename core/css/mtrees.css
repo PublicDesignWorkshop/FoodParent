@@ -4,5 +4,127 @@
         height: 100%;
         background-color: #eeeeee;
         border-top: 4px solid #5e4e51;
+        overflow: hidden;
+    }
+
+    #content-map {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        border-top: 4px solid #5e4e51;
+        overflow: hidden;
+    }
+
+    #wrapper-mapmenu {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        max-width: 280px;
+        height: 100%;
+        pointer-events: none;
+        padding: 12px 8px 8px 8px;
+        overflow-y: hidden;
+    }
+
+    #wrapper-treeinfo {
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 100%;
+        max-width: 360px;
+        height: 100%;
+        pointer-events: none;
+        padding: 12px 8px 8px 8px;
+        overflow-y: hidden;
+        color: #ffffff;
+    }
+
+    #wrapper-treeinfo div {
+        pointer-events: all;
+    }
+
+    #wrapper-treeinfo .hr {
+        background-color: rgba(132, 167, 87, 0.85);
+        border-color: rgba(255, 255, 255, 0.75);
+        border-left: 2px solid;
+        border-right: 2px solid;
+        height: 1px;
+        margin: 0;
+        padding: 0 8px;
+
+    }
+    #wrapper-treeinfo hr {
+        margin: 0;
+        padding: 0;
+    }
+
+    #wrapper-treeinfo .tree-info-name {
+        border-color: rgba(255, 255, 255, 0.75);
+        border-top: 2px solid;
+        border-left: 2px solid;
+        border-right: 2px solid;
+        background-color: rgba(132, 167, 87, 0.85);
+        font-size: x-large;
+        padding: 4px 0;
+        margin: 0;
+    }
+    #wrapper-treeinfo .tree-info-coordinate {
+        border-color: rgba(255, 255, 255, 0.75);
+        border-left: 2px solid;
+        border-right: 2px solid;
+        background-color: rgba(132, 167, 87, 0.85);
+        font-size: small;
+        padding: 4px 4px 0 4px;
+        margin: 0;
+    }
+
+    #wrapper-treeinfo .tree-info-address {
+        border-color: rgba(255, 255, 255, 0.75);
+        border-left: 2px solid;
+        border-right: 2px solid;
+        background-color: rgba(132, 167, 87, 0.85);
+        font-size: small;
+        padding: 4px;
+        margin: 0;
+    }
+
+    #wrapper-treeinfo .info-header {
+        border-color: rgba(255, 255, 255, 0.75);
+        border-left: 2px solid;
+        border-right: 2px solid;
+        background-color: rgba(132, 167, 87, 0.85);
+        font-weight: 700;
+        font-size: small;
+        text-align: left;
+        padding: 4px 16px 0 16px;
+    }
+    #wrapper-treeinfo .info-group {
+        border-color: rgba(255, 255, 255, 0.75);
+        border-left: 2px solid;
+        border-right: 2px solid;
+        background-color: rgba(132, 167, 87, 0.85);
+        font-weight: 700;
+        font-size: small;
+        text-align: left;
+        padding: 4px 24px;
+    }
+
+    #wrapper-treeinfo label:hover input[type="checkbox"] ~ i.fa {
+        color: #5e4e51;
+    }
+    #wrapper-treeinfo label:hover {
+        color: #5e4e51;
+    }
+    #wrapper-treeinfo label.active:hover {
+        color: #5e4e51;
+    }
+    #wrapper-treeinfo .flag-radio.active {
+        background-color: rgba(0, 0, 0, 0.05);
+    }
+    #wrapper-treeinfo .ownership-radio.active {
+        background-color: rgba(0, 0, 0, 0.05);
     }
 }

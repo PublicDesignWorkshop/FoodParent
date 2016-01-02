@@ -50,12 +50,15 @@ var FoodParent;
             return 250;
         };
         Setting.getDefaultMapZoomLevel = function () {
-            return 10;
+            return 13;
         };
         Setting.getTileMapAddress = function () {
             return 'http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png';
             //return 'http://{s}.tile.stamen.com/watercolor/{z}/{x}/{y}.jpg'
             //return 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+        };
+        Setting.getReverseGeoCodingAddress = function (coordinate) {
+            return 'http://nominatim.openstreetmap.org/reverse?format=json&lat=' + coordinate.lat + '&lon=' + coordinate.lng + '&zoom=18&addressdetails=1';
         };
         Setting.getMapMinZoomLevel = function () {
             return 5;
@@ -65,6 +68,9 @@ var FoodParent;
         };
         Setting.getMapCenterZoomLevel = function () {
             return 16;
+        };
+        Setting.getDateFormat = function () {
+            return "DD MMM";
         };
         Setting.getDateTimeFormat = function () {
             return "YYYY-MM-DD HH:mm:ss";

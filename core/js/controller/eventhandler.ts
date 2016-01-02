@@ -5,7 +5,7 @@
     }
     */
     export enum DATA_MODE {
-        NONE, CREATE, DELETE, UPDATE_LOCATION, UPDATE_INFO
+        NONE, CREATE, DELETE, UPDATE_LOCATION, UPDATE_FLAG, UPDATE_OWNERSHIP
     }
     export enum VIEW_STATUS {
         NONE, HOME, MANAGE_TREES, PARENT_TREES, GEO_ERROR, NETWORK_ERROR
@@ -132,11 +132,17 @@
             }
         }
 
-        public static handleTreeData(tree: Tree, dataMode: DATA_MODE, args: any): void {
+        public static handleTreeData(tree: Tree, dataMode: DATA_MODE, args: any, success?: Function, error?: Function): void {
             var self: EventHandler = EventHandler._instance;
             switch (dataMode) {
                 case DATA_MODE.UPDATE_LOCATION:
-                    self._lastCommand = new UpdateTreeLocation({ tree: tree, marker: args.marker, location: args.location });
+                    self._lastCommand = new UpdateTreeLocation({ tree: tree, marker: args.marker, location: args.location }, success, error);
+                    break;
+                case DATA_MODE.UPDATE_FLAG:
+                    self._lastCommand = new UpdateTreeFlag({ tree: tree, flag: args.flag }, success, error);
+                    break;
+                case DATA_MODE.UPDATE_OWNERSHIP:
+                    self._lastCommand = new UpdateTreeOwnership({ tree: tree, ownership: args.ownership }, success, error);
                     break;
             }
             self._lastCommand.execute();

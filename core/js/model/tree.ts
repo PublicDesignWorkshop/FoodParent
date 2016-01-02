@@ -18,7 +18,7 @@
                 "ownership": 0,
                 "updated": moment(new Date()).format(Setting.getDateTimeFormat()),
             };
-
+            /*
             self.off("change");
             self.on("change", function (model: Tree, options) {
                 if (self.isSavable == false) return;
@@ -40,6 +40,7 @@
                     }
                 );
             });
+            */
 
         }
 
@@ -135,10 +136,21 @@
             return result;
         }
 
-        public filterById(idArray): Array<Tree> {
+        public filterByIds(idArray): Array<Tree> {
             var self: Trees = this;
             var trees: Trees = new Trees(self.models);
             return trees.reset(_.map(idArray, function (id) { return this.get(id); }, this));
+        }
+
+        public filterByFoodIds(idArray): Trees {
+            var self: Trees = this;
+            var trees: Trees = new Trees(self.models);
+            return new Trees(trees.filter(function (tree: Tree, index: number) {
+                if ($.inArray(tree.getFoodId(), idArray) > -1) {
+                    return true;
+                }
+                return false;
+            }));
         }
 
         public getAssigned(trees: Trees): Trees {
@@ -148,7 +160,6 @@
                     if (trees.where({ id: model.getId() }) != undefined) {
                         trees.add(model);
                     }
-
                 }
             });
             return trees;

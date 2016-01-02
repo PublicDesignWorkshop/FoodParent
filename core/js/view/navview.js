@@ -83,7 +83,7 @@ var FoodParent;
         };
         NavView.prototype.focusOnLeft = function () {
             var self = this;
-            self.$('#background-nav-left').animate({ left: '-65%' }, FoodParent.Setting.getNavAnimDuration());
+            self.$('#background-nav-left').animate({ left: '-66%' }, FoodParent.Setting.getNavAnimDuration());
         };
         NavView.prototype.focusOnRight = function () {
             var self = this;

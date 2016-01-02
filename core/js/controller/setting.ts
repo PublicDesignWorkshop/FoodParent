@@ -51,12 +51,15 @@
             return 250;
         }
         public static getDefaultMapZoomLevel(): number {
-            return 10;
+            return 13;
         }
         public static getTileMapAddress(): string {
             return 'http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png';
             //return 'http://{s}.tile.stamen.com/watercolor/{z}/{x}/{y}.jpg'
             //return 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+        }
+        public static getReverseGeoCodingAddress(coordinate: L.LatLng): string {
+            return 'http://nominatim.openstreetmap.org/reverse?format=json&lat=' + coordinate.lat + '&lon=' + coordinate.lng + '&zoom=18&addressdetails=1';
         }
         public static getMapMinZoomLevel(): number {
             return 5;
@@ -66,6 +69,9 @@
         }
         public static getMapCenterZoomLevel(): number {
             return 16;
+        }
+        public static getDateFormat(): string {
+            return "DD MMM";
         }
         public static getDateTimeFormat(): string {
             return "YYYY-MM-DD HH:mm:ss";

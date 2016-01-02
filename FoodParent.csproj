@@ -22,6 +22,13 @@
     <Content Include="content\icon\marker-crabapples.png" />
     <Content Include="content\icon\marker-mulberries.png" />
     <Content Include="content\icon\marker-pear.png" />
+    <Content Include="content\picture\blackberry1.jpg" />
+    <Content Include="content\picture\blackberry2.jpg" />
+    <Content Include="content\picture\blackberry3.jpg" />
+    <Content Include="content\picture\blackberry4.jpg" />
+    <Content Include="content\picture\blackberry5.jpg" />
+    <Content Include="content\picture\blackberry6.jpg" />
+    <Content Include="content\picture\blackberry7.jpg" />
     <Content Include="core\css\alert.css" />
     <Content Include="core\css\app.css" />
     <Content Include="core\css\base.css" />
@@ -31,6 +38,7 @@
       <DependentUpon>foodparent.css</DependentUpon>
     </Content>
     <Content Include="core\css\home.css" />
+    <Content Include="core\css\input.css" />
     <Content Include="core\css\message.css" />
     <Content Include="core\css\mtrees.css" />
     <Content Include="core\css\nav.css" />
@@ -38,6 +46,7 @@
     <Content Include="core\css\pop.css" />
     <Content Include="core\css\leaflet.css" />
     <Content Include="core\image\marker-shadow.png" />
+    <Content Include="core\image\placeholder-image.jpg" />
     <Content Include="core\js\foodparent.js" />
     <Content Include="core\js\foodparent.min.js">
       <DependentUpon>foodparent.js</DependentUpon>
@@ -141,6 +150,12 @@
     <Content Include="bundleconfig.json.bindings">
       <DependentUpon>bundleconfig.json</DependentUpon>
     </Content>
+    <Content Include="core\php\flag.php" />
+    <Content Include="core\php\flags.php" />
+    <Content Include="core\php\ownership.php" />
+    <Content Include="core\php\ownerships.php" />
+    <Content Include="core\php\note.php" />
+    <Content Include="core\php\notes.php" />
     <None Include="web.Debug.config">
       <DependentUpon>web.config</DependentUpon>
     </None>
@@ -148,18 +163,19 @@
       <DependentUpon>web.config</DependentUpon>
     </None>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="content\picture\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <TypeScriptCompile Include="core\js\app.ts" />
     <TypeScriptCompile Include="core\js\controller\command\command.ts" />
     <TypeScriptCompile Include="core\js\controller\controller.ts" />
     <TypeScriptCompile Include="core\js\controller\eventhandler.ts" />
+    <TypeScriptCompile Include="core\js\controller\geolocation.ts" />
     <TypeScriptCompile Include="core\js\controller\setting.ts" />
     <TypeScriptCompile Include="core\js\model\adopt.ts" />
     <TypeScriptCompile Include="core\js\model\auth.ts" />
+    <TypeScriptCompile Include="core\js\model\flag.ts" />
     <TypeScriptCompile Include="core\js\model\food.ts" />
+    <TypeScriptCompile Include="core\js\model\note.ts" />
     <TypeScriptCompile Include="core\js\model\ownership.ts" />
     <TypeScriptCompile Include="core\js\model\tree.ts" />
     <TypeScriptCompile Include="core\js\view\alertview.ts" />

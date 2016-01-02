@@ -3287,7 +3287,6 @@ select[multiple].input-lg {
 .btn:hover,
 .btn:focus,
 .btn.focus {
-  color: #333;
   text-decoration: none;
 }
 .btn:active,
@@ -11672,10 +11671,6 @@ button.close {
         -webkit-font-smoothing: antialiased;
     }
 
-    ::-webkit-scrollbar { 
-        display: none; 
-    }
-
     html {
         width: 100%;
         height: 100%;
@@ -11768,9 +11763,9 @@ button.close {
         top: 0;
         left: 0;
         margin-top: 60px;
-        padding-bottom: 60px;
         width: 100%;
         height: 100%;
+        overflow: hidden;
     }
     
     .leaflet-popup-content {
@@ -11876,6 +11871,7 @@ button.close {
         left: 0;
         width: 100%;
         height: 100%;
+        overflow: hidden;
     }
     #background-nav-left {
         position: absolute;
@@ -12015,6 +12011,8 @@ button.close {
     }
 }
 @media all {
+    /* Button Style 1 */
+
     .button-outer-frame {
         padding: 4px;
     }
@@ -12029,6 +12027,7 @@ button.close {
         -ms-user-select: none;
         -webkit-user-select: none;
         user-select: none;
+        pointer-events: fill;
     }
 
     .button1 .button-inner-frame:hover {
@@ -12049,6 +12048,40 @@ button.close {
     .button2 {
         background-color: #84a757;
     }
+
+    /* Button Style 2 */
+
+    .button-outer-frame2 {
+        padding: 3px;
+    }
+
+    .button-inner-frame2 {
+        color: rgba(255, 255, 255, 1);
+        border: 2px solid rgba(255, 255, 255, 0.75);
+        padding: 3px 6px;
+        font-weight: 700;
+        font-size: small;
+        cursor: pointer;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        -webkit-user-select: none;
+        user-select: none;
+        pointer-events: fill;
+    }
+
+    .button3 .button-inner-frame2:hover {
+        color: #84a757;
+        border: 2px solid #84a757;
+    }
+
+    .button3 .button-inner-frame2:active {
+        text-shadow: 2px 2px 1px #403537;
+        box-shadow: inset 0 0 2px 2px #403537;
+    }
+
+    .button3 {
+        background-color: rgba(94, 78, 81, 0.85);
+    }
 }
 @media all {
     #wrapper-pop .outer-frame {
@@ -12068,6 +12101,128 @@ button.close {
         height: 100%;
         background-color: #eeeeee;
         border-top: 4px solid #5e4e51;
+        overflow: hidden;
+    }
+
+    #content-map {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        border-top: 4px solid #5e4e51;
+        overflow: hidden;
+    }
+
+    #wrapper-mapmenu {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        max-width: 280px;
+        height: 100%;
+        pointer-events: none;
+        padding: 12px 8px 8px 8px;
+        overflow-y: hidden;
+    }
+
+    #wrapper-treeinfo {
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 100%;
+        max-width: 360px;
+        height: 100%;
+        pointer-events: none;
+        padding: 12px 8px 8px 8px;
+        overflow-y: hidden;
+        color: #ffffff;
+    }
+
+    #wrapper-treeinfo div {
+        pointer-events: all;
+    }
+
+    #wrapper-treeinfo .hr {
+        background-color: rgba(132, 167, 87, 0.85);
+        border-color: rgba(255, 255, 255, 0.75);
+        border-left: 2px solid;
+        border-right: 2px solid;
+        height: 1px;
+        margin: 0;
+        padding: 0 8px;
+
+    }
+    #wrapper-treeinfo hr {
+        margin: 0;
+        padding: 0;
+    }
+
+    #wrapper-treeinfo .tree-info-name {
+        border-color: rgba(255, 255, 255, 0.75);
+        border-top: 2px solid;
+        border-left: 2px solid;
+        border-right: 2px solid;
+        background-color: rgba(132, 167, 87, 0.85);
+        font-size: x-large;
+        padding: 4px 0;
+        margin: 0;
+    }
+    #wrapper-treeinfo .tree-info-coordinate {
+        border-color: rgba(255, 255, 255, 0.75);
+        border-left: 2px solid;
+        border-right: 2px solid;
+        background-color: rgba(132, 167, 87, 0.85);
+        font-size: small;
+        padding: 4px 4px 0 4px;
+        margin: 0;
+    }
+
+    #wrapper-treeinfo .tree-info-address {
+        border-color: rgba(255, 255, 255, 0.75);
+        border-left: 2px solid;
+        border-right: 2px solid;
+        background-color: rgba(132, 167, 87, 0.85);
+        font-size: small;
+        padding: 4px;
+        margin: 0;
+    }
+
+    #wrapper-treeinfo .info-header {
+        border-color: rgba(255, 255, 255, 0.75);
+        border-left: 2px solid;
+        border-right: 2px solid;
+        background-color: rgba(132, 167, 87, 0.85);
+        font-weight: 700;
+        font-size: small;
+        text-align: left;
+        padding: 4px 16px 0 16px;
+    }
+    #wrapper-treeinfo .info-group {
+        border-color: rgba(255, 255, 255, 0.75);
+        border-left: 2px solid;
+        border-right: 2px solid;
+        background-color: rgba(132, 167, 87, 0.85);
+        font-weight: 700;
+        font-size: small;
+        text-align: left;
+        padding: 4px 24px;
+    }
+
+    #wrapper-treeinfo label:hover input[type="checkbox"] ~ i.fa {
+        color: #5e4e51;
+    }
+    #wrapper-treeinfo label:hover {
+        color: #5e4e51;
+    }
+    #wrapper-treeinfo label.active:hover {
+        color: #5e4e51;
+    }
+    #wrapper-treeinfo .flag-radio.active {
+        background-color: rgba(0, 0, 0, 0.05);
+    }
+    #wrapper-treeinfo .ownership-radio.active {
+        background-color: rgba(0, 0, 0, 0.05);
     }
 }
 @media all {
@@ -12114,5 +12269,82 @@ button.close {
     .leaflet-label:hover, .leaflet-label.active {
         color: rgba(0, 0, 0, 0.75);
         background-color: rgba(255, 255, 255, 0.75);
+    }
+}
+
+@media all {
+    label input[type="radio"] ~ i.fa.fa-circle-o{
+        display: inline;
+    }
+    label input[type="radio"] ~ i.fa.fa-check-circle-o{
+        display: none;
+    }
+    label input[type="radio"]:checked ~ i.fa.fa-circle-o{
+        display: none;
+    }
+    label input[type="radio"]:checked ~ i.fa.fa-check-circle-o{
+        display: inline;
+    }
+    label:hover input[type="radio"] ~ i.fa {
+
+    }
+
+    label input[type="checkbox"] ~ i.fa.fa-square-o{
+        display: inline;
+    }
+    label input[type="checkbox"] ~ i.fa.fa-check-square-o{
+        display: none;
+    }
+    label input[type="checkbox"]:checked ~ i.fa.fa-square-o{
+        display: none;
+    }
+    label input[type="checkbox"]:checked ~ i.fa.fa-check-square-o{
+        display: inline;
+    }
+    label:hover input[type="checkbox"] ~ i.fa {
+        color: #83a656;
+    }
+    label:hover {
+        color: #83a656;
+    }
+    label.active:hover {
+        color: #83a656;
+    }
+
+    .filter-checkbox {
+        text-align: left;
+        width: 100%;
+        padding: 4px 8px;
+    }
+
+    .filter-checkbox {
+        color: rgba(255, 255, 255, 0.35);
+    }
+    .filter-checkbox.active {
+        color: rgba(255, 255, 255, 1);
+        background-color: rgba(0, 0, 0, 0.05);
+    }
+
+    .list-hiearchy1 {
+        padding-left: 8px;
+    }
+
+    .list-hiearchy2 {
+        padding-left: 24px;
+    }
+
+    .collapsible-list {
+        width: 100%;
+        color: rgba(255, 255, 255, 0.75);
+        background-color: rgba(94, 78, 81, 0.85);
+        text-align: left;
+        padding: 2px 8px 4px 8px;
+        font-size: small;
+        pointer-events: fill;
+        overflow-y: auto;
+    }
+
+    .collapsible-list hr {
+        margin: 8px 0;
     }
 }

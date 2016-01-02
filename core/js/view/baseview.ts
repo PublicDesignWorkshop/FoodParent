@@ -55,6 +55,10 @@ module FoodParent {
                 return;
             }
         }
+
+        public resize(): any {
+
+        }
         
         public getIsRendered(): boolean {
             return this.bRendered;

@@ -39,6 +39,27 @@ var FoodParent;
             }
             return self.trees;
         };
+        Model.getFlags = function () {
+            var self = Model._instance;
+            if (self.flags == undefined) {
+                self.flags = new FoodParent.Flags();
+            }
+            return self.flags;
+        };
+        Model.getOwnerships = function () {
+            var self = Model._instance;
+            if (self.ownerships == undefined) {
+                self.ownerships = new FoodParent.Ownerships();
+            }
+            return self.ownerships;
+        };
+        Model.getNotes = function () {
+            var self = Model._instance;
+            if (self.notes == undefined) {
+                self.notes = new FoodParent.Notes();
+            }
+            return self.notes;
+        };
         Model.fetchAuths = function () {
             console.log(Model.TAG + "fetchAuths()");
             var self = Model._instance;
@@ -201,6 +222,42 @@ var FoodParent;
                     west: 0,
                     east: 0,
                 },
+                success: function (collection, response, options) {
+                    console.log("success fetch with " + collection.models.length + " trees");
+                    //that.fetchFoods(that.foods.getUndetectedIds(that.trees.getFoodIds()));
+                },
+                error: function (collection, jqxhr, options) {
+                    console.log("error while fetching item data from the server");
+                }
+            });
+        };
+        Model.fetchAllFlags = function () {
+            var self = Model._instance;
+            if (self.flags == undefined) {
+                self.flags = new FoodParent.Flags();
+            }
+            return self.flags.fetch({
+                remove: true,
+                processData: true,
+                data: {},
+                success: function (collection, response, options) {
+                    console.log("success fetch with " + collection.models.length + " trees");
+                    //that.fetchFoods(that.foods.getUndetectedIds(that.trees.getFoodIds()));
+                },
+                error: function (collection, jqxhr, options) {
+                    console.log("error while fetching item data from the server");
+                }
+            });
+        };
+        Model.fetchAllOwnerships = function () {
+            var self = Model._instance;
+            if (self.ownerships == undefined) {
+                self.ownerships = new FoodParent.Ownerships();
+            }
+            return self.ownerships.fetch({
+                remove: true,
+                processData: true,
+                data: {},
                 success: function (collection, response, options) {
                     console.log("success fetch with " + collection.models.length + " trees");
                     //that.fetchFoods(that.foods.getUndetectedIds(that.trees.getFoodIds()));

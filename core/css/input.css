@@ -1,0 +1,76 @@
+﻿@media all {
+    label input[type="radio"] ~ i.fa.fa-circle-o{
+        display: inline;
+    }
+    label input[type="radio"] ~ i.fa.fa-check-circle-o{
+        display: none;
+    }
+    label input[type="radio"]:checked ~ i.fa.fa-circle-o{
+        display: none;
+    }
+    label input[type="radio"]:checked ~ i.fa.fa-check-circle-o{
+        display: inline;
+    }
+    label:hover input[type="radio"] ~ i.fa {
+
+    }
+
+    label input[type="checkbox"] ~ i.fa.fa-square-o{
+        display: inline;
+    }
+    label input[type="checkbox"] ~ i.fa.fa-check-square-o{
+        display: none;
+    }
+    label input[type="checkbox"]:checked ~ i.fa.fa-square-o{
+        display: none;
+    }
+    label input[type="checkbox"]:checked ~ i.fa.fa-check-square-o{
+        display: inline;
+    }
+    label:hover input[type="checkbox"] ~ i.fa {
+        color: #83a656;
+    }
+    label:hover {
+        color: #83a656;
+    }
+    label.active:hover {
+        color: #83a656;
+    }
+
+    .filter-checkbox {
+        text-align: left;
+        width: 100%;
+        padding: 4px 8px;
+    }
+
+    .filter-checkbox {
+        color: rgba(255, 255, 255, 0.35);
+    }
+    .filter-checkbox.active {
+        color: rgba(255, 255, 255, 1);
+        background-color: rgba(0, 0, 0, 0.05);
+    }
+
+    .list-hiearchy1 {
+        padding-left: 8px;
+    }
+
+    .list-hiearchy2 {
+        padding-left: 24px;
+    }
+
+    .collapsible-list {
+        width: 100%;
+        color: rgba(255, 255, 255, 0.75);
+        background-color: rgba(94, 78, 81, 0.85);
+        text-align: left;
+        padding: 2px 8px 4px 8px;
+        font-size: small;
+        pointer-events: fill;
+        overflow-y: auto;
+    }
+
+    .collapsible-list hr {
+        margin: 8px 0;
+    }
+}

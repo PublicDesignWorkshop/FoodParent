@@ -83,7 +83,7 @@
 
         public focusOnLeft(): void {
             var self: NavView = this;
-            self.$('#background-nav-left').animate({ left: '-65%' }, Setting.getNavAnimDuration());
+            self.$('#background-nav-left').animate({ left: '-66%' }, Setting.getNavAnimDuration());
         }
 
         public focusOnRight(): void {

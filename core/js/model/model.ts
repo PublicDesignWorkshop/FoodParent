@@ -7,6 +7,9 @@
         private foods: Foods;
         private adopts: Adopts;
         private trees: Trees;
+        private flags: Flags;
+        private ownerships: Ownerships;
+        private notes: Notes;
         constructor(args?: any) {
             if (Model._instance) {
                 throw new Error("Error: Instantiation failed: Use Model.getInstance() instead of new.");
@@ -43,6 +46,27 @@
                 self.trees = new Trees();
             }
             return self.trees;
+        }
+        public static getFlags(): Flags {
+            var self: Model = Model._instance;
+            if (self.flags == undefined) {
+                self.flags = new Flags();
+            }
+            return self.flags;
+        }
+        public static getOwnerships(): Ownerships {
+            var self: Model = Model._instance;
+            if (self.ownerships == undefined) {
+                self.ownerships = new Ownerships();
+            }
+            return self.ownerships;
+        }
+        public static getNotes(): Notes {
+            var self: Model = Model._instance;
+            if (self.notes == undefined) {
+                self.notes = new Notes();
+            }
+            return self.notes;
         }
 
         public static fetchAuths(): void {
@@ -209,6 +233,48 @@
                     north: 0,
                     west: 0,
                     east: 0,
+                },
+                success(collection?: any, response?: any, options?: any): void {
+                    console.log("success fetch with " + collection.models.length + " trees");
+                    //that.fetchFoods(that.foods.getUndetectedIds(that.trees.getFoodIds()));
+                },
+                error(collection?: any, jqxhr?: JQueryXHR, options?: any): void {
+                    console.log("error while fetching item data from the server");
+                }
+            });
+        }
+
+        public static fetchAllFlags(): JQueryXHR {
+            var self: Model = Model._instance;
+            if (self.flags == undefined) {
+                self.flags = new Flags();
+            }
+            return self.flags.fetch({
+                remove: true,	// if remove == false, it only adds new items, not removing old items.
+                processData: true,
+                data: {
+                    
+                },
+                success(collection?: any, response?: any, options?: any): void {
+                    console.log("success fetch with " + collection.models.length + " trees");
+                    //that.fetchFoods(that.foods.getUndetectedIds(that.trees.getFoodIds()));
+                },
+                error(collection?: any, jqxhr?: JQueryXHR, options?: any): void {
+                    console.log("error while fetching item data from the server");
+                }
+            });
+        }
+
+        public static fetchAllOwnerships(): JQueryXHR {
+            var self: Model = Model._instance;
+            if (self.ownerships == undefined) {
+                self.ownerships = new Ownerships();
+            }
+            return self.ownerships.fetch({
+                remove: true,	// if remove == false, it only adds new items, not removing old items.
+                processData: true,
+                data: {
+
                 },
                 success(collection?: any, response?: any, options?: any): void {
                     console.log("success fetch with " + collection.models.length + " trees");

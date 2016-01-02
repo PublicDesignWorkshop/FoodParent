@@ -98,6 +98,12 @@ var FoodParent;
             self._navView.destroy();
             self._navView = null;
         };
+        View.getWidth = function () {
+            return $('body').innerWidth();
+        };
+        View.getHeight = function () {
+            return $('body').innerHeight();
+        };
         View._instance = new View();
         View.TAG = "View - ";
         return View;

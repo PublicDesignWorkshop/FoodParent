@@ -27,6 +27,7 @@
       "core/js/controller/setting.js",
       "core/js/controller/controller.js",
       "core/js/controller/eventhandler.js",
+      "core/js/controller/geolocation.js",
       // Command
       "core/js/controller/command/command.js",
       // View
@@ -45,7 +46,9 @@
       "core/js/model/auth.js",
       "core/js/model/food.js",
       "core/js/model/ownership.js",
-      "core/js/model/tree.js"
+      "core/js/model/tree.js",
+      "core/js/model/flag.js",
+      "core/js/model/note.js"
     ]
   },
   {
@@ -72,7 +75,8 @@
       "core/css/button.css",
       "core/css/alert.css",
       "core/css/mtrees.css",
-      "core/css/leaflet.css"
+      "core/css/leaflet.css",
+      "core/css/input.css"
     ]
   }
 ]

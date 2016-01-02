@@ -101,5 +101,12 @@
             self._navView.destroy();
             self._navView = null;
         }
+
+        public static getWidth(): number {
+            return $('body').innerWidth();
+        }
+        public static getHeight(): number {
+            return $('body').innerHeight();
+        }
     }
 }

@@ -64,6 +64,25 @@ var FoodParent;
                 }
             });
         };
+        Controller.fetchAllFlagsAndOwners = function (success, error) {
+            var xhr1 = FoodParent.Model.fetchAllFlags();
+            var xhr2 = FoodParent.Model.fetchAllOwnerships();
+            Controller.pushXHR(xhr1);
+            Controller.pushXHR(xhr2);
+            $.when(xhr1, xhr2).then(function () {
+                Controller.removeXHR(xhr1);
+                Controller.removeXHR(xhr2);
+                if (success) {
+                    success();
+                }
+            }, function () {
+                Controller.removeXHR(xhr1);
+                Controller.removeXHR(xhr2);
+                if (error) {
+                    error(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+                }
+            });
+        };
         Controller._instance = new Controller();
         Controller.TAG = "Controller - ";
         return Controller;
