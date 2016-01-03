@@ -5,7 +5,7 @@
     }
     */
     export enum DATA_MODE {
-        NONE, CREATE, DELETE, UPDATE_LOCATION, UPDATE_FLAG, UPDATE_OWNERSHIP
+        NONE, CREATE, DELETE, UPDATE_LOCATION, UPDATE_FLAG, UPDATE_OWNERSHIP, UPDATE_FOODTYPE
     }
     export enum VIEW_STATUS {
         NONE, HOME, MANAGE_TREES, PARENT_TREES, GEO_ERROR, NETWORK_ERROR
@@ -143,6 +143,9 @@
                     break;
                 case DATA_MODE.UPDATE_OWNERSHIP:
                     self._lastCommand = new UpdateTreeOwnership({ tree: tree, ownership: args.ownership }, success, error);
+                    break;
+                case DATA_MODE.UPDATE_FOODTYPE:
+                    self._lastCommand = new UpdateTreeFoodType({ tree: tree, food: args.food }, success, error);
                     break;
             }
             self._lastCommand.execute();

@@ -12,6 +12,7 @@ var FoodParent;
         DATA_MODE[DATA_MODE["UPDATE_LOCATION"] = 3] = "UPDATE_LOCATION";
         DATA_MODE[DATA_MODE["UPDATE_FLAG"] = 4] = "UPDATE_FLAG";
         DATA_MODE[DATA_MODE["UPDATE_OWNERSHIP"] = 5] = "UPDATE_OWNERSHIP";
+        DATA_MODE[DATA_MODE["UPDATE_FOODTYPE"] = 6] = "UPDATE_FOODTYPE";
     })(FoodParent.DATA_MODE || (FoodParent.DATA_MODE = {}));
     var DATA_MODE = FoodParent.DATA_MODE;
     (function (VIEW_STATUS) {
@@ -156,6 +157,9 @@ var FoodParent;
                     break;
                 case DATA_MODE.UPDATE_OWNERSHIP:
                     self._lastCommand = new FoodParent.UpdateTreeOwnership({ tree: tree, ownership: args.ownership }, success, error);
+                    break;
+                case DATA_MODE.UPDATE_FOODTYPE:
+                    self._lastCommand = new FoodParent.UpdateTreeFoodType({ tree: tree, food: args.food }, success, error);
                     break;
             }
             self._lastCommand.execute();

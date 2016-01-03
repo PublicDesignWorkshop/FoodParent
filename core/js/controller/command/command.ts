@@ -512,6 +512,106 @@
         }
     }
 
+    export class UpdateTreeFoodType implements Command {
+        private _tree: Tree;
+        private _food: number;
+        private _previousFood: number;
+        private _success: Function;
+        private _error: Function;
+        private _note: Note;
+        constructor(args?: any, success?: Function, error?: Function) {
+            var self: UpdateTreeFoodType = this;
+            if (args != undefined && args.tree != undefined && args.food != undefined) {
+                self._tree = args.tree;
+                self._food = args.food;
+            }
+            if (success) {
+                self._success = success;
+            }
+            if (error) {
+                self._error = error;
+            }
+        }
+        public execute(): any {
+            var self: UpdateTreeFoodType = this;
+            self._previousFood = self._tree.getFoodId();
+            self._tree.save(
+                {
+                    'food': self._food,
+                },
+                {
+                    wait: true,
+                    success: function (tree: Tree, response: any) {
+                        self._note = new Note({
+                            type: NoteType.INFO,
+                            tree: self._tree.getId(),
+                            person: 0,
+                            comment: "Food type has changed from '" + Model.getFoods().findWhere({ id: self._previousFood }).getName()
+                            + "'to '" + Model.getFoods().findWhere({ id: self._food }).getName() + "'",
+                            picture: "",
+                            rate: -1,
+                            date: moment(new Date()).format(Setting.getDateTimeFormat()),
+                        });
+                        self._note.save(
+                            {},
+                            {
+                                wait: true,
+                                success: function (note: Note, response: any) {
+                                    Model.getNotes().add(note);
+                                    if (self._success) {
+                                        self._success();
+                                    }
+                                },
+                                error: function (error) {
+                                    if (self._error) {
+                                        self._error();
+                                    }
+                                },
+                            }
+                        );
+                    },
+                    error: function (error, response) {
+                        if (self._error) {
+                            self._error();
+                        }
+                    },
+                }
+            );
+        }
+        public undo(): any {
+            var self: UpdateTreeFoodType = this;
+            self._tree.save(
+                {
+                    'food': self._food,
+                },
+                {
+                    wait: true,
+                    success: function (tree: Tree, response: any) {
+                        Model.getNotes().remove(self._note);
+                        self._note.destroy({
+                            wait: true,
+                            success: function (note: Note, response: any) {
+                                if (self._success) {
+                                    self._success();
+                                }
+                            },
+                            error: function (error) {
+                                if (self._error) {
+                                    self._error();
+                                }
+                            },
+                        });
+                    },
+                    error: function (error, response) {
+                        if (self._error) {
+                            self._error();
+                        }
+                    },
+                }
+            );
+        }
+    }
+
     export class RenderMessageViewCommand implements Command {
         private _el: JQuery;
         private _message: string;

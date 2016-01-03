@@ -70,6 +70,9 @@
         font-size: x-large;
         padding: 4px 0;
         margin: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
     }
     #wrapper-treeinfo .tree-info-coordinate {
         border-color: rgba(255, 255, 255, 0.75);
@@ -140,8 +143,7 @@
         font-weight: 400;
         display: flex;
     }
-
-    #wrapper-treeinfo input {
-        color: #222222;
+    #wrapper-treeinfo div.input-lat, #wrapper-treeinfo div.input-lng, #wrapper-treeinfo div.input-food {
+        cursor: pointer;
     }
 }

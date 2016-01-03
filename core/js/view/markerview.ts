@@ -11,6 +11,18 @@
         public static getInstance(): MarkerFractory {
             return MarkerFractory._instance;
         }
+
+        public static getIcon(food: Food): L.Icon {
+            return new L.Icon({
+                iconUrl: food.getIconPath(),
+                shadowUrl: Setting.getMarkerShadowPath(),
+                iconSize: new L.Point(40, 40),
+                iconAnchor: new L.Point(20, 40),
+                shadowAnchor: new L.Point(9, 38),
+                popupAnchor: new L.Point(0, 48),
+            });
+        }
+
         public static create(tree: Tree, bCloseOnClick: boolean): L.Marker {
             var food: Food = Model.getFoods().findWhere({ id: tree.getFoodId() });
             var icon: L.Icon = new L.Icon({

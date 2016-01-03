@@ -111,7 +111,8 @@
                 var ownership: Ownership = Model.getOwnerships().findWhere({ id: tree.getOwnershipId() });
                 var template = _.template(Template.getTreeInfoTemplate());
                 var data = {
-                    name: food.getName() + " " + tree.getName(),
+                    foodname: food.getName(),
+                    treename: tree.getName(),
                     lat: tree.getLat().toFixed(4),
                     lng: tree.getLng().toFixed(4),
                     flags: Model.getFlags(),
@@ -128,54 +129,84 @@
                 }, function () {
                     EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
                 });
+                self.$('.input-food').on('click', function (event) {
+                    var template = _.template(Template.FoodSelectTemplate());
+                    var data = {
+                        foods: Model.getFoods(),
+                    }
+                    $(this).replaceWith(template(data));
+                    
+                    self.$('.input-food').selectpicker();
+                    self.$('.input-food').selectpicker("val", food.getId());
+                    self.$('.input-food').on('hide.bs.dropdown', function (event) {
+                        var selected = $(this).find("option:selected").val();
+                        EventHandler.handleTreeData(tree, DATA_MODE.UPDATE_FOODTYPE, { food: parseInt(selected) }, function () {
+                            var food: Food = Model.getFoods().findWhere({ id: tree.getFoodId() });
+                            var flag: Flag = Model.getFlags().findWhere({ id: tree.getFlagId() });
+                            EventHandler.handleDataChange("Food type of <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has changed successfully.", true);
+                            self._selectedMarker.label._container.innerHTML = food.getName() + " " + tree.getName();
+                            self._selectedMarker.setIcon(MarkerFractory.getIcon(food));
+                            self.renderTreeInfo(tree);
+                        }, function () {
+                            EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
+                        });
+
+                        console.log(selected);
+                        self.renderTreeInfo(tree);
+                    });
+                });
+
                 self.$('.input-lat').on('click', function (event) {
                     var width: number = self.$('.input-lat').outerWidth() + 8;
-                    $(this).replaceWith("<input class='input-lat' value=" + $(this).html() + " />");
-                    self.$('.input-lat').css({ width: width });
+                    $(this).replaceWith("<input class='input-lat form-control' value=" + $(this).html() + " />");
+                    //self.$('.input-lat').css({ width: width });
                     self.$('.input-lat').focus();
                     self.$('.input-lat').on('focusout', function (event) {
                         var location: L.LatLng = new L.LatLng(parseFloat(self.$('.input-lat').val()), self._selectedMarker.getLatLng().lng);
-                        if (self._selectedMarker != undefined && self._selectedMarker.options.id != undefined) {
-                            var tree: Tree = Model.getTrees().findWhere({
-                                id: self._selectedMarker.options.id
-                            });
-                            EventHandler.handleTreeData(tree, DATA_MODE.UPDATE_LOCATION, { marker: self._selectedMarker, location: location }, function () {
-                                var food: Food = Model.getFoods().findWhere({ id: tree.getFoodId() });
-                                self.renderRecentActivities(tree);
-                                EventHandler.handleDataChange("Location of <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has changed successfully.", true);
-                                // Move marker to desired location & update info panel
-                                self._selectedMarker.setLatLng(tree.getLocation());
-                                self._map.setView(tree.getLocation());
-                                self.renderTreeInfo(tree);
-                            }, function () {
-                                EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
-                            });
+                        if (location.lat != self._selectedMarker.getLatLng().lat) {
+                            if (self._selectedMarker != undefined && self._selectedMarker.options.id != undefined) {
+                                EventHandler.handleTreeData(tree, DATA_MODE.UPDATE_LOCATION, { marker: self._selectedMarker, location: location }, function () {
+                                    var food: Food = Model.getFoods().findWhere({ id: tree.getFoodId() });
+                                    self.renderRecentActivities(tree);
+                                    EventHandler.handleDataChange("Location of <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has changed successfully.", true);
+                                    // Move marker to desired location & update info panel
+                                    self._selectedMarker.setLatLng(tree.getLocation());
+                                    self._map.setView(tree.getLocation());
+                                    self.renderTreeInfo(tree);
+                                }, function () {
+                                    EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
+                                });
+                            }
+                        } else {
+                            self.renderTreeInfo(tree);
                         }
                     });
                 });
                 self.$('.input-lng').on('click', function (event) {
                     var width: number = self.$('.input-lng').outerWidth() + 8;
-                    $(this).replaceWith("<input class='input-lng' value=" + $(this).html() + " />");
-                    self.$('.input-lng').css({ width: width });
+                    $(this).replaceWith("<input class='input-lng form-control' value=" + $(this).html() + " />");
+                    //self.$('.input-lng').css({ width: width });
                     self.$('.input-lng').focus();
                     self.$('.input-lng').on('focusout', function (event) {
                         var location: L.LatLng = new L.LatLng(self._selectedMarker.getLatLng().lat, parseFloat(self.$('.input-lng').val()));
-                        if (self._selectedMarker != undefined && self._selectedMarker.options.id != undefined) {
-                            var tree: Tree = Model.getTrees().findWhere({
-                                id: self._selectedMarker.options.id
-                            });
-                            EventHandler.handleTreeData(tree, DATA_MODE.UPDATE_LOCATION, { marker: self._selectedMarker, location: location }, function () {
-                                var food: Food = Model.getFoods().findWhere({ id: tree.getFoodId() });
-                                self.renderRecentActivities(tree);
-                                EventHandler.handleDataChange("Location of <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has changed successfully.", true);
-                                // Move marker to desired location & update info panel
-                                self._selectedMarker.setLatLng(tree.getLocation());
-                                self._map.setView(tree.getLocation());
-                                self.renderTreeInfo(tree);
-                            }, function () {
-                                EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
-                            });
+                        if (location.lng != self._selectedMarker.getLatLng().lng) {
+                            if (self._selectedMarker != undefined && self._selectedMarker.options.id != undefined) {
+                                EventHandler.handleTreeData(tree, DATA_MODE.UPDATE_LOCATION, { marker: self._selectedMarker, location: location }, function () {
+                                    var food: Food = Model.getFoods().findWhere({ id: tree.getFoodId() });
+                                    self.renderRecentActivities(tree);
+                                    EventHandler.handleDataChange("Location of <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has changed successfully.", true);
+                                    // Move marker to desired location & update info panel
+                                    self._selectedMarker.setLatLng(tree.getLocation());
+                                    self._map.setView(tree.getLocation());
+                                    self.renderTreeInfo(tree);
+                                }, function () {
+                                    EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
+                                });
+                            }
+                        } else {
+                            self.renderTreeInfo(tree);
                         }
+                        
                     });
                 });
             }, function () {
@@ -398,6 +429,7 @@
                         var food: Food = Model.getFoods().findWhere({ id: tree.getFoodId() });
                         self.renderRecentActivities(tree);
                         EventHandler.handleDataChange("Location of <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has changed successfully.", true);
+                        self.renderTreeInfo(tree);
                     }, function () {
                         EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
                     });

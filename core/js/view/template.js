@@ -123,11 +123,27 @@ var FoodParent;
             template += '</div>';
             return template;
         };
+        Template.FoodSelectTemplate = function () {
+            var template = '';
+            template += '<select class="input-food selectpicker">';
+            template += '<optgroup label="Food">';
+            template += '<% _.each(foods.models, function (food) { %>';
+            template += '<option value="<%= food.getId() %>"><%= food.getName() %></option>';
+            template += '<% }); %>';
+            template += '</optgroup>';
+            template += '</select>';
+            return template;
+        };
         Template.getTreeInfoTemplate = function () {
             var template = '';
-            template += '<div class="tree-info-name"><%= name %></div>';
+            template += '<div class="tree-info-name"><div class="input-food"><%= foodname %></div>&nbsp;<%= treename %></div>';
             template += '<div class="tree-info-coordinate">@&nbsp;<div class="input-lat"><%= lat %></div>,&nbsp;<div class="input-lng"><%= lng %></div></div>';
             template += '<div class="tree-info-address"><div>&nbsp;</div><div>&nbsp;</div></div>';
+            template += '<div class="hr"><hr /></div>';
+            template += '<div class="info-header"><i class="fa fa-sticky-note fa-1x"></i> Description</div>';
+            template += '<div class="info-group">';
+            template += '<div class="tree-description"></div>';
+            template += '</div>';
             template += '<div class="hr"><hr /></div>';
             template += '<div class="info-header"><i class="fa fa-tag fa-1x"></i> Status</div>';
             template += '<div class="info-group">';

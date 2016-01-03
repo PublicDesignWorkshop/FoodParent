@@ -475,6 +475,92 @@ var FoodParent;
         return UpdateTreeLocation;
     })();
     FoodParent.UpdateTreeLocation = UpdateTreeLocation;
+    var UpdateTreeFoodType = (function () {
+        function UpdateTreeFoodType(args, success, error) {
+            var self = this;
+            if (args != undefined && args.tree != undefined && args.food != undefined) {
+                self._tree = args.tree;
+                self._food = args.food;
+            }
+            if (success) {
+                self._success = success;
+            }
+            if (error) {
+                self._error = error;
+            }
+        }
+        UpdateTreeFoodType.prototype.execute = function () {
+            var self = this;
+            self._previousFood = self._tree.getFoodId();
+            self._tree.save({
+                'food': self._food,
+            }, {
+                wait: true,
+                success: function (tree, response) {
+                    self._note = new FoodParent.Note({
+                        type: FoodParent.NoteType.INFO,
+                        tree: self._tree.getId(),
+                        person: 0,
+                        comment: "Food type has changed from '" + FoodParent.Model.getFoods().findWhere({ id: self._previousFood }).getName()
+                            + "'to '" + FoodParent.Model.getFoods().findWhere({ id: self._food }).getName() + "'",
+                        picture: "",
+                        rate: -1,
+                        date: moment(new Date()).format(FoodParent.Setting.getDateTimeFormat()),
+                    });
+                    self._note.save({}, {
+                        wait: true,
+                        success: function (note, response) {
+                            FoodParent.Model.getNotes().add(note);
+                            if (self._success) {
+                                self._success();
+                            }
+                        },
+                        error: function (error) {
+                            if (self._error) {
+                                self._error();
+                            }
+                        },
+                    });
+                },
+                error: function (error, response) {
+                    if (self._error) {
+                        self._error();
+                    }
+                },
+            });
+        };
+        UpdateTreeFoodType.prototype.undo = function () {
+            var self = this;
+            self._tree.save({
+                'food': self._food,
+            }, {
+                wait: true,
+                success: function (tree, response) {
+                    FoodParent.Model.getNotes().remove(self._note);
+                    self._note.destroy({
+                        wait: true,
+                        success: function (note, response) {
+                            if (self._success) {
+                                self._success();
+                            }
+                        },
+                        error: function (error) {
+                            if (self._error) {
+                                self._error();
+                            }
+                        },
+                    });
+                },
+                error: function (error, response) {
+                    if (self._error) {
+                        self._error();
+                    }
+                },
+            });
+        };
+        return UpdateTreeFoodType;
+    })();
+    FoodParent.UpdateTreeFoodType = UpdateTreeFoodType;
     var RenderMessageViewCommand = (function () {
         function RenderMessageViewCommand(args) {
             var self = this;

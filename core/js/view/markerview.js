@@ -10,6 +10,16 @@ var FoodParent;
         MarkerFractory.getInstance = function () {
             return MarkerFractory._instance;
         };
+        MarkerFractory.getIcon = function (food) {
+            return new L.Icon({
+                iconUrl: food.getIconPath(),
+                shadowUrl: FoodParent.Setting.getMarkerShadowPath(),
+                iconSize: new L.Point(40, 40),
+                iconAnchor: new L.Point(20, 40),
+                shadowAnchor: new L.Point(9, 38),
+                popupAnchor: new L.Point(0, 48),
+            });
+        };
         MarkerFractory.create = function (tree, bCloseOnClick) {
             var food = FoodParent.Model.getFoods().findWhere({ id: tree.getFoodId() });
             var icon = new L.Icon({
