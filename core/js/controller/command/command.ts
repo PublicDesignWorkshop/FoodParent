@@ -242,7 +242,7 @@
                             tree: self._tree.getId(),
                             person: 0,
                             comment: "Status has changed from '" + Model.getFlags().findWhere({ id: self._previousFlag }).getName() 
-                                    + "'to '" + Model.getFlags().findWhere({ id: self._flag }).getName() + "'",
+                                    + "' to '" + Model.getFlags().findWhere({ id: self._flag }).getName() + "'",
                             picture: "",
                             rate: -1,
                             date: moment(new Date()).format(Setting.getDateTimeFormat()),
@@ -342,7 +342,7 @@
                             tree: self._tree.getId(),
                             person: 0,
                             comment: "Ownership has changed from '" + Model.getOwnerships().findWhere({ id: self._previousOwnership }).getName()
-                            + "'to '" + Model.getOwnerships().findWhere({ id: self._ownership }).getName() + "'",
+                            + "' to '" + Model.getOwnerships().findWhere({ id: self._ownership }).getName() + "'",
                             picture: "",
                             rate: -1,
                             date: moment(new Date()).format(Setting.getDateTimeFormat()),
@@ -547,7 +547,7 @@
                             tree: self._tree.getId(),
                             person: 0,
                             comment: "Food type has changed from '" + Model.getFoods().findWhere({ id: self._previousFood }).getName()
-                            + "'to '" + Model.getFoods().findWhere({ id: self._food }).getName() + "'",
+                            + "' to '" + Model.getFoods().findWhere({ id: self._food }).getName() + "'",
                             picture: "",
                             rate: -1,
                             date: moment(new Date()).format(Setting.getDateTimeFormat()),
@@ -582,7 +582,7 @@
             var self: UpdateTreeFoodType = this;
             self._tree.save(
                 {
-                    'food': self._food,
+                    'food': self._previousFood,
                 },
                 {
                     wait: true,

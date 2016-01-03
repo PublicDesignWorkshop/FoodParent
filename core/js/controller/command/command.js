@@ -240,7 +240,7 @@ var FoodParent;
                         tree: self._tree.getId(),
                         person: 0,
                         comment: "Status has changed from '" + FoodParent.Model.getFlags().findWhere({ id: self._previousFlag }).getName()
-                            + "'to '" + FoodParent.Model.getFlags().findWhere({ id: self._flag }).getName() + "'",
+                            + "' to '" + FoodParent.Model.getFlags().findWhere({ id: self._flag }).getName() + "'",
                         picture: "",
                         rate: -1,
                         date: moment(new Date()).format(FoodParent.Setting.getDateTimeFormat()),
@@ -326,7 +326,7 @@ var FoodParent;
                         tree: self._tree.getId(),
                         person: 0,
                         comment: "Ownership has changed from '" + FoodParent.Model.getOwnerships().findWhere({ id: self._previousOwnership }).getName()
-                            + "'to '" + FoodParent.Model.getOwnerships().findWhere({ id: self._ownership }).getName() + "'",
+                            + "' to '" + FoodParent.Model.getOwnerships().findWhere({ id: self._ownership }).getName() + "'",
                         picture: "",
                         rate: -1,
                         date: moment(new Date()).format(FoodParent.Setting.getDateTimeFormat()),
@@ -502,7 +502,7 @@ var FoodParent;
                         tree: self._tree.getId(),
                         person: 0,
                         comment: "Food type has changed from '" + FoodParent.Model.getFoods().findWhere({ id: self._previousFood }).getName()
-                            + "'to '" + FoodParent.Model.getFoods().findWhere({ id: self._food }).getName() + "'",
+                            + "' to '" + FoodParent.Model.getFoods().findWhere({ id: self._food }).getName() + "'",
                         picture: "",
                         rate: -1,
                         date: moment(new Date()).format(FoodParent.Setting.getDateTimeFormat()),
@@ -532,7 +532,7 @@ var FoodParent;
         UpdateTreeFoodType.prototype.undo = function () {
             var self = this;
             self._tree.save({
-                'food': self._food,
+                'food': self._previousFood,
             }, {
                 wait: true,
                 success: function (tree, response) {
