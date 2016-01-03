@@ -126,7 +126,7 @@ var FoodParent;
         Template.getTreeInfoTemplate = function () {
             var template = '';
             template += '<div class="tree-info-name"><%= name %></div>';
-            template += '<div class="tree-info-coordinate"><%= coordinate %></div>';
+            template += '<div class="tree-info-coordinate">@&nbsp;<div class="input-lat"><%= lat %></div>,&nbsp;<div class="input-lng"><%= lng %></div></div>';
             template += '<div class="tree-info-address"><div>&nbsp;</div><div>&nbsp;</div></div>';
             template += '<div class="hr"><hr /></div>';
             template += '<div class="info-header"><i class="fa fa-tag fa-1x"></i> Status</div>';
@@ -154,6 +154,18 @@ var FoodParent;
             template += '<% }); %>';
             template += '</div>';
             template += '</div>';
+            template += '<div class="hr"><hr /></div>';
+            template += '<div class="info-header"><i class="fa fa-leaf fa-1x"></i> Recent Activities</div>';
+            template += '<div id="list-activities" class="info-group">';
+            template += '<div>&nbsp;</div>';
+            template += '</div>';
+            return template;
+        };
+        Template.getRecentActivitiesTemplate = function () {
+            var template = '';
+            template += '<% _.each(notes.models, function (note) { %>';
+            template += '<div class="item-activity"><i class="fa fa-caret-right fa-1x"></i> <div><%= note.getComment() %></div></div>';
+            template += '<% }); %>';
             return template;
         };
         Template.getTreeFilterListTemplate = function () {

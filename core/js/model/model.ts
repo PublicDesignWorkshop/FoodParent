@@ -285,5 +285,32 @@
                 }
             });
         }
+
+        public static fetchNotesOfTrees(ids: Array<number>, size: number, offset: number): JQueryXHR {
+            var self: Model = Model._instance;
+            if (self.notes == undefined) {
+                self.notes = new Notes();
+            }
+            if (ids.length != 0) {
+                return self.notes.fetch({
+                    remove: true,	// if remove == false, it only adds new items, not removing old items.
+                    processData: true,
+                    data: {
+                        mode: 0,    // 0: fetch only the number of the size from offset, 1: fetch all
+                        trees: ids.toString(),
+                        size: size,
+                        offset: offset,
+                    },
+                    success(collection?: any, response?: any, options?: any): void {
+                        console.log("success fetch with " + collection.models.length + " notes");
+                        //Controller.getInstance().renderTreesOnMap();
+                    },
+                    error(collection?: any, jqxhr?: JQueryXHR, options?: any): void {
+                        console.log("error while fetching item data from the server");
+                    }
+                });
+            }
+            return null;
+        }
     }
 }

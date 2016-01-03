@@ -82,5 +82,8 @@
         public static getManagerContact(): string {
             return "captainwhale52@gmail.com";
         }
+        public static getNumRecentActivitiesShown(): number {
+            return 5;
+        }
     }
 }

@@ -36,12 +36,14 @@
         $params = null;
         if ($data != null) {
             $params = array(
+                "mode" => $data->{'mode'},
                 "trees" => $data->{'trees'},
                 "size" => $data->{'size'},
                 "offset" => $data->{'offset'},
             );
         } else {
             $params = array(
+                "mode" => $_GET['mode'],
                 "trees" => $_GET['trees'],
                 "size" => $_GET['size'],
                 "offset" => $_GET['offset'],

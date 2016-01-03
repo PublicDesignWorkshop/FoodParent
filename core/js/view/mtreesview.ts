@@ -112,7 +112,8 @@
                 var template = _.template(Template.getTreeInfoTemplate());
                 var data = {
                     name: food.getName() + " " + tree.getName(),
-                    coordinate: '@ ' + tree.getLat().toFixed(4) + ", " + tree.getLng().toFixed(4),
+                    lat: tree.getLat().toFixed(4),
+                    lng: tree.getLng().toFixed(4),
                     flags: Model.getFlags(),
                     ownerships: Model.getOwnerships(),
                 }
@@ -121,16 +122,65 @@
                 
                 self.renderFlagInfo(flag);
                 self.renderOwnershipInfo(ownership);
+                self.renderRecentActivities(tree);
                 GeoLocation.reverseGeocoding(tree.getLocation(), function (data: ReverseGeoLocation) {
                     self.$(".tree-info-address").html("<div>" + data.road + ", " + data.county + "</div><div>" + data.state + ", " + data.country + ", " + data.postcode + "</div>");
                 }, function () {
                     EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
                 });
+                self.$('.input-lat').on('click', function (event) {
+                    var width: number = self.$('.input-lat').outerWidth() + 8;
+                    $(this).replaceWith("<input class='input-lat' value=" + $(this).html() + " />");
+                    self.$('.input-lat').css({ width: width });
+                    self.$('.input-lat').focus();
+                    self.$('.input-lat').on('focusout', function (event) {
+                        var location: L.LatLng = new L.LatLng(parseFloat(self.$('.input-lat').val()), self._selectedMarker.getLatLng().lng);
+                        if (self._selectedMarker != undefined && self._selectedMarker.options.id != undefined) {
+                            var tree: Tree = Model.getTrees().findWhere({
+                                id: self._selectedMarker.options.id
+                            });
+                            EventHandler.handleTreeData(tree, DATA_MODE.UPDATE_LOCATION, { marker: self._selectedMarker, location: location }, function () {
+                                var food: Food = Model.getFoods().findWhere({ id: tree.getFoodId() });
+                                self.renderRecentActivities(tree);
+                                EventHandler.handleDataChange("Location of <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has changed successfully.", true);
+                                // Move marker to desired location & update info panel
+                                self._selectedMarker.setLatLng(tree.getLocation());
+                                self._map.setView(tree.getLocation());
+                                self.renderTreeInfo(tree);
+                            }, function () {
+                                EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
+                            });
+                        }
+                    });
+                });
+                self.$('.input-lng').on('click', function (event) {
+                    var width: number = self.$('.input-lng').outerWidth() + 8;
+                    $(this).replaceWith("<input class='input-lng' value=" + $(this).html() + " />");
+                    self.$('.input-lng').css({ width: width });
+                    self.$('.input-lng').focus();
+                    self.$('.input-lng').on('focusout', function (event) {
+                        var location: L.LatLng = new L.LatLng(self._selectedMarker.getLatLng().lat, parseFloat(self.$('.input-lng').val()));
+                        if (self._selectedMarker != undefined && self._selectedMarker.options.id != undefined) {
+                            var tree: Tree = Model.getTrees().findWhere({
+                                id: self._selectedMarker.options.id
+                            });
+                            EventHandler.handleTreeData(tree, DATA_MODE.UPDATE_LOCATION, { marker: self._selectedMarker, location: location }, function () {
+                                var food: Food = Model.getFoods().findWhere({ id: tree.getFoodId() });
+                                self.renderRecentActivities(tree);
+                                EventHandler.handleDataChange("Location of <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has changed successfully.", true);
+                                // Move marker to desired location & update info panel
+                                self._selectedMarker.setLatLng(tree.getLocation());
+                                self._map.setView(tree.getLocation());
+                                self.renderTreeInfo(tree);
+                            }, function () {
+                                EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
+                            });
+                        }
+                    });
+                });
             }, function () {
                 EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
             });
-
-            
         }
 
         private renderOwnershipInfo(flag: Flag): void {
@@ -158,6 +208,26 @@
                }
            });
         }
+
+       private renderRecentActivities(tree: Tree): void {
+           var self: ManageTreesMapView = this;
+           var trees: Array<Tree> = new Array<Tree>();
+           trees.push(tree);
+           Controller.fetchNotesOfTrees(trees, Setting.getNumRecentActivitiesShown(), 0, function () {
+               var notes: Notes = new Notes(Model.getNotes().where({ tree: tree.getId() }));
+               notes.sortByDescendingDate();
+               var template = _.template(Template.getRecentActivitiesTemplate());
+               var data = {
+                   notes: notes,
+                   coordinate: '@ ' + tree.getLat().toFixed(4) + ", " + tree.getLng().toFixed(4),
+                   flags: Model.getFlags(),
+                   ownerships: Model.getOwnerships(),
+               }
+               self.$('#list-activities').html(template(data));
+           }, function () {
+               EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
+           });
+       }
 
         private renderMapError = (error: PositionError) => {
             var self: ManageTreesMapView = this;
@@ -215,6 +285,10 @@
                     var tree: Tree = Model.getTrees().findWhere({ id: marker.options.id });
                     self.renderTreeInfo(tree);
                     self._selectedMarker = marker;
+                    // Make MessageView invisible.
+                    if (View.getMessageView()) {
+                        View.getMessageView().setInvisible();
+                    }
                 });
                 self._map.on('popupclose', function (event: any) {
                     var marker: L.Marker = event.popup._source;
@@ -283,6 +357,10 @@
                     }
                 });
                 if (!bFound) {
+                    // close popup if the marker is selected
+                    if (self._markers[j] == self._selectedMarker) {
+                        self._selectedMarker.closePopup();
+                    }
                     self.removeMarker(self._markers[j]);
                     self._markers = _.without(self._markers, self._markers[j]);
                     j--;
@@ -318,6 +396,7 @@
                     });
                     EventHandler.handleTreeData(tree, DATA_MODE.UPDATE_LOCATION, { marker: marker, location: marker.getLatLng() }, function () {
                         var food: Food = Model.getFoods().findWhere({ id: tree.getFoodId() });
+                        self.renderRecentActivities(tree);
                         EventHandler.handleDataChange("Location of <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has changed successfully.", true);
                     }, function () {
                         EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
@@ -426,6 +505,7 @@
                 var food: Food = Model.getFoods().findWhere({ id: tree.getFoodId() });
                 var flag: Flag = Model.getFlags().findWhere({ id: tree.getFlagId() });
                 self.renderFlagInfo(flag);
+                self.renderRecentActivities(tree);
                 EventHandler.handleDataChange("Status of <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has changed successfully.", true);
             }, function () {
                 EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
@@ -439,6 +519,7 @@
                 var food: Food = Model.getFoods().findWhere({ id: tree.getFoodId() });
                 var ownership: Ownership = Model.getOwnerships().findWhere({ id: tree.getOwnershipId() });
                 self.renderOwnershipInfo(ownership);
+                self.renderRecentActivities(tree);
                 EventHandler.handleDataChange("Ownership of <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has changed successfully.", true);
             }, function () {
                 EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);

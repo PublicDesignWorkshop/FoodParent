@@ -83,6 +83,25 @@ var FoodParent;
                 }
             });
         };
+        Controller.fetchNotesOfTrees = function (trees, size, offset, success, error) {
+            var ids = new Array();
+            $.each(trees, function (index, tree) {
+                ids.push(tree.getId());
+            });
+            var xhr1 = FoodParent.Model.fetchNotesOfTrees(ids, size, offset);
+            Controller.pushXHR(xhr1);
+            $.when(xhr1).then(function () {
+                Controller.removeXHR(xhr1);
+                if (success) {
+                    success();
+                }
+            }, function () {
+                Controller.removeXHR(xhr1);
+                if (error) {
+                    error(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+                }
+            });
+        };
         Controller._instance = new Controller();
         Controller.TAG = "Controller - ";
         return Controller;

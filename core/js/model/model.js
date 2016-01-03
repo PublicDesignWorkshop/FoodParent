@@ -267,6 +267,32 @@ var FoodParent;
                 }
             });
         };
+        Model.fetchNotesOfTrees = function (ids, size, offset) {
+            var self = Model._instance;
+            if (self.notes == undefined) {
+                self.notes = new FoodParent.Notes();
+            }
+            if (ids.length != 0) {
+                return self.notes.fetch({
+                    remove: true,
+                    processData: true,
+                    data: {
+                        mode: 0,
+                        trees: ids.toString(),
+                        size: size,
+                        offset: offset,
+                    },
+                    success: function (collection, response, options) {
+                        console.log("success fetch with " + collection.models.length + " notes");
+                        //Controller.getInstance().renderTreesOnMap();
+                    },
+                    error: function (collection, jqxhr, options) {
+                        console.log("error while fetching item data from the server");
+                    }
+                });
+            }
+            return null;
+        };
         Model._instance = new Model();
         Model.TAG = "Model - ";
         return Model;

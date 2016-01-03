@@ -12176,6 +12176,9 @@ button.close {
         font-size: small;
         padding: 4px 4px 0 4px;
         margin: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
     }
 
     #wrapper-treeinfo .tree-info-address {
@@ -12223,6 +12226,20 @@ button.close {
     }
     #wrapper-treeinfo .ownership-radio.active {
         background-color: rgba(0, 0, 0, 0.05);
+    }
+
+    #wrapper-treeinfo .item-activity i {
+        padding: 2px 2px 0 0;
+    }
+
+    #wrapper-treeinfo .item-activity {
+        padding: 2px;
+        font-weight: 400;
+        display: flex;
+    }
+
+    #wrapper-treeinfo input {
+        color: #222222;
     }
 }
 @media all {

@@ -88,6 +88,27 @@
                 }
             });
         }
+        public static fetchNotesOfTrees(trees: Array<Tree>, size: number, offset: number, success?: any, error?: any) {
+            var ids: Array<number> = new Array<number>();
+            $.each(trees, function (index: number, tree: Tree) {
+                ids.push(tree.getId());
+            });
+            var xhr1: JQueryXHR = Model.fetchNotesOfTrees(ids, size, offset);
+            Controller.pushXHR(xhr1);
+            $.when(
+                xhr1
+            ).then(function () {
+                Controller.removeXHR(xhr1);
+                if (success) {
+                    success();
+                }
+            }, function () {
+                Controller.removeXHR(xhr1);
+                if (error) {
+                    error(ERROR_MODE.SEVER_CONNECTION_ERROR);
+                }
+            });
+        }
     }
 
     export class Router extends Backbone.Router {

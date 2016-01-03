@@ -81,6 +81,9 @@ var FoodParent;
         Setting.getManagerContact = function () {
             return "captainwhale52@gmail.com";
         };
+        Setting.getNumRecentActivitiesShown = function () {
+            return 5;
+        };
         Setting._instance = new Setting();
         return Setting;
     })();
