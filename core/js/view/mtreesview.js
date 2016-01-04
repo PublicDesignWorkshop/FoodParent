@@ -15,13 +15,15 @@ var FoodParent;
         ManageTreesViewFractory.getInstance = function () {
             return ManageTreesViewFractory._instance;
         };
-        ManageTreesViewFractory.create = function (el, viewMode) {
+        ManageTreesViewFractory.create = function (el, viewMode, id) {
             var view;
             if (viewMode == FoodParent.VIEW_MODE.MAP) {
                 view = new ManageTreesMapView({ el: el });
+                view.setTreeId(id);
             }
             else if (viewMode == FoodParent.VIEW_MODE.TABLE) {
                 view = new ManageTreesTableView({ el: el });
+                view.setTreeId(id);
             }
             return view;
         };
@@ -34,6 +36,9 @@ var FoodParent;
         function ManageTreesView() {
             _super.apply(this, arguments);
         }
+        ManageTreesView.prototype.setTreeId = function (id) {
+            this._id = id;
+        };
         return ManageTreesView;
     })(FoodParent.BaseView);
     FoodParent.ManageTreesView = ManageTreesView;
@@ -46,29 +51,43 @@ var FoodParent;
                 var self = _this;
                 FoodParent.Controller.fetchAllTrees(function () {
                     // add grid instance for existing data
-                    var optionValues = new Array();
-                    optionValues.push({ name: "Food", values: FoodParent.Model.getFoods().toArray() });
-                    TreeColumn[0].cell = Backgrid.SelectCell.extend({
-                        editor: Backgrid.FoodSelectCellEditor,
-                        optionValues: optionValues,
-                    });
-                    var grid = new Backgrid.Grid({
-                        columns: TreeColumn,
-                        collection: FoodParent.Model.getTrees(),
-                        emptyText: FoodParent.Setting.getNoDataText(),
-                    });
-                    grid.render();
-                    //grid.sort("name", "ascending");
-                    self.$(".list-tree").html(grid.el);
+                    self.renderTreeList(FoodParent.Model.getTrees());
+                    self.renderFilterList();
                 }, function () {
                     FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
                 });
+            };
+            this.renderTreeList = function (trees) {
+                var self = _this;
+                var optionValues = new Array();
+                optionValues.push({ name: "Food", values: FoodParent.Model.getFoods().toArray() });
+                TreeColumn[0].cell = Backgrid.SelectCell.extend({
+                    editor: Backgrid.FoodSelectCellEditor,
+                    optionValues: optionValues,
+                });
+                var grid = new Backgrid.Grid({
+                    columns: TreeColumn,
+                    collection: trees,
+                    emptyText: FoodParent.Setting.getNoDataText(),
+                });
+                grid.render();
+                //grid.sort("name", "ascending");
+                self.$(".list-tree").html(grid.el);
+            };
+            this.renderFilterList = function () {
+                var self = _this;
+                var template = _.template(FoodParent.Template.getTreeFilterListTemplate());
+                var data = {
+                    foods: FoodParent.Model.getFoods(),
+                };
+                self.$('#filter-list').html(template(data));
             };
             var self = this;
             self.bDebug = true;
             //$(window).resize(_.debounce(that.customResize, Setting.getInstance().getResizeTimeout()));
             self.events = {
                 "click .switch-map": "_mouseClick",
+                "click .filter-checkbox": "_applyFilter",
             };
             self.delegateEvents();
         }
@@ -93,6 +112,44 @@ var FoodParent;
             $('#wrapper-main').css({ height: FoodParent.View.getHeight() - 60 });
             $('#wrapper-mtrees').css({ height: FoodParent.View.getHeight() - 60 });
             $('.collapsible-list').css({ height: FoodParent.View.getHeight() - 60 - 34 * 4 - 20 });
+        };
+        ManageTreesTableView.prototype._applyFilter = function (event) {
+            var self = this;
+            var trees = FoodParent.Model.getTrees();
+            setTimeout(function () {
+                // Filtering food type.
+                if ($(event.target).find('input').prop('name') == 'foodsall') {
+                    if ($(event.target).find('input').prop('checked') == true) {
+                        $('.filter-food').addClass('active');
+                        $('.filter-food input').prop({ 'checked': 'checked' });
+                    }
+                    else {
+                        $('.filter-food').removeClass('active');
+                        $('.filter-food input').prop({ 'checked': '' });
+                    }
+                }
+                // Apply food filtering
+                var foodIds = new Array();
+                $.each($('.filter-food input'), function (index, item) {
+                    if ($(item).prop('checked') == true) {
+                        foodIds.push(Math.floor($(item).prop('name')));
+                    }
+                });
+                trees = trees.filterByFoodIds(foodIds);
+                // Filtering adoption status.
+                if ($(event.target).find('input').prop('name') == 'adoptsall') {
+                    if ($(event.target).find('input').prop('checked') == true) {
+                        $('.filter-adopt').addClass('active');
+                        $('.filter-adopt input').prop({ 'checked': 'checked' });
+                    }
+                    else {
+                        $('.filter-adopt').removeClass('active');
+                        $('.filter-adopt input').prop({ 'checked': '' });
+                    }
+                }
+                // update markers
+                self.renderTreeList(trees);
+            }, 1);
         };
         ManageTreesTableView.prototype._mouseOver = function (event) {
             var self = this;
@@ -344,6 +401,15 @@ var FoodParent;
                         self.addMarker(tree);
                     }
                 });
+                if (self._id != undefined && self._id != 0) {
+                    for (var j = 0; j < self._markers.length; j++) {
+                        if (self._markers[j].options.id == self._id) {
+                            self._markers[j].openPopup();
+                            self._map.setView(self._markers[j].getLatLng());
+                            break;
+                        }
+                    }
+                }
                 // Render filter list
                 self.renderFilterList();
                 // Render foragable list

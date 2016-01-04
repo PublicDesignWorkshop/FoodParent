@@ -25,6 +25,7 @@
     }
 
     .marker-control-item i {
+        pointer-events: none;
         padding: 0 0 0 1px;
     }
 

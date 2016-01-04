@@ -13,12 +13,14 @@ module FoodParent {
         public static getInstance(): ManageTreesViewFractory {
             return ManageTreesViewFractory._instance;
         }
-        public static create(el: JQuery, viewMode: VIEW_MODE): ManageTreesView {
+        public static create(el: JQuery, viewMode: VIEW_MODE, id: number): ManageTreesView {
             var view: ManageTreesView;
             if (viewMode == VIEW_MODE.MAP) {
                 view = new ManageTreesMapView({ el: el });
+                view.setTreeId(id);
             } else if (viewMode == VIEW_MODE.TABLE) {
                 view = new ManageTreesTableView({ el: el });
+                view.setTreeId(id);
             }
             
             return view;
@@ -26,7 +28,10 @@ module FoodParent {
     }
 
     export class ManageTreesView extends BaseView {
-
+        protected _id: number;
+        public setTreeId(id: number) {
+            this._id = id;
+        }
     }
 
     
@@ -39,6 +44,7 @@ module FoodParent {
             //$(window).resize(_.debounce(that.customResize, Setting.getInstance().getResizeTimeout()));
             self.events = <any>{
                 "click .switch-map": "_mouseClick",
+                "click .filter-checkbox": "_applyFilter",
             };
             self.delegateEvents();
         }
@@ -65,24 +71,30 @@ module FoodParent {
             var self: ManageTreesTableView = this;
             Controller.fetchAllTrees(function () {
                 // add grid instance for existing data
-                var optionValues = new Array<{ name: string, values: any }>();
-                optionValues.push({ name: "Food", values: Model.getFoods().toArray() });
-                TreeColumn[0].cell = Backgrid.SelectCell.extend({
-                    editor: Backgrid.FoodSelectCellEditor,
-                    optionValues: optionValues,
-                });
-
-                var grid = new Backgrid.Grid({
-                    columns: TreeColumn,
-                    collection: Model.getTrees(),
-                    emptyText: Setting.getNoDataText(),
-                });
-                grid.render();
-                //grid.sort("name", "ascending");
-                self.$(".list-tree").html(grid.el);
+                self.renderTreeList(Model.getTrees());
+                self.renderFilterList();
             }, function () {
                 EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
             });
+        }
+
+        private renderTreeList = (trees: Trees) => {
+            var self: ManageTreesTableView = this;
+            var optionValues = new Array<{ name: string, values: any }>();
+            optionValues.push({ name: "Food", values: Model.getFoods().toArray() });
+            TreeColumn[0].cell = Backgrid.SelectCell.extend({
+                editor: Backgrid.FoodSelectCellEditor,
+                optionValues: optionValues,
+            });
+
+            var grid = new Backgrid.Grid({
+                columns: TreeColumn,
+                collection: trees,
+                emptyText: Setting.getNoDataText(),
+            });
+            grid.render();
+            //grid.sort("name", "ascending");
+            self.$(".list-tree").html(grid.el);
         }
 
         public resize(): any {
@@ -90,6 +102,57 @@ module FoodParent {
             $('#wrapper-main').css({ height: View.getHeight() - 60 });
             $('#wrapper-mtrees').css({ height: View.getHeight() - 60 });
             $('.collapsible-list').css({ height: View.getHeight() - 60 - 34 * 4 - 20 });
+        }
+
+        public renderFilterList = () => {
+            var self: ManageTreesTableView = this;
+            var template = _.template(Template.getTreeFilterListTemplate());
+            var data = {
+                foods: Model.getFoods(),
+            }
+            self.$('#filter-list').html(template(data));
+        }
+
+        private _applyFilter(event: Event): void {
+            var self: ManageTreesTableView = this;
+            var trees: Trees = Model.getTrees();
+            setTimeout(function () {
+                // Filtering food type.
+                if ($(event.target).find('input').prop('name') == 'foodsall') {
+                    if ($(event.target).find('input').prop('checked') == true) {
+                        $('.filter-food').addClass('active');
+                        $('.filter-food input').prop({ 'checked': 'checked' });
+                    } else {
+                        $('.filter-food').removeClass('active');
+                        $('.filter-food input').prop({ 'checked': '' });
+                    }
+                }
+
+                // Apply food filtering
+                var foodIds = new Array<number>();
+                $.each($('.filter-food input'), function (index: number, item: JQuery) {
+                    if ($(item).prop('checked') == true) {
+                        foodIds.push(Math.floor($(item).prop('name')));
+                    }
+                });
+
+                trees = trees.filterByFoodIds(foodIds);
+
+                // Filtering adoption status.
+                if ($(event.target).find('input').prop('name') == 'adoptsall') {
+                    if ($(event.target).find('input').prop('checked') == true) {
+                        $('.filter-adopt').addClass('active');
+                        $('.filter-adopt input').prop({ 'checked': 'checked' });
+                    } else {
+                        $('.filter-adopt').removeClass('active');
+                        $('.filter-adopt input').prop({ 'checked': '' });
+                    }
+                }
+
+
+                // update markers
+                self.renderTreeList(trees);
+            }, 1);
         }
 
         private _mouseOver(event: Event): void {
@@ -461,6 +524,17 @@ module FoodParent {
                     self.addMarker(tree);
                 }
             });
+
+            if (self._id != undefined && self._id != 0) {
+                for (var j = 0; j < self._markers.length; j++) {
+                    if (self._markers[j].options.id == self._id) {
+                        self._markers[j].openPopup();
+                        self._map.setView(self._markers[j].getLatLng());
+                        break;
+                    }
+                }
+            }
+
             // Render filter list
             self.renderFilterList();
             // Render foragable list

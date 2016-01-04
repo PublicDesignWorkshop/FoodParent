@@ -71,7 +71,7 @@ var FoodParent;
             }
             else if (viewStatus == VIEW_STATUS.MANAGE_TREES) {
                 new FoodParent.MovePaceBarToUnderNav().execute();
-                new FoodParent.RenderManageTreesViewCommand({ el: FoodParent.Setting.getMainWrapperElement(), viewMode: option.viewMode }).execute();
+                new FoodParent.RenderManageTreesViewCommand({ el: FoodParent.Setting.getMainWrapperElement(), viewMode: option.viewMode, id: option.id }).execute();
             }
             FoodParent.View.getNavView().setActiveNavItem(viewStatus);
             FoodParent.View.setViewStatus(viewStatus);
@@ -91,7 +91,7 @@ var FoodParent;
                     break;
                 case VIEW_STATUS.HOME:
                     if (el.hasClass('home-menu-left')) {
-                        new FoodParent.NavigateCommand({ hash: 'mtrees', viewMode: VIEW_MODE.MAP }).execute();
+                        new FoodParent.NavigateCommand({ hash: 'mtrees', viewMode: VIEW_MODE.MAP, id: 0 }).execute();
                     }
                     else if (el.hasClass('home-menu-right')) {
                         new FoodParent.NavigateCommand({ hash: 'ptrees' }).execute();
@@ -130,10 +130,13 @@ var FoodParent;
                         view.deleteTree(tree);
                     }
                     else if (el.hasClass('switch-table')) {
-                        new FoodParent.NavigateCommand({ hash: 'mtrees', viewMode: VIEW_MODE.TABLE }).execute();
+                        new FoodParent.NavigateCommand({ hash: 'mtrees', viewMode: VIEW_MODE.TABLE, id: 0 }).execute();
                     }
                     else if (el.hasClass('switch-map')) {
-                        new FoodParent.NavigateCommand({ hash: 'mtrees', viewMode: VIEW_MODE.MAP }).execute();
+                        new FoodParent.NavigateCommand({ hash: 'mtrees', viewMode: VIEW_MODE.MAP, id: 0 }).execute();
+                    }
+                    else if (el.hasClass('mapview-item')) {
+                        new FoodParent.NavigateCommand({ hash: 'mtrees', viewMode: VIEW_MODE.MAP, id: options.id }).execute();
                     }
                     break;
             }

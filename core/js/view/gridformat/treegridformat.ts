@@ -1,4 +1,85 @@
-﻿var TreeLatitudeCellEditor = Backgrid.Cell.extend({
+﻿var TreeDescriptionCellEditor = Backgrid.Cell.extend({
+    tagName: "input",
+    attributes: {
+        type: "text"
+    },
+    events: {
+        "blur": "saveOrCancel",
+        "keydown": "saveOrCancel"
+    },
+    initialize: function (options) {
+        Backgrid.InputCellEditor.__super__.initialize.apply(this, arguments);
+
+        if (options.placeholder) {
+            this.$el.attr("placeholder", options.placeholder);
+        }
+    },
+    render: function () {
+        var model = this.model;
+        this.$el.val(this.formatter.fromRaw(model.get(this.column.get("name")), model));
+        return this;
+    },
+    saveOrCancel: function (e) {
+        var self: any = this;
+        var tree: FoodParent.Tree = this.model;
+        var formatter = this.formatter;
+        var model = this.model;
+        var column = this.column;
+
+        var command = new Backgrid.Command(e);
+        var blurred = e.type === "blur";
+
+        if (command.moveUp() || command.moveDown() || command.moveLeft() || command.moveRight() ||
+            command.save() || blurred) {
+
+            e.preventDefault();
+            e.stopPropagation();
+
+            var val = this.$el.val();
+            var newValue = formatter.toRaw(val, model);
+            if (_.isUndefined(newValue)) {
+                model.trigger("backgrid:error", model, column, val);
+            }
+            else {
+                if (newValue.trim() != tree.getDescription().trim()) {
+                    var description: string = newValue;
+                    if (tree.getDescription().trim() != description.trim()) {
+                        FoodParent.EventHandler.handleTreeData(tree, FoodParent.DATA_MODE.UPDATE_DESCRIPTION, { description: description }, function () {
+                            var food: FoodParent.Food = FoodParent.Model.getFoods().findWhere({ id: tree.getFoodId() });
+                            model.trigger("backgrid:edited", model, column, command);
+                            FoodParent.EventHandler.handleDataChange("Description of <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has changed successfully.", true);
+                        }, function () {
+                            FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+                        });
+                    } else {
+                        self.renderTreeInfo(tree);
+                    }
+                } else {
+                    model.trigger("backgrid:edited", model, column, command);
+                }
+                //model.set(column.get("name"), newValue);
+            }
+        }
+        // esc
+        else if (command.cancel()) {
+            // undo
+            e.stopPropagation();
+            model.trigger("backgrid:edited", model, column, command);
+        }
+    },
+    postRender: function (model, column) {
+        if (column == null || column.get("name") == this.column.get("name")) {
+            // move the cursor to the end on firefox if text is right aligned
+            if (this.$el.css("text-align") === "right") {
+                var val = this.$el.val();
+                this.$el.focus().val(null).val(val);
+            }
+            else this.$el.focus();
+        }
+        return this;
+    }
+});
+var TreeLatitudeCellEditor = Backgrid.Cell.extend({
     tagName: "input",
     attributes: {
         type: "text"
@@ -191,9 +272,28 @@ var TreeAddressCell = Backgrid.Cell.extend({
     },
 });
 
+var TreeMapViewCell = Backgrid.Cell.extend({
+    template: _.template('<div class="marker-control-item mapview-item" data-target="<%= treeid %>"><i class="fa fa-map-marker fa-2x"></i></div>'),
+    events: {
+        "click .mapview-item": "_showMapView"
+    },
+    _showMapView: function (event) {
+        var tree: number = parseInt($(event.target).attr('data-target'));
+        //console.log(tree);
+        FoodParent.EventHandler.handleMouseClick($(event.currentTarget), this, { id: tree });
+        //FoodParent.Router.getInstance().navigate("tree/" + this.model.getId(), { trigger: true });
+    },
+    render: function () {
+        $(this.el).html(this.template({
+            treeid: this.model.getId(),
+        }));
+        this.delegateEvents();
+        return this;
+    }
+});
 
 var TreeDetailCell = Backgrid.Cell.extend({
-    template: _.template('<div class="marker-control-item marker-control-info"><i class="fa fa-sticky-note-o fa-2x"></i></div>'),
+    template: _.template('<div class="marker-control-item"><i class="fa fa-sticky-note-o fa-2x"></i></div>'),
     events: {
         "click": "_showDetail"
     },
@@ -208,7 +308,7 @@ var TreeDetailCell = Backgrid.Cell.extend({
 });
 
 var TreeDeleteCell = Backgrid.Cell.extend({
-    template: _.template('<div class="marker-control-item marker-control-info"><i class="fa fa-remove fa-2x"></i></div>'),
+    template: _.template('<div class="marker-control-item"><i class="fa fa-remove fa-2x"></i></div>'),
     events: {
         "click": "_deleteRow"
     },
@@ -248,6 +348,12 @@ var TreeColumn: any = [
         editable: false,
         cell: "string",
     }, {
+        name: "description",
+        label: "Description",
+        editable: true,
+        formatter: Backgrid.StringFormatter,
+        cell: Backgrid.Cell.extend({ editor: TreeDescriptionCellEditor }),
+    }, {
         name: "address",
         label: "Address",
         editable: false,
@@ -265,21 +371,29 @@ var TreeColumn: any = [
         formatter: Backgrid.NumberFormatter,
         cell: Backgrid.Cell.extend({ editor: TreeLongitudeCellEditor }),
     }, {
-        name: "updated",
-        label: "Last Updated",
+        label: "",
+        sortable: false,
         editable: false,
-        cell: Backgrid.Cell.extend({ editor: DatePickerCellEditor }),
+        cell: TreeMapViewCell,
     }, {
-        label: "Detail",
+        label: "",
         sortable: false,
         editable: false,
         cell: TreeDetailCell,
     }, {
-        label: "Delete",
+        label: "",
         sortable: false,
         editable: false,
         cell: TreeDeleteCell,
     }
+    /*
+     {
+        name: "updated",
+        label: "Last Updated",
+        editable: false,
+        cell: Backgrid.Cell.extend({ editor: DatePickerCellEditor }),
+    },
+    */
 ];
 
 var FoodSelectCellEditor = Backgrid.FoodSelectCellEditor = Backgrid.CellEditor.extend({

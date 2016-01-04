@@ -53,7 +53,7 @@
                 new RenderHomeViewCommand({ el: Setting.getMainWrapperElement() }).execute();
             } else if (viewStatus == VIEW_STATUS.MANAGE_TREES) {
                 new MovePaceBarToUnderNav().execute();
-                new RenderManageTreesViewCommand({ el: Setting.getMainWrapperElement(), viewMode: option.viewMode }).execute();
+                new RenderManageTreesViewCommand({ el: Setting.getMainWrapperElement(), viewMode: option.viewMode, id: option.id }).execute();
                 
             }
             View.getNavView().setActiveNavItem(viewStatus);
@@ -75,7 +75,7 @@
                     break;
                 case VIEW_STATUS.HOME:
                     if (el.hasClass('home-menu-left')) {
-                        new NavigateCommand({ hash: 'mtrees', viewMode: VIEW_MODE.MAP }).execute();
+                        new NavigateCommand({ hash: 'mtrees', viewMode: VIEW_MODE.MAP, id: 0 }).execute();
                     } else if (el.hasClass('home-menu-right')) {
                         new NavigateCommand({ hash: 'ptrees' }).execute();
                     }
@@ -110,9 +110,11 @@
                         var tree: Tree = Model.getTrees().findWhere({ id: options.marker.options.id });
                         (<ManageTreesMapView>view).deleteTree(tree);
                     } else if (el.hasClass('switch-table')) {   // Switch to table view.
-                        new NavigateCommand({ hash: 'mtrees', viewMode: VIEW_MODE.TABLE }).execute();
+                        new NavigateCommand({ hash: 'mtrees', viewMode: VIEW_MODE.TABLE, id: 0 }).execute();
                     } else if (el.hasClass('switch-map')) {   // Switch to table view.
-                        new NavigateCommand({ hash: 'mtrees', viewMode: VIEW_MODE.MAP }).execute();
+                        new NavigateCommand({ hash: 'mtrees', viewMode: VIEW_MODE.MAP, id: 0 }).execute();
+                    } else if (el.hasClass('mapview-item')) {   // Switch to map item view.
+                        new NavigateCommand({ hash: 'mtrees', viewMode: VIEW_MODE.MAP, id: options.id }).execute();
                     }
                     break;
             }

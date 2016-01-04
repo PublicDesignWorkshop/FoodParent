@@ -53,9 +53,12 @@
     <Content Include="core\js\foodparent.min.js">
       <DependentUpon>foodparent.js</DependentUpon>
     </Content>
+    <Content Include="core\lib\backbone-paginator\backbone.paginator.js" />
     <Content Include="core\lib\backbone\backbone.js" />
     <Content Include="core\lib\backgrid-moment-cell\backgrid-moment-cell.css" />
     <Content Include="core\lib\backgrid-moment-cell\backgrid-moment-cell.js" />
+    <Content Include="core\lib\backgrid-paginator\backgrid-paginator.css" />
+    <Content Include="core\lib\backgrid-paginator\backgrid-paginator.js" />
     <Content Include="core\lib\backgrid\backgrid.css" />
     <Content Include="core\lib\backgrid\backgrid.js" />
     <Content Include="core\lib\bootstrap-datetimepicker\css\bootstrap-datetimepicker.css" />

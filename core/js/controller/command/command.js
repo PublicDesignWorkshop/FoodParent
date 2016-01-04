@@ -63,13 +63,14 @@ var FoodParent;
             var self = this;
             self._el = args.el;
             self._viewMode = args.viewMode;
+            self._id = args.id;
         }
         RenderManageTreesViewCommand.prototype.execute = function () {
             var self = this;
             if (FoodParent.View.getManageTreesView()) {
             }
             else {
-                var view = FoodParent.ManageTreesViewFractory.create(self._el, self._viewMode).render();
+                var view = FoodParent.ManageTreesViewFractory.create(self._el, self._viewMode, self._id).render();
                 FoodParent.View.addChild(view);
                 FoodParent.View.setManageTreesView(view);
             }
@@ -173,20 +174,20 @@ var FoodParent;
         function NavigateCommand(args) {
             var self = this;
             self._hash = args.hash;
-            if (args.id) {
+            if (args.id != undefined) {
                 self._id = args.id;
             }
-            if (args.viewMode) {
+            if (args.viewMode != undefined) {
                 self._viewMode = args.viewMode;
             }
         }
         NavigateCommand.prototype.execute = function () {
             var self = this;
-            if (self._id) {
-                FoodParent.Router.getInstance().navigate(self._hash + "/" + self._id, { trigger: true, replace: false });
+            if (self._viewMode != undefined && self._id != undefined) {
+                FoodParent.Router.getInstance().navigate(self._hash + "/" + self._viewMode + "/" + self._id, { trigger: true, replace: false });
             }
-            else if (self._viewMode) {
-                FoodParent.Router.getInstance().navigate(self._hash + "/" + self._viewMode, { trigger: true, replace: false });
+            else if (self._id != undefined) {
+                FoodParent.Router.getInstance().navigate(self._hash + "/" + self._id, { trigger: true, replace: false });
             }
             else {
                 FoodParent.Router.getInstance().navigate(self._hash, { trigger: true, replace: false });

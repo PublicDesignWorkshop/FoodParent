@@ -8,8 +8,10 @@
       "core/lib/underscore/underscore.js",
       "core/lib/momentjs/moment.js",
       "core/lib/backbone/backbone.js",
+      "core/lib/backbone-paginator/backbone.paginator.js",
       "core/lib/backgrid/backgrid.js",
       "core/lib/backgrid-moment-cell/backgrid-moment-cell.js",
+      "core/lib/backgrid-paginator/backgrid-paginator.js",
 
       "core/lib/bootstrap/js/bootstrap.js",
       "core/lib/bootstrap-toggle/js/bootstrap-toggle.js",
@@ -62,6 +64,7 @@
       // Libraries
       "core/lib/backgrid/backgrid.css",
       "core/lib/backgrid-moment-cell/backgrid-moment-cell.css",
+      "core/lib/backgrid-paginator/backgrid-paginator.css",
       "core/lib/bootstrap/css/bootstrap.css",
       "core/lib/bootstrap-select/css/bootstrap-select.css",
       "core/lib/font-awesome/css/font-awesome.css",

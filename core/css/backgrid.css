@@ -21,11 +21,17 @@
     .list-tree .backgrid .lng {
         width: 10%;
     }
+    .list-tree .backgrid .description {
+        width: 20%;
+    }
     .list-tree .backgrid .address {
         width: 35%;
     }
-    .list-tree .backgrid .updated {
-        width: 15%;
+    .list-tree .backgrid .lat {
+        width: 72px;
+    }
+    .list-tree .backgrid .lng {
+        width: 72px;
     }
 
     td.editable {

@@ -870,6 +870,7 @@ var Cell = Backgrid.Cell = Backbone.View.extend({
     if (Backgrid.callByNeed(column.editable(), column, model)) $el.addClass("editable");
     if (Backgrid.callByNeed(column.sortable(), column, model)) $el.addClass("sortable");
     if (Backgrid.callByNeed(column.renderable(), column, model)) $el.addClass("renderable");
+    if (Backgrid.callByNeed(column.renderable(), column, model)) $el.addClass(column.get("name"));
   },
 
   /**
