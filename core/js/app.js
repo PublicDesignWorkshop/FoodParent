@@ -1,3 +1,11 @@
+var htmlEncode = function (str) {
+    str = str.replace(/&/g, "&amp;");
+    str = str.replace(/>/g, "&gt;");
+    str = str.replace(/</g, "&lt;");
+    str = str.replace(/"/g, "&quot;");
+    str = str.replace(/'/g, "&#039;");
+    return str;
+};
 var replaceAt = function (str, index, character) {
     return str.substr(0, index) + character + str.substr(index + character.length);
 };

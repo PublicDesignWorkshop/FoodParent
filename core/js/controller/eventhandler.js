@@ -13,6 +13,7 @@ var FoodParent;
         DATA_MODE[DATA_MODE["UPDATE_FLAG"] = 4] = "UPDATE_FLAG";
         DATA_MODE[DATA_MODE["UPDATE_OWNERSHIP"] = 5] = "UPDATE_OWNERSHIP";
         DATA_MODE[DATA_MODE["UPDATE_FOODTYPE"] = 6] = "UPDATE_FOODTYPE";
+        DATA_MODE[DATA_MODE["UPDATE_DESCRIPTION"] = 7] = "UPDATE_DESCRIPTION";
     })(FoodParent.DATA_MODE || (FoodParent.DATA_MODE = {}));
     var DATA_MODE = FoodParent.DATA_MODE;
     (function (VIEW_STATUS) {
@@ -22,6 +23,7 @@ var FoodParent;
         VIEW_STATUS[VIEW_STATUS["PARENT_TREES"] = 3] = "PARENT_TREES";
         VIEW_STATUS[VIEW_STATUS["GEO_ERROR"] = 4] = "GEO_ERROR";
         VIEW_STATUS[VIEW_STATUS["NETWORK_ERROR"] = 5] = "NETWORK_ERROR";
+        VIEW_STATUS[VIEW_STATUS["CONFIRM"] = 6] = "CONFIRM";
     })(FoodParent.VIEW_STATUS || (FoodParent.VIEW_STATUS = {}));
     var VIEW_STATUS = FoodParent.VIEW_STATUS;
     (function (VIEW_MODE) {
@@ -69,7 +71,7 @@ var FoodParent;
             }
             else if (viewStatus == VIEW_STATUS.MANAGE_TREES) {
                 new FoodParent.MovePaceBarToUnderNav().execute();
-                new FoodParent.RenderManageTreesViewCommand({ el: FoodParent.Setting.getMainWrapperElement(), viewMode: VIEW_MODE.MAP }).execute();
+                new FoodParent.RenderManageTreesViewCommand({ el: FoodParent.Setting.getMainWrapperElement(), viewMode: option.viewMode }).execute();
             }
             FoodParent.View.getNavView().setActiveNavItem(viewStatus);
             FoodParent.View.setViewStatus(viewStatus);
@@ -89,7 +91,7 @@ var FoodParent;
                     break;
                 case VIEW_STATUS.HOME:
                     if (el.hasClass('home-menu-left')) {
-                        new FoodParent.NavigateCommand({ hash: 'mtrees' }).execute();
+                        new FoodParent.NavigateCommand({ hash: 'mtrees', viewMode: VIEW_MODE.MAP }).execute();
                     }
                     else if (el.hasClass('home-menu-right')) {
                         new FoodParent.NavigateCommand({ hash: 'ptrees' }).execute();
@@ -98,6 +100,11 @@ var FoodParent;
                 case VIEW_STATUS.GEO_ERROR:
                 case VIEW_STATUS.NETWORK_ERROR:
                     if (el.hasClass('alert-confirm')) {
+                        new FoodParent.RemoveAlertViewCommand({ delay: FoodParent.Setting.getRemovePopupDuration() }).execute();
+                    }
+                    break;
+                case VIEW_STATUS.CONFIRM:
+                    if (el.hasClass('confirm-confirm') || el.hasClass('confirm-cancel')) {
                         new FoodParent.RemoveAlertViewCommand({ delay: FoodParent.Setting.getRemovePopupDuration() }).execute();
                     }
                     break;
@@ -119,6 +126,14 @@ var FoodParent;
                     else if (el.hasClass('marker-control-info')) {
                     }
                     else if (el.hasClass('marker-control-delete')) {
+                        var tree = FoodParent.Model.getTrees().findWhere({ id: options.marker.options.id });
+                        view.deleteTree(tree);
+                    }
+                    else if (el.hasClass('switch-table')) {
+                        new FoodParent.NavigateCommand({ hash: 'mtrees', viewMode: VIEW_MODE.TABLE }).execute();
+                    }
+                    else if (el.hasClass('switch-map')) {
+                        new FoodParent.NavigateCommand({ hash: 'mtrees', viewMode: VIEW_MODE.MAP }).execute();
                     }
                     break;
             }
@@ -142,12 +157,17 @@ var FoodParent;
         };
         EventHandler.handleDataChange = function (message, undoable) {
             var self = EventHandler._instance;
+            console.log("!");
             if (self._lastCommand) {
-                new FoodParent.RenderMessageViewCommand({ el: FoodParent.Setting.getMessageWrapperElement(), message: message, undoable: undoable }).execute();
+                new FoodParent.RenderMessageViewCommand({ el: FoodParent.Setting.getMessageWrapperElement(), message: message, undoable: true }).execute();
+            }
+            else {
+                new FoodParent.RenderMessageViewCommand({ el: FoodParent.Setting.getMessageWrapperElement(), message: message, undoable: false }).execute();
             }
         };
-        EventHandler.handleTreeData = function (tree, dataMode, args, success, error) {
+        EventHandler.handleTreeData = function (tree, dataMode, args, success, error, undoSuccess) {
             var self = EventHandler._instance;
+            self._lastCommand = null;
             switch (dataMode) {
                 case DATA_MODE.UPDATE_LOCATION:
                     self._lastCommand = new FoodParent.UpdateTreeLocation({ tree: tree, marker: args.marker, location: args.location }, success, error);
@@ -161,8 +181,21 @@ var FoodParent;
                 case DATA_MODE.UPDATE_FOODTYPE:
                     self._lastCommand = new FoodParent.UpdateTreeFoodType({ tree: tree, food: args.food }, success, error);
                     break;
+                case DATA_MODE.UPDATE_DESCRIPTION:
+                    self._lastCommand = new FoodParent.UpdateTreeDescription({ tree: tree, description: args.description }, success, error);
+                    break;
+                case DATA_MODE.CREATE:
+                    self._lastCommand = new FoodParent.AddNewTree({ tree: tree }, success, error, undoSuccess);
+                    break;
+                case DATA_MODE.DELETE:
+                    var food = FoodParent.Model.getFoods().findWhere({ id: tree.getFoodId() });
+                    var command = new FoodParent.DeleteTree({ tree: tree }, success, error);
+                    new FoodParent.RenderConfirmViewCommand({ el: FoodParent.Setting.getPopWrapperElement(), message: "Are you sure to delete " + food.getName() + " " + tree.getName() + "?", command: command }).execute();
+                    break;
             }
-            self._lastCommand.execute();
+            if (self._lastCommand != undefined) {
+                self._lastCommand.execute();
+            }
         };
         EventHandler._instance = new EventHandler();
         EventHandler.TAG = "Controller - ";

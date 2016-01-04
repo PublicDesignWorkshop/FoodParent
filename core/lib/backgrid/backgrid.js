@@ -942,10 +942,12 @@ var Cell = Backgrid.Cell = Backbone.View.extend({
      Removes the editor and re-render in display mode.
   */
   exitEditMode: function () {
-    this.$el.removeClass("error");
-    this.currentEditor.remove();
-    this.stopListening(this.currentEditor);
-    delete this.currentEditor;
+      this.$el.removeClass("error");
+      if (this.currentEditor) {
+          this.currentEditor.remove();
+          this.stopListening(this.currentEditor);
+          delete this.currentEditor;
+      }
     this.$el.removeClass("editor");
     this.render();
   },

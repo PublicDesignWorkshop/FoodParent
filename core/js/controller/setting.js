@@ -84,6 +84,9 @@ var FoodParent;
         Setting.getNumRecentActivitiesShown = function () {
             return 5;
         };
+        Setting.getNoDataText = function () {
+            return "No Data";
+        };
         Setting._instance = new Setting();
         return Setting;
     })();

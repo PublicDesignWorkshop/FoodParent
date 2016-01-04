@@ -27,6 +27,33 @@
             return template;
         }
 
+        public static getManageTreesTableViewTemplate(): string {
+            var template = '';
+            template += '<div id="wrapper-mtrees">';
+            template +=     '<div id="wrapper-mtrees-table">';
+            template +=         '<div id="wrapper-tablemenu">';
+            template +=             '<div class="button-outer-frame2 button3"><div class="button-inner-frame2 switch-map">Switch to Map View</div></div>';
+            template +=             '<div class="button-outer-frame2 button3"><div class="button-inner-frame2 add-tree">Add A New Tree</div></div>';
+            template +=             '<div class="button-outer-frame2 button3"><div class="button-inner-frame2 collapsible-button" data-target="#filter-list">Filter List</div></div>';
+            template +=             '<div id="filter-list" class="collapsible-list">';
+            template +=             '</div>';
+
+            template +=             '<div class="button-outer-frame2 button3"><div class="button-inner-frame2 collapsible-button" data-target="#forage-list">Foragable List</div></div>';
+            template +=             '<div id="forage-list" class="collapsible-list hidden">';
+            template +=             '</div>';
+            template +=         '</div>';
+
+            template +=         '<div id="content-mtrees-table">';
+            template +=             '<div class="tree-list-title">List of Trees</div>';
+            template +=             '<div class="list-tree">';
+            template +=             '</div>';
+            template +=         '</div>';
+
+            template +=     '</div>';
+            template += '</div>';
+            return template;
+        }
+
         public static getManageTreesMapViewTemplate(): string {
             var template = '';
             template += '<div id="wrapper-mtrees">';
@@ -54,7 +81,7 @@
             var template = '';
             template += '<div id="background-nav-right">';
             template += '</div>';
-            template += '<div id="background-nav-left">123';
+            template += '<div id="background-nav-left">';
             template += '</div>';
             template += '<div id="list-nav">';
             template += '</div>';
@@ -91,6 +118,18 @@
             template +=             '<%= content %>';
             template +=         '</div>';
             template +=     '</div>';
+            template += '</div>';
+            return template;
+        }
+
+        public static getConfirmViewTemplate(): string {
+            var template = '';
+            template += '<div id="wrapper-confirm">';
+            template += '<div class="outer-frame">';
+            template += '<div class="inner-frame">';
+            template += '<%= content %>';
+            template += '</div>';
+            template += '</div>';
             template += '</div>';
             return template;
         }
@@ -158,7 +197,7 @@
             template += '<div class="hr"><hr /></div>';
             template += '<div class="info-header"><i class="fa fa-sticky-note fa-1x"></i> Description</div>';
             template += '<div class="info-group">';
-            template += '<div class="tree-description"></div>';
+            template += '<div class="input-description"><%= description %></div>';
             template += '</div>';
             
             template += '<div class="hr"><hr /></div>';

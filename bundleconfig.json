@@ -10,7 +10,7 @@
       "core/lib/backbone/backbone.js",
       "core/lib/backgrid/backgrid.js",
       "core/lib/backgrid-moment-cell/backgrid-moment-cell.js",
-      
+
       "core/lib/bootstrap/js/bootstrap.js",
       "core/lib/bootstrap-toggle/js/bootstrap-toggle.js",
       "core/lib/bootstrap-select/js/bootstrap-select.js",
@@ -31,6 +31,10 @@
       "core/js/controller/geolocation.js",
       // Command
       "core/js/controller/command/command.js",
+      "core/js/controller/command/treecommand.js",
+      // View - GridFormat
+      "core/js/view/gridformat/gridformat.js",
+      "core/js/view/gridformat/treegridformat.js",
       // View
       "core/js/view/template.js",
       "core/js/view/baseview.js",
@@ -75,6 +79,7 @@
       "core/css/pop.css",
       "core/css/message.css",
       "core/css/button.css",
+      "core/css/backgrid.css",
       "core/css/alert.css",
       "core/css/mtrees.css",
       "core/css/leaflet.css",

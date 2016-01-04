@@ -1,0 +1,34 @@
+﻿@media all {
+    .list-tree td {
+        color: #222222;
+        font-size: small;
+    }
+
+    .list-tree a {
+        font-size: small;
+    }
+
+    .list-tree .backgrid .select-cell {
+        text-align: left;
+    }
+
+    .list-tree .backgrid .food {
+        width: 15%;
+    }
+    .list-tree .backgrid .lat {
+        width: 10%;
+    }
+    .list-tree .backgrid .lng {
+        width: 10%;
+    }
+    .list-tree .backgrid .address {
+        width: 35%;
+    }
+    .list-tree .backgrid .updated {
+        width: 15%;
+    }
+
+    td.editable {
+        cursor: pointer;
+    }
+}

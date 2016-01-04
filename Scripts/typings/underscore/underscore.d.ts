@@ -25,6 +25,7 @@ declare module _ {
 	* to 'template()' to override defaults.
 	**/
 	interface TemplateSettings {
+        variable?: any;
 		/**
 		* Default value is '/<%([\s\S]+?)%>/g'.
 		**/

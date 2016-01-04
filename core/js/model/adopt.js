@@ -95,7 +95,7 @@ var FoodParent;
             });
             return result;
         };
-        Adopts.prototype.getOwnerIds = function (treeId) {
+        Adopts.prototype.getParentIds = function (treeId) {
             var self = this;
             var result = Array();
             $.each(self.models, function (index, model) {

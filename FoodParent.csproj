@@ -22,6 +22,7 @@
     <Content Include="content\icon\marker-crabapples.png" />
     <Content Include="content\icon\marker-mulberries.png" />
     <Content Include="content\icon\marker-pear.png" />
+    <Content Include="content\icon\marker-question.png" />
     <Content Include="content\picture\blackberry1.jpg" />
     <Content Include="content\picture\blackberry2.jpg" />
     <Content Include="content\picture\blackberry3.jpg" />
@@ -31,6 +32,7 @@
     <Content Include="content\picture\blackberry7.jpg" />
     <Content Include="core\css\alert.css" />
     <Content Include="core\css\app.css" />
+    <Content Include="core\css\backgrid.css" />
     <Content Include="core\css\base.css" />
     <Content Include="core\css\button.css" />
     <Content Include="core\css\foodparent.css" />
@@ -167,6 +169,7 @@
   <ItemGroup>
     <TypeScriptCompile Include="core\js\app.ts" />
     <TypeScriptCompile Include="core\js\controller\command\command.ts" />
+    <TypeScriptCompile Include="core\js\controller\command\treecommand.ts" />
     <TypeScriptCompile Include="core\js\controller\controller.ts" />
     <TypeScriptCompile Include="core\js\controller\eventhandler.ts" />
     <TypeScriptCompile Include="core\js\controller\geolocation.ts" />
@@ -179,6 +182,8 @@
     <TypeScriptCompile Include="core\js\model\ownership.ts" />
     <TypeScriptCompile Include="core\js\model\tree.ts" />
     <TypeScriptCompile Include="core\js\view\alertview.ts" />
+    <TypeScriptCompile Include="core\js\view\gridformat\gridformat.ts" />
+    <TypeScriptCompile Include="core\js\view\gridformat\treegridformat.ts" />
     <TypeScriptCompile Include="core\js\view\homeview.ts" />
     <TypeScriptCompile Include="core\js\model\model.ts" />
     <TypeScriptCompile Include="core\js\view\baseview.ts" />

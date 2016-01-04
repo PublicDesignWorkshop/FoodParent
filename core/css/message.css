@@ -9,6 +9,7 @@
         display: flex;
         align-items: center;
         justify-content: center;
+        pointer-events: none;
     }
 
     #wrapper-message .outer-frame {
@@ -21,6 +22,7 @@
         padding: 6px 12px;
         color: #262121;
         font-size: medium;
+        pointer-events: all;
     }
 
     #wrapper-message .undo {

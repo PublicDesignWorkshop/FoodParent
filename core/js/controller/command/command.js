@@ -79,6 +79,24 @@ var FoodParent;
         return RenderManageTreesViewCommand;
     })();
     FoodParent.RenderManageTreesViewCommand = RenderManageTreesViewCommand;
+    var RenderConfirmViewCommand = (function () {
+        function RenderConfirmViewCommand(args) {
+            var self = this;
+            self._el = args.el;
+            self._message = args.message;
+            self._command = args.command;
+        }
+        RenderConfirmViewCommand.prototype.execute = function () {
+            var self = this;
+            var view = FoodParent.ConfirmViewFractory.create(self._el, self._message, self._command).render();
+            FoodParent.View.setPopupView(view);
+            FoodParent.View.setViewStatus(FoodParent.VIEW_STATUS.CONFIRM);
+        };
+        RenderConfirmViewCommand.prototype.undo = function () {
+        };
+        return RenderConfirmViewCommand;
+    })();
+    FoodParent.RenderConfirmViewCommand = RenderConfirmViewCommand;
     var RenderAlertViewCommand = (function () {
         function RenderAlertViewCommand(args) {
             var self = this;
@@ -158,11 +176,17 @@ var FoodParent;
             if (args.id) {
                 self._id = args.id;
             }
+            if (args.viewMode) {
+                self._viewMode = args.viewMode;
+            }
         }
         NavigateCommand.prototype.execute = function () {
             var self = this;
             if (self._id) {
                 FoodParent.Router.getInstance().navigate(self._hash + "/" + self._id, { trigger: true, replace: false });
+            }
+            else if (self._viewMode) {
+                FoodParent.Router.getInstance().navigate(self._hash + "/" + self._viewMode, { trigger: true, replace: false });
             }
             else {
                 FoodParent.Router.getInstance().navigate(self._hash, { trigger: true, replace: false });
@@ -213,354 +237,6 @@ var FoodParent;
         return MovePaceBarToUnderNav;
     })();
     FoodParent.MovePaceBarToUnderNav = MovePaceBarToUnderNav;
-    var UpdateTreeFlag = (function () {
-        function UpdateTreeFlag(args, success, error) {
-            var self = this;
-            if (args != undefined && args.tree != undefined && args.flag != undefined) {
-                self._tree = args.tree;
-                self._flag = args.flag;
-            }
-            if (success) {
-                self._success = success;
-            }
-            if (error) {
-                self._error = error;
-            }
-        }
-        UpdateTreeFlag.prototype.execute = function () {
-            var self = this;
-            self._previousFlag = self._tree.getFlagId();
-            self._tree.save({
-                'flag': self._flag,
-            }, {
-                wait: true,
-                success: function (tree, response) {
-                    self._note = new FoodParent.Note({
-                        type: FoodParent.NoteType.INFO,
-                        tree: self._tree.getId(),
-                        person: 0,
-                        comment: "Status has changed from '" + FoodParent.Model.getFlags().findWhere({ id: self._previousFlag }).getName()
-                            + "' to '" + FoodParent.Model.getFlags().findWhere({ id: self._flag }).getName() + "'",
-                        picture: "",
-                        rate: -1,
-                        date: moment(new Date()).format(FoodParent.Setting.getDateTimeFormat()),
-                    });
-                    self._note.save({}, {
-                        wait: true,
-                        success: function (note, response) {
-                            FoodParent.Model.getNotes().add(note);
-                            if (self._success) {
-                                self._success();
-                            }
-                        },
-                        error: function (error) {
-                            if (self._error) {
-                                self._error();
-                            }
-                        },
-                    });
-                },
-                error: function (error, response) {
-                    if (self._error) {
-                        self._error();
-                    }
-                },
-            });
-        };
-        UpdateTreeFlag.prototype.undo = function () {
-            var self = this;
-            self._tree.save({
-                'flag': self._previousFlag,
-            }, {
-                wait: true,
-                success: function (tree, response) {
-                    FoodParent.Model.getNotes().remove(self._note);
-                    self._note.destroy({
-                        wait: true,
-                        success: function (note, response) {
-                            if (self._success) {
-                                self._success();
-                            }
-                        },
-                        error: function (error) {
-                            if (self._error) {
-                                self._error();
-                            }
-                        },
-                    });
-                },
-                error: function (error, response) {
-                    if (self._error) {
-                        self._error();
-                    }
-                },
-            });
-        };
-        return UpdateTreeFlag;
-    })();
-    FoodParent.UpdateTreeFlag = UpdateTreeFlag;
-    var UpdateTreeOwnership = (function () {
-        function UpdateTreeOwnership(args, success, error) {
-            var self = this;
-            if (args != undefined && args.tree != undefined && args.ownership != undefined) {
-                self._tree = args.tree;
-                self._ownership = args.ownership;
-            }
-            if (success) {
-                self._success = success;
-            }
-            if (error) {
-                self._error = error;
-            }
-        }
-        UpdateTreeOwnership.prototype.execute = function () {
-            var self = this;
-            self._previousOwnership = self._tree.getOwnershipId();
-            self._tree.save({
-                'ownership': self._ownership,
-            }, {
-                wait: true,
-                success: function (tree, response) {
-                    self._note = new FoodParent.Note({
-                        type: FoodParent.NoteType.INFO,
-                        tree: self._tree.getId(),
-                        person: 0,
-                        comment: "Ownership has changed from '" + FoodParent.Model.getOwnerships().findWhere({ id: self._previousOwnership }).getName()
-                            + "' to '" + FoodParent.Model.getOwnerships().findWhere({ id: self._ownership }).getName() + "'",
-                        picture: "",
-                        rate: -1,
-                        date: moment(new Date()).format(FoodParent.Setting.getDateTimeFormat()),
-                    });
-                    self._note.save({}, {
-                        wait: true,
-                        success: function (note, response) {
-                            FoodParent.Model.getNotes().add(note);
-                            if (self._success) {
-                                self._success();
-                            }
-                        },
-                        error: function (error) {
-                            if (self._error) {
-                                self._error();
-                            }
-                        },
-                    });
-                },
-                error: function (error, response) {
-                    if (self._error) {
-                        self._error();
-                    }
-                },
-            });
-        };
-        UpdateTreeOwnership.prototype.undo = function () {
-            var self = this;
-            self._tree.save({
-                'ownership': self._previousOwnership,
-            }, {
-                wait: true,
-                success: function (tree, response) {
-                    FoodParent.Model.getNotes().remove(self._note);
-                    self._note.destroy({
-                        wait: true,
-                        success: function (note, response) {
-                            if (self._success) {
-                                self._success();
-                            }
-                        },
-                        error: function (error) {
-                            if (self._error) {
-                                self._error();
-                            }
-                        },
-                    });
-                },
-                error: function (error, response) {
-                    if (self._error) {
-                        self._error();
-                    }
-                },
-            });
-        };
-        return UpdateTreeOwnership;
-    })();
-    FoodParent.UpdateTreeOwnership = UpdateTreeOwnership;
-    var UpdateTreeLocation = (function () {
-        function UpdateTreeLocation(args, success, error) {
-            var self = this;
-            if (args != undefined && args.tree != undefined && args.location != undefined) {
-                self._tree = args.tree;
-                self._marker = args.marker;
-                self._location = args.location;
-            }
-            if (success) {
-                self._success = success;
-            }
-            if (error) {
-                self._error = error;
-            }
-        }
-        UpdateTreeLocation.prototype.execute = function () {
-            var self = this;
-            self._prevLocation = self._tree.getLocation();
-            self._tree.save({
-                'lat': self._location.lat,
-                'lng': self._location.lng
-            }, {
-                wait: true,
-                success: function (tree, response) {
-                    self._note = new FoodParent.Note({
-                        type: FoodParent.NoteType.INFO,
-                        tree: self._tree.getId(),
-                        person: 0,
-                        comment: "Location has changed from '@ " + self._prevLocation.lat.toFixed(4) + ", " + self._prevLocation.lng.toFixed(4)
-                            + "' to '" + '@ ' + self._location.lat.toFixed(4) + ", " + self._location.lng.toFixed(4) + "'",
-                        picture: "",
-                        rate: -1,
-                        date: moment(new Date()).format(FoodParent.Setting.getDateTimeFormat()),
-                    });
-                    self._note.save({}, {
-                        wait: true,
-                        success: function (note, response) {
-                            FoodParent.Model.getNotes().add(note);
-                            if (self._success) {
-                                self._success();
-                            }
-                        },
-                        error: function (error) {
-                            if (self._error) {
-                                self._error();
-                            }
-                        },
-                    });
-                },
-                error: function (error, response) {
-                    if (self._error) {
-                        self._error();
-                    }
-                },
-            });
-        };
-        UpdateTreeLocation.prototype.undo = function () {
-            var self = this;
-            self._tree.save({
-                'lat': self._prevLocation.lat,
-                'lng': self._prevLocation.lng
-            }, {
-                wait: true,
-                success: function (tree, response) {
-                    FoodParent.Model.getNotes().remove(self._note);
-                    self._note.destroy({
-                        wait: true,
-                        success: function (note, response) {
-                            if (self._success) {
-                                self._success();
-                            }
-                            self._marker.setLatLng(self._prevLocation);
-                        },
-                        error: function (error) {
-                            if (self._error) {
-                                self._error();
-                            }
-                        },
-                    });
-                },
-                error: function (error, response) {
-                    if (self._error) {
-                        self._error();
-                    }
-                },
-            });
-        };
-        return UpdateTreeLocation;
-    })();
-    FoodParent.UpdateTreeLocation = UpdateTreeLocation;
-    var UpdateTreeFoodType = (function () {
-        function UpdateTreeFoodType(args, success, error) {
-            var self = this;
-            if (args != undefined && args.tree != undefined && args.food != undefined) {
-                self._tree = args.tree;
-                self._food = args.food;
-            }
-            if (success) {
-                self._success = success;
-            }
-            if (error) {
-                self._error = error;
-            }
-        }
-        UpdateTreeFoodType.prototype.execute = function () {
-            var self = this;
-            self._previousFood = self._tree.getFoodId();
-            self._tree.save({
-                'food': self._food,
-            }, {
-                wait: true,
-                success: function (tree, response) {
-                    self._note = new FoodParent.Note({
-                        type: FoodParent.NoteType.INFO,
-                        tree: self._tree.getId(),
-                        person: 0,
-                        comment: "Food type has changed from '" + FoodParent.Model.getFoods().findWhere({ id: self._previousFood }).getName()
-                            + "' to '" + FoodParent.Model.getFoods().findWhere({ id: self._food }).getName() + "'",
-                        picture: "",
-                        rate: -1,
-                        date: moment(new Date()).format(FoodParent.Setting.getDateTimeFormat()),
-                    });
-                    self._note.save({}, {
-                        wait: true,
-                        success: function (note, response) {
-                            FoodParent.Model.getNotes().add(note);
-                            if (self._success) {
-                                self._success();
-                            }
-                        },
-                        error: function (error) {
-                            if (self._error) {
-                                self._error();
-                            }
-                        },
-                    });
-                },
-                error: function (error, response) {
-                    if (self._error) {
-                        self._error();
-                    }
-                },
-            });
-        };
-        UpdateTreeFoodType.prototype.undo = function () {
-            var self = this;
-            self._tree.save({
-                'food': self._previousFood,
-            }, {
-                wait: true,
-                success: function (tree, response) {
-                    FoodParent.Model.getNotes().remove(self._note);
-                    self._note.destroy({
-                        wait: true,
-                        success: function (note, response) {
-                            if (self._success) {
-                                self._success();
-                            }
-                        },
-                        error: function (error) {
-                            if (self._error) {
-                                self._error();
-                            }
-                        },
-                    });
-                },
-                error: function (error, response) {
-                    if (self._error) {
-                        self._error();
-                    }
-                },
-            });
-        };
-        return UpdateTreeFoodType;
-    })();
-    FoodParent.UpdateTreeFoodType = UpdateTreeFoodType;
     var RenderMessageViewCommand = (function () {
         function RenderMessageViewCommand(args) {
             var self = this;

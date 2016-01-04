@@ -9,4 +9,10 @@
         padding: 60px 120px 80px 120px;
         color: #262121;
     }
+
+    #wrapper-pop .confirm-button-group {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
 }

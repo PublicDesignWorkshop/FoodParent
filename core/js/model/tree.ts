@@ -16,6 +16,7 @@
                 "flag": 0,
                 "owner": 0,
                 "ownership": 0,
+                "description": "",
                 "updated": moment(new Date()).format(Setting.getDateTimeFormat()),
             };
             /*
@@ -57,7 +58,7 @@
             response.ownership = parseInt(response.ownership);
             response.updated = moment(response.updated).format(Setting.getDateTimeFormat());
 
-            response.owners = Model.getAdopts().getOwnerIds(response.id);
+            response.parents = Model.getAdopts().getParentIds(response.id);
             return super.parse(response, options);
         }
         toJSON(options?: any): any {
@@ -65,7 +66,7 @@
             if (this.id != null) {
                 clone["id"] = this.id;
             }
-            delete clone["owners"];
+            delete clone["parents"];
             return clone;
         }
         public getFoodId(): number {
@@ -93,6 +94,12 @@
 
         public getLocation(): L.LatLng {
             return new L.LatLng(this.getLat(), this.getLng());
+        }
+        public getDescription(): string {
+            if (this.get('description') == "") {
+                return "&nbsp;";
+            }
+            return this.get('description');
         }
     }
     export class Trees extends Backbone.Collection<Tree> {
@@ -156,7 +163,7 @@
         public getAssigned(trees: Trees): Trees {
             var self: Trees = this;
             $.each(self.models, function (index: number, model: Tree) {
-                if (model.get('owners').length >= 1) {
+                if (model.get('parents').length >= 1) {
                     if (trees.where({ id: model.getId() }) != undefined) {
                         trees.add(model);
                     }
@@ -168,7 +175,7 @@
         public getUnassigned(trees: Trees): Trees {
             var self: Trees = this;
             $.each(self.models, function (index: number, model: Tree) {
-                if (model.get('owners').length == 0) {
+                if (model.get('parents').length == 0) {
                     if (trees.where({ id: model.getId() }) != undefined) {
                         trees.add(model);
                     }

@@ -23,6 +23,7 @@ var FoodParent;
                 "flag": 0,
                 "owner": 0,
                 "ownership": 0,
+                "description": "",
                 "updated": moment(new Date()).format(FoodParent.Setting.getDateTimeFormat()),
             };
             /*
@@ -61,7 +62,7 @@ var FoodParent;
             response.owner = parseInt(response.owner);
             response.ownership = parseInt(response.ownership);
             response.updated = moment(response.updated).format(FoodParent.Setting.getDateTimeFormat());
-            response.owners = FoodParent.Model.getAdopts().getOwnerIds(response.id);
+            response.parents = FoodParent.Model.getAdopts().getParentIds(response.id);
             return _super.prototype.parse.call(this, response, options);
         };
         Tree.prototype.toJSON = function (options) {
@@ -69,7 +70,7 @@ var FoodParent;
             if (this.id != null) {
                 clone["id"] = this.id;
             }
-            delete clone["owners"];
+            delete clone["parents"];
             return clone;
         };
         Tree.prototype.getFoodId = function () {
@@ -96,6 +97,12 @@ var FoodParent;
         };
         Tree.prototype.getLocation = function () {
             return new L.LatLng(this.getLat(), this.getLng());
+        };
+        Tree.prototype.getDescription = function () {
+            if (this.get('description') == "") {
+                return "&nbsp;";
+            }
+            return this.get('description');
         };
         return Tree;
     })(Backbone.Model);
@@ -156,7 +163,7 @@ var FoodParent;
         Trees.prototype.getAssigned = function (trees) {
             var self = this;
             $.each(self.models, function (index, model) {
-                if (model.get('owners').length >= 1) {
+                if (model.get('parents').length >= 1) {
                     if (trees.where({ id: model.getId() }) != undefined) {
                         trees.add(model);
                     }
@@ -167,7 +174,7 @@ var FoodParent;
         Trees.prototype.getUnassigned = function (trees) {
             var self = this;
             $.each(self.models, function (index, model) {
-                if (model.get('owners').length == 0) {
+                if (model.get('parents').length == 0) {
                     if (trees.where({ id: model.getId() }) != undefined) {
                         trees.add(model);
                     }

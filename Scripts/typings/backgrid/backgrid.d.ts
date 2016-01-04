@@ -6,7 +6,14 @@
 /// <reference path="../backbone/backbone.d.ts" />
 
 declare module Backgrid {
+    var NumberFormatter: any;
+    var StringFormatter: any;
+    var CellEditor: any;
     var SelectCell: any;
+    var FoodSelectCellEditor: any;
+    var Cell: any;
+    var InputCellEditor: any;
+    var Command: any;
     interface GridOptions {
 	columns: Column[];
 	collection: Backbone.Collection<Backbone.Model>;
@@ -24,7 +31,7 @@ declare module Backgrid {
     
     class Row extends Backbone.View<Backbone.Model> {
     }
-
+    /*
     class Command {
 	cancel();
 	moveDown();
@@ -34,6 +41,7 @@ declare module Backgrid {
 	passThru();
 	save();
     }
+    */
 
     interface ColumnAttr {
 	name: string;
@@ -55,7 +63,7 @@ declare module Backgrid {
 
 	initialize(options?: any);
 	insertRow(model: Backbone.Model, collection: Backbone.Collection<Backbone.Model>, options: any);
-	moveToNextCell(model: Backbone.Model, cell: Column, command: Command);
+	moveToNextCell(model: Backbone.Model, cell: Column, command: any);
 	refresh(): Body;
 	remove(): Body;
 	removeRow(model: Backbone.Model, collection: Backbone.Collection<Backbone.Model>, options: any);

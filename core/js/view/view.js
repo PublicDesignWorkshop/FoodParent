@@ -64,7 +64,9 @@ var FoodParent;
             var self = View._instance;
             if (View._instance.children) {
                 View._instance.children.forEach(function (view) {
-                    view.traverse(destroyView);
+                    if (view) {
+                        view.traverse(destroyView);
+                    }
                 });
             }
             View._instance._manageTreesView = null;

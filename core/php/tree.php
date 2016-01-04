@@ -18,7 +18,7 @@
 
     switch($_SERVER['REQUEST_METHOD']){
         case 'POST':
-            //create();
+            create();
             break;
         case 'GET':
             //read();
@@ -27,7 +27,7 @@
             update();
             break;
         case 'DELETE':
-            //delete();
+            delete();
             break;
     }
     
@@ -64,16 +64,16 @@
                 "id" => $data->{'id'},
                 "lat" => $data->{'lat'},
                 "lng" => $data->{'lng'},
-                "address" => $data->{'address'},
                 "food" => $data->{'food'},
                 "type" => $data->{'type'},
                 "flag" => $data->{'flag'},
                 "owner" => $data->{'owner'},
+                "description" => $data->{'description'},
                 "ownership" => $data->{'ownership'},
                 "updated" => date("Y-m-d H:i:s"),
             );
         }
-        $sql = "UPDATE `tree` SET `lat` = :lat, `lng` = :lng, `address` = :address, `food` = :food, `type` = :type, `flag` = :flag, `owner` = :owner, `ownership` = :ownership, `updated` = :updated WHERE (`id` = :id)";
+        $sql = "UPDATE `tree` SET `lat` = :lat, `lng` = :lng, `food` = :food, `type` = :type, `flag` = :flag, `owner` = :owner, `ownership` = :ownership, `description` = :description, `updated` = :updated WHERE (`id` = :id)";
         
         try {
             $pdo = getConnection();
@@ -95,6 +95,61 @@
                 echo '{"error":{"text":'. $e->getMessage() .'}}';
             }
                 
+        } catch(PDOException $e) {
+            echo '{"error":{"text":'. $e->getMessage() .'}}';
+        }
+    }
+    
+    function create() {
+        $data = json_decode(file_get_contents('php://input'));
+        $params = array(
+            "lat" => $data->{'lat'},
+            "lng" => $data->{'lng'},
+            "food" => $data->{'food'},
+            "type" => $data->{'type'},
+            "flag" => $data->{'flag'},
+            "owner" => $data->{'owner'},
+            "description" => $data->{'description'},
+            "ownership" => $data->{'ownership'},
+            "updated" => date("Y-m-d H:i:s"),
+        );
+        $sql = "INSERT INTO `tree` VALUES ( NULL, :lat, :lng, :food, :type, :flag, :owner, :description, :ownership, :updated )";
+        
+        try {
+            $pdo = getConnection();
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute($params);
+            
+            $sql = "SELECT * FROM `tree` WHERE `id` = :id";
+            $params = array(
+                "id" => $pdo->lastInsertId(),
+            );
+            try {
+               $stmt = $pdo->prepare($sql);
+                $stmt->execute($params);
+                $result = $stmt->fetchAll(PDO::FETCH_OBJ);
+                $pdo = null;
+                echo json_encode($result[0]);
+            } catch(PDOException $e) {
+                echo '{"error":{"text":'. $e->getMessage() .'}}';
+            }
+        } catch(PDOException $e) {
+            echo '{"error":{"text":'. $e->getMessage() .'}}';
+        }
+    }
+    
+    function delete() {
+        $data = json_decode(file_get_contents('php://input'));
+        $params = array(
+            "id" => $data->{'id'},
+        );
+        $sql = "DELETE FROM `tree` WHERE (`id` = :id)";
+        try {
+            $pdo = getConnection();
+            $stmt = $pdo->prepare($sql);
+            $result = $stmt->execute($params);
+            $pdo = null;
+            echo json_encode($result);
         } catch(PDOException $e) {
             echo '{"error":{"text":'. $e->getMessage() .'}}';
         }

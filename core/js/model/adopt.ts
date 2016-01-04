@@ -93,7 +93,7 @@
             return result;
         }
 
-        public getOwnerIds(treeId: number): Array<number> {
+        public getParentIds(treeId: number): Array<number> {
             var self: Adopts = this;
             var result = Array<number>();
             $.each(self.models, function (index: number, model: Adopt) {

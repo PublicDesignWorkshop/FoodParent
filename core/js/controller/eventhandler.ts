@@ -5,10 +5,10 @@
     }
     */
     export enum DATA_MODE {
-        NONE, CREATE, DELETE, UPDATE_LOCATION, UPDATE_FLAG, UPDATE_OWNERSHIP, UPDATE_FOODTYPE
+        NONE, CREATE, DELETE, UPDATE_LOCATION, UPDATE_FLAG, UPDATE_OWNERSHIP, UPDATE_FOODTYPE, UPDATE_DESCRIPTION
     }
     export enum VIEW_STATUS {
-        NONE, HOME, MANAGE_TREES, PARENT_TREES, GEO_ERROR, NETWORK_ERROR
+        NONE, HOME, MANAGE_TREES, PARENT_TREES, GEO_ERROR, NETWORK_ERROR, CONFIRM
     }
     export enum VIEW_MODE {
         NONE, MAP, GRAPHIC, TABLE
@@ -53,7 +53,8 @@
                 new RenderHomeViewCommand({ el: Setting.getMainWrapperElement() }).execute();
             } else if (viewStatus == VIEW_STATUS.MANAGE_TREES) {
                 new MovePaceBarToUnderNav().execute();
-                new RenderManageTreesViewCommand({ el: Setting.getMainWrapperElement(), viewMode: VIEW_MODE.MAP }).execute();
+                new RenderManageTreesViewCommand({ el: Setting.getMainWrapperElement(), viewMode: option.viewMode }).execute();
+                
             }
             View.getNavView().setActiveNavItem(viewStatus);
             View.setViewStatus(viewStatus);
@@ -74,7 +75,7 @@
                     break;
                 case VIEW_STATUS.HOME:
                     if (el.hasClass('home-menu-left')) {
-                        new NavigateCommand({ hash: 'mtrees' }).execute();
+                        new NavigateCommand({ hash: 'mtrees', viewMode: VIEW_MODE.MAP }).execute();
                     } else if (el.hasClass('home-menu-right')) {
                         new NavigateCommand({ hash: 'ptrees' }).execute();
                     }
@@ -85,8 +86,13 @@
                         new RemoveAlertViewCommand({ delay: Setting.getRemovePopupDuration() }).execute();
                     }
                     break;
+                case VIEW_STATUS.CONFIRM:
+                    if (el.hasClass('confirm-confirm') || el.hasClass('confirm-cancel')) {
+                        new RemoveAlertViewCommand({ delay: Setting.getRemovePopupDuration() }).execute();
+                    }
+                    break;
                 case VIEW_STATUS.MANAGE_TREES:
-                    if (el.hasClass('marker-control-lock')) {   
+                    if (el.hasClass('marker-control-lock')) {
                         if (!options.marker.options.draggable) {
                             options.marker.options.draggable = true;
                             options.marker.dragging.enable();
@@ -101,7 +107,12 @@
                     } else if (el.hasClass('marker-control-info')) {
 
                     } else if (el.hasClass('marker-control-delete')) {
-
+                        var tree: Tree = Model.getTrees().findWhere({ id: options.marker.options.id });
+                        (<ManageTreesMapView>view).deleteTree(tree);
+                    } else if (el.hasClass('switch-table')) {   // Switch to table view.
+                        new NavigateCommand({ hash: 'mtrees', viewMode: VIEW_MODE.TABLE }).execute();
+                    } else if (el.hasClass('switch-map')) {   // Switch to table view.
+                        new NavigateCommand({ hash: 'mtrees', viewMode: VIEW_MODE.MAP }).execute();
                     }
                     break;
             }
@@ -125,15 +136,19 @@
             new RenderAlertViewCommand({ el: Setting.getPopWrapperElement(), errorMode: errorMode }).execute();
         }
 
-        public static handleDataChange(message: string, undoable: boolean): void {
+        public static handleDataChange(message: string, undoable?: boolean): void {
             var self: EventHandler = EventHandler._instance;
+            console.log("!");
             if (self._lastCommand) {
-                new RenderMessageViewCommand({ el: Setting.getMessageWrapperElement(), message: message, undoable: undoable }).execute();
+                new RenderMessageViewCommand({ el: Setting.getMessageWrapperElement(), message: message, undoable: true }).execute();
+            } else {
+                new RenderMessageViewCommand({ el: Setting.getMessageWrapperElement(), message: message, undoable: false }).execute();
             }
         }
 
-        public static handleTreeData(tree: Tree, dataMode: DATA_MODE, args: any, success?: Function, error?: Function): void {
+        public static handleTreeData(tree: Tree, dataMode: DATA_MODE, args: any, success?: Function, error?: Function, undoSuccess?: Function): void {
             var self: EventHandler = EventHandler._instance;
+            self._lastCommand = null;
             switch (dataMode) {
                 case DATA_MODE.UPDATE_LOCATION:
                     self._lastCommand = new UpdateTreeLocation({ tree: tree, marker: args.marker, location: args.location }, success, error);
@@ -147,8 +162,21 @@
                 case DATA_MODE.UPDATE_FOODTYPE:
                     self._lastCommand = new UpdateTreeFoodType({ tree: tree, food: args.food }, success, error);
                     break;
+                case DATA_MODE.UPDATE_DESCRIPTION:
+                    self._lastCommand = new UpdateTreeDescription({ tree: tree, description: args.description }, success, error);
+                    break;
+                case DATA_MODE.CREATE:
+                    self._lastCommand = new AddNewTree({ tree: tree }, success, error, undoSuccess);
+                    break;
+                case DATA_MODE.DELETE:
+                    var food: Food = Model.getFoods().findWhere({ id: tree.getFoodId() });
+                    var command: Command = new DeleteTree({ tree: tree }, success, error);
+                    new RenderConfirmViewCommand({ el: Setting.getPopWrapperElement(), message: "Are you sure to delete " + food.getName() + " " + tree.getName() + "?", command: command }).execute();
+                    break;
             }
-            self._lastCommand.execute();
+            if (self._lastCommand != undefined) {
+                self._lastCommand.execute();
+            }
         }
     }
 }

@@ -323,6 +323,8 @@ declare module Backbone {
         className?: string;
         tagName?: string;
         attributes?: any[];
+        columns?: any;
+        emptyText?: any;
     }
 
     class View<TModel extends Model> extends Events {

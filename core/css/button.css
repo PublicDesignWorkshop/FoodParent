@@ -2,6 +2,7 @@
     /* Button Style 1 */
 
     .button-outer-frame {
+        flex-grow: 1;
         padding: 4px;
     }
 
@@ -40,6 +41,7 @@
     /* Button Style 2 */
 
     .button-outer-frame2 {
+        flex-grow: 1;
         padding: 3px;
     }
 
@@ -69,5 +71,9 @@
 
     .button3 {
         background-color: rgba(94, 78, 81, 0.85);
+    }
+
+    .btn input, .btn i {
+        pointer-events: none;
     }
 }

@@ -117,7 +117,7 @@ var FoodParent;
             // Setup Router parameters
             this.routes = {
                 "": "home",
-                "mtrees": "manageTrees",
+                "mtrees/:viewMode": "manageTrees",
                 "ptrees": "parentTrees",
             };
             _super.call(this, options);
@@ -129,9 +129,9 @@ var FoodParent;
             console.log(Router.TAG + "we have loaded the home page.");
             FoodParent.EventHandler.handleNavigate(FoodParent.VIEW_STATUS.HOME);
         };
-        Router.prototype.manageTrees = function () {
+        Router.prototype.manageTrees = function (viewMode) {
             console.log(Router.TAG + "we have loaded the manage trees page.");
-            FoodParent.EventHandler.handleNavigate(FoodParent.VIEW_STATUS.MANAGE_TREES);
+            FoodParent.EventHandler.handleNavigate(FoodParent.VIEW_STATUS.MANAGE_TREES, { viewMode: viewMode });
         };
         Router._instance = new Router();
         Router.TAG = "Router - ";

@@ -85,5 +85,8 @@
         public static getNumRecentActivitiesShown(): number {
             return 5;
         }
+        public static getNoDataText(): string {
+            return "No Data";
+        }
     }
 }

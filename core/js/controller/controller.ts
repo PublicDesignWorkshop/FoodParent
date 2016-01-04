@@ -122,7 +122,7 @@
             // Setup Router parameters
             this.routes = {
                 "": "home",
-                "mtrees": "manageTrees",
+                "mtrees/:viewMode": "manageTrees",
                 "ptrees": "parentTrees",
             }
             super(options);
@@ -134,9 +134,9 @@
             console.log(Router.TAG + "we have loaded the home page.");
             EventHandler.handleNavigate(VIEW_STATUS.HOME);
         }
-        manageTrees() {
+        manageTrees(viewMode: VIEW_MODE) {
             console.log(Router.TAG + "we have loaded the manage trees page.");
-            EventHandler.handleNavigate(VIEW_STATUS.MANAGE_TREES);
+            EventHandler.handleNavigate(VIEW_STATUS.MANAGE_TREES, { viewMode: viewMode });
         }
     }
 } 
