@@ -7,10 +7,10 @@ var FoodParent;
 (function (FoodParent) {
     var Auth = (function (_super) {
         __extends(Auth, _super);
-        //url: string = "food.php";
         function Auth(attributes, options) {
             _super.call(this, attributes, options);
-            //this.url = Setting.getInstance().getPhpDir() + this.url;
+            this.url = "auth.php";
+            this.url = FoodParent.Setting.getPhpDir() + this.url;
             this.defaults = {
                 "id": 0,
                 "name": ""
@@ -30,7 +30,10 @@ var FoodParent;
             return clone;
         };
         Auth.prototype.getId = function () {
-            return Math.floor(this.id);
+            if (this.id != undefined) {
+                return Math.floor(this.id);
+            }
+            return null;
         };
         Auth.prototype.getName = function () {
             return this.get('name');
@@ -40,10 +43,10 @@ var FoodParent;
     FoodParent.Auth = Auth;
     var Auths = (function (_super) {
         __extends(Auths, _super);
-        //url: string = "foods.php";
         function Auths(models, options) {
             _super.call(this, models, options);
-            //this.url = Setting.getInstance().getPhpDir() + this.url;
+            this.url = "auths.php";
+            this.url = FoodParent.Setting.getPhpDir() + this.url;
             this.model = Auth;
         }
         Auths.prototype.toArray = function () {

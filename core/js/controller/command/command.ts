@@ -75,8 +75,31 @@
                 View.addChild(view);
                 View.setManageTreesView(view);
             }
+        }
+        public undo(): any {
 
-            
+        }
+    }
+
+    export class RenderManagePeopleViewCommand implements Command {
+        private _el: JQuery;
+        private _viewMode: VIEW_MODE;
+        private _id: number;
+        constructor(args?: any) {
+            var self: RenderManagePeopleViewCommand = this;
+            self._el = args.el;
+            self._viewMode = args.viewMode;
+            self._id = args.id;
+        }
+        public execute(): any {
+            var self: RenderManagePeopleViewCommand = this;
+            if (View.getManageTreesView()) {
+
+            } else {
+                var view: ManagePeopleView = ManagePeopleViewFractory.create(self._el, self._viewMode, self._id).render();
+                View.addChild(view);
+                View.setManagePeopleView(view);
+            }
         }
         public undo(): any {
 

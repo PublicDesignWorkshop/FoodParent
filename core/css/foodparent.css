@@ -12093,7 +12093,9 @@ button.close {
     .uppercase {
         text-transform: uppercase;
     }
+
 }
+
 @media all {
     #wrapper-main {
         position: absolute;
@@ -12429,16 +12431,16 @@ button.close {
     }
 }
 @media all {
-    .list-tree td, .new-tree td {
+    .list-tree td, .new-tree td, .list-people td, .new-person td {
         color: #222222;
         font-size: small;
     }
 
-    .list-tree a, .new-tree a {
+    .list-tree a, .new-tree a, .list-tree a, .new-person a {
         font-size: small;
     }
 
-    .list-tree .backgrid .select-cell, .new-tree .backgrid .select-cell {
+    .list-tree .backgrid .select-cell, .new-tree .backgrid .select-cell, .list-people .backgrid .select-cell, .new-person .backgrid .select-cell {
         text-align: left;
     }
 
@@ -12474,8 +12476,41 @@ button.close {
         width: 72px;
     }
 
+    .list-people .backgrid .auth {
+        width: 12.5%;
+    }
+    .list-people .backgrid .name {
+        width: 12.5%;
+    }
+    .list-people .backgrid .address {
+        width: 20%;
+    }
+    .list-people .backgrid .contact {
+        width: 20%;
+    }
+    .list-people .backgrid .neighborhood {
+        width: 15%;
+    }
+    .list-people .backgrid .adoption {
+        width: 30%;
+    }
+
     td.editable {
         cursor: pointer;
+    }
+
+    .cell-link {
+        margin: 2px;
+        padding: 2px;
+        text-align: center;
+        border-radius: 2px;
+        cursor: pointer;
+        color: rgba(0, 0, 0, 0.75);
+    }
+
+    .cell-link:hover {
+        box-shadow: inset 0 0 1px 1px rgba(0,0,0,0.25);
+        background-color: rgba(0, 0, 0, 0.05);
     }
 }
 @media all {
@@ -12680,7 +12715,7 @@ button.close {
         margin: 0 0 0 8px;
     }
 
-    .tree-list-title {
+    .list-title {
         color: #222222;
         font-size: large;
         font-weight: 700;
@@ -12836,4 +12871,89 @@ button.close {
         box-shadow: inset 0 0 1px 1px rgba(0,0,0,0.25);
         background-color: rgba(0, 0, 0, 0.05);
     }
+}
+@media all {
+    #wrapper-mpeople {
+        width: 100%;
+        height: 100%;
+        background-color: #eeeeee;
+        border-top: 4px solid #5e4e51;
+        overflow: hidden;
+    }
+
+    #wrapper-mpeople-table {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        display: flex;
+        justify-content: flex-start;
+        align-items: flex-start;
+    }
+}
+@media print {
+    html, body {
+        width: auto;
+        height: auto;
+        overflow: visible;
+    }
+    body * {
+        visibility: hidden;
+        position: relative;
+        overflow: visible;
+    }
+    /*
+    #wrapper-nav, #wrapper-nav * {
+        visibility: visible;
+    }
+    */
+
+    #wrapper-main {
+        position: relative;
+        width: auto;
+        height: auto;
+        overflow: visible;
+        padding: 0;
+        margin: 0;
+    }
+    #wrapper-mtrees {
+        position: relative;
+        width: auto;
+        height: auto;
+        overflow: visible;
+        padding: 0;
+        margin: 0;
+    }
+    #wrapper-mtrees-table {
+        position: relative;
+        width: auto;
+        height: auto;
+        overflow: visible;
+        padding: 0;
+        margin: 0;
+    }
+    #wrapper-tablemenu {
+        display: none;
+    }
+    #content-mtrees-table, #content-mtrees-table * {
+        visibility: visible;
+    }
+    #content-mtrees-table {
+        width: auto;
+        height: auto;
+        overflow: visible;
+        padding: 0;
+        margin: 0;
+    }
+
+    .marker-control-item, .cell-button {
+        display: none;
+    }
+    /*
+    .backgrid th, .backgrid td {
+        padding: 0;
+    }
+    */
 }

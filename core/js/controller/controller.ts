@@ -88,6 +88,42 @@
                 }
             });
         }
+
+        public static fetchAllPersonsAndAuthsAndFoodAndTreesAndAdopts(success?: any, error?: any) {
+            var xhr1: JQueryXHR = Model.fetchAllAuths();
+            var xhr2: JQueryXHR = Model.fetchAllPersons();
+            var xhr3: JQueryXHR = Model.fetchAllAdopts();
+            var xhr4: JQueryXHR = Model.fetchAllTrees();
+            var xhr5: JQueryXHR = Model.fetchAllFoods();
+            Controller.pushXHR(xhr1);
+            Controller.pushXHR(xhr2);
+            Controller.pushXHR(xhr3);
+            Controller.pushXHR(xhr4);
+            Controller.pushXHR(xhr5);
+            $.when(
+                xhr1, xhr2, xhr3, xhr4, xhr5
+            ).then(function () {
+                Controller.removeXHR(xhr1);
+                Controller.removeXHR(xhr2);
+                Controller.removeXHR(xhr3);
+                Controller.removeXHR(xhr4);
+                Controller.removeXHR(xhr5);
+                Model.getPersons().updateTrees();
+                if (success) {
+                    success();
+                }
+            }, function () {
+                Controller.removeXHR(xhr1);
+                Controller.removeXHR(xhr2);
+                Controller.removeXHR(xhr3);
+                Controller.removeXHR(xhr4);
+                Controller.removeXHR(xhr5);
+                if (error) {
+                    error(ERROR_MODE.SEVER_CONNECTION_ERROR);
+                }
+            });
+        }
+
         public static fetchNotesOfTrees(trees: Array<Tree>, size: number, offset: number, success?: any, error?: any) {
             var ids: Array<number> = new Array<number>();
             $.each(trees, function (index: number, tree: Tree) {
@@ -123,6 +159,7 @@
             this.routes = {
                 "": "home",
                 "mtrees/:viewMode/:id": "manageTrees",
+                "mpeople/:viewMode/:id": "managePeople",
                 "ptrees": "parentTrees",
             }
             super(options);
@@ -137,6 +174,10 @@
         manageTrees(viewMode: VIEW_MODE, id: number) {
             console.log(Router.TAG + "we have loaded the manage trees page.");
             EventHandler.handleNavigate(VIEW_STATUS.MANAGE_TREES, { viewMode: viewMode, id: id });
+        }
+        managePeople(viewMode: VIEW_MODE, id: number) {
+            console.log(Router.TAG + "we have loaded the manage trees page.");
+            EventHandler.handleNavigate(VIEW_STATUS.MANAGE_PEOPLE, { viewMode: viewMode, id: id });
         }
     }
 } 

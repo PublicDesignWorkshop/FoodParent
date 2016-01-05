@@ -34,7 +34,10 @@ var FoodParent;
             return clone;
         };
         Food.prototype.getId = function () {
-            return Math.floor(this.id);
+            if (this.id != undefined) {
+                return Math.floor(this.id);
+            }
+            return null;
         };
         Food.prototype.getName = function () {
             return this.get('name');

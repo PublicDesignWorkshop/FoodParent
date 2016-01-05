@@ -27,6 +27,31 @@
             return template;
         }
 
+        public static getManagePeopleTableViewTemplate(): string {
+            var template = '';
+            template += '<div id="wrapper-mpeople">';
+            template +=     '<div id="wrapper-mpeople-table">';
+            template +=         '<div id="wrapper-tablemenu">';
+            //template +=             '<div class="button-outer-frame2 button3"><div class="button-inner-frame2 switch-map">Switch to Map View</div></div>';
+            template +=             '<div class="button-outer-frame2 button3"><div class="button-inner-frame2 add-tree">Add A New Person</div></div>';
+            template +=             '<div class="button-outer-frame2 button3"><div class="button-inner-frame2 collapsible-button" data-target="#filter-list">Filter List</div></div>';
+            template +=             '<div id="filter-list" class="collapsible-list">';
+            template +=             '</div>';
+            template +=         '</div>';
+
+            template +=         '<div id="content-mpeople-table">';
+            template +=             '<div class="new-person hidden">';
+            template +=             '</div>';
+            template +=             '<div class="list-title">List of People</div>';
+            template +=             '<div class="list-people">';
+            template +=             '</div>';
+            template +=         '</div>';
+
+            template +=     '</div>';
+            template += '</div>';
+            return template;
+        }
+
         public static getManageTreesTableViewTemplate(): string {
             var template = '';
             template += '<div id="wrapper-mtrees">';
@@ -46,7 +71,7 @@
             template +=         '<div id="content-mtrees-table">';
             template +=             '<div class="new-tree hidden">';
             template +=             '</div>';
-            template +=             '<div class="tree-list-title">List of Trees</div>';
+            template +=             '<div class="list-title">List of Trees</div>';
             template +=             '<div class="list-tree">';
             template +=             '</div>';
             template +=         '</div>';
@@ -297,6 +322,19 @@
             template += '<% }); %>';
 
             
+            return template;
+        }
+
+        public static getAdoptTreeCellTemplate(): string {
+            //<%= address %>
+            var template = "";
+           // template += '<div class="cell-group">';
+            template += '<% _.each(trees.models, function (tree) { %>';
+            template +=     '<% var food = FoodParent.Model.getFoods().findWhere({ id: tree.getFoodId() }); %>';
+            template +=     '<div class="cell-link cell-tree-detail" data-target="tree.getId()"><%= food.getName() + " " + tree.getName() %></div>';
+            template += '<% }); %>';
+            //template += '<div class="cell-button cell-edit"><i class="fa fa-edit fa-1x"></i></div>';
+            //template += '</div>';
             return template;
         }
     }

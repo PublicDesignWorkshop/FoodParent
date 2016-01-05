@@ -24,6 +24,10 @@
             var self: NavView = this;
             self.bDebug = true;
             //$(window).resize(_.debounce(that.customResize, Setting.getInstance().getResizeTimeout()));
+            self.events = <any>{
+                "click .item-nav": "_mouseClick",
+            };
+            self.delegateEvents();
         }
         public render(args?: any): any {
             if (this.bRendered) {
@@ -46,6 +50,11 @@
                 data = {
 
                 }
+            } else if (args.viewStatus == VIEW_STATUS.MANAGE_PEOPLE) {
+                template = _.template(Template.getNavViewManageTemplate());
+                data = {
+
+                }
             }
 
             
@@ -56,6 +65,9 @@
                 self.urenderNavItems();
                 self.$('#background-nav-left').css({ left: '-69%' });
             } else if (args.viewStatus == VIEW_STATUS.MANAGE_TREES) {
+                self.renderNavManageItems();
+                self.$('#background-nav-left').css({ left: '-40%' });
+            } else if (args.viewStatus == VIEW_STATUS.MANAGE_PEOPLE) {
                 self.renderNavManageItems();
                 self.$('#background-nav-left').css({ left: '-40%' });
             }
@@ -114,7 +126,16 @@
                     self.$('.item-nav').removeClass('active');
                     self.$('.trees').addClass('active');
                     break;
+                case VIEW_STATUS.MANAGE_PEOPLE:
+                    self.$('.item-nav').removeClass('active');
+                    self.$('.people').addClass('active');
+                    break;
             }
+        }
+
+        private _mouseClick(event: Event): void {
+            var self: NavView = this;
+            EventHandler.handleMouseClick($(event.currentTarget), self);
         }
     }
 }

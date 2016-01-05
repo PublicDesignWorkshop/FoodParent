@@ -54,7 +54,10 @@ var FoodParent;
             return clone;
         };
         Note.prototype.getId = function () {
-            return Math.floor(this.id);
+            if (this.id != undefined) {
+                return Math.floor(this.id);
+            }
+            return null;
         };
         Note.prototype.getComment = function () {
             return this.get('comment');

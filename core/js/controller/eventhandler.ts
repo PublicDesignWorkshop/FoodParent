@@ -5,10 +5,11 @@
     }
     */
     export enum DATA_MODE {
-        NONE, CREATE, DELETE, UPDATE_LOCATION, UPDATE_FLAG, UPDATE_OWNERSHIP, UPDATE_FOODTYPE, UPDATE_DESCRIPTION
+        NONE, CREATE, DELETE, UPDATE_LOCATION, UPDATE_FLAG, UPDATE_OWNERSHIP, UPDATE_FOODTYPE, UPDATE_DESCRIPTION, 
+        UPDATE_NAME, UPDATE_ADDRESS, UPDATE_CONTACT, UPDATE_NEIGHBORHOOD, UPDATE_AUTH
     }
     export enum VIEW_STATUS {
-        NONE, HOME, MANAGE_TREES, PARENT_TREES, GEO_ERROR, NETWORK_ERROR, CONFIRM
+        NONE, HOME, MANAGE_TREES, PARENT_TREES, GEO_ERROR, NETWORK_ERROR, CONFIRM, MANAGE_PEOPLE
     }
     export enum VIEW_MODE {
         NONE, MAP, GRAPHIC, TABLE
@@ -54,7 +55,9 @@
             } else if (viewStatus == VIEW_STATUS.MANAGE_TREES) {
                 new MovePaceBarToUnderNav().execute();
                 new RenderManageTreesViewCommand({ el: Setting.getMainWrapperElement(), viewMode: option.viewMode, id: option.id }).execute();
-                
+            } else if (viewStatus == VIEW_STATUS.MANAGE_PEOPLE) {
+                new MovePaceBarToUnderNav().execute();
+                new RenderManagePeopleViewCommand({ el: Setting.getMainWrapperElement(), viewMode: option.viewMode, id: option.id }).execute();
             }
             View.getNavView().setActiveNavItem(viewStatus);
             View.setViewStatus(viewStatus);
@@ -69,6 +72,15 @@
             if (View.getMessageView()) {
                 View.getMessageView().setInvisible();
             }
+            // Handle NavView
+            if (view instanceof NavView) {
+                if (el.hasClass('trees')) {
+                    new NavigateCommand({ hash: 'mtrees', viewMode: VIEW_MODE.MAP, id: 0 }).execute();
+                } else if (el.hasClass('people')) {
+                    new NavigateCommand({ hash: 'mpeople', viewMode: VIEW_MODE.TABLE, id: 0 }).execute();
+                }
+            }
+
             // Handle specific event on each view status.
             switch (View.getViewStatus()) {
                 case VIEW_STATUS.NONE:
@@ -145,6 +157,35 @@
                 new RenderMessageViewCommand({ el: Setting.getMessageWrapperElement(), message: message, undoable: true }).execute();
             } else {
                 new RenderMessageViewCommand({ el: Setting.getMessageWrapperElement(), message: message, undoable: false }).execute();
+            }
+        }
+
+        public static handlePersonData(person: Person, dataMode: DATA_MODE, args: any, success?: Function, error?: Function, undoSuccess?: Function): void {
+            var self: EventHandler = EventHandler._instance;
+            self._lastCommand = null;
+            switch (dataMode) {
+                case DATA_MODE.UPDATE_NAME:
+                    self._lastCommand = new UpdatePersonName({ person: person, name: args.name }, success, error);
+                    break;
+                case DATA_MODE.UPDATE_ADDRESS:
+                    self._lastCommand = new UpdatePersonAddress({ person: person, address: args.address }, success, error);
+                    break;
+                case DATA_MODE.UPDATE_CONTACT:
+                    self._lastCommand = new UpdatePersonContact({ person: person, contact: args.contact }, success, error);
+                    break;
+                case DATA_MODE.UPDATE_NEIGHBORHOOD:
+                    self._lastCommand = new UpdatePersonNeightborhood({ person: person, neighborhood: args.neighborhood }, success, error);
+                    break;
+                case DATA_MODE.DELETE:
+                    var command: Command = new DeletePerson({ person: person }, success, error);
+                    new RenderConfirmViewCommand({ el: Setting.getPopWrapperElement(), message: "Are you sure to delete " + person.getName() + "?", command: command }).execute();
+                    break;
+                case DATA_MODE.UPDATE_AUTH:
+                    self._lastCommand = new UpdatePersonAuth({ person: person, auth: args.auth }, success, error);
+                    break;
+            }
+            if (self._lastCommand != undefined) {
+                self._lastCommand.execute();
             }
         }
 

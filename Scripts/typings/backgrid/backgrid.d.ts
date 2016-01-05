@@ -6,7 +6,7 @@
 /// <reference path="../backbone/backbone.d.ts" />
 
 declare module Backgrid {
-    
+    var AuthSelectCellEditor: any;
     var NumberFormatter: any;
     var StringFormatter: any;
     var CellEditor: any;

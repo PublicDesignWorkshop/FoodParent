@@ -51,7 +51,7 @@
             return 250;
         }
         public static getDefaultMapZoomLevel(): number {
-            return 13;
+            return 12;
         }
         public static getTileMapAddress(): string {
             return 'http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png';

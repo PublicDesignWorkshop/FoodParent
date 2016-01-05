@@ -30,6 +30,10 @@ var FoodParent;
             var self = this;
             self.bDebug = true;
             //$(window).resize(_.debounce(that.customResize, Setting.getInstance().getResizeTimeout()));
+            self.events = {
+                "click .item-nav": "_mouseClick",
+            };
+            self.delegateEvents();
         }
         NavView.prototype.render = function (args) {
             if (this.bRendered) {
@@ -51,12 +55,20 @@ var FoodParent;
                 template = _.template(FoodParent.Template.getNavViewManageTemplate());
                 data = {};
             }
+            else if (args.viewStatus == FoodParent.VIEW_STATUS.MANAGE_PEOPLE) {
+                template = _.template(FoodParent.Template.getNavViewManageTemplate());
+                data = {};
+            }
             self.$el.html(template(data));
             if (args.viewStatus == FoodParent.VIEW_STATUS.HOME) {
                 self.urenderNavItems();
                 self.$('#background-nav-left').css({ left: '-69%' });
             }
             else if (args.viewStatus == FoodParent.VIEW_STATUS.MANAGE_TREES) {
+                self.renderNavManageItems();
+                self.$('#background-nav-left').css({ left: '-40%' });
+            }
+            else if (args.viewStatus == FoodParent.VIEW_STATUS.MANAGE_PEOPLE) {
                 self.renderNavManageItems();
                 self.$('#background-nav-left').css({ left: '-40%' });
             }
@@ -108,7 +120,15 @@ var FoodParent;
                     self.$('.item-nav').removeClass('active');
                     self.$('.trees').addClass('active');
                     break;
+                case FoodParent.VIEW_STATUS.MANAGE_PEOPLE:
+                    self.$('.item-nav').removeClass('active');
+                    self.$('.people').addClass('active');
+                    break;
             }
+        };
+        NavView.prototype._mouseClick = function (event) {
+            var self = this;
+            FoodParent.EventHandler.handleMouseClick($(event.currentTarget), self);
         };
         NavView.TAG = "NavView - ";
         return NavView;

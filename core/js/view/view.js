@@ -70,6 +70,7 @@ var FoodParent;
                 });
             }
             View._instance._manageTreesView = null;
+            View._instance._managePeopleView = null;
         };
         View.setMessageView = function (view) {
             View._instance._messageView = view;
@@ -94,6 +95,12 @@ var FoodParent;
         };
         View.getManageTreesView = function () {
             return View._instance._manageTreesView;
+        };
+        View.setManagePeopleView = function (view) {
+            View._instance._managePeopleView = view;
+        };
+        View.getManagePeopleView = function () {
+            return View._instance._managePeopleView;
         };
         View.removeNavView = function () {
             var self = View._instance;

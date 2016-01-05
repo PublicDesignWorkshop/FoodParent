@@ -1,9 +1,9 @@
 ﻿module FoodParent {
     export class Auth extends Backbone.Model {
-        //url: string = "food.php";
+        url: string = "auth.php";
         constructor(attributes?: any, options?: any) {
             super(attributes, options);
-            //this.url = Setting.getInstance().getPhpDir() + this.url;
+            this.url = Setting.getPhpDir() + this.url;
             this.defaults = <any>{
                 "id": 0,
                 "name": ""
@@ -23,17 +23,20 @@
             return clone;
         }
         public getId(): number {
-            return Math.floor(this.id);
+            if (this.id != undefined) {
+                return Math.floor(this.id);
+            }
+            return null;
         }
         public getName(): string {
             return this.get('name');
         }
     }
     export class Auths extends Backbone.Collection<Auth> {
-        //url: string = "foods.php";
+        url: string = "auths.php";
         constructor(models?: Auth[], options?: any) {
             super(models, options);
-            //this.url = Setting.getInstance().getPhpDir() + this.url;
+            this.url = Setting.getPhpDir() + this.url;
             this.model = Auth;
         }
 

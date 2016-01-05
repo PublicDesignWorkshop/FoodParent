@@ -101,7 +101,7 @@ var FoodParent;
                 });
                 grid.render();
                 //grid.sort("name", "ascending");
-                self.$(".new-tree").html('<div class="tree-list-title">Add a New Tree</div>');
+                self.$(".new-tree").html('<div class="list-title">Add a New Tree</div>');
                 self.$(".new-tree").append(grid.el);
                 self.$(".new-tree").removeClass('hidden');
             };

@@ -83,6 +83,38 @@ var FoodParent;
                 }
             });
         };
+        Controller.fetchAllPersonsAndAuthsAndFoodAndTreesAndAdopts = function (success, error) {
+            var xhr1 = FoodParent.Model.fetchAllAuths();
+            var xhr2 = FoodParent.Model.fetchAllPersons();
+            var xhr3 = FoodParent.Model.fetchAllAdopts();
+            var xhr4 = FoodParent.Model.fetchAllTrees();
+            var xhr5 = FoodParent.Model.fetchAllFoods();
+            Controller.pushXHR(xhr1);
+            Controller.pushXHR(xhr2);
+            Controller.pushXHR(xhr3);
+            Controller.pushXHR(xhr4);
+            Controller.pushXHR(xhr5);
+            $.when(xhr1, xhr2, xhr3, xhr4, xhr5).then(function () {
+                Controller.removeXHR(xhr1);
+                Controller.removeXHR(xhr2);
+                Controller.removeXHR(xhr3);
+                Controller.removeXHR(xhr4);
+                Controller.removeXHR(xhr5);
+                FoodParent.Model.getPersons().updateTrees();
+                if (success) {
+                    success();
+                }
+            }, function () {
+                Controller.removeXHR(xhr1);
+                Controller.removeXHR(xhr2);
+                Controller.removeXHR(xhr3);
+                Controller.removeXHR(xhr4);
+                Controller.removeXHR(xhr5);
+                if (error) {
+                    error(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+                }
+            });
+        };
         Controller.fetchNotesOfTrees = function (trees, size, offset, success, error) {
             var ids = new Array();
             $.each(trees, function (index, tree) {
@@ -118,6 +150,7 @@ var FoodParent;
             this.routes = {
                 "": "home",
                 "mtrees/:viewMode/:id": "manageTrees",
+                "mpeople/:viewMode/:id": "managePeople",
                 "ptrees": "parentTrees",
             };
             _super.call(this, options);
@@ -132,6 +165,10 @@ var FoodParent;
         Router.prototype.manageTrees = function (viewMode, id) {
             console.log(Router.TAG + "we have loaded the manage trees page.");
             FoodParent.EventHandler.handleNavigate(FoodParent.VIEW_STATUS.MANAGE_TREES, { viewMode: viewMode, id: id });
+        };
+        Router.prototype.managePeople = function (viewMode, id) {
+            console.log(Router.TAG + "we have loaded the manage trees page.");
+            FoodParent.EventHandler.handleNavigate(FoodParent.VIEW_STATUS.MANAGE_PEOPLE, { viewMode: viewMode, id: id });
         };
         Router._instance = new Router();
         Router.TAG = "Router - ";

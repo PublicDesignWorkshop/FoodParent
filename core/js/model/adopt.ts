@@ -1,7 +1,6 @@
 ﻿module FoodParent {
     export class Adopt extends Backbone.Model {
         url: string = "adopt.php";
-        private isSavable = true;
         constructor(attributes?: any, options?: any) {
             super(attributes, options);
             var self: Adopt = this;
@@ -9,28 +8,9 @@
             this.defaults = <any>{
                 "id": 0,
                 "tree": "",
-                "owner": "",
+                "parent": "",
                 "updated": moment(new Date()).format(Setting.getDateTimeFormat()),
             };
-
-            self.off("change");
-            self.on("change", function (model: Adopt, options) {
-                if (self.isSavable == false) return;
-                self.isSavable = false;
-                model.save(
-                    {},
-                    {
-                        wait: true,
-                        success: function (model: Adopt, response: any) {
-                            console.log(model);
-                            model.isSavable = true;
-                        },
-                        error: function (error, response) {
-                        },
-                    }
-                );
-            });
-
         }
 
         parse(response: any, options?: any): any {
@@ -38,7 +18,7 @@
                 response.id = parseInt(response.id);
             }
             response.tree = parseInt(response.tree);
-            response.owner = parseInt(response.owner);
+            response.parent = parseInt(response.parent);
             response.updated = moment(response.updated).format(Setting.getDateTimeFormat());
             return super.parse(response, options);
         }
@@ -50,15 +30,18 @@
             return clone;
         }
         public getId(): number {
-            return Math.floor(this.id);
+            if (this.id != undefined) {
+                return Math.floor(this.id);
+            }
+            return null;
         }
         public getTreeId(): number {
             var self: Adopt = this;
             return Math.floor(self.get('tree'));
         }
-        public getOwnerId(): number {
+        public getParentId(): number {
             var self: Adopt = this;
-            return Math.floor(self.get('owner'));
+            return Math.floor(self.get('parent'));
         }
     }
     export class Adopts extends Backbone.Collection<Adopt> {
@@ -80,11 +63,11 @@
             return result;
         }
 
-        public getTreeIds(ownerId: number): Array<number> {
+        public getTreeIds(personId: number): Array<number> {
             var self: Adopts = this;
             var result = Array<number>();
             $.each(self.models, function (index: number, model: Adopt) {
-                if (model.getOwnerId() == ownerId) {
+                if (model.getParentId() == personId) {
                     if (result.indexOf(model.getTreeId()) == -1) {
                         result.push(model.getTreeId());
                     }
@@ -98,8 +81,8 @@
             var result = Array<number>();
             $.each(self.models, function (index: number, model: Adopt) {
                 if (model.getTreeId() == treeId) {
-                    if (result.indexOf(model.getOwnerId()) == -1) {
-                        result.push(model.getOwnerId());
+                    if (result.indexOf(model.getParentId()) == -1) {
+                        result.push(model.getParentId());
                     }
                 }
             });

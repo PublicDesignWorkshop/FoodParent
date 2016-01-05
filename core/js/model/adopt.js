@@ -10,37 +10,21 @@ var FoodParent;
         function Adopt(attributes, options) {
             _super.call(this, attributes, options);
             this.url = "adopt.php";
-            this.isSavable = true;
             var self = this;
             this.url = FoodParent.Setting.getPhpDir() + this.url;
             this.defaults = {
                 "id": 0,
                 "tree": "",
-                "owner": "",
+                "parent": "",
                 "updated": moment(new Date()).format(FoodParent.Setting.getDateTimeFormat()),
             };
-            self.off("change");
-            self.on("change", function (model, options) {
-                if (self.isSavable == false)
-                    return;
-                self.isSavable = false;
-                model.save({}, {
-                    wait: true,
-                    success: function (model, response) {
-                        console.log(model);
-                        model.isSavable = true;
-                    },
-                    error: function (error, response) {
-                    },
-                });
-            });
         }
         Adopt.prototype.parse = function (response, options) {
             if (response.id != null) {
                 response.id = parseInt(response.id);
             }
             response.tree = parseInt(response.tree);
-            response.owner = parseInt(response.owner);
+            response.parent = parseInt(response.parent);
             response.updated = moment(response.updated).format(FoodParent.Setting.getDateTimeFormat());
             return _super.prototype.parse.call(this, response, options);
         };
@@ -52,15 +36,18 @@ var FoodParent;
             return clone;
         };
         Adopt.prototype.getId = function () {
-            return Math.floor(this.id);
+            if (this.id != undefined) {
+                return Math.floor(this.id);
+            }
+            return null;
         };
         Adopt.prototype.getTreeId = function () {
             var self = this;
             return Math.floor(self.get('tree'));
         };
-        Adopt.prototype.getOwnerId = function () {
+        Adopt.prototype.getParentId = function () {
             var self = this;
-            return Math.floor(self.get('owner'));
+            return Math.floor(self.get('parent'));
         };
         return Adopt;
     })(Backbone.Model);
@@ -83,11 +70,11 @@ var FoodParent;
             });
             return result;
         };
-        Adopts.prototype.getTreeIds = function (ownerId) {
+        Adopts.prototype.getTreeIds = function (personId) {
             var self = this;
             var result = Array();
             $.each(self.models, function (index, model) {
-                if (model.getOwnerId() == ownerId) {
+                if (model.getParentId() == personId) {
                     if (result.indexOf(model.getTreeId()) == -1) {
                         result.push(model.getTreeId());
                     }
@@ -100,8 +87,8 @@ var FoodParent;
             var result = Array();
             $.each(self.models, function (index, model) {
                 if (model.getTreeId() == treeId) {
-                    if (result.indexOf(model.getOwnerId()) == -1) {
-                        result.push(model.getOwnerId());
+                    if (result.indexOf(model.getParentId()) == -1) {
+                        result.push(model.getParentId());
                     }
                 }
             });

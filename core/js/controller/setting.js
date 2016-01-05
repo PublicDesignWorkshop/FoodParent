@@ -50,7 +50,7 @@ var FoodParent;
             return 250;
         };
         Setting.getDefaultMapZoomLevel = function () {
-            return 13;
+            return 12;
         };
         Setting.getTileMapAddress = function () {
             return 'http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png';

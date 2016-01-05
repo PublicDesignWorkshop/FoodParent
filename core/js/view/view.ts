@@ -8,6 +8,7 @@
         private _popupView: PopupView;
         private _messageView: MessageView;
         private _manageTreesView: ManageTreesView;
+        private _managePeopleView: ManagePeopleView;
 
         constructor(options?: Backbone.ViewOptions<Backbone.Model>) {
             super(options);
@@ -72,6 +73,7 @@
                 });
             }
             View._instance._manageTreesView = null;
+            View._instance._managePeopleView = null;
         }
 
         public static setMessageView(view: MessageView): void {
@@ -97,6 +99,12 @@
         }
         public static getManageTreesView(): ManageTreesView {
             return View._instance._manageTreesView;
+        }
+        public static setManagePeopleView(view: ManagePeopleView): void {
+            View._instance._managePeopleView = view;
+        }
+        public static getManagePeopleView(): ManagePeopleView {
+            return View._instance._managePeopleView;
         }
         public static removeNavView(): void {
             var self: View = View._instance;

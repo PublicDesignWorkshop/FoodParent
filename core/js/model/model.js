@@ -60,24 +60,12 @@ var FoodParent;
             }
             return self.notes;
         };
-        Model.fetchAuths = function () {
-            console.log(Model.TAG + "fetchAuths()");
+        Model.getPersons = function () {
             var self = Model._instance;
-            if (self.auths == undefined) {
-                self.auths = new FoodParent.Auths();
-                var auth1 = new FoodParent.Auth({ id: 1, name: "ConcreteJungle" });
-                auth1.id = 1;
-                var auth2 = new FoodParent.Auth({ id: 2, name: "Participant" });
-                auth2.id = 2;
-                var auth3 = new FoodParent.Auth({ id: 3, name: "Manager" });
-                auth3.id = 3;
-                var auth4 = new FoodParent.Auth({ id: 4, name: "Unkown" });
-                auth4.id = 4;
-                self.auths.add(auth1);
-                self.auths.add(auth2);
-                self.auths.add(auth3);
-                self.auths.add(auth4);
+            if (self.persons == undefined) {
+                self.persons = new FoodParent.Persons();
             }
+            return self.persons;
         };
         /*
         public static fetchFood(id: number): void {
@@ -182,6 +170,23 @@ var FoodParent;
             });
         }
         */
+        Model.fetchAllAuths = function () {
+            var self = Model._instance;
+            if (self.auths == undefined) {
+                self.auths = new FoodParent.Auths();
+            }
+            return self.auths.fetch({
+                remove: true,
+                processData: true,
+                data: {},
+                success: function (collection, response, options) {
+                    console.log("success fetch with " + collection.models.length + " auths");
+                },
+                error: function (collection, jqxhr, options) {
+                    console.log("error while fetching item data from the server");
+                }
+            });
+        };
         Model.fetchAllFoods = function () {
             var self = Model._instance;
             if (self.foods == undefined) {
@@ -255,6 +260,42 @@ var FoodParent;
                 self.ownerships = new FoodParent.Ownerships();
             }
             return self.ownerships.fetch({
+                remove: true,
+                processData: true,
+                data: {},
+                success: function (collection, response, options) {
+                    console.log("success fetch with " + collection.models.length + " trees");
+                    //that.fetchFoods(that.foods.getUndetectedIds(that.trees.getFoodIds()));
+                },
+                error: function (collection, jqxhr, options) {
+                    console.log("error while fetching item data from the server");
+                }
+            });
+        };
+        Model.fetchAllPersons = function () {
+            var self = Model._instance;
+            if (self.persons == undefined) {
+                self.persons = new FoodParent.Persons();
+            }
+            return self.persons.fetch({
+                remove: true,
+                processData: true,
+                data: {},
+                success: function (collection, response, options) {
+                    console.log("success fetch with " + collection.models.length + " trees");
+                    //that.fetchFoods(that.foods.getUndetectedIds(that.trees.getFoodIds()));
+                },
+                error: function (collection, jqxhr, options) {
+                    console.log("error while fetching item data from the server");
+                }
+            });
+        };
+        Model.fetchAllAdopts = function () {
+            var self = Model._instance;
+            if (self.adopts == undefined) {
+                self.adopts = new FoodParent.Adopts();
+            }
+            return self.adopts.fetch({
                 remove: true,
                 processData: true,
                 data: {},

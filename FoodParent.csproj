@@ -45,8 +45,10 @@
     <Content Include="core\css\mtrees.css" />
     <Content Include="core\css\nav.css" />
     <Content Include="core\css\pace.css" />
+    <Content Include="core\css\mpeople.css" />
     <Content Include="core\css\pop.css" />
     <Content Include="core\css\leaflet.css" />
+    <Content Include="core\css\print.css" />
     <Content Include="core\image\marker-shadow.png" />
     <Content Include="core\image\placeholder-image.jpg" />
     <Content Include="core\js\foodparent.js" />
@@ -161,6 +163,12 @@
     <Content Include="core\php\ownerships.php" />
     <Content Include="core\php\note.php" />
     <Content Include="core\php\notes.php" />
+    <Content Include="core\php\adopt.php" />
+    <Content Include="core\php\adopts.php" />
+    <Content Include="core\php\person.php" />
+    <Content Include="core\php\persons.php" />
+    <Content Include="core\php\auth.php" />
+    <Content Include="core\php\auths.php" />
     <None Include="web.Debug.config">
       <DependentUpon>web.config</DependentUpon>
     </None>
@@ -172,6 +180,7 @@
   <ItemGroup>
     <TypeScriptCompile Include="core\js\app.ts" />
     <TypeScriptCompile Include="core\js\controller\command\command.ts" />
+    <TypeScriptCompile Include="core\js\controller\command\personcommand.ts" />
     <TypeScriptCompile Include="core\js\controller\command\treecommand.ts" />
     <TypeScriptCompile Include="core\js\controller\controller.ts" />
     <TypeScriptCompile Include="core\js\controller\eventhandler.ts" />
@@ -183,15 +192,18 @@
     <TypeScriptCompile Include="core\js\model\food.ts" />
     <TypeScriptCompile Include="core\js\model\note.ts" />
     <TypeScriptCompile Include="core\js\model\ownership.ts" />
+    <TypeScriptCompile Include="core\js\model\person.ts" />
     <TypeScriptCompile Include="core\js\model\tree.ts" />
     <TypeScriptCompile Include="core\js\view\alertview.ts" />
     <TypeScriptCompile Include="core\js\view\gridformat\gridformat.ts" />
+    <TypeScriptCompile Include="core\js\view\gridformat\persongridformat.ts" />
     <TypeScriptCompile Include="core\js\view\gridformat\treegridformat.ts" />
     <TypeScriptCompile Include="core\js\view\homeview.ts" />
     <TypeScriptCompile Include="core\js\model\model.ts" />
     <TypeScriptCompile Include="core\js\view\baseview.ts" />
     <TypeScriptCompile Include="core\js\view\markerview.ts" />
     <TypeScriptCompile Include="core\js\view\messageview.ts" />
+    <TypeScriptCompile Include="core\js\view\mpeopleview.ts" />
     <TypeScriptCompile Include="core\js\view\mtreesview.ts" />
     <TypeScriptCompile Include="core\js\view\navview.ts" />
     <TypeScriptCompile Include="core\js\view\template.ts" />

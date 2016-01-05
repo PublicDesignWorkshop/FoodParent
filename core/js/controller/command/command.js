@@ -80,6 +80,28 @@ var FoodParent;
         return RenderManageTreesViewCommand;
     })();
     FoodParent.RenderManageTreesViewCommand = RenderManageTreesViewCommand;
+    var RenderManagePeopleViewCommand = (function () {
+        function RenderManagePeopleViewCommand(args) {
+            var self = this;
+            self._el = args.el;
+            self._viewMode = args.viewMode;
+            self._id = args.id;
+        }
+        RenderManagePeopleViewCommand.prototype.execute = function () {
+            var self = this;
+            if (FoodParent.View.getManageTreesView()) {
+            }
+            else {
+                var view = FoodParent.ManagePeopleViewFractory.create(self._el, self._viewMode, self._id).render();
+                FoodParent.View.addChild(view);
+                FoodParent.View.setManagePeopleView(view);
+            }
+        };
+        RenderManagePeopleViewCommand.prototype.undo = function () {
+        };
+        return RenderManagePeopleViewCommand;
+    })();
+    FoodParent.RenderManagePeopleViewCommand = RenderManagePeopleViewCommand;
     var RenderConfirmViewCommand = (function () {
         function RenderConfirmViewCommand(args) {
             var self = this;

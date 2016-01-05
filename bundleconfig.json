@@ -34,9 +34,11 @@
       // Command
       "core/js/controller/command/command.js",
       "core/js/controller/command/treecommand.js",
+      "core/js/controller/command/personcommand.js",
       // View - GridFormat
       "core/js/view/gridformat/gridformat.js",
       "core/js/view/gridformat/treegridformat.js",
+      "core/js/view/gridformat/persongridformat.js",
       // View
       "core/js/view/template.js",
       "core/js/view/baseview.js",
@@ -47,6 +49,7 @@
       "core/js/view/mtreesview.js",
       "core/js/view/markerview.js",
       "core/js/view/messageview.js",
+      "core/js/view/mpeopleview.js",
       // Model
       "core/js/model/model.js",
       "core/js/model/adopt.js",
@@ -55,7 +58,8 @@
       "core/js/model/ownership.js",
       "core/js/model/tree.js",
       "core/js/model/flag.js",
-      "core/js/model/note.js"
+      "core/js/model/note.js",
+      "core/js/model/person.js"
     ]
   },
   {
@@ -86,7 +90,11 @@
       "core/css/alert.css",
       "core/css/mtrees.css",
       "core/css/leaflet.css",
-      "core/css/input.css"
+      "core/css/input.css",
+      "core/css/mpeople.css",
+
+
+      "core/css/print.css"
     ]
   }
 ]

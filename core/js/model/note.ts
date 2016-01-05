@@ -40,7 +40,10 @@
             return clone;
         }
         public getId(): number {
-            return Math.floor(this.id);
+            if (this.id != undefined) {
+                return Math.floor(this.id);
+            }
+            return null;
         }
         public getComment(): string {
             return this.get('comment');

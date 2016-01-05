@@ -14,6 +14,11 @@ var FoodParent;
         DATA_MODE[DATA_MODE["UPDATE_OWNERSHIP"] = 5] = "UPDATE_OWNERSHIP";
         DATA_MODE[DATA_MODE["UPDATE_FOODTYPE"] = 6] = "UPDATE_FOODTYPE";
         DATA_MODE[DATA_MODE["UPDATE_DESCRIPTION"] = 7] = "UPDATE_DESCRIPTION";
+        DATA_MODE[DATA_MODE["UPDATE_NAME"] = 8] = "UPDATE_NAME";
+        DATA_MODE[DATA_MODE["UPDATE_ADDRESS"] = 9] = "UPDATE_ADDRESS";
+        DATA_MODE[DATA_MODE["UPDATE_CONTACT"] = 10] = "UPDATE_CONTACT";
+        DATA_MODE[DATA_MODE["UPDATE_NEIGHBORHOOD"] = 11] = "UPDATE_NEIGHBORHOOD";
+        DATA_MODE[DATA_MODE["UPDATE_AUTH"] = 12] = "UPDATE_AUTH";
     })(FoodParent.DATA_MODE || (FoodParent.DATA_MODE = {}));
     var DATA_MODE = FoodParent.DATA_MODE;
     (function (VIEW_STATUS) {
@@ -24,6 +29,7 @@ var FoodParent;
         VIEW_STATUS[VIEW_STATUS["GEO_ERROR"] = 4] = "GEO_ERROR";
         VIEW_STATUS[VIEW_STATUS["NETWORK_ERROR"] = 5] = "NETWORK_ERROR";
         VIEW_STATUS[VIEW_STATUS["CONFIRM"] = 6] = "CONFIRM";
+        VIEW_STATUS[VIEW_STATUS["MANAGE_PEOPLE"] = 7] = "MANAGE_PEOPLE";
     })(FoodParent.VIEW_STATUS || (FoodParent.VIEW_STATUS = {}));
     var VIEW_STATUS = FoodParent.VIEW_STATUS;
     (function (VIEW_MODE) {
@@ -73,6 +79,10 @@ var FoodParent;
                 new FoodParent.MovePaceBarToUnderNav().execute();
                 new FoodParent.RenderManageTreesViewCommand({ el: FoodParent.Setting.getMainWrapperElement(), viewMode: option.viewMode, id: option.id }).execute();
             }
+            else if (viewStatus == VIEW_STATUS.MANAGE_PEOPLE) {
+                new FoodParent.MovePaceBarToUnderNav().execute();
+                new FoodParent.RenderManagePeopleViewCommand({ el: FoodParent.Setting.getMainWrapperElement(), viewMode: option.viewMode, id: option.id }).execute();
+            }
             FoodParent.View.getNavView().setActiveNavItem(viewStatus);
             FoodParent.View.setViewStatus(viewStatus);
         };
@@ -84,6 +94,15 @@ var FoodParent;
             // Make MessageView invisible.
             if (FoodParent.View.getMessageView()) {
                 FoodParent.View.getMessageView().setInvisible();
+            }
+            // Handle NavView
+            if (view instanceof FoodParent.NavView) {
+                if (el.hasClass('trees')) {
+                    new FoodParent.NavigateCommand({ hash: 'mtrees', viewMode: VIEW_MODE.MAP, id: 0 }).execute();
+                }
+                else if (el.hasClass('people')) {
+                    new FoodParent.NavigateCommand({ hash: 'mpeople', viewMode: VIEW_MODE.TABLE, id: 0 }).execute();
+                }
             }
             // Handle specific event on each view status.
             switch (FoodParent.View.getViewStatus()) {
@@ -166,6 +185,34 @@ var FoodParent;
             }
             else {
                 new FoodParent.RenderMessageViewCommand({ el: FoodParent.Setting.getMessageWrapperElement(), message: message, undoable: false }).execute();
+            }
+        };
+        EventHandler.handlePersonData = function (person, dataMode, args, success, error, undoSuccess) {
+            var self = EventHandler._instance;
+            self._lastCommand = null;
+            switch (dataMode) {
+                case DATA_MODE.UPDATE_NAME:
+                    self._lastCommand = new FoodParent.UpdatePersonName({ person: person, name: args.name }, success, error);
+                    break;
+                case DATA_MODE.UPDATE_ADDRESS:
+                    self._lastCommand = new FoodParent.UpdatePersonAddress({ person: person, address: args.address }, success, error);
+                    break;
+                case DATA_MODE.UPDATE_CONTACT:
+                    self._lastCommand = new FoodParent.UpdatePersonContact({ person: person, contact: args.contact }, success, error);
+                    break;
+                case DATA_MODE.UPDATE_NEIGHBORHOOD:
+                    self._lastCommand = new FoodParent.UpdatePersonNeightborhood({ person: person, neighborhood: args.neighborhood }, success, error);
+                    break;
+                case DATA_MODE.DELETE:
+                    var command = new FoodParent.DeletePerson({ person: person }, success, error);
+                    new FoodParent.RenderConfirmViewCommand({ el: FoodParent.Setting.getPopWrapperElement(), message: "Are you sure to delete " + person.getName() + "?", command: command }).execute();
+                    break;
+                case DATA_MODE.UPDATE_AUTH:
+                    self._lastCommand = new FoodParent.UpdatePersonAuth({ person: person, auth: args.auth }, success, error);
+                    break;
+            }
+            if (self._lastCommand != undefined) {
+                self._lastCommand.execute();
             }
         };
         EventHandler.handleTreeData = function (tree, dataMode, args, success, error, undoSuccess) {

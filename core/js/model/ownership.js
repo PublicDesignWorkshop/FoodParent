@@ -30,7 +30,10 @@ var FoodParent;
             return clone;
         };
         Ownership.prototype.getId = function () {
-            return this.id;
+            if (this.id != undefined) {
+                return Math.floor(this.id);
+            }
+            return null;
         };
         Ownership.prototype.getName = function () {
             return this.get('name');

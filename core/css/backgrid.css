@@ -1,14 +1,14 @@
 ﻿@media all {
-    .list-tree td, .new-tree td {
+    .list-tree td, .new-tree td, .list-people td, .new-person td {
         color: #222222;
         font-size: small;
     }
 
-    .list-tree a, .new-tree a {
+    .list-tree a, .new-tree a, .list-tree a, .new-person a {
         font-size: small;
     }
 
-    .list-tree .backgrid .select-cell, .new-tree .backgrid .select-cell {
+    .list-tree .backgrid .select-cell, .new-tree .backgrid .select-cell, .list-people .backgrid .select-cell, .new-person .backgrid .select-cell {
         text-align: left;
     }
 
@@ -44,7 +44,40 @@
         width: 72px;
     }
 
+    .list-people .backgrid .auth {
+        width: 12.5%;
+    }
+    .list-people .backgrid .name {
+        width: 12.5%;
+    }
+    .list-people .backgrid .address {
+        width: 20%;
+    }
+    .list-people .backgrid .contact {
+        width: 20%;
+    }
+    .list-people .backgrid .neighborhood {
+        width: 15%;
+    }
+    .list-people .backgrid .adoption {
+        width: 30%;
+    }
+
     td.editable {
         cursor: pointer;
+    }
+
+    .cell-link {
+        margin: 2px;
+        padding: 2px;
+        text-align: center;
+        border-radius: 2px;
+        cursor: pointer;
+        color: rgba(0, 0, 0, 0.75);
+    }
+
+    .cell-link:hover {
+        box-shadow: inset 0 0 1px 1px rgba(0,0,0,0.25);
+        background-color: rgba(0, 0, 0, 0.05);
     }
 }

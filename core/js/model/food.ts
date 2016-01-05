@@ -27,7 +27,10 @@
             return clone;
         }
         public getId(): number {
-            return Math.floor(this.id);
+            if (this.id != undefined) {
+                return Math.floor(this.id);
+            }
+            return null;
         }
         public getName(): string {
             return this.get('name');
