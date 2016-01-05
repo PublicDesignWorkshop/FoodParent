@@ -361,4 +361,63 @@
 
         }
     }
+
+    export class CreatePerson implements Command {
+        private _person: Person;
+        private _success: Function;
+        private _error: Function;
+        private _undoSuccess: Function;
+        constructor(args?: any, success?: Function, error?: Function, undoSuccess?: Function) {
+            var self: CreatePerson = this;
+            if (args != undefined && args.person != undefined) {
+                self._person = args.person;
+            }
+            if (success) {
+                self._success = success;
+            }
+            if (error) {
+                self._error = error;
+            }
+            if (undoSuccess) {
+                self._undoSuccess = undoSuccess;
+            }
+        }
+        public execute(): any {
+            var self: CreatePerson = this;
+            self._person.save(
+                {},
+                {
+                    wait: true,
+                    success: function (tree: Tree, response: any) {
+                        Model.getPersons().add(self._person);
+                        if (self._success) {
+                            self._success();
+                        }
+                    },
+                    error: function (error, response) {
+                        if (self._error) {
+                            self._error();
+                        }
+                    },
+                }
+            );
+        }
+        public undo(): any {
+            var self: CreatePerson = this;
+            Model.getPersons().remove(self._person);
+            self._person.destroy({
+                wait: true,
+                success: function (note: Note, response: any) {
+                    if (self._undoSuccess) {
+                        self._undoSuccess();
+                    }
+                },
+                error: function (error) {
+                    if (self._error) {
+                        self._error();
+                    }
+                },
+            });
+        }
+    }
 }

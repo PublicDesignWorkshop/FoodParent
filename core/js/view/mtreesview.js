@@ -77,7 +77,7 @@ var FoodParent;
             this._addNewTree = function () {
                 var self = _this;
                 if (self.$(".new-tree").hasClass('hidden')) {
-                    FoodParent.Controller.updateGeoLocation(self.renderNewTree, self.renderMapError);
+                    FoodParent.Controller.updateGeoLocation(self.renderNewTree, self.renderGeoLocationError);
                 }
                 else {
                     self.$(".new-tree").addClass('hidden');
@@ -105,7 +105,7 @@ var FoodParent;
                 self.$(".new-tree").append(grid.el);
                 self.$(".new-tree").removeClass('hidden');
             };
-            this.renderMapError = function (error) {
+            this.renderGeoLocationError = function (error) {
                 var self = _this;
                 switch (error.code) {
                     case error.PERMISSION_DENIED:
@@ -151,6 +151,7 @@ var FoodParent;
             self.setElement(self.$('#wrapper-mtrees'));
             self.resize();
             self.renderTrees();
+            return self;
         };
         ManageTreesTableView.prototype.resize = function () {
             $('#content-mtrees-table').css({ width: FoodParent.View.getWidth() - $('#wrapper-tablemenu').outerWidth() });
@@ -163,14 +164,16 @@ var FoodParent;
             var trees = FoodParent.Model.getTrees();
             setTimeout(function () {
                 // Filtering food type.
-                if ($(event.target).find('input').prop('name') == 'foodsall') {
-                    if ($(event.target).find('input').prop('checked') == true) {
-                        $('.filter-food').addClass('active');
-                        $('.filter-food input').prop({ 'checked': 'checked' });
-                    }
-                    else {
-                        $('.filter-food').removeClass('active');
-                        $('.filter-food input').prop({ 'checked': '' });
+                if (event != undefined) {
+                    if ($(event.target).find('input').prop('name') == 'foodsall') {
+                        if ($(event.target).find('input').prop('checked') == true) {
+                            $('.filter-food').addClass('active');
+                            $('.filter-food input').prop({ 'checked': 'checked' });
+                        }
+                        else {
+                            $('.filter-food').removeClass('active');
+                            $('.filter-food input').prop({ 'checked': '' });
+                        }
                     }
                 }
                 // Apply food filtering
@@ -182,16 +185,26 @@ var FoodParent;
                 });
                 trees = trees.filterByFoodIds(foodIds);
                 // Filtering adoption status.
-                if ($(event.target).find('input').prop('name') == 'adoptsall') {
-                    if ($(event.target).find('input').prop('checked') == true) {
-                        $('.filter-adopt').addClass('active');
-                        $('.filter-adopt input').prop({ 'checked': 'checked' });
-                    }
-                    else {
-                        $('.filter-adopt').removeClass('active');
-                        $('.filter-adopt input').prop({ 'checked': '' });
+                if (event != undefined) {
+                    if ($(event.target).find('input').prop('name') == 'adoptsall') {
+                        if ($(event.target).find('input').prop('checked') == true) {
+                            $('.filter-adopt').addClass('active');
+                            $('.filter-adopt input').prop({ 'checked': 'checked' });
+                        }
+                        else {
+                            $('.filter-adopt').removeClass('active');
+                            $('.filter-adopt input').prop({ 'checked': '' });
+                        }
                     }
                 }
+                // Apply adopt filtering
+                var adoptIds = new Array();
+                $.each($('.filter-adopt input'), function (index, item) {
+                    if ($(item).prop('checked') == true) {
+                        adoptIds.push(Math.floor($(item).prop('name')));
+                    }
+                });
+                trees = trees.filterByAdoptStatus(adoptIds);
                 // update markers
                 self.renderTreeList(trees);
             }, 1);
@@ -690,6 +703,14 @@ var FoodParent;
                         $('.filter-adopt input').prop({ 'checked': '' });
                     }
                 }
+                // Apply adopt filtering
+                var adoptIds = new Array();
+                $.each($('.filter-adopt input'), function (index, item) {
+                    if ($(item).prop('checked') == true) {
+                        adoptIds.push(Math.floor($(item).prop('name')));
+                    }
+                });
+                trees = trees.filterByAdoptStatus(adoptIds);
                 // update markers
                 self.updateMarkers(trees);
             }, 1);

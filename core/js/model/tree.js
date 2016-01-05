@@ -163,6 +163,27 @@ var FoodParent;
                 return false;
             }));
         };
+        Trees.prototype.filterByAdoptStatus = function (idArray) {
+            var self = this;
+            var trees = new Trees();
+            $.each(self.models, function (index, tree) {
+                if ($.inArray(0, idArray) > -1) {
+                    if (tree.get('parents').length == 0) {
+                        if (trees.where({ id: tree.getId() }) != undefined) {
+                            trees.add(tree);
+                        }
+                    }
+                }
+                if ($.inArray(1, idArray) > -1) {
+                    if (tree.get('parents').length >= 1) {
+                        if (trees.where({ id: tree.getId() }) != undefined) {
+                            trees.add(tree);
+                        }
+                    }
+                }
+            });
+            return trees;
+        };
         Trees.prototype.getAssigned = function (trees) {
             var self = this;
             $.each(self.models, function (index, model) {
@@ -195,6 +216,12 @@ var FoodParent;
                 }
             });
             return trees;
+        };
+        Trees.prototype.updateParents = function () {
+            var self = this;
+            $.each(self.models, function (index, tree) {
+                tree.attributes.parents = FoodParent.Model.getAdopts().getParentIds(tree.id);
+            });
         };
         return Trees;
     })(Backbone.Collection);

@@ -163,6 +163,29 @@
             }));
         }
 
+        public filterByAdoptStatus(idArray): Trees {
+            var self: Trees = this;
+            var trees: Trees = new Trees();
+            $.each(self.models, function (index: number, tree: Tree) {
+                if ($.inArray(0, idArray) > -1) {
+                    if (tree.get('parents').length == 0) {
+                        if (trees.where({ id: tree.getId() }) != undefined) {
+                            trees.add(tree);
+                        }
+
+                    }
+                }
+                if ($.inArray(1, idArray) > -1) {
+                    if (tree.get('parents').length >= 1) {
+                        if (trees.where({ id: tree.getId() }) != undefined) {
+                            trees.add(tree);
+                        }
+                    }
+                }
+            });
+            return trees;
+        }
+
         public getAssigned(trees: Trees): Trees {
             var self: Trees = this;
             $.each(self.models, function (index: number, model: Tree) {
@@ -182,7 +205,6 @@
                     if (trees.where({ id: model.getId() }) != undefined) {
                         trees.add(model);
                     }
-
                 }
             });
             return trees;
@@ -198,6 +220,13 @@
                 }
             });
             return trees;
+        }
+
+        public updateParents(): void {
+            var self: Trees = this;
+            $.each(self.models, function (index: number, tree: Tree) {
+                tree.attributes.parents = Model.getAdopts().getParentIds(tree.id);
+            });
         }
     }
 }

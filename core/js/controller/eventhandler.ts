@@ -152,7 +152,6 @@
 
         public static handleDataChange(message: string, undoable?: boolean): void {
             var self: EventHandler = EventHandler._instance;
-            console.log("!");
             if (self._lastCommand) {
                 new RenderMessageViewCommand({ el: Setting.getMessageWrapperElement(), message: message, undoable: true }).execute();
             } else {
@@ -182,6 +181,9 @@
                     break;
                 case DATA_MODE.UPDATE_AUTH:
                     self._lastCommand = new UpdatePersonAuth({ person: person, auth: args.auth }, success, error);
+                    break;
+                case DATA_MODE.CREATE:
+                    self._lastCommand = new CreatePerson({ person: person }, success, error);
                     break;
             }
             if (self._lastCommand != undefined) {

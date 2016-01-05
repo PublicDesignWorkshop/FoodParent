@@ -323,7 +323,7 @@ var PersonNeighborhoodCellEditor = Backgrid.Cell.extend({
 });
 
 
-var PersonAdoptionCellEditor = Backgrid.Cell.extend({
+var PersonAdoptionCell = Backgrid.Cell.extend({
     events: {
         "click .cell-link": "_linkTreeDetail",
     },
@@ -364,7 +364,7 @@ var PersonDeleteCell = Backgrid.Cell.extend({
     _deleteRow: function (e) {
         var person: FoodParent.Person = this.model;
         if (person.getId() == undefined) {
-            $('#wrapper-mtrees .new-tree').addClass('hidden');
+            $('#wrapper-mpeople .new-person').addClass('hidden');
         } else {
             FoodParent.EventHandler.handlePersonData(person, FoodParent.DATA_MODE.DELETE, {}, function () {
                 FoodParent.EventHandler.handleDataChange("<strong><i>" + person.getName() + "</i></strong> has deleted successfully.", false);
@@ -512,6 +512,30 @@ var AuthSelectCellEditor = Backgrid.AuthSelectCellEditor = Backgrid.CellEditor.e
     }
 });
 
+var PersonCreateCell = Backgrid.Cell.extend({
+    template: _.template('<div class="marker-control-item create-item"><i class="fa fa-save fa-2x"></i></div>'),
+    events: {
+        "click": "_createRow"
+    },
+    _createRow: function (e) {
+        var person: FoodParent.Person = this.model;
+        FoodParent.EventHandler.handlePersonData(person, FoodParent.DATA_MODE.CREATE, {}, function () {
+            FoodParent.EventHandler.handleDataChange("<strong><i>" + person.getName() + "</i></strong> has been created successfully.", true);
+            $('#wrapper-mpeople .new-person').addClass('hidden');
+            (<FoodParent.ManagePeopleTableView>FoodParent.View.getManagePeopleView())._applyFilter();
+        }, function () {
+            FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+        }, function () {
+            FoodParent.EventHandler.handleDataChange("<strong><i>" + person.getName() + "</i></strong> has been deleted successfully.", false);
+        });
+    },
+    render: function () {
+        $(this.el).html(this.template());
+        this.delegateEvents();
+        return this;
+    }
+});
+
 var PersonColumn: any = [
     {
         name: "auth",
@@ -545,7 +569,7 @@ var PersonColumn: any = [
         name: "trees",
         label: "Adoption",
         editable: false,
-        cell: PersonAdoptionCellEditor,
+        cell: PersonAdoptionCell,
     }, {
         label: "",
         sortable: false,
@@ -565,4 +589,46 @@ var PersonColumn: any = [
         cell: Backgrid.Cell.extend({ editor: DatePickerCellEditor }),
     },
     */
+];
+
+var NewPersonColumn: any = [
+    {
+        name: "auth",
+        label: "Auth",
+        editable: true,
+    }, {
+        name: "name",
+        label: "Name",
+        editable: true,
+        formatter: Backgrid.StringFormatter,
+        cell: Backgrid.Cell.extend({ editor: PersonNameCellEditor }),
+    }, {
+        name: "address",
+        label: "Address",
+        editable: true,
+        formatter: Backgrid.StringFormatter,
+        cell: Backgrid.Cell.extend({ editor: PersonAddressCellEditor }),
+    }, {
+        name: "contact",
+        label: "Contact",
+        editable: true,
+        formatter: Backgrid.StringFormatter,
+        cell: Backgrid.Cell.extend({ editor: PersonContactCellEditor }),
+    }, {
+        name: "neighborhood",
+        label: "Neighborhood",
+        editable: true,
+        formatter: Backgrid.StringFormatter,
+        cell: Backgrid.Cell.extend({ editor: PersonNeighborhoodCellEditor }),
+    }, {
+        label: "",
+        sortable: false,
+        editable: false,
+        cell: PersonCreateCell,
+    }, {
+        label: "",
+        sortable: false,
+        editable: false,
+        cell: PersonDeleteCell,
+    }
 ];

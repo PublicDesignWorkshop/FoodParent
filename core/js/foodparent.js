@@ -37365,17 +37365,26 @@ var FoodParent;
         Controller.fetchAllTrees = function (success, error) {
             var xhr1 = FoodParent.Model.fetchAllFoods();
             var xhr2 = FoodParent.Model.fetchAllTrees();
+            var xhr3 = FoodParent.Model.fetchAllAdopts();
+            var xhr4 = FoodParent.Model.fetchAllPersons();
             Controller.pushXHR(xhr1);
             Controller.pushXHR(xhr2);
-            $.when(xhr1, xhr2).then(function () {
+            Controller.pushXHR(xhr3);
+            Controller.pushXHR(xhr4);
+            $.when(xhr1, xhr2, xhr3, xhr4).then(function () {
                 Controller.removeXHR(xhr1);
                 Controller.removeXHR(xhr2);
+                Controller.removeXHR(xhr3);
+                Controller.removeXHR(xhr4);
+                FoodParent.Model.getTrees().updateParents();
                 if (success) {
                     success();
                 }
             }, function () {
                 Controller.removeXHR(xhr1);
                 Controller.removeXHR(xhr2);
+                Controller.removeXHR(xhr3);
+                Controller.removeXHR(xhr4);
                 if (error) {
                     error(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
                 }
@@ -37675,7 +37684,6 @@ var FoodParent;
         };
         EventHandler.handleDataChange = function (message, undoable) {
             var self = EventHandler._instance;
-            console.log("!");
             if (self._lastCommand) {
                 new FoodParent.RenderMessageViewCommand({ el: FoodParent.Setting.getMessageWrapperElement(), message: message, undoable: true }).execute();
             }
@@ -37705,6 +37713,9 @@ var FoodParent;
                     break;
                 case DATA_MODE.UPDATE_AUTH:
                     self._lastCommand = new FoodParent.UpdatePersonAuth({ person: person, auth: args.auth }, success, error);
+                    break;
+                case DATA_MODE.CREATE:
+                    self._lastCommand = new FoodParent.CreatePerson({ person: person }, success, error);
                     break;
             }
             if (self._lastCommand != undefined) {
@@ -38943,6 +38954,59 @@ var FoodParent;
         return DeletePerson;
     })();
     FoodParent.DeletePerson = DeletePerson;
+    var CreatePerson = (function () {
+        function CreatePerson(args, success, error, undoSuccess) {
+            var self = this;
+            if (args != undefined && args.person != undefined) {
+                self._person = args.person;
+            }
+            if (success) {
+                self._success = success;
+            }
+            if (error) {
+                self._error = error;
+            }
+            if (undoSuccess) {
+                self._undoSuccess = undoSuccess;
+            }
+        }
+        CreatePerson.prototype.execute = function () {
+            var self = this;
+            self._person.save({}, {
+                wait: true,
+                success: function (tree, response) {
+                    FoodParent.Model.getPersons().add(self._person);
+                    if (self._success) {
+                        self._success();
+                    }
+                },
+                error: function (error, response) {
+                    if (self._error) {
+                        self._error();
+                    }
+                },
+            });
+        };
+        CreatePerson.prototype.undo = function () {
+            var self = this;
+            FoodParent.Model.getPersons().remove(self._person);
+            self._person.destroy({
+                wait: true,
+                success: function (note, response) {
+                    if (self._undoSuccess) {
+                        self._undoSuccess();
+                    }
+                },
+                error: function (error) {
+                    if (self._error) {
+                        self._error();
+                    }
+                },
+            });
+        };
+        return CreatePerson;
+    })();
+    FoodParent.CreatePerson = CreatePerson;
 })(FoodParent || (FoodParent = {}));
 
 var DatePickerCellEditor = Backgrid.InputCellEditor.extend({
@@ -39001,7 +39065,6 @@ var TreeDescriptionCellEditor = Backgrid.Cell.extend({
                 model.trigger("backgrid:error", model, column, val);
             }
             else {
-                console.log(tree.getId());
                 if (tree.getId() == undefined) {
                     model.set(column.get("name"), newValue);
                     model.trigger("backgrid:edited", model, column, command);
@@ -39212,7 +39275,7 @@ var TreeAddressCell = Backgrid.Cell.extend({
         var element = $(self.el);
         FoodParent.GeoLocation.reverseGeocoding(self.model.getLocation(), function (data) {
             element.html(self.template({
-                address: "<div>" + data.road + ", " + data.state + ", " + data.postcode + "</div>",
+                address: "<div>" + data.road + ", " + data.county + ", " + data.state + ", " + data.postcode + "</div>",
             }));
         }, function () {
             FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
@@ -39225,7 +39288,7 @@ var TreeAddressCell = Backgrid.Cell.extend({
         var element = $(self.el);
         FoodParent.GeoLocation.reverseGeocoding(self.model.getLocation(), function (data) {
             element.html(self.template({
-                address: "<div>" + data.road + ", " + data.state + ", " + data.postcode + "</div>",
+                address: "<div>" + data.road + ", " + data.county + ", " + data.state + ", " + data.postcode + "</div>",
             }));
         }, function () {
             FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
@@ -39276,13 +39339,13 @@ var TreeCreateCell = Backgrid.Cell.extend({
             var food = FoodParent.Model.getFoods().findWhere({ id: tree.getFoodId() });
             FoodParent.EventHandler.handleDataChange("<strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has been created successfully.", true);
             $('#wrapper-mtrees .new-tree').addClass('hidden');
-            //(<FoodParent.ManageTreesTableView>FoodParent.View.getManageTreesView()).unRenderNewTree();
+            FoodParent.View.getManageTreesView()._applyFilter();
             //(<FoodParent.ManageTreesTableView>FoodParent.View.getManageTreesView()).renderTreeList(FoodParent.Model.getTrees());
         }, function () {
             FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
         }, function () {
             var food = FoodParent.Model.getFoods().findWhere({ id: tree.getFoodId() });
-            //FoodParent.EventHandler.handleDataChange("<strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has been deleted successfully.", false);
+            FoodParent.EventHandler.handleDataChange("<strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has been deleted successfully.", false);
             //(<FoodParent.ManageTreesTableView>FoodParent.View.getManageTreesView()).renderTreeList(FoodParent.Model.getTrees());
         });
     },
@@ -39333,56 +39396,23 @@ var TreeDeleteCell = Backgrid.Cell.extend({
         return this;
     }
 });
-var TreeColumn = [
-    {
-        name: "food",
-        label: "Food Type",
-        editable: true,
-    }, {
-        name: "id",
-        label: "#",
-        editable: false,
-        cell: "string",
-    }, {
-        name: "description",
-        label: "Description",
-        editable: true,
-        formatter: Backgrid.StringFormatter,
-        cell: Backgrid.Cell.extend({ editor: TreeDescriptionCellEditor }),
-    }, {
-        name: "address",
-        label: "Address",
-        editable: false,
-        cell: TreeAddressCell,
-    }, {
-        name: "lat",
-        label: "Latitude",
-        editable: true,
-        formatter: Backgrid.NumberFormatter,
-        cell: Backgrid.Cell.extend({ editor: TreeLatitudeCellEditor }),
-    }, {
-        name: "lng",
-        label: "Longitude",
-        editable: true,
-        formatter: Backgrid.NumberFormatter,
-        cell: Backgrid.Cell.extend({ editor: TreeLongitudeCellEditor }),
-    }, {
-        label: "",
-        sortable: false,
-        editable: false,
-        cell: TreeMapViewCell,
-    }, {
-        label: "",
-        sortable: false,
-        editable: false,
-        cell: TreeDetailCell,
-    }, {
-        label: "",
-        sortable: false,
-        editable: false,
-        cell: TreeDeleteCell,
+var TreeAdoptionCell = Backgrid.Cell.extend({
+    events: {
+        "click .cell-link": "_linkTreeDetail",
+    },
+    _linkTreeDetail: function (e) {
+        //FoodParent.Router.getInstance().navigate("tree/" + this.model.getId(), { trigger: true });
+    },
+    render: function () {
+        this.template = _.template(FoodParent.Template.getAdoptPersonCellTemplate());
+        var persons = new FoodParent.Persons(FoodParent.Model.getPersons().filterByIds(this.model.get('parents')));
+        $(this.el).html(this.template({
+            persons: persons,
+        }));
+        this.delegateEvents();
+        return this;
     }
-];
+});
 var FoodSelectCellEditor = Backgrid.FoodSelectCellEditor = Backgrid.CellEditor.extend({
     /** @property */
     tagName: "select",
@@ -39500,6 +39530,61 @@ var FoodSelectCellEditor = Backgrid.FoodSelectCellEditor = Backgrid.CellEditor.e
         }
     }
 });
+var TreeColumn = [
+    {
+        name: "food",
+        label: "Food Type",
+        editable: true,
+    }, {
+        name: "id",
+        label: "#",
+        editable: false,
+        cell: "string",
+    }, {
+        name: "description",
+        label: "Description",
+        editable: true,
+        formatter: Backgrid.StringFormatter,
+        cell: Backgrid.Cell.extend({ editor: TreeDescriptionCellEditor }),
+    }, {
+        name: "address",
+        label: "Address",
+        editable: false,
+        cell: TreeAddressCell,
+    }, {
+        name: "lat",
+        label: "Latitude",
+        editable: true,
+        formatter: Backgrid.NumberFormatter,
+        cell: Backgrid.Cell.extend({ editor: TreeLatitudeCellEditor }),
+    }, {
+        name: "lng",
+        label: "Longitude",
+        editable: true,
+        formatter: Backgrid.NumberFormatter,
+        cell: Backgrid.Cell.extend({ editor: TreeLongitudeCellEditor }),
+    }, {
+        name: "parents",
+        label: "Adoption",
+        editable: false,
+        cell: TreeAdoptionCell,
+    }, {
+        label: "",
+        sortable: false,
+        editable: false,
+        cell: TreeMapViewCell,
+    }, {
+        label: "",
+        sortable: false,
+        editable: false,
+        cell: TreeDetailCell,
+    }, {
+        label: "",
+        sortable: false,
+        editable: false,
+        cell: TreeDeleteCell,
+    }
+];
 var NewTreeColumn = [
     {
         name: "food",
@@ -39849,7 +39934,7 @@ var PersonNeighborhoodCellEditor = Backgrid.Cell.extend({
         return this;
     }
 });
-var PersonAdoptionCellEditor = Backgrid.Cell.extend({
+var PersonAdoptionCell = Backgrid.Cell.extend({
     events: {
         "click .cell-link": "_linkTreeDetail",
     },
@@ -39888,7 +39973,7 @@ var PersonDeleteCell = Backgrid.Cell.extend({
     _deleteRow: function (e) {
         var person = this.model;
         if (person.getId() == undefined) {
-            $('#wrapper-mtrees .new-tree').addClass('hidden');
+            $('#wrapper-mpeople .new-person').addClass('hidden');
         }
         else {
             FoodParent.EventHandler.handlePersonData(person, FoodParent.DATA_MODE.DELETE, {}, function () {
@@ -40020,6 +40105,29 @@ var AuthSelectCellEditor = Backgrid.AuthSelectCellEditor = Backgrid.CellEditor.e
         }
     }
 });
+var PersonCreateCell = Backgrid.Cell.extend({
+    template: _.template('<div class="marker-control-item create-item"><i class="fa fa-save fa-2x"></i></div>'),
+    events: {
+        "click": "_createRow"
+    },
+    _createRow: function (e) {
+        var person = this.model;
+        FoodParent.EventHandler.handlePersonData(person, FoodParent.DATA_MODE.CREATE, {}, function () {
+            FoodParent.EventHandler.handleDataChange("<strong><i>" + person.getName() + "</i></strong> has been created successfully.", true);
+            $('#wrapper-mpeople .new-person').addClass('hidden');
+            FoodParent.View.getManagePeopleView()._applyFilter();
+        }, function () {
+            FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+        }, function () {
+            FoodParent.EventHandler.handleDataChange("<strong><i>" + person.getName() + "</i></strong> has been deleted successfully.", false);
+        });
+    },
+    render: function () {
+        $(this.el).html(this.template());
+        this.delegateEvents();
+        return this;
+    }
+});
 var PersonColumn = [
     {
         name: "auth",
@@ -40053,12 +40161,53 @@ var PersonColumn = [
         name: "trees",
         label: "Adoption",
         editable: false,
-        cell: PersonAdoptionCellEditor,
+        cell: PersonAdoptionCell,
     }, {
         label: "",
         sortable: false,
         editable: false,
         cell: PersonDetailCell,
+    }, {
+        label: "",
+        sortable: false,
+        editable: false,
+        cell: PersonDeleteCell,
+    }
+];
+var NewPersonColumn = [
+    {
+        name: "auth",
+        label: "Auth",
+        editable: true,
+    }, {
+        name: "name",
+        label: "Name",
+        editable: true,
+        formatter: Backgrid.StringFormatter,
+        cell: Backgrid.Cell.extend({ editor: PersonNameCellEditor }),
+    }, {
+        name: "address",
+        label: "Address",
+        editable: true,
+        formatter: Backgrid.StringFormatter,
+        cell: Backgrid.Cell.extend({ editor: PersonAddressCellEditor }),
+    }, {
+        name: "contact",
+        label: "Contact",
+        editable: true,
+        formatter: Backgrid.StringFormatter,
+        cell: Backgrid.Cell.extend({ editor: PersonContactCellEditor }),
+    }, {
+        name: "neighborhood",
+        label: "Neighborhood",
+        editable: true,
+        formatter: Backgrid.StringFormatter,
+        cell: Backgrid.Cell.extend({ editor: PersonNeighborhoodCellEditor }),
+    }, {
+        label: "",
+        sortable: false,
+        editable: false,
+        cell: PersonCreateCell,
     }, {
         label: "",
         sortable: false,
@@ -40099,7 +40248,7 @@ var FoodParent;
             template += '<div id="wrapper-mpeople-table">';
             template += '<div id="wrapper-tablemenu">';
             //template +=             '<div class="button-outer-frame2 button3"><div class="button-inner-frame2 switch-map">Switch to Map View</div></div>';
-            template += '<div class="button-outer-frame2 button3"><div class="button-inner-frame2 add-tree">Add A New Person</div></div>';
+            template += '<div class="button-outer-frame2 button3"><div class="button-inner-frame2 add-person">Add A New Person</div></div>';
             template += '<div class="button-outer-frame2 button3"><div class="button-inner-frame2 collapsible-button" data-target="#filter-list">Filter List</div></div>';
             template += '<div id="filter-list" class="collapsible-list">';
             template += '</div>';
@@ -40322,14 +40471,14 @@ var FoodParent;
             template += '</div>';
             template += '<div data-toggle="buttons">';
             template += '<label class="btn filter-checkbox filter-adopt active list-hiearchy2">';
-            template += '<input type="checkbox" name="assigned" checked>';
+            template += '<input type="checkbox" name="1" checked>';
             template += '<i class="fa fa-square-o fa-1x"></i>';
             template += '<i class="fa fa-check-square-o fa-1x"></i>';
             template += ' Assigned</label>';
             template += '</div>';
             template += '<div data-toggle="buttons">';
             template += '<label class="btn filter-checkbox filter-adopt active list-hiearchy2">';
-            template += '<input type="checkbox" name="unassigned" checked>';
+            template += '<input type="checkbox" name="0" checked>';
             template += '<i class="fa fa-square-o fa-1x"></i>';
             template += '<i class="fa fa-check-square-o fa-1x"></i>';
             template += ' Unassigned</label>';
@@ -40353,13 +40502,66 @@ var FoodParent;
             template += '<% }); %>';
             return template;
         };
+        Template.getPersonFilterListTemplate = function () {
+            var template = '';
+            template += '<div data-toggle="buttons">';
+            template += '<label class="btn filter-checkbox active list-hiearchy1">';
+            template += '<input type="checkbox" name="adoptsall" checked>';
+            template += '<i class="fa fa-square-o fa-1x"></i>';
+            template += '<i class="fa fa-check-square-o fa-1x"></i>';
+            template += ' Adopting Status (show all / hide)</label>';
+            template += '</div>';
+            template += '<div data-toggle="buttons">';
+            template += '<label class="btn filter-checkbox filter-adopt active list-hiearchy2">';
+            template += '<input type="checkbox" name="1" checked>';
+            template += '<i class="fa fa-square-o fa-1x"></i>';
+            template += '<i class="fa fa-check-square-o fa-1x"></i>';
+            template += ' Adopt</label>';
+            template += '</div>';
+            template += '<div data-toggle="buttons">';
+            template += '<label class="btn filter-checkbox filter-adopt active list-hiearchy2">';
+            template += '<input type="checkbox" name="0" checked>';
+            template += '<i class="fa fa-square-o fa-1x"></i>';
+            template += '<i class="fa fa-check-square-o fa-1x"></i>';
+            template += ' Unadopt</label>';
+            template += '</div>';
+            template += '<hr />';
+            template += '<div data-toggle="buttons">';
+            template += '<label class="btn filter-checkbox active list-hiearchy1">';
+            template += '<input type="checkbox" name="authsall" checked>';
+            template += '<i class="fa fa-square-o fa-1x"></i>';
+            template += '<i class="fa fa-check-square-o fa-1x"></i>';
+            template += ' Auth Type (show all / hide)</label>';
+            template += '</div>';
+            template += '<% _.each(auths.models, function (auth) { %>';
+            template += '<div data-toggle="buttons">';
+            template += '<label class="btn filter-checkbox filter-auth active list-hiearchy2">';
+            template += '<input type="checkbox" name="<%= auth.getId() %>" checked>';
+            template += '<i class="fa fa-square-o fa-1x"></i>';
+            template += '<i class="fa fa-check-square-o fa-1x"></i>';
+            template += ' <%= auth.getName() %></label>';
+            template += '</div>';
+            template += '<% }); %>';
+            return template;
+        };
         Template.getAdoptTreeCellTemplate = function () {
             //<%= address %>
             var template = "";
             // template += '<div class="cell-group">';
             template += '<% _.each(trees.models, function (tree) { %>';
             template += '<% var food = FoodParent.Model.getFoods().findWhere({ id: tree.getFoodId() }); %>';
-            template += '<div class="cell-link cell-tree-detail" data-target="tree.getId()"><%= food.getName() + " " + tree.getName() %></div>';
+            template += '<div class="cell-link cell-tree-detail" data-target="<%= tree.getId() %>"><%= food.getName() + " " + tree.getName() %></div>';
+            template += '<% }); %>';
+            //template += '<div class="cell-button cell-edit"><i class="fa fa-edit fa-1x"></i></div>';
+            //template += '</div>';
+            return template;
+        };
+        Template.getAdoptPersonCellTemplate = function () {
+            //<%= address %>
+            var template = "";
+            // template += '<div class="cell-group">';
+            template += '<% _.each(persons.models, function (person) { %>';
+            template += '<div class="cell-link cell-person-detail" data-target="<%= person.getId() %>"><%= person.getName() %></div>';
             template += '<% }); %>';
             //template += '<div class="cell-button cell-edit"><i class="fa fa-edit fa-1x"></i></div>';
             //template += '</div>';
@@ -40415,14 +40617,14 @@ var FoodParent;
         BaseView.prototype.render = function (args) {
             if (this.bRendered) {
                 this.update();
-                return;
+                return this;
             }
             this.bRendered = true;
         };
         BaseView.prototype.update = function (args) {
             if (!this.bRendered) {
                 this.render();
-                return;
+                return this;
             }
         };
         BaseView.prototype.resize = function () {
@@ -41113,7 +41315,7 @@ var FoodParent;
             this._addNewTree = function () {
                 var self = _this;
                 if (self.$(".new-tree").hasClass('hidden')) {
-                    FoodParent.Controller.updateGeoLocation(self.renderNewTree, self.renderMapError);
+                    FoodParent.Controller.updateGeoLocation(self.renderNewTree, self.renderGeoLocationError);
                 }
                 else {
                     self.$(".new-tree").addClass('hidden');
@@ -41141,7 +41343,7 @@ var FoodParent;
                 self.$(".new-tree").append(grid.el);
                 self.$(".new-tree").removeClass('hidden');
             };
-            this.renderMapError = function (error) {
+            this.renderGeoLocationError = function (error) {
                 var self = _this;
                 switch (error.code) {
                     case error.PERMISSION_DENIED:
@@ -41187,6 +41389,7 @@ var FoodParent;
             self.setElement(self.$('#wrapper-mtrees'));
             self.resize();
             self.renderTrees();
+            return self;
         };
         ManageTreesTableView.prototype.resize = function () {
             $('#content-mtrees-table').css({ width: FoodParent.View.getWidth() - $('#wrapper-tablemenu').outerWidth() });
@@ -41199,14 +41402,16 @@ var FoodParent;
             var trees = FoodParent.Model.getTrees();
             setTimeout(function () {
                 // Filtering food type.
-                if ($(event.target).find('input').prop('name') == 'foodsall') {
-                    if ($(event.target).find('input').prop('checked') == true) {
-                        $('.filter-food').addClass('active');
-                        $('.filter-food input').prop({ 'checked': 'checked' });
-                    }
-                    else {
-                        $('.filter-food').removeClass('active');
-                        $('.filter-food input').prop({ 'checked': '' });
+                if (event != undefined) {
+                    if ($(event.target).find('input').prop('name') == 'foodsall') {
+                        if ($(event.target).find('input').prop('checked') == true) {
+                            $('.filter-food').addClass('active');
+                            $('.filter-food input').prop({ 'checked': 'checked' });
+                        }
+                        else {
+                            $('.filter-food').removeClass('active');
+                            $('.filter-food input').prop({ 'checked': '' });
+                        }
                     }
                 }
                 // Apply food filtering
@@ -41218,16 +41423,26 @@ var FoodParent;
                 });
                 trees = trees.filterByFoodIds(foodIds);
                 // Filtering adoption status.
-                if ($(event.target).find('input').prop('name') == 'adoptsall') {
-                    if ($(event.target).find('input').prop('checked') == true) {
-                        $('.filter-adopt').addClass('active');
-                        $('.filter-adopt input').prop({ 'checked': 'checked' });
-                    }
-                    else {
-                        $('.filter-adopt').removeClass('active');
-                        $('.filter-adopt input').prop({ 'checked': '' });
+                if (event != undefined) {
+                    if ($(event.target).find('input').prop('name') == 'adoptsall') {
+                        if ($(event.target).find('input').prop('checked') == true) {
+                            $('.filter-adopt').addClass('active');
+                            $('.filter-adopt input').prop({ 'checked': 'checked' });
+                        }
+                        else {
+                            $('.filter-adopt').removeClass('active');
+                            $('.filter-adopt input').prop({ 'checked': '' });
+                        }
                     }
                 }
+                // Apply adopt filtering
+                var adoptIds = new Array();
+                $.each($('.filter-adopt input'), function (index, item) {
+                    if ($(item).prop('checked') == true) {
+                        adoptIds.push(Math.floor($(item).prop('name')));
+                    }
+                });
+                trees = trees.filterByAdoptStatus(adoptIds);
                 // update markers
                 self.renderTreeList(trees);
             }, 1);
@@ -41726,6 +41941,14 @@ var FoodParent;
                         $('.filter-adopt input').prop({ 'checked': '' });
                     }
                 }
+                // Apply adopt filtering
+                var adoptIds = new Array();
+                $.each($('.filter-adopt input'), function (index, item) {
+                    if ($(item).prop('checked') == true) {
+                        adoptIds.push(Math.floor($(item).prop('name')));
+                    }
+                });
+                trees = trees.filterByAdoptStatus(adoptIds);
                 // update markers
                 self.updateMarkers(trees);
             }, 1);
@@ -42037,7 +42260,7 @@ var FoodParent;
                 FoodParent.Controller.fetchAllPersonsAndAuthsAndFoodAndTreesAndAdopts(function () {
                     // add grid instance for existing data
                     self.renderPersonsList(FoodParent.Model.getPersons());
-                    //self.renderFilterList();
+                    self.renderFilterList();
                 }, function () {
                     FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
                 });
@@ -42059,10 +42282,48 @@ var FoodParent;
                 //grid.sort("name", "ascending");
                 self.$(".list-people").html(grid.el);
             };
+            this._addNewPerson = function () {
+                var self = _this;
+                if (self.$(".new-person").hasClass('hidden')) {
+                    var person = new FoodParent.Person({ auth: 0, name: "", address: "", contact: "", neightborhood: "" });
+                    var persons = new FoodParent.Persons();
+                    persons.add(person);
+                    var optionValues = new Array();
+                    optionValues.push({ name: "Authorization", values: FoodParent.Model.getAuths().toArray() });
+                    NewPersonColumn[0].cell = Backgrid.SelectCell.extend({
+                        editor: Backgrid.AuthSelectCellEditor,
+                        optionValues: optionValues,
+                    });
+                    var grid = new Backgrid.Grid({
+                        columns: NewPersonColumn,
+                        collection: persons,
+                        emptyText: FoodParent.Setting.getNoDataText(),
+                    });
+                    grid.render();
+                    //grid.sort("name", "ascending");
+                    self.$(".new-person").html('<div class="list-title">Add a New Person</div>');
+                    self.$(".new-person").append(grid.el);
+                    self.$(".new-person").removeClass('hidden');
+                }
+                else {
+                    self.$(".new-person").addClass('hidden');
+                }
+            };
+            this.renderFilterList = function () {
+                var self = _this;
+                var template = _.template(FoodParent.Template.getPersonFilterListTemplate());
+                var data = {
+                    auths: FoodParent.Model.getAuths(),
+                };
+                self.$('#filter-list').html(template(data));
+            };
             var self = this;
             self.bDebug = true;
             //$(window).resize(_.debounce(that.customResize, Setting.getInstance().getResizeTimeout()));
-            self.events = {};
+            self.events = {
+                "click .add-person": "_addNewPerson",
+                "click .filter-checkbox": "_applyFilter",
+            };
             self.delegateEvents();
         }
         ManagePeopleTableView.prototype.render = function (args) {
@@ -42080,12 +42341,63 @@ var FoodParent;
             self.setElement(self.$('#wrapper-mpeople'));
             self.resize();
             self.renderPersons();
+            return self;
         };
         ManagePeopleTableView.prototype.resize = function () {
             $('#content-mpeople-table').css({ width: FoodParent.View.getWidth() - $('#wrapper-tablemenu').outerWidth() });
             $('#wrapper-main').css({ height: FoodParent.View.getHeight() - 60 });
             $('#wrapper-mpeople').css({ height: FoodParent.View.getHeight() - 60 });
             $('.collapsible-list').css({ height: FoodParent.View.getHeight() - 60 - 34 * 2 - 20 });
+        };
+        ManagePeopleTableView.prototype._applyFilter = function (event) {
+            var self = this;
+            var persons = FoodParent.Model.getPersons();
+            setTimeout(function () {
+                // Filtering food type.
+                if (event != undefined) {
+                    if ($(event.target).find('input').prop('name') == 'authsall') {
+                        if ($(event.target).find('input').prop('checked') == true) {
+                            $('.filter-auth').addClass('active');
+                            $('.filter-auth input').prop({ 'checked': 'checked' });
+                        }
+                        else {
+                            $('.filter-auth').removeClass('active');
+                            $('.filter-auth input').prop({ 'checked': '' });
+                        }
+                    }
+                }
+                // Apply auth filtering
+                var authIds = new Array();
+                $.each($('.filter-auth input'), function (index, item) {
+                    if ($(item).prop('checked') == true) {
+                        authIds.push(Math.floor($(item).prop('name')));
+                    }
+                });
+                persons = persons.filterByAuthIds(authIds);
+                // Filtering adoption status.
+                if (event != undefined) {
+                    if ($(event.target).find('input').prop('name') == 'adoptsall') {
+                        if ($(event.target).find('input').prop('checked') == true) {
+                            $('.filter-adopt').addClass('active');
+                            $('.filter-adopt input').prop({ 'checked': 'checked' });
+                        }
+                        else {
+                            $('.filter-adopt').removeClass('active');
+                            $('.filter-adopt input').prop({ 'checked': '' });
+                        }
+                    }
+                }
+                // Apply adopt filtering
+                var adoptIds = new Array();
+                $.each($('.filter-adopt input'), function (index, item) {
+                    if ($(item).prop('checked') == true) {
+                        adoptIds.push(Math.floor($(item).prop('name')));
+                    }
+                });
+                persons = persons.filterByAdoptStatus(adoptIds);
+                // update markers
+                self.renderPersonsList(persons);
+            }, 1);
         };
         ManagePeopleTableView.TAG = "ManageTreesMapView - ";
         return ManagePeopleTableView;
@@ -42905,6 +43217,27 @@ var FoodParent;
                 return false;
             }));
         };
+        Trees.prototype.filterByAdoptStatus = function (idArray) {
+            var self = this;
+            var trees = new Trees();
+            $.each(self.models, function (index, tree) {
+                if ($.inArray(0, idArray) > -1) {
+                    if (tree.get('parents').length == 0) {
+                        if (trees.where({ id: tree.getId() }) != undefined) {
+                            trees.add(tree);
+                        }
+                    }
+                }
+                if ($.inArray(1, idArray) > -1) {
+                    if (tree.get('parents').length >= 1) {
+                        if (trees.where({ id: tree.getId() }) != undefined) {
+                            trees.add(tree);
+                        }
+                    }
+                }
+            });
+            return trees;
+        };
         Trees.prototype.getAssigned = function (trees) {
             var self = this;
             $.each(self.models, function (index, model) {
@@ -42937,6 +43270,12 @@ var FoodParent;
                 }
             });
             return trees;
+        };
+        Trees.prototype.updateParents = function () {
+            var self = this;
+            $.each(self.models, function (index, tree) {
+                tree.attributes.parents = FoodParent.Model.getAdopts().getParentIds(tree.id);
+            });
         };
         return Trees;
     })(Backbone.Collection);
@@ -43233,11 +43572,47 @@ var FoodParent;
             });
             return persons;
         };
+        Persons.prototype.filterByAuthIds = function (idArray) {
+            var self = this;
+            var persons = new Persons(self.models);
+            return new Persons(persons.filter(function (person, index) {
+                if ($.inArray(person.getAuth(), idArray) > -1) {
+                    return true;
+                }
+                return false;
+            }));
+        };
+        Persons.prototype.filterByAdoptStatus = function (idArray) {
+            var self = this;
+            var persons = new Persons();
+            $.each(self.models, function (index, person) {
+                if ($.inArray(0, idArray) > -1) {
+                    if (person.get('trees').length == 0) {
+                        if (persons.where({ id: person.getId() }) != undefined) {
+                            persons.add(person);
+                        }
+                    }
+                }
+                if ($.inArray(1, idArray) > -1) {
+                    if (person.get('trees').length >= 1) {
+                        if (persons.where({ id: person.getId() }) != undefined) {
+                            persons.add(person);
+                        }
+                    }
+                }
+            });
+            return persons;
+        };
         Persons.prototype.updateTrees = function () {
-            var that = this;
-            $.each(that.models, function (index, model) {
+            var self = this;
+            $.each(self.models, function (index, model) {
                 model.attributes.trees = FoodParent.Model.getAdopts().getTreeIds(model.id);
             });
+        };
+        Persons.prototype.filterByIds = function (idArray) {
+            var self = this;
+            var persons = new Persons(self.models);
+            return persons.reset(_.map(idArray, function (id) { return this.get(id); }, this));
         };
         return Persons;
     })(Backbone.Collection);

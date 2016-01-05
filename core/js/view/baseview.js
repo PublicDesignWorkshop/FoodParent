@@ -42,14 +42,14 @@ var FoodParent;
         BaseView.prototype.render = function (args) {
             if (this.bRendered) {
                 this.update();
-                return;
+                return this;
             }
             this.bRendered = true;
         };
         BaseView.prototype.update = function (args) {
             if (!this.bRendered) {
                 this.render();
-                return;
+                return this;
             }
         };
         BaseView.prototype.resize = function () {

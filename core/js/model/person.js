@@ -109,11 +109,47 @@ var FoodParent;
             });
             return persons;
         };
+        Persons.prototype.filterByAuthIds = function (idArray) {
+            var self = this;
+            var persons = new Persons(self.models);
+            return new Persons(persons.filter(function (person, index) {
+                if ($.inArray(person.getAuth(), idArray) > -1) {
+                    return true;
+                }
+                return false;
+            }));
+        };
+        Persons.prototype.filterByAdoptStatus = function (idArray) {
+            var self = this;
+            var persons = new Persons();
+            $.each(self.models, function (index, person) {
+                if ($.inArray(0, idArray) > -1) {
+                    if (person.get('trees').length == 0) {
+                        if (persons.where({ id: person.getId() }) != undefined) {
+                            persons.add(person);
+                        }
+                    }
+                }
+                if ($.inArray(1, idArray) > -1) {
+                    if (person.get('trees').length >= 1) {
+                        if (persons.where({ id: person.getId() }) != undefined) {
+                            persons.add(person);
+                        }
+                    }
+                }
+            });
+            return persons;
+        };
         Persons.prototype.updateTrees = function () {
-            var that = this;
-            $.each(that.models, function (index, model) {
+            var self = this;
+            $.each(self.models, function (index, model) {
                 model.attributes.trees = FoodParent.Model.getAdopts().getTreeIds(model.id);
             });
+        };
+        Persons.prototype.filterByIds = function (idArray) {
+            var self = this;
+            var persons = new Persons(self.models);
+            return persons.reset(_.map(idArray, function (id) { return this.get(id); }, this));
         };
         return Persons;
     })(Backbone.Collection);

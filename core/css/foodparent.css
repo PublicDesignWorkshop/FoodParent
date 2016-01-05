@@ -31,7 +31,7 @@
   display: none;
   height: 20px;
   max-width: 250px;
-  padding: 4px 5px;
+  padding: 2px 4px;
   overflow: hidden;
   line-height: 20px;
   text-align: left;
@@ -12431,7 +12431,7 @@ button.close {
     }
 }
 @media all {
-    .list-tree td, .new-tree td, .list-people td, .new-person td {
+    .list-tree td, .new-tree td, .list-people td, .list-people th, .new-person td {
         color: #222222;
         font-size: small;
     }
@@ -12451,7 +12451,10 @@ button.close {
         width: 20%;
     }
     .list-tree .backgrid .address {
-        width: 35%;
+        width: 25%;
+    }
+    .list-tree .backgrid .parents {
+        width: 15%;
     }
     .list-tree .backgrid .lat {
         width: 72px;
@@ -12493,6 +12496,22 @@ button.close {
     }
     .list-people .backgrid .adoption {
         width: 30%;
+    }
+
+    .new-person .backgrid .auth {
+        width: 15%;
+    }
+    .new-person .backgrid .name {
+        width: 15%;
+    }
+    .new-person .backgrid .address {
+        width: 25%;
+    }
+    .new-person .backgrid .contact {
+        width: 25%;
+    }
+    .new-person .backgrid .neighborhood {
+        width: 20%;
     }
 
     td.editable {
@@ -12892,16 +12911,18 @@ button.close {
         justify-content: flex-start;
         align-items: flex-start;
     }
+    #content-mpeople-table {
+        padding: 8px 8px 8px 0;
+        margin: 4px 0 0 0;
+    }
 }
 @media print {
+    body * {
+        visibility: hidden;
+    }
     html, body {
         width: auto;
         height: auto;
-        overflow: visible;
-    }
-    body * {
-        visibility: hidden;
-        position: relative;
         overflow: visible;
     }
     /*
@@ -12956,4 +12977,15 @@ button.close {
         padding: 0;
     }
     */
+
+    #content-map, #content-map * {
+        visibility: visible;
+    }
+    #content-map {
+        position: relative;
+        padding: 0;
+        margin: 0;
+        overflow: hidden;
+        border: none;
+    }
 }

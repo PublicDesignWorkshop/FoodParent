@@ -179,7 +179,6 @@ var FoodParent;
         };
         EventHandler.handleDataChange = function (message, undoable) {
             var self = EventHandler._instance;
-            console.log("!");
             if (self._lastCommand) {
                 new FoodParent.RenderMessageViewCommand({ el: FoodParent.Setting.getMessageWrapperElement(), message: message, undoable: true }).execute();
             }
@@ -209,6 +208,9 @@ var FoodParent;
                     break;
                 case DATA_MODE.UPDATE_AUTH:
                     self._lastCommand = new FoodParent.UpdatePersonAuth({ person: person, auth: args.auth }, success, error);
+                    break;
+                case DATA_MODE.CREATE:
+                    self._lastCommand = new FoodParent.CreatePerson({ person: person }, success, error);
                     break;
             }
             if (self._lastCommand != undefined) {

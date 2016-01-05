@@ -44,7 +44,7 @@ module FoodParent {
         public render(args?: any): any {
             if (this.bRendered) {
                 this.update();
-                return;
+                return this;
             }
             this.bRendered = true;
         }
@@ -52,7 +52,7 @@ module FoodParent {
         public update(args?: any): any {
             if (!this.bRendered) {
                 this.render();
-                return;
+                return this;
             }
         }
 

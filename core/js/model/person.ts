@@ -106,11 +106,50 @@
             return persons;
         }
 
+        public filterByAuthIds(idArray): Persons {
+            var self: Persons = this;
+            var persons: Persons = new Persons(self.models);
+            return new Persons(persons.filter(function (person: Person, index: number) {
+                if ($.inArray(person.getAuth(), idArray) > -1) {
+                    return true;
+                }
+                return false;
+            }));
+        }
+
+        public filterByAdoptStatus(idArray): Persons {
+            var self: Persons = this;
+            var persons: Persons = new Persons();
+            $.each(self.models, function (index: number, person: Person) {
+                if ($.inArray(0, idArray) > -1) {
+                    if (person.get('trees').length == 0) {
+                        if (persons.where({ id: person.getId() }) != undefined) {
+                            persons.add(person);
+                        }
+                    }
+                }
+                if ($.inArray(1, idArray) > -1) {
+                    if (person.get('trees').length >= 1) {
+                        if (persons.where({ id: person.getId() }) != undefined) {
+                            persons.add(person);
+                        }
+                    }
+                }
+            });
+            return persons;
+        }
+
         public updateTrees(): void {
-            var that: Persons = this;
-            $.each(that.models, function (index: number, model: Person) {
+            var self: Persons = this;
+            $.each(self.models, function (index: number, model: Person) {
                 model.attributes.trees = Model.getAdopts().getTreeIds(model.id);
             });
+        }
+
+        public filterByIds(idArray): Array<Person> {
+            var self: Persons = this;
+            var persons: Persons = new Persons(self.models);
+            return persons.reset(_.map(idArray, function (id) { return this.get(id); }, this));
         }
     }
 }

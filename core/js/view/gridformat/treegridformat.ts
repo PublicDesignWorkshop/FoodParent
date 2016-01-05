@@ -41,7 +41,6 @@
                 model.trigger("backgrid:error", model, column, val);
             }
             else {
-                console.log(tree.getId());
                 if (tree.getId() == undefined) {
                     model.set(column.get("name"), newValue);
                     model.trigger("backgrid:edited", model, column, command);
@@ -256,7 +255,7 @@ var TreeAddressCell = Backgrid.Cell.extend({
         var element: JQuery = $(self.el);
         FoodParent.GeoLocation.reverseGeocoding(self.model.getLocation(), function (data: FoodParent.ReverseGeoLocation) {
             element.html(self.template({
-                address: "<div>" + data.road + ", " + data.state + ", " + data.postcode + "</div>",
+                address: "<div>" + data.road + ", " + data.county + ", " + data.state + ", " + data.postcode + "</div>",
             }));
         }, function () {
             FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
@@ -269,7 +268,7 @@ var TreeAddressCell = Backgrid.Cell.extend({
         var element: JQuery = $(self.el);
         FoodParent.GeoLocation.reverseGeocoding(self.model.getLocation(), function (data: FoodParent.ReverseGeoLocation) {
             element.html(self.template({
-                address: "<div>" + data.road + ", " + data.state + ", " + data.postcode + "</div>",
+                address: "<div>" + data.road + ", " + data.county + ", " + data.state + ", " + data.postcode + "</div>",
             }));
         }, function () {
             FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
@@ -323,13 +322,13 @@ var TreeCreateCell = Backgrid.Cell.extend({
             var food: FoodParent.Food = FoodParent.Model.getFoods().findWhere({ id: tree.getFoodId() });
             FoodParent.EventHandler.handleDataChange("<strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has been created successfully.", true);
             $('#wrapper-mtrees .new-tree').addClass('hidden');
-            //(<FoodParent.ManageTreesTableView>FoodParent.View.getManageTreesView()).unRenderNewTree();
+            (<FoodParent.ManageTreesTableView>FoodParent.View.getManageTreesView())._applyFilter();
             //(<FoodParent.ManageTreesTableView>FoodParent.View.getManageTreesView()).renderTreeList(FoodParent.Model.getTrees());
         }, function () {
             FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
         }, function () {
             var food: FoodParent.Food = FoodParent.Model.getFoods().findWhere({ id: tree.getFoodId() });
-            //FoodParent.EventHandler.handleDataChange("<strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has been deleted successfully.", false);
+            FoodParent.EventHandler.handleDataChange("<strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has been deleted successfully.", false);
             //(<FoodParent.ManageTreesTableView>FoodParent.View.getManageTreesView()).renderTreeList(FoodParent.Model.getTrees());
         });
     },
@@ -381,64 +380,24 @@ var TreeDeleteCell = Backgrid.Cell.extend({
     }
 });
 
-var TreeColumn: any = [
-    {
-        name: "food",
-        label: "Food Type",
-        editable: true,
-    }, {
-        name: "id",
-        label: "#",
-        editable: false,
-        cell: "string",
-    }, {
-        name: "description",
-        label: "Description",
-        editable: true,
-        formatter: Backgrid.StringFormatter,
-        cell: Backgrid.Cell.extend({ editor: TreeDescriptionCellEditor }),
-    }, {
-        name: "address",
-        label: "Address",
-        editable: false,
-        cell: TreeAddressCell,
-    }, {
-        name: "lat",
-        label: "Latitude",
-        editable: true,
-        formatter: Backgrid.NumberFormatter,
-        cell: Backgrid.Cell.extend({ editor: TreeLatitudeCellEditor }),
-    }, {
-        name: "lng",
-        label: "Longitude",
-        editable: true,
-        formatter: Backgrid.NumberFormatter,
-        cell: Backgrid.Cell.extend({ editor: TreeLongitudeCellEditor }),
-    }, {
-        label: "",
-        sortable: false,
-        editable: false,
-        cell: TreeMapViewCell,
-    }, {
-        label: "",
-        sortable: false,
-        editable: false,
-        cell: TreeDetailCell,
-    }, {
-        label: "",
-        sortable: false,
-        editable: false,
-        cell: TreeDeleteCell,
-    }
-    /*
-     {
-        name: "updated",
-        label: "Last Updated",
-        editable: false,
-        cell: Backgrid.Cell.extend({ editor: DatePickerCellEditor }),
+var TreeAdoptionCell = Backgrid.Cell.extend({
+    events: {
+        "click .cell-link": "_linkTreeDetail",
     },
-    */
-];
+    _linkTreeDetail: function (e) {
+        //FoodParent.Router.getInstance().navigate("tree/" + this.model.getId(), { trigger: true });
+    },
+    render: function () {
+        this.template = _.template(FoodParent.Template.getAdoptPersonCellTemplate());
+        var persons: FoodParent.Persons = new FoodParent.Persons(FoodParent.Model.getPersons().filterByIds(this.model.get('parents')));
+        $(this.el).html(this.template({
+            persons: persons,
+        }));
+        this.delegateEvents();
+        return this;
+    }
+});
+
 
 var FoodSelectCellEditor = Backgrid.FoodSelectCellEditor = Backgrid.CellEditor.extend({
 
@@ -573,6 +532,71 @@ var FoodSelectCellEditor = Backgrid.FoodSelectCellEditor = Backgrid.CellEditor.e
     }
 });
 
+
+
+var TreeColumn: any = [
+    {
+        name: "food",
+        label: "Food Type",
+        editable: true,
+    }, {
+        name: "id",
+        label: "#",
+        editable: false,
+        cell: "string",
+    }, {
+        name: "description",
+        label: "Description",
+        editable: true,
+        formatter: Backgrid.StringFormatter,
+        cell: Backgrid.Cell.extend({ editor: TreeDescriptionCellEditor }),
+    }, {
+        name: "address",
+        label: "Address",
+        editable: false,
+        cell: TreeAddressCell,
+    }, {
+        name: "lat",
+        label: "Latitude",
+        editable: true,
+        formatter: Backgrid.NumberFormatter,
+        cell: Backgrid.Cell.extend({ editor: TreeLatitudeCellEditor }),
+    }, {
+        name: "lng",
+        label: "Longitude",
+        editable: true,
+        formatter: Backgrid.NumberFormatter,
+        cell: Backgrid.Cell.extend({ editor: TreeLongitudeCellEditor }),
+    }, {
+        name: "parents",
+        label: "Adoption",
+        editable: false,
+        cell: TreeAdoptionCell,
+    }, {
+        label: "",
+        sortable: false,
+        editable: false,
+        cell: TreeMapViewCell,
+    }, {
+        label: "",
+        sortable: false,
+        editable: false,
+        cell: TreeDetailCell,
+    }, {
+        label: "",
+        sortable: false,
+        editable: false,
+        cell: TreeDeleteCell,
+    }
+    /*
+     {
+        name: "updated",
+        label: "Last Updated",
+        editable: false,
+        cell: Backgrid.Cell.extend({ editor: DatePickerCellEditor }),
+    },
+    */
+];
 
 var NewTreeColumn: any = [
     {

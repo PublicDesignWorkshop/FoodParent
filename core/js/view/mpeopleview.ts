@@ -1,4 +1,5 @@
 ﻿declare var PersonColumn;
+declare var NewPersonColumn;
 
 module FoodParent {
     export class ManagePeopleViewFractory {
@@ -38,7 +39,8 @@ module FoodParent {
             self.bDebug = true;
             //$(window).resize(_.debounce(that.customResize, Setting.getInstance().getResizeTimeout()));
             self.events = <any>{
-                //"click .switch-map": "_mouseClick",
+                "click .add-person": "_addNewPerson",
+                "click .filter-checkbox": "_applyFilter",
             };
             self.delegateEvents();
         }
@@ -59,6 +61,8 @@ module FoodParent {
             self.setElement(self.$('#wrapper-mpeople'));
             self.resize();
             self.renderPersons();
+
+            return self;
         }
 
         public resize(): any {
@@ -73,7 +77,7 @@ module FoodParent {
             Controller.fetchAllPersonsAndAuthsAndFoodAndTreesAndAdopts(function () {
                 // add grid instance for existing data
                 self.renderPersonsList(Model.getPersons());
-                //self.renderFilterList();
+                self.renderFilterList();
             }, function () {
                 EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
             });
@@ -97,5 +101,98 @@ module FoodParent {
             //grid.sort("name", "ascending");
             self.$(".list-people").html(grid.el);
         }
+
+        private _addNewPerson = () => {
+            var self: ManagePeopleTableView = this;
+            if (self.$(".new-person").hasClass('hidden')) {
+                var person: Person = new Person({ auth: 0, name: "", address: "", contact: "", neightborhood: "" });
+                var persons: Persons = new Persons();
+                persons.add(person);
+                var optionValues = new Array<{ name: string, values: any }>();
+                optionValues.push({ name: "Authorization", values: Model.getAuths().toArray() });
+                NewPersonColumn[0].cell = Backgrid.SelectCell.extend({
+                    editor: Backgrid.AuthSelectCellEditor,
+                    optionValues: optionValues,
+                });
+                var grid = new Backgrid.Grid({
+                    columns: NewPersonColumn,
+                    collection: persons,
+                    emptyText: Setting.getNoDataText(),
+                });
+                grid.render();
+                //grid.sort("name", "ascending");
+                self.$(".new-person").html('<div class="list-title">Add a New Person</div>');
+                self.$(".new-person").append(grid.el);
+                self.$(".new-person").removeClass('hidden');
+            } else {
+                self.$(".new-person").addClass('hidden');
+            }
+        }
+
+        public renderFilterList = () => {
+            var self: ManagePeopleTableView = this;
+            var template = _.template(Template.getPersonFilterListTemplate());
+            var data = {
+                auths: Model.getAuths(),
+            }
+            self.$('#filter-list').html(template(data));
+        }
+        
+        public _applyFilter(event?: Event): void {
+            var self: ManagePeopleTableView = this;
+            var persons: Persons = Model.getPersons();
+            setTimeout(function () {
+                // Filtering food type.
+                if (event != undefined) {
+                    if ($(event.target).find('input').prop('name') == 'authsall') {
+                        if ($(event.target).find('input').prop('checked') == true) {
+                            $('.filter-auth').addClass('active');
+                            $('.filter-auth input').prop({ 'checked': 'checked' });
+                        } else {
+                            $('.filter-auth').removeClass('active');
+                            $('.filter-auth input').prop({ 'checked': '' });
+                        }
+                    }
+                }
+                
+
+                // Apply auth filtering
+                var authIds = new Array<number>();
+                $.each($('.filter-auth input'), function (index: number, item: JQuery) {
+                    if ($(item).prop('checked') == true) {
+                        authIds.push(Math.floor($(item).prop('name')));
+                    }
+                });
+
+                persons = persons.filterByAuthIds(authIds);
+
+                // Filtering adoption status.
+                if (event != undefined) {
+                    if ($(event.target).find('input').prop('name') == 'adoptsall') {
+                        if ($(event.target).find('input').prop('checked') == true) {
+                            $('.filter-adopt').addClass('active');
+                            $('.filter-adopt input').prop({ 'checked': 'checked' });
+                        } else {
+                            $('.filter-adopt').removeClass('active');
+                            $('.filter-adopt input').prop({ 'checked': '' });
+                        }
+                    }
+                }
+
+                // Apply adopt filtering
+                var adoptIds = new Array<number>();
+                $.each($('.filter-adopt input'), function (index: number, item: JQuery) {
+                    if ($(item).prop('checked') == true) {
+                        adoptIds.push(Math.floor($(item).prop('name')));
+                    }
+                });
+
+                persons = persons.filterByAdoptStatus(adoptIds);
+
+                // update markers
+                self.renderPersonsList(persons);
+            }, 1);
+        }
+        
     }
 }

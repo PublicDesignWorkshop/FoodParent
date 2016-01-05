@@ -1,5 +1,5 @@
 ﻿@media all {
-    .list-tree td, .new-tree td, .list-people td, .new-person td {
+    .list-tree td, .new-tree td, .list-people td, .list-people th, .new-person td {
         color: #222222;
         font-size: small;
     }
@@ -19,7 +19,10 @@
         width: 20%;
     }
     .list-tree .backgrid .address {
-        width: 35%;
+        width: 25%;
+    }
+    .list-tree .backgrid .parents {
+        width: 15%;
     }
     .list-tree .backgrid .lat {
         width: 72px;
@@ -61,6 +64,22 @@
     }
     .list-people .backgrid .adoption {
         width: 30%;
+    }
+
+    .new-person .backgrid .auth {
+        width: 15%;
+    }
+    .new-person .backgrid .name {
+        width: 15%;
+    }
+    .new-person .backgrid .address {
+        width: 25%;
+    }
+    .new-person .backgrid .contact {
+        width: 25%;
+    }
+    .new-person .backgrid .neighborhood {
+        width: 20%;
     }
 
     td.editable {

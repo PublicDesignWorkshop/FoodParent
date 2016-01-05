@@ -1,12 +1,10 @@
 ﻿@media print {
+    body * {
+        visibility: hidden;
+    }
     html, body {
         width: auto;
         height: auto;
-        overflow: visible;
-    }
-    body * {
-        visibility: hidden;
-        position: relative;
         overflow: visible;
     }
     /*
@@ -61,4 +59,15 @@
         padding: 0;
     }
     */
+
+    #content-map, #content-map * {
+        visibility: visible;
+    }
+    #content-map {
+        position: relative;
+        padding: 0;
+        margin: 0;
+        overflow: hidden;
+        border: none;
+    }
 }

@@ -49,19 +49,28 @@
         public static fetchAllTrees(success?: any, error?: any) {
             var xhr1: JQueryXHR = Model.fetchAllFoods();
             var xhr2: JQueryXHR = Model.fetchAllTrees();
+            var xhr3: JQueryXHR = Model.fetchAllAdopts();
+            var xhr4: JQueryXHR = Model.fetchAllPersons();
             Controller.pushXHR(xhr1);
             Controller.pushXHR(xhr2);
+            Controller.pushXHR(xhr3);
+            Controller.pushXHR(xhr4);
             $.when(
-                xhr1, xhr2
+                xhr1, xhr2, xhr3, xhr4
             ).then(function () {
                 Controller.removeXHR(xhr1);
                 Controller.removeXHR(xhr2);
+                Controller.removeXHR(xhr3);
+                Controller.removeXHR(xhr4);
+                Model.getTrees().updateParents();
                 if (success) {
                     success();
                 }
             }, function () {
                 Controller.removeXHR(xhr1);
                 Controller.removeXHR(xhr2);
+                Controller.removeXHR(xhr3);
+                Controller.removeXHR(xhr4);
                 if (error) {
                     error(ERROR_MODE.SEVER_CONNECTION_ERROR);
                 }

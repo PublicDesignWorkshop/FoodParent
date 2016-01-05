@@ -305,4 +305,57 @@ var FoodParent;
         return DeletePerson;
     })();
     FoodParent.DeletePerson = DeletePerson;
+    var CreatePerson = (function () {
+        function CreatePerson(args, success, error, undoSuccess) {
+            var self = this;
+            if (args != undefined && args.person != undefined) {
+                self._person = args.person;
+            }
+            if (success) {
+                self._success = success;
+            }
+            if (error) {
+                self._error = error;
+            }
+            if (undoSuccess) {
+                self._undoSuccess = undoSuccess;
+            }
+        }
+        CreatePerson.prototype.execute = function () {
+            var self = this;
+            self._person.save({}, {
+                wait: true,
+                success: function (tree, response) {
+                    FoodParent.Model.getPersons().add(self._person);
+                    if (self._success) {
+                        self._success();
+                    }
+                },
+                error: function (error, response) {
+                    if (self._error) {
+                        self._error();
+                    }
+                },
+            });
+        };
+        CreatePerson.prototype.undo = function () {
+            var self = this;
+            FoodParent.Model.getPersons().remove(self._person);
+            self._person.destroy({
+                wait: true,
+                success: function (note, response) {
+                    if (self._undoSuccess) {
+                        self._undoSuccess();
+                    }
+                },
+                error: function (error) {
+                    if (self._error) {
+                        self._error();
+                    }
+                },
+            });
+        };
+        return CreatePerson;
+    })();
+    FoodParent.CreatePerson = CreatePerson;
 })(FoodParent || (FoodParent = {}));
