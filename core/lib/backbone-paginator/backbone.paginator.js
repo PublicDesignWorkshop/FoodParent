@@ -176,7 +176,7 @@
       firstPage: 1,
       lastPage: null,
       currentPage: null,
-      pageSize: 25,
+      pageSize: 1,
       totalPages: null,
       totalRecords: null,
       sortKey: null,
@@ -189,7 +189,7 @@
        `"client"` paginates on the client-side and `"infinite"` paginates on the
        server-side for APIs that do not support `totalRecords`.
     */
-    mode: "server",
+    mode: "client",
 
     /**
        A translation map to convert Backbone.PageableCollection state attributes

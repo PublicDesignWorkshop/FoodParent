@@ -93,7 +93,10 @@ var FoodParent;
             return parseFloat(this.get('lng'));
         };
         Tree.prototype.getId = function () {
-            return Math.floor(this.id);
+            if (this.id != undefined) {
+                return Math.floor(this.id);
+            }
+            return null;
         };
         Tree.prototype.getLocation = function () {
             return new L.LatLng(this.getLat(), this.getLng());

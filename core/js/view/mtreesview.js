@@ -74,6 +74,50 @@ var FoodParent;
                 //grid.sort("name", "ascending");
                 self.$(".list-tree").html(grid.el);
             };
+            this._addNewTree = function () {
+                var self = _this;
+                if (self.$(".new-tree").hasClass('hidden')) {
+                    FoodParent.Controller.updateGeoLocation(self.renderNewTree, self.renderMapError);
+                }
+                else {
+                    self.$(".new-tree").addClass('hidden');
+                }
+            };
+            this.renderNewTree = function (position) {
+                var self = _this;
+                var tree = new FoodParent.Tree({ lat: position.coords.latitude, lng: position.coords.longitude, food: 0, type: 0, flag: 0, owner: 0, ownership: 0, description: "" });
+                var trees = new FoodParent.Trees();
+                trees.add(tree);
+                var optionValues = new Array();
+                optionValues.push({ name: "Food", values: FoodParent.Model.getFoods().toArray() });
+                NewTreeColumn[0].cell = Backgrid.SelectCell.extend({
+                    editor: Backgrid.FoodSelectCellEditor,
+                    optionValues: optionValues,
+                });
+                var grid = new Backgrid.Grid({
+                    columns: NewTreeColumn,
+                    collection: trees,
+                    emptyText: FoodParent.Setting.getNoDataText(),
+                });
+                grid.render();
+                //grid.sort("name", "ascending");
+                self.$(".new-tree").html('<div class="tree-list-title">Add a New Tree</div>');
+                self.$(".new-tree").append(grid.el);
+                self.$(".new-tree").removeClass('hidden');
+            };
+            this.renderMapError = function (error) {
+                var self = _this;
+                switch (error.code) {
+                    case error.PERMISSION_DENIED:
+                        FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.GEO_PERMISSION_ERROR);
+                        break;
+                    case error.POSITION_UNAVAILABLE:
+                        FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.GEO_PERMISSION_ERROR);
+                        break;
+                    case error.TIMEOUT:
+                        break;
+                }
+            };
             this.renderFilterList = function () {
                 var self = _this;
                 var template = _.template(FoodParent.Template.getTreeFilterListTemplate());
@@ -88,6 +132,7 @@ var FoodParent;
             self.events = {
                 "click .switch-map": "_mouseClick",
                 "click .filter-checkbox": "_applyFilter",
+                "click .add-tree": "_addNewTree",
             };
             self.delegateEvents();
         }

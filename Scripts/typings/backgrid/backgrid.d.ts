@@ -6,6 +6,7 @@
 /// <reference path="../backbone/backbone.d.ts" />
 
 declare module Backgrid {
+    
     var NumberFormatter: any;
     var StringFormatter: any;
     var CellEditor: any;
@@ -14,6 +15,7 @@ declare module Backgrid {
     var Cell: any;
     var InputCellEditor: any;
     var Command: any;
+    var Extension: any;
     interface GridOptions {
 	columns: Column[];
 	collection: Backbone.Collection<Backbone.Model>;

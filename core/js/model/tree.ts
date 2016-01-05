@@ -89,7 +89,10 @@
             return parseFloat(this.get('lng'));
         }
         public getId(): number {
-            return Math.floor(this.id);
+            if (this.id != undefined) {
+                return Math.floor(this.id);
+            }
+            return null;
         }
 
         public getLocation(): L.LatLng {

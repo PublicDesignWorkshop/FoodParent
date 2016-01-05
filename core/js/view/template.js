@@ -39,6 +39,8 @@ var FoodParent;
             template += '</div>';
             template += '</div>';
             template += '<div id="content-mtrees-table">';
+            template += '<div class="new-tree hidden">';
+            template += '</div>';
             template += '<div class="tree-list-title">List of Trees</div>';
             template += '<div class="list-tree">';
             template += '</div>';

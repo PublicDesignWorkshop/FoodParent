@@ -196,6 +196,7 @@
     <TypeScriptCompile Include="core\js\view\navview.ts" />
     <TypeScriptCompile Include="core\js\view\template.ts" />
     <TypeScriptCompile Include="core\js\view\view.ts" />
+    <TypeScriptCompile Include="Scripts\typings\backbone.paginator\backbone.paginator.d.ts" />
     <TypeScriptCompile Include="Scripts\typings\backbone\backbone.d.ts" />
     <TypeScriptCompile Include="Scripts\typings\backgrid\backgrid.d.ts" />
     <TypeScriptCompile Include="Scripts\typings\bootstrap.v3.datetimepicker\bootstrap.v3.datetimepicker.d.ts" />

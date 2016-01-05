@@ -16098,7 +16098,7 @@ jQuery.extend( jQuery.easing,
       firstPage: 1,
       lastPage: null,
       currentPage: null,
-      pageSize: 25,
+      pageSize: 1,
       totalPages: null,
       totalRecords: null,
       sortKey: null,
@@ -16111,7 +16111,7 @@ jQuery.extend( jQuery.easing,
        `"client"` paginates on the client-side and `"infinite"` paginates on the
        server-side for APIs that do not support `totalRecords`.
     */
-    mode: "server",
+    mode: "client",
 
     /**
        A translation map to convert Backbone.PageableCollection state attributes
@@ -38586,23 +38586,30 @@ var TreeDescriptionCellEditor = Backgrid.Cell.extend({
                 model.trigger("backgrid:error", model, column, val);
             }
             else {
-                if (newValue.trim() != tree.getDescription().trim()) {
-                    var description = newValue;
-                    if (tree.getDescription().trim() != description.trim()) {
-                        FoodParent.EventHandler.handleTreeData(tree, FoodParent.DATA_MODE.UPDATE_DESCRIPTION, { description: description }, function () {
-                            var food = FoodParent.Model.getFoods().findWhere({ id: tree.getFoodId() });
-                            model.trigger("backgrid:edited", model, column, command);
-                            FoodParent.EventHandler.handleDataChange("Description of <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has changed successfully.", true);
-                        }, function () {
-                            FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
-                        });
-                    }
-                    else {
-                        self.renderTreeInfo(tree);
-                    }
+                console.log(tree.getId());
+                if (tree.getId() == undefined) {
+                    model.set(column.get("name"), newValue);
+                    model.trigger("backgrid:edited", model, column, command);
                 }
                 else {
-                    model.trigger("backgrid:edited", model, column, command);
+                    if (newValue.trim() != tree.getDescription().trim()) {
+                        var description = newValue;
+                        if (tree.getDescription().trim() != description.trim()) {
+                            FoodParent.EventHandler.handleTreeData(tree, FoodParent.DATA_MODE.UPDATE_DESCRIPTION, { description: description }, function () {
+                                var food = FoodParent.Model.getFoods().findWhere({ id: tree.getFoodId() });
+                                model.trigger("backgrid:edited", model, column, command);
+                                FoodParent.EventHandler.handleDataChange("Description of <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has changed successfully.", true);
+                            }, function () {
+                                FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+                            });
+                        }
+                        else {
+                            self.renderTreeInfo(tree);
+                        }
+                    }
+                    else {
+                        model.trigger("backgrid:edited", model, column, command);
+                    }
                 }
             }
         }
@@ -38663,18 +38670,24 @@ var TreeLatitudeCellEditor = Backgrid.Cell.extend({
                 model.trigger("backgrid:error", model, column, val);
             }
             else {
-                if (newValue != tree.getLat()) {
-                    var location = new L.LatLng(newValue, tree.getLng());
-                    FoodParent.EventHandler.handleTreeData(tree, FoodParent.DATA_MODE.UPDATE_LOCATION, { location: location }, function () {
-                        var food = FoodParent.Model.getFoods().findWhere({ id: tree.getFoodId() });
-                        model.trigger("backgrid:edited", model, column, command);
-                        FoodParent.EventHandler.handleDataChange("Location of <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has changed successfully.", true);
-                    }, function () {
-                        FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
-                    });
+                if (tree.getId() == undefined) {
+                    model.set(column.get("name"), newValue);
+                    model.trigger("backgrid:edited", model, column, command);
                 }
                 else {
-                    model.trigger("backgrid:edited", model, column, command);
+                    if (newValue != tree.getLat()) {
+                        var location = new L.LatLng(newValue, tree.getLng());
+                        FoodParent.EventHandler.handleTreeData(tree, FoodParent.DATA_MODE.UPDATE_LOCATION, { location: location }, function () {
+                            var food = FoodParent.Model.getFoods().findWhere({ id: tree.getFoodId() });
+                            model.trigger("backgrid:edited", model, column, command);
+                            FoodParent.EventHandler.handleDataChange("Location of <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has changed successfully.", true);
+                        }, function () {
+                            FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+                        });
+                    }
+                    else {
+                        model.trigger("backgrid:edited", model, column, command);
+                    }
                 }
             }
         }
@@ -38734,18 +38747,24 @@ var TreeLongitudeCellEditor = Backgrid.Cell.extend({
                 model.trigger("backgrid:error", model, column, val);
             }
             else {
-                if (newValue != tree.getLng()) {
-                    var location = new L.LatLng(tree.getLat(), newValue);
-                    FoodParent.EventHandler.handleTreeData(tree, FoodParent.DATA_MODE.UPDATE_LOCATION, { location: location }, function () {
-                        var food = FoodParent.Model.getFoods().findWhere({ id: tree.getFoodId() });
-                        model.trigger("backgrid:edited", model, column, command);
-                        FoodParent.EventHandler.handleDataChange("Location of <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has changed successfully.", true);
-                    }, function () {
-                        FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
-                    });
+                if (tree.getId() == undefined) {
+                    model.set(column.get("name"), newValue);
+                    model.trigger("backgrid:edited", model, column, command);
                 }
                 else {
-                    model.trigger("backgrid:edited", model, column, command);
+                    if (newValue != tree.getLng()) {
+                        var location = new L.LatLng(tree.getLat(), newValue);
+                        FoodParent.EventHandler.handleTreeData(tree, FoodParent.DATA_MODE.UPDATE_LOCATION, { location: location }, function () {
+                            var food = FoodParent.Model.getFoods().findWhere({ id: tree.getFoodId() });
+                            model.trigger("backgrid:edited", model, column, command);
+                            FoodParent.EventHandler.handleDataChange("Location of <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has changed successfully.", true);
+                        }, function () {
+                            FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+                        });
+                    }
+                    else {
+                        model.trigger("backgrid:edited", model, column, command);
+                    }
                 }
             }
         }
@@ -38831,12 +38850,51 @@ var TreeDetailCell = Backgrid.Cell.extend({
         return this;
     }
 });
+var TreeCreateCell = Backgrid.Cell.extend({
+    template: _.template('<div class="marker-control-item create-item"><i class="fa fa-save fa-2x"></i></div>'),
+    events: {
+        "click": "_createRow"
+    },
+    _createRow: function (e) {
+        var tree = this.model;
+        FoodParent.EventHandler.handleTreeData(tree, FoodParent.DATA_MODE.CREATE, {}, function () {
+            var food = FoodParent.Model.getFoods().findWhere({ id: tree.getFoodId() });
+            FoodParent.EventHandler.handleDataChange("<strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has been created successfully.", true);
+            $('#wrapper-mtrees .new-tree').addClass('hidden');
+            //(<FoodParent.ManageTreesTableView>FoodParent.View.getManageTreesView()).unRenderNewTree();
+            //(<FoodParent.ManageTreesTableView>FoodParent.View.getManageTreesView()).renderTreeList(FoodParent.Model.getTrees());
+        }, function () {
+            FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+        }, function () {
+            var food = FoodParent.Model.getFoods().findWhere({ id: tree.getFoodId() });
+            //FoodParent.EventHandler.handleDataChange("<strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has been deleted successfully.", false);
+            //(<FoodParent.ManageTreesTableView>FoodParent.View.getManageTreesView()).renderTreeList(FoodParent.Model.getTrees());
+        });
+    },
+    render: function () {
+        $(this.el).html(this.template());
+        this.delegateEvents();
+        return this;
+    }
+});
 var TreeDeleteCell = Backgrid.Cell.extend({
     template: _.template('<div class="marker-control-item"><i class="fa fa-remove fa-2x"></i></div>'),
     events: {
         "click": "_deleteRow"
     },
     _deleteRow: function (e) {
+        var tree = this.model;
+        if (tree.getId() == undefined) {
+            $('#wrapper-mtrees .new-tree').addClass('hidden');
+        }
+        else {
+            FoodParent.EventHandler.handleTreeData(tree, FoodParent.DATA_MODE.DELETE, {}, function () {
+                var food = FoodParent.Model.getFoods().findWhere({ id: tree.getFoodId() });
+                FoodParent.EventHandler.handleDataChange("<strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has deleted successfully.", false);
+            }, function () {
+                FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+            });
+        }
         /*
         var r = confirm(FoodParent.getDeleteConfirmText());
         if (r == true) {
@@ -38991,13 +39049,20 @@ var FoodSelectCellEditor = Backgrid.FoodSelectCellEditor = Backgrid.CellEditor.e
         var column = this.column;
         //tree.set(column.get("name"), parseInt(this.formatter.toRaw(this.$el.val(), tree)));
         var selected = parseInt(this.$el.val());
-        FoodParent.EventHandler.handleTreeData(tree, FoodParent.DATA_MODE.UPDATE_FOODTYPE, { food: selected }, function () {
-            var food = FoodParent.Model.getFoods().findWhere({ id: tree.getFoodId() });
-            tree.trigger("backgrid:edited", tree, column, new Backgrid.Command(e));
-            FoodParent.EventHandler.handleDataChange("Food type of <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has changed successfully.", true);
-        }, function () {
-            FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
-        });
+        var command = new Backgrid.Command(e);
+        if (tree.getId() == undefined) {
+            tree.set(column.get("name"), selected);
+            tree.trigger("backgrid:edited", tree, column, command);
+        }
+        else {
+            FoodParent.EventHandler.handleTreeData(tree, FoodParent.DATA_MODE.UPDATE_FOODTYPE, { food: selected }, function () {
+                var food = FoodParent.Model.getFoods().findWhere({ id: tree.getFoodId() });
+                tree.trigger("backgrid:edited", tree, column, new Backgrid.Command(e));
+                FoodParent.EventHandler.handleDataChange("Food type of <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has changed successfully.", true);
+            }, function () {
+                FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+            });
+        }
     },
     /**
        Triggers a `backgrid:edited` event from the model so the body can close
@@ -39020,6 +39085,46 @@ var FoodSelectCellEditor = Backgrid.FoodSelectCellEditor = Backgrid.CellEditor.e
         }
     }
 });
+var NewTreeColumn = [
+    {
+        name: "food",
+        label: "Food Type",
+        editable: true,
+    }, {
+        name: "description",
+        label: "Description",
+        editable: true,
+        formatter: Backgrid.StringFormatter,
+        cell: Backgrid.Cell.extend({ editor: TreeDescriptionCellEditor }),
+    }, {
+        name: "address",
+        label: "Address",
+        editable: false,
+        cell: TreeAddressCell,
+    }, {
+        name: "lat",
+        label: "Latitude",
+        editable: true,
+        formatter: Backgrid.NumberFormatter,
+        cell: Backgrid.Cell.extend({ editor: TreeLatitudeCellEditor }),
+    }, {
+        name: "lng",
+        label: "Longitude",
+        editable: true,
+        formatter: Backgrid.NumberFormatter,
+        cell: Backgrid.Cell.extend({ editor: TreeLongitudeCellEditor }),
+    }, {
+        label: "",
+        sortable: false,
+        editable: false,
+        cell: TreeCreateCell,
+    }, {
+        label: "",
+        sortable: false,
+        editable: false,
+        cell: TreeDeleteCell,
+    }
+];
 
 var FoodParent;
 (function (FoodParent) {
@@ -39062,6 +39167,8 @@ var FoodParent;
             template += '</div>';
             template += '</div>';
             template += '<div id="content-mtrees-table">';
+            template += '<div class="new-tree hidden">';
+            template += '</div>';
             template += '<div class="tree-list-title">List of Trees</div>';
             template += '<div class="list-tree">';
             template += '</div>';
@@ -40001,6 +40108,50 @@ var FoodParent;
                 //grid.sort("name", "ascending");
                 self.$(".list-tree").html(grid.el);
             };
+            this._addNewTree = function () {
+                var self = _this;
+                if (self.$(".new-tree").hasClass('hidden')) {
+                    FoodParent.Controller.updateGeoLocation(self.renderNewTree, self.renderMapError);
+                }
+                else {
+                    self.$(".new-tree").addClass('hidden');
+                }
+            };
+            this.renderNewTree = function (position) {
+                var self = _this;
+                var tree = new FoodParent.Tree({ lat: position.coords.latitude, lng: position.coords.longitude, food: 0, type: 0, flag: 0, owner: 0, ownership: 0, description: "" });
+                var trees = new FoodParent.Trees();
+                trees.add(tree);
+                var optionValues = new Array();
+                optionValues.push({ name: "Food", values: FoodParent.Model.getFoods().toArray() });
+                NewTreeColumn[0].cell = Backgrid.SelectCell.extend({
+                    editor: Backgrid.FoodSelectCellEditor,
+                    optionValues: optionValues,
+                });
+                var grid = new Backgrid.Grid({
+                    columns: NewTreeColumn,
+                    collection: trees,
+                    emptyText: FoodParent.Setting.getNoDataText(),
+                });
+                grid.render();
+                //grid.sort("name", "ascending");
+                self.$(".new-tree").html('<div class="tree-list-title">Add a New Tree</div>');
+                self.$(".new-tree").append(grid.el);
+                self.$(".new-tree").removeClass('hidden');
+            };
+            this.renderMapError = function (error) {
+                var self = _this;
+                switch (error.code) {
+                    case error.PERMISSION_DENIED:
+                        FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.GEO_PERMISSION_ERROR);
+                        break;
+                    case error.POSITION_UNAVAILABLE:
+                        FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.GEO_PERMISSION_ERROR);
+                        break;
+                    case error.TIMEOUT:
+                        break;
+                }
+            };
             this.renderFilterList = function () {
                 var self = _this;
                 var template = _.template(FoodParent.Template.getTreeFilterListTemplate());
@@ -40015,6 +40166,7 @@ var FoodParent;
             self.events = {
                 "click .switch-map": "_mouseClick",
                 "click .filter-checkbox": "_applyFilter",
+                "click .add-tree": "_addNewTree",
             };
             self.delegateEvents();
         }
@@ -41538,7 +41690,10 @@ var FoodParent;
             return parseFloat(this.get('lng'));
         };
         Tree.prototype.getId = function () {
-            return Math.floor(this.id);
+            if (this.id != undefined) {
+                return Math.floor(this.id);
+            }
+            return null;
         };
         Tree.prototype.getLocation = function () {
             return new L.LatLng(this.getLat(), this.getLng());

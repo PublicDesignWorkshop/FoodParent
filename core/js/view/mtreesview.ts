@@ -1,4 +1,5 @@
 ﻿declare var TreeColumn;
+declare var NewTreeColumn;
 
 module FoodParent {
     export class ManageTreesViewFractory {
@@ -45,6 +46,7 @@ module FoodParent {
             self.events = <any>{
                 "click .switch-map": "_mouseClick",
                 "click .filter-checkbox": "_applyFilter",
+                "click .add-tree": "_addNewTree",
             };
             self.delegateEvents();
         }
@@ -78,7 +80,7 @@ module FoodParent {
             });
         }
 
-        private renderTreeList = (trees: Trees) => {
+        public renderTreeList = (trees: Trees) => {
             var self: ManageTreesTableView = this;
             var optionValues = new Array<{ name: string, values: any }>();
             optionValues.push({ name: "Food", values: Model.getFoods().toArray() });
@@ -95,6 +97,55 @@ module FoodParent {
             grid.render();
             //grid.sort("name", "ascending");
             self.$(".list-tree").html(grid.el);
+        }
+
+        
+
+        private _addNewTree = () => {
+            var self: ManageTreesTableView = this;
+            if (self.$(".new-tree").hasClass('hidden')) {
+                Controller.updateGeoLocation(self.renderNewTree, self.renderMapError);
+            } else {
+                self.$(".new-tree").addClass('hidden');
+            }
+            
+        }
+
+        public renderNewTree = (position: Position) => {
+            var self: ManageTreesTableView = this;
+            var tree: Tree = new Tree({ lat: position.coords.latitude, lng: position.coords.longitude, food: 0, type: 0, flag: 0, owner: 0, ownership: 0, description: "" });
+            var trees: Trees = new Trees();
+            trees.add(tree);
+            var optionValues = new Array<{ name: string, values: any }>();
+            optionValues.push({ name: "Food", values: Model.getFoods().toArray() });
+            NewTreeColumn[0].cell = Backgrid.SelectCell.extend({
+                editor: Backgrid.FoodSelectCellEditor,
+                optionValues: optionValues,
+            });
+            var grid = new Backgrid.Grid({
+                columns: NewTreeColumn,
+                collection: trees,
+                emptyText: Setting.getNoDataText(),
+            });
+            grid.render();
+            //grid.sort("name", "ascending");
+            self.$(".new-tree").html('<div class="tree-list-title">Add a New Tree</div>');
+            self.$(".new-tree").append(grid.el);
+            self.$(".new-tree").removeClass('hidden');
+        }
+
+        private renderMapError = (error: PositionError) => {
+            var self: ManageTreesTableView = this;
+            switch (error.code) {
+                case error.PERMISSION_DENIED:
+                    EventHandler.handleError(ERROR_MODE.GEO_PERMISSION_ERROR);
+                    break;
+                case error.POSITION_UNAVAILABLE:
+                    EventHandler.handleError(ERROR_MODE.GEO_PERMISSION_ERROR);
+                    break;
+                case error.TIMEOUT:
+                    break;
+            }
         }
 
         public resize(): any {

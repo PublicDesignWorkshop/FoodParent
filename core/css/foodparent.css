@@ -12429,27 +12429,21 @@ button.close {
     }
 }
 @media all {
-    .list-tree td {
+    .list-tree td, .new-tree td {
         color: #222222;
         font-size: small;
     }
 
-    .list-tree a {
+    .list-tree a, .new-tree a {
         font-size: small;
     }
 
-    .list-tree .backgrid .select-cell {
+    .list-tree .backgrid .select-cell, .new-tree .backgrid .select-cell {
         text-align: left;
     }
 
     .list-tree .backgrid .food {
         width: 15%;
-    }
-    .list-tree .backgrid .lat {
-        width: 10%;
-    }
-    .list-tree .backgrid .lng {
-        width: 10%;
     }
     .list-tree .backgrid .description {
         width: 20%;
@@ -12461,6 +12455,22 @@ button.close {
         width: 72px;
     }
     .list-tree .backgrid .lng {
+        width: 72px;
+    }
+
+    .new-tree .backgrid .food {
+        width: 15%;
+    }
+    .new-tree .backgrid .description {
+        width: 35%;
+    }
+    .new-tree .backgrid .address {
+        width: 35%;
+    }
+    .new-tree .backgrid .lat {
+        width: 72px;
+    }
+    .new-tree .backgrid .lng {
         width: 72px;
     }
 
@@ -12631,7 +12641,8 @@ button.close {
     #content-mtrees-table {
         height: 100%;
         flex-grow: 1;
-        padding: 12px 8px 8px 0;
+        padding: 8px 8px 8px 0;
+        margin: 4px 0 0 0;
         overflow: auto;
     }
 
