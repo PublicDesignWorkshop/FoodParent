@@ -320,6 +320,7 @@ module FoodParent {
                 var food: Food = Model.getFoods().findWhere({ id: tree.getFoodId() });
                 var flag: Flag = Model.getFlags().findWhere({ id: tree.getFlagId() });
                 var ownership: Ownership = Model.getOwnerships().findWhere({ id: tree.getOwnershipId() });
+
                 var template = _.template(Template.getTreeInfoTemplate());
                 var data = {
                     foodname: food.getName(),
@@ -329,6 +330,7 @@ module FoodParent {
                     flags: Model.getFlags(),
                     ownerships: Model.getOwnerships(),
                     description: tree.getDescription(),
+                    persons: tree.getParents(),
                 }
                 self.$('#wrapper-treeinfo').html(template(data));
                 self.$('#wrapper-treeinfo').removeClass('hidden');

@@ -12626,7 +12626,7 @@ button.close {
         position: absolute;
         top: 32px;
         right: 36px;
-        color: rgba(94, 78, 81, 0.75);
+        color: rgba(94, 78, 81, 0.9);
         cursor: pointer;
     }
 
@@ -12754,6 +12754,12 @@ button.close {
         font-size: small;
         text-align: left;
         padding: 4px 24px;
+    }
+
+    .info-group-flex {
+        display: flex;
+        justify-content: flex-start;
+        align-items: flex-start;
     }
 
     #wrapper-tablemenu {

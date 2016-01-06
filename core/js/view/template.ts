@@ -226,6 +226,18 @@
             template += '<div class="info-group">';
             template += '<div class="input-description"><%= description %></div>';
             template += '</div>';
+
+            template += '<div class="hr"><hr /></div>';
+            template += '<div class="info-header"><i class="fa fa-users fa-1x"></i> Parents</div>';
+            template += '<div class="info-group info-group-flex">';
+            template += '<% _.each(persons.models, function (person, index) { %>';
+            template +=     '<% if (index < persons.models.length - 1) { %>';
+            template +=         '<div><%= person.getName() %>,&nbsp;</div>';
+            template +=     '<% } else { %>';
+            template +=         '<div><%= person.getName() %></div>';
+            template +=     '<% } %>';
+            template += '<% }); %>';
+            template += '</div>';
             
             template += '<div class="hr"><hr /></div>';
             template += '<div class="info-header"><i class="fa fa-tag fa-1x"></i> Status</div>';

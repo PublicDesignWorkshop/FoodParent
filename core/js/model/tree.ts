@@ -95,6 +95,15 @@
             return null;
         }
 
+        public getParents(): Persons {
+            var persons: Persons = new Persons();
+            $.each(this.get('parents'), function (index: number, item: number) {
+                console.log(item);
+                persons.add(Model.getPersons().findWhere({ id: item }));
+            });
+            return persons;
+        }
+
         public getLocation(): L.LatLng {
             return new L.LatLng(this.getLat(), this.getLng());
         }

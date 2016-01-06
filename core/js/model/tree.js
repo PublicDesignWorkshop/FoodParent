@@ -98,6 +98,14 @@ var FoodParent;
             }
             return null;
         };
+        Tree.prototype.getParents = function () {
+            var persons = new FoodParent.Persons();
+            $.each(this.get('parents'), function (index, item) {
+                console.log(item);
+                persons.add(FoodParent.Model.getPersons().findWhere({ id: item }));
+            });
+            return persons;
+        };
         Tree.prototype.getLocation = function () {
             return new L.LatLng(this.getLat(), this.getLng());
         };

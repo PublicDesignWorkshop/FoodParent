@@ -254,6 +254,7 @@ var FoodParent;
                         flags: FoodParent.Model.getFlags(),
                         ownerships: FoodParent.Model.getOwnerships(),
                         description: tree.getDescription(),
+                        persons: tree.getParents(),
                     };
                     self.$('#wrapper-treeinfo').html(template(data));
                     self.$('#wrapper-treeinfo').removeClass('hidden');

@@ -40831,6 +40831,17 @@ var FoodParent;
             template += '<div class="input-description"><%= description %></div>';
             template += '</div>';
             template += '<div class="hr"><hr /></div>';
+            template += '<div class="info-header"><i class="fa fa-users fa-1x"></i> Parents</div>';
+            template += '<div class="info-group info-group-flex">';
+            template += '<% _.each(persons.models, function (person, index) { %>';
+            template += '<% if (index < persons.models.length - 1) { %>';
+            template += '<div><%= person.getName() %>,&nbsp;</div>';
+            template += '<% } else { %>';
+            template += '<div><%= person.getName() %></div>';
+            template += '<% } %>';
+            template += '<% }); %>';
+            template += '</div>';
+            template += '<div class="hr"><hr /></div>';
             template += '<div class="info-header"><i class="fa fa-tag fa-1x"></i> Status</div>';
             template += '<div class="info-group">';
             template += '<div data-toggle="buttons">';
@@ -42155,6 +42166,7 @@ var FoodParent;
                         flags: FoodParent.Model.getFlags(),
                         ownerships: FoodParent.Model.getOwnerships(),
                         description: tree.getDescription(),
+                        persons: tree.getParents(),
                     };
                     self.$('#wrapper-treeinfo').html(template(data));
                     self.$('#wrapper-treeinfo').removeClass('hidden');
@@ -43828,6 +43840,14 @@ var FoodParent;
                 return Math.floor(this.id);
             }
             return null;
+        };
+        Tree.prototype.getParents = function () {
+            var persons = new FoodParent.Persons();
+            $.each(this.get('parents'), function (index, item) {
+                console.log(item);
+                persons.add(FoodParent.Model.getPersons().findWhere({ id: item }));
+            });
+            return persons;
         };
         Tree.prototype.getLocation = function () {
             return new L.LatLng(this.getLat(), this.getLng());
