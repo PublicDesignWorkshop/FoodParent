@@ -35,6 +35,8 @@ var FoodParent;
         __extends(ManageTreesView, _super);
         function ManageTreesView() {
             _super.apply(this, arguments);
+            this.renderTreeInfo = function (tree) {
+            };
         }
         ManageTreesView.prototype.setTreeId = function (id) {
             this._id = id;

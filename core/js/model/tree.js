@@ -107,6 +107,10 @@ var FoodParent;
             }
             return this.get('description');
         };
+        Tree.prototype.updateParents = function () {
+            var self = this;
+            self.attributes.parents = FoodParent.Model.getAdopts().getParentIds(self.id);
+        };
         return Tree;
     })(Backbone.Model);
     FoodParent.Tree = Tree;

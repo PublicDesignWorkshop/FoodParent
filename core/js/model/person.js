@@ -66,6 +66,10 @@ var FoodParent;
             var that = this;
             return this.get('neighborhood');
         };
+        Person.prototype.updateTrees = function () {
+            var self = this;
+            self.attributes.trees = FoodParent.Model.getAdopts().getTreeIds(self.id);
+        };
         return Person;
     })(Backbone.Model);
     FoodParent.Person = Person;

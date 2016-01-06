@@ -21,7 +21,7 @@
         padding: 0;
         margin: 0;
     }
-    #wrapper-mtrees {
+    #wrapper-mtrees, #wrapper-mpeople {
         position: relative;
         width: auto;
         height: auto;
@@ -29,7 +29,7 @@
         padding: 0;
         margin: 0;
     }
-    #wrapper-mtrees-table {
+    #wrapper-mtrees-table, #wrapper-mpeople-table {
         position: relative;
         width: auto;
         height: auto;
@@ -40,10 +40,10 @@
     #wrapper-tablemenu {
         display: none;
     }
-    #content-mtrees-table, #content-mtrees-table * {
+    #content-mtrees-table, #content-mtrees-table *, #content-mpeople-table, #content-mpeople-table * {
         visibility: visible;
     }
-    #content-mtrees-table {
+    #content-mtrees-table, #content-mpeople-table {
         width: auto;
         height: auto;
         overflow: visible;

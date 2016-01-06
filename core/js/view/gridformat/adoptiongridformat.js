@@ -43,12 +43,25 @@ var AdoptionNeighborhoodCell = Backgrid.Cell.extend({
     }
 });
 var AdoptionAddCell = Backgrid.Cell.extend({
-    template: _.template('<div class="marker-control-item"><i class="fa fa-plus-square fa-2x"></i></div>'),
+    template: _.template('<div class="marker-control-item marker-add-adoption"><i class="fa fa-plus-square fa-2x"></i></div>'),
     events: {
-        "click .marker-control-item": "_addAdoption"
+        "click .marker-control-item": "_addAdoption",
     },
     _addAdoption: function (e) {
-        //FoodParent.Router.getInstance().navigate("tree/" + this.model.getId(), { trigger: true });
+        var tree = FoodParent.Model.getTrees().findWhere({ id: parseInt($('.list-adoption').attr('data-target')) });
+        var food = FoodParent.Model.getFoods().findWhere({ id: tree.getFoodId() });
+        var person = this.model;
+        FoodParent.EventHandler.handleAdoptionData(tree, person, FoodParent.DATA_MODE.CREATE, {}, function () {
+            FoodParent.EventHandler.handleDataChange("<strong><i>" + person.getName() + "</i></strong> has adopted <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> successfully.", false);
+            FoodParent.View.getPopupView()._applyFilter();
+            FoodParent.View.getManageTreesView().renderTreeInfo(tree);
+        }, function () {
+            FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+        }, function () {
+            FoodParent.EventHandler.handleDataChange("<strong><i>" + person.getName() + "</i></strong> has unadopted <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> successfully.", false);
+            FoodParent.View.getPopupView()._applyFilter();
+            FoodParent.View.getManageTreesView().renderTreeInfo(tree);
+        });
     },
     render: function () {
         var self = this;
@@ -65,12 +78,25 @@ var AdoptionAddCell = Backgrid.Cell.extend({
     }
 });
 var AdoptionDeleteCell = Backgrid.Cell.extend({
-    template: _.template('<div class="marker-control-item"><i class="fa fa-minus-square fa-2x"></i></div>'),
+    template: _.template('<div class="marker-control-item marker-remove-adoption"><i class="fa fa-minus-square fa-2x"></i></div>'),
     events: {
-        "click .marker-control-item": "_removeAdoption"
+        "click .marker-control-item": "_removeAdoption",
     },
     _removeAdoption: function (e) {
-        //FoodParent.Router.getInstance().navigate("tree/" + this.model.getId(), { trigger: true });
+        var tree = FoodParent.Model.getTrees().findWhere({ id: parseInt($('.list-adoption').attr('data-target')) });
+        var food = FoodParent.Model.getFoods().findWhere({ id: tree.getFoodId() });
+        var person = this.model;
+        FoodParent.EventHandler.handleAdoptionData(tree, person, FoodParent.DATA_MODE.DELETE, {}, function () {
+            FoodParent.EventHandler.handleDataChange("<strong><i>" + person.getName() + "</i></strong> has unadopted <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> successfully.", false);
+            FoodParent.View.getPopupView()._applyFilter();
+            FoodParent.View.getManageTreesView().renderTreeInfo(tree);
+        }, function () {
+            FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+        }, function () {
+            FoodParent.EventHandler.handleDataChange("<strong><i>" + person.getName() + "</i></strong> has adopted <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> successfully.", false);
+            FoodParent.View.getPopupView()._applyFilter();
+            FoodParent.View.getManageTreesView().renderTreeInfo(tree);
+        });
     },
     render: function () {
         var self = this;

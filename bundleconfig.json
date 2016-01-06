@@ -35,6 +35,7 @@
       "core/js/controller/command/command.js",
       "core/js/controller/command/treecommand.js",
       "core/js/controller/command/personcommand.js",
+      "core/js/controller/command/adoptioncommand.js",
       // View - GridFormat
       "core/js/view/gridformat/gridformat.js",
       "core/js/view/gridformat/treegridformat.js",

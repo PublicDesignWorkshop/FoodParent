@@ -62,6 +62,10 @@
             var that: Person = this;
             return this.get('neighborhood');
         }
+        public updateTrees(): void {
+            var self: Person = this;
+            self.attributes.trees = Model.getAdopts().getTreeIds(self.id);
+        }
     }
     export class Persons extends Backbone.Collection<Person> {
         url: string = "persons.php";

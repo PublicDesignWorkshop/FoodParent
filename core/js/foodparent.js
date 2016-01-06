@@ -37603,7 +37603,10 @@ var FoodParent;
             }
             // Handle NavView
             if (view instanceof FoodParent.NavView) {
-                if (el.hasClass('trees')) {
+                if (el.hasClass('item-manage-title')) {
+                    new FoodParent.NavigateCommand({ hash: '' }).execute();
+                }
+                else if (el.hasClass('trees')) {
                     new FoodParent.NavigateCommand({ hash: 'mtrees', viewMode: VIEW_MODE.MAP, id: 0 }).execute();
                 }
                 else if (el.hasClass('people')) {
@@ -37760,6 +37763,21 @@ var FoodParent;
                     var food = FoodParent.Model.getFoods().findWhere({ id: tree.getFoodId() });
                     var command = new FoodParent.DeleteTree({ tree: tree }, success, error);
                     new FoodParent.RenderConfirmViewCommand({ el: FoodParent.Setting.getPopWrapperElement(), message: "Are you sure to delete " + food.getName() + " " + tree.getName() + "?", command: command }).execute();
+                    break;
+            }
+            if (self._lastCommand != undefined) {
+                self._lastCommand.execute();
+            }
+        };
+        EventHandler.handleAdoptionData = function (tree, person, dataMode, args, success, error, undoSuccess) {
+            var self = EventHandler._instance;
+            self._lastCommand = null;
+            switch (dataMode) {
+                case DATA_MODE.CREATE:
+                    self._lastCommand = new FoodParent.CreateAdoption({ tree: tree, person: person }, success, error, undoSuccess);
+                    break;
+                case DATA_MODE.DELETE:
+                    self._lastCommand = new FoodParent.DeleteAdoption({ tree: tree, person: person }, success, error, undoSuccess);
                     break;
             }
             if (self._lastCommand != undefined) {
@@ -39038,6 +39056,193 @@ var FoodParent;
     FoodParent.CreatePerson = CreatePerson;
 })(FoodParent || (FoodParent = {}));
 
+var FoodParent;
+(function (FoodParent) {
+    var CreateAdoption = (function () {
+        function CreateAdoption(args, success, error, undoSuccess) {
+            var self = this;
+            if (args != undefined && args.tree != undefined && args.person != undefined) {
+                self._tree = args.tree;
+                self._person = args.person;
+            }
+            if (success) {
+                self._success = success;
+            }
+            if (error) {
+                self._error = error;
+            }
+            if (undoSuccess) {
+                self._undoSuccess = undoSuccess;
+            }
+        }
+        CreateAdoption.prototype.execute = function () {
+            var self = this;
+            self._adopt = new FoodParent.Adopt({ tree: self._tree.getId(), parent: self._person.getId() });
+            self._adopt.save({}, {
+                wait: true,
+                success: function (tree, response) {
+                    FoodParent.Model.getAdopts().add(self._adopt);
+                    self._tree.updateParents();
+                    self._person.updateTrees();
+                    self._note = new FoodParent.Note({
+                        type: FoodParent.NoteType.INFO,
+                        tree: self._tree.getId(),
+                        person: self._person.getId(),
+                        comment: self._person.getName() + " has adopted this tree.",
+                        picture: "",
+                        rate: -1,
+                        date: moment(new Date()).format(FoodParent.Setting.getDateTimeFormat()),
+                    });
+                    self._note.save({}, {
+                        wait: true,
+                        success: function (note, response) {
+                            FoodParent.Model.getNotes().add(note);
+                            if (self._success) {
+                                self._success();
+                            }
+                        },
+                        error: function (error) {
+                            if (self._error) {
+                                self._error();
+                            }
+                        },
+                    });
+                },
+                error: function (error, response) {
+                    if (self._error) {
+                        self._error();
+                    }
+                },
+            });
+        };
+        CreateAdoption.prototype.undo = function () {
+            var self = this;
+            FoodParent.Model.getAdopts().remove(self._adopt);
+            self._tree.updateParents();
+            self._person.updateTrees();
+            self._adopt.destroy({
+                wait: true,
+                success: function (note, response) {
+                    FoodParent.Model.getNotes().remove(self._note);
+                    self._note.destroy({
+                        wait: true,
+                        success: function (note, response) {
+                            if (self._undoSuccess) {
+                                self._undoSuccess();
+                            }
+                        },
+                        error: function (error) {
+                            if (self._error) {
+                                self._error();
+                            }
+                        },
+                    });
+                },
+                error: function (error) {
+                    if (self._error) {
+                        self._error();
+                    }
+                },
+            });
+        };
+        return CreateAdoption;
+    })();
+    FoodParent.CreateAdoption = CreateAdoption;
+    var DeleteAdoption = (function () {
+        function DeleteAdoption(args, success, error, undoSuccess) {
+            var self = this;
+            if (args != undefined && args.tree != undefined && args.person != undefined) {
+                self._tree = args.tree;
+                self._person = args.person;
+            }
+            if (success) {
+                self._success = success;
+            }
+            if (error) {
+                self._error = error;
+            }
+            if (undoSuccess) {
+                self._undoSuccess = undoSuccess;
+            }
+        }
+        DeleteAdoption.prototype.execute = function () {
+            var self = this;
+            self._adopt = FoodParent.Model.getAdopts().findWhere({ tree: self._tree.getId(), parent: self._person.getId() });
+            if (self._adopt != undefined) {
+                FoodParent.Model.getAdopts().remove(self._adopt);
+                self._tree.updateParents();
+                self._person.updateTrees();
+                self._adopt.destroy({
+                    wait: true,
+                    success: function (note, response) {
+                        self._note = new FoodParent.Note({
+                            type: FoodParent.NoteType.INFO,
+                            tree: self._tree.getId(),
+                            person: self._person.getId(),
+                            comment: self._person.getName() + " has unadopted this tree.",
+                            picture: "",
+                            rate: -1,
+                            date: moment(new Date()).format(FoodParent.Setting.getDateTimeFormat()),
+                        });
+                        self._note.save({}, {
+                            wait: true,
+                            success: function (note, response) {
+                                FoodParent.Model.getNotes().add(note);
+                                if (self._success) {
+                                    self._success();
+                                }
+                            },
+                            error: function (error) {
+                                if (self._error) {
+                                    self._error();
+                                }
+                            },
+                        });
+                    },
+                    error: function (error) {
+                        if (self._error) {
+                            self._error();
+                        }
+                    },
+                });
+            }
+        };
+        DeleteAdoption.prototype.undo = function () {
+            var self = this;
+            self._adopt = new FoodParent.Adopt({ tree: self._tree.getId(), parent: self._person.getId() });
+            self._adopt.save({}, {
+                wait: true,
+                success: function (tree, response) {
+                    FoodParent.Model.getAdopts().add(self._adopt);
+                    self._tree.updateParents();
+                    self._person.updateTrees();
+                    FoodParent.Model.getNotes().remove(self._note);
+                    self._note.destroy({
+                        wait: true,
+                        success: function (note, response) {
+                            if (self._undoSuccess) {
+                                self._undoSuccess();
+                            }
+                        },
+                        error: function (error) {
+                            if (self._error) {
+                                self._error();
+                            }
+                        },
+                    });
+                },
+                error: function (error, response) {
+                    if (self._error) {
+                        self._error();
+                    }
+                },
+            });
+        };
+        return DeleteAdoption;
+    })();
+    FoodParent.DeleteAdoption = DeleteAdoption;
+})(FoodParent || (FoodParent = {}));
+
 var DatePickerCellEditor = Backgrid.InputCellEditor.extend({
     events: {},
     initialize: function () {
@@ -40313,12 +40518,25 @@ var AdoptionNeighborhoodCell = Backgrid.Cell.extend({
     }
 });
 var AdoptionAddCell = Backgrid.Cell.extend({
-    template: _.template('<div class="marker-control-item"><i class="fa fa-plus-square fa-2x"></i></div>'),
+    template: _.template('<div class="marker-control-item marker-add-adoption"><i class="fa fa-plus-square fa-2x"></i></div>'),
     events: {
-        "click .marker-control-item": "_addAdoption"
+        "click .marker-control-item": "_addAdoption",
     },
     _addAdoption: function (e) {
-        //FoodParent.Router.getInstance().navigate("tree/" + this.model.getId(), { trigger: true });
+        var tree = FoodParent.Model.getTrees().findWhere({ id: parseInt($('.list-adoption').attr('data-target')) });
+        var food = FoodParent.Model.getFoods().findWhere({ id: tree.getFoodId() });
+        var person = this.model;
+        FoodParent.EventHandler.handleAdoptionData(tree, person, FoodParent.DATA_MODE.CREATE, {}, function () {
+            FoodParent.EventHandler.handleDataChange("<strong><i>" + person.getName() + "</i></strong> has adopted <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> successfully.", false);
+            FoodParent.View.getPopupView()._applyFilter();
+            FoodParent.View.getManageTreesView().renderTreeInfo(tree);
+        }, function () {
+            FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+        }, function () {
+            FoodParent.EventHandler.handleDataChange("<strong><i>" + person.getName() + "</i></strong> has unadopted <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> successfully.", false);
+            FoodParent.View.getPopupView()._applyFilter();
+            FoodParent.View.getManageTreesView().renderTreeInfo(tree);
+        });
     },
     render: function () {
         var self = this;
@@ -40335,12 +40553,25 @@ var AdoptionAddCell = Backgrid.Cell.extend({
     }
 });
 var AdoptionDeleteCell = Backgrid.Cell.extend({
-    template: _.template('<div class="marker-control-item"><i class="fa fa-minus-square fa-2x"></i></div>'),
+    template: _.template('<div class="marker-control-item marker-remove-adoption"><i class="fa fa-minus-square fa-2x"></i></div>'),
     events: {
-        "click .marker-control-item": "_removeAdoption"
+        "click .marker-control-item": "_removeAdoption",
     },
     _removeAdoption: function (e) {
-        //FoodParent.Router.getInstance().navigate("tree/" + this.model.getId(), { trigger: true });
+        var tree = FoodParent.Model.getTrees().findWhere({ id: parseInt($('.list-adoption').attr('data-target')) });
+        var food = FoodParent.Model.getFoods().findWhere({ id: tree.getFoodId() });
+        var person = this.model;
+        FoodParent.EventHandler.handleAdoptionData(tree, person, FoodParent.DATA_MODE.DELETE, {}, function () {
+            FoodParent.EventHandler.handleDataChange("<strong><i>" + person.getName() + "</i></strong> has unadopted <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> successfully.", false);
+            FoodParent.View.getPopupView()._applyFilter();
+            FoodParent.View.getManageTreesView().renderTreeInfo(tree);
+        }, function () {
+            FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+        }, function () {
+            FoodParent.EventHandler.handleDataChange("<strong><i>" + person.getName() + "</i></strong> has adopted <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> successfully.", false);
+            FoodParent.View.getPopupView()._applyFilter();
+            FoodParent.View.getManageTreesView().renderTreeInfo(tree);
+        });
     },
     render: function () {
         var self = this;
@@ -41705,6 +41936,8 @@ var FoodParent;
         __extends(ManageTreesView, _super);
         function ManageTreesView() {
             _super.apply(this, arguments);
+            this.renderTreeInfo = function (tree) {
+            };
         }
         ManageTreesView.prototype.setTreeId = function (id) {
             this._id = id;
@@ -43605,6 +43838,10 @@ var FoodParent;
             }
             return this.get('description');
         };
+        Tree.prototype.updateParents = function () {
+            var self = this;
+            self.attributes.parents = FoodParent.Model.getAdopts().getParentIds(self.id);
+        };
         return Tree;
     })(Backbone.Model);
     FoodParent.Tree = Tree;
@@ -43972,6 +44209,10 @@ var FoodParent;
         Person.prototype.getNeighboorhood = function () {
             var that = this;
             return this.get('neighborhood');
+        };
+        Person.prototype.updateTrees = function () {
+            var self = this;
+            self.attributes.trees = FoodParent.Model.getAdopts().getTreeIds(self.id);
         };
         return Person;
     })(Backbone.Model);

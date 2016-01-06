@@ -98,7 +98,10 @@ var FoodParent;
             }
             // Handle NavView
             if (view instanceof FoodParent.NavView) {
-                if (el.hasClass('trees')) {
+                if (el.hasClass('item-manage-title')) {
+                    new FoodParent.NavigateCommand({ hash: '' }).execute();
+                }
+                else if (el.hasClass('trees')) {
                     new FoodParent.NavigateCommand({ hash: 'mtrees', viewMode: VIEW_MODE.MAP, id: 0 }).execute();
                 }
                 else if (el.hasClass('people')) {
@@ -255,6 +258,21 @@ var FoodParent;
                     var food = FoodParent.Model.getFoods().findWhere({ id: tree.getFoodId() });
                     var command = new FoodParent.DeleteTree({ tree: tree }, success, error);
                     new FoodParent.RenderConfirmViewCommand({ el: FoodParent.Setting.getPopWrapperElement(), message: "Are you sure to delete " + food.getName() + " " + tree.getName() + "?", command: command }).execute();
+                    break;
+            }
+            if (self._lastCommand != undefined) {
+                self._lastCommand.execute();
+            }
+        };
+        EventHandler.handleAdoptionData = function (tree, person, dataMode, args, success, error, undoSuccess) {
+            var self = EventHandler._instance;
+            self._lastCommand = null;
+            switch (dataMode) {
+                case DATA_MODE.CREATE:
+                    self._lastCommand = new FoodParent.CreateAdoption({ tree: tree, person: person }, success, error, undoSuccess);
+                    break;
+                case DATA_MODE.DELETE:
+                    self._lastCommand = new FoodParent.DeleteAdoption({ tree: tree, person: person }, success, error, undoSuccess);
                     break;
             }
             if (self._lastCommand != undefined) {

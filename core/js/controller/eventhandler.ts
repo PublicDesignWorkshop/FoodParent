@@ -75,7 +75,9 @@
             }
             // Handle NavView
             if (view instanceof NavView) {
-                if (el.hasClass('trees')) {
+                if (el.hasClass('item-manage-title')) {
+                    new NavigateCommand({ hash: '' }).execute();
+                } else if (el.hasClass('trees')) {
                     new NavigateCommand({ hash: 'mtrees', viewMode: VIEW_MODE.MAP, id: 0 }).execute();
                 } else if (el.hasClass('people')) {
                     new NavigateCommand({ hash: 'mpeople', viewMode: VIEW_MODE.TABLE, id: 0 }).execute();
@@ -228,6 +230,23 @@
                     var command: Command = new DeleteTree({ tree: tree }, success, error);
                     new RenderConfirmViewCommand({ el: Setting.getPopWrapperElement(), message: "Are you sure to delete " + food.getName() + " " + tree.getName() + "?", command: command }).execute();
                     break;
+            }
+            if (self._lastCommand != undefined) {
+                self._lastCommand.execute();
+            }
+        }
+
+        public static handleAdoptionData(tree: Tree, person: Person, dataMode: DATA_MODE, args: any, success?: Function, error?: Function, undoSuccess?: Function): void {
+            var self: EventHandler = EventHandler._instance;
+            self._lastCommand = null;
+            switch (dataMode) {
+                case DATA_MODE.CREATE:
+                    self._lastCommand = new CreateAdoption({ tree: tree, person: person }, success, error, undoSuccess);
+                    break;
+                case DATA_MODE.DELETE:
+                    self._lastCommand = new DeleteAdoption({ tree: tree, person: person }, success, error, undoSuccess);
+                    break;
+
             }
             if (self._lastCommand != undefined) {
                 self._lastCommand.execute();

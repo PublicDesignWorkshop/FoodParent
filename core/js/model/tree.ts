@@ -104,6 +104,10 @@
             }
             return this.get('description');
         }
+        public updateParents(): void {
+            var self: Tree = this;
+            self.attributes.parents = Model.getAdopts().getParentIds(self.id);
+        }
     }
     export class Trees extends Backbone.Collection<Tree> {
         url: string = "trees.php";

@@ -33,6 +33,9 @@ module FoodParent {
         public setTreeId(id: number) {
             this._id = id;
         }
+        public renderTreeInfo = (tree: Tree) => {
+
+        }
     }
 
     
