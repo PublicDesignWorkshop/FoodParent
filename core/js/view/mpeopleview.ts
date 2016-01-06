@@ -98,7 +98,7 @@ module FoodParent {
                 emptyText: Setting.getNoDataText(),
             });
             grid.render();
-            //grid.sort("name", "ascending");
+            grid.sort("name", "ascending");
             self.$(".list-people").html(grid.el);
         }
 
@@ -158,7 +158,7 @@ module FoodParent {
 
                 // Apply auth filtering
                 var authIds = new Array<number>();
-                $.each($('.filter-auth input'), function (index: number, item: JQuery) {
+                $.each(self.$('.filter-auth input'), function (index: number, item: JQuery) {
                     if ($(item).prop('checked') == true) {
                         authIds.push(Math.floor($(item).prop('name')));
                     }
@@ -181,7 +181,7 @@ module FoodParent {
 
                 // Apply adopt filtering
                 var adoptIds = new Array<number>();
-                $.each($('.filter-adopt input'), function (index: number, item: JQuery) {
+                $.each(self.$('.filter-adopt input'), function (index: number, item: JQuery) {
                     if ($(item).prop('checked') == true) {
                         adoptIds.push(Math.floor($(item).prop('name')));
                     }

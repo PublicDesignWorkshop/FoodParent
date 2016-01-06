@@ -139,6 +139,29 @@
             return persons;
         }
 
+        public filterByAdoptStatusForTree(idArray, treeId: number): Persons {
+            var self: Persons = this;
+            var persons: Persons = new Persons();
+            $.each(self.models, function (index: number, person: Person) {
+                if ($.inArray(0, idArray) > -1) {
+                    console.log($.inArray(treeId, person.get('trees')));
+                    if (person.get('trees').length == 0 || $.inArray(treeId, person.get('trees')) < 0) {
+                        if (persons.where({ id: person.getId() }) != undefined) {
+                            persons.add(person);
+                        }
+                    }
+                }
+                if ($.inArray(1, idArray) > -1) {
+                    if ($.inArray(treeId, person.get('trees')) > -1) {
+                        if (persons.where({ id: person.getId() }) != undefined) {
+                            persons.add(person);
+                        }
+                    }
+                }
+            });
+            return persons;
+        }
+
         public updateTrees(): void {
             var self: Persons = this;
             $.each(self.models, function (index: number, model: Person) {

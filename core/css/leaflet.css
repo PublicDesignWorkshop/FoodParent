@@ -13,6 +13,14 @@
         align-items: center;
     }
 
+    .blank-marker-control-item {
+        display: block;
+        width: 30px;
+        height: 30px;
+        margin: 2px;
+        padding: 2px;
+    }
+
     .marker-control-item {
         width: 30px;
         height: 30px;

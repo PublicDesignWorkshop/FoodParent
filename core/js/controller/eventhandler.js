@@ -30,6 +30,7 @@ var FoodParent;
         VIEW_STATUS[VIEW_STATUS["NETWORK_ERROR"] = 5] = "NETWORK_ERROR";
         VIEW_STATUS[VIEW_STATUS["CONFIRM"] = 6] = "CONFIRM";
         VIEW_STATUS[VIEW_STATUS["MANAGE_PEOPLE"] = 7] = "MANAGE_PEOPLE";
+        VIEW_STATUS[VIEW_STATUS["MANAGE_ADOPTION"] = 8] = "MANAGE_ADOPTION";
     })(FoodParent.VIEW_STATUS || (FoodParent.VIEW_STATUS = {}));
     var VIEW_STATUS = FoodParent.VIEW_STATUS;
     (function (VIEW_MODE) {
@@ -67,9 +68,9 @@ var FoodParent;
             FoodParent.Controller.abortAllXHR();
             Pace.restart();
             new FoodParent.RemoveAlertViewCommand().execute();
-            if (FoodParent.View.getViewStatus() != viewStatus) {
-                new FoodParent.RemoveChildViewCommand({ parent: FoodParent.View }).execute();
-            }
+            //if (View.getViewStatus() != viewStatus) {
+            new FoodParent.RemoveChildViewCommand({ parent: FoodParent.View }).execute();
+            //}
             new FoodParent.RenderNavViewCommand({ el: FoodParent.Setting.getNavWrapperElement(), viewStatus: viewStatus }).execute();
             if (viewStatus == VIEW_STATUS.HOME) {
                 new FoodParent.MovePaceBarToTop().execute();
@@ -142,6 +143,9 @@ var FoodParent;
                             options.marker._popup.setContent('<div class="marker-control-wrapper">' + $('.marker-control-wrapper').html() + '</div>');
                         }
                     }
+                    else if (el.hasClass('marker-control-adoption')) {
+                        new FoodParent.RenderManageAdoptionViewCommand({ el: FoodParent.Setting.getPopWrapperElement(), tree: options.tree }).execute();
+                    }
                     else if (el.hasClass('marker-control-info')) {
                     }
                     else if (el.hasClass('marker-control-delete')) {
@@ -156,6 +160,14 @@ var FoodParent;
                     }
                     else if (el.hasClass('mapview-item')) {
                         new FoodParent.NavigateCommand({ hash: 'mtrees', viewMode: VIEW_MODE.MAP, id: options.id }).execute();
+                    }
+                    else if (el.hasClass('manage-adoption-item')) {
+                        new FoodParent.RenderManageAdoptionViewCommand({ el: FoodParent.Setting.getPopWrapperElement(), tree: options.tree }).execute();
+                    }
+                    break;
+                case VIEW_STATUS.MANAGE_ADOPTION:
+                    if (el.hasClass('button-close')) {
+                        new FoodParent.RemoveAlertViewCommand({ delay: FoodParent.Setting.getRemovePopupDuration() }).execute();
                     }
                     break;
             }

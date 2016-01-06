@@ -67,7 +67,7 @@ var FoodParent;
                     emptyText: FoodParent.Setting.getNoDataText(),
                 });
                 grid.render();
-                //grid.sort("name", "ascending");
+                grid.sort("name", "ascending");
                 self.$(".list-people").html(grid.el);
             };
             this._addNewPerson = function () {
@@ -156,7 +156,7 @@ var FoodParent;
                 }
                 // Apply auth filtering
                 var authIds = new Array();
-                $.each($('.filter-auth input'), function (index, item) {
+                $.each(self.$('.filter-auth input'), function (index, item) {
                     if ($(item).prop('checked') == true) {
                         authIds.push(Math.floor($(item).prop('name')));
                     }
@@ -177,7 +177,7 @@ var FoodParent;
                 }
                 // Apply adopt filtering
                 var adoptIds = new Array();
-                $.each($('.filter-adopt input'), function (index, item) {
+                $.each(self.$('.filter-adopt input'), function (index, item) {
                     if ($(item).prop('checked') == true) {
                         adoptIds.push(Math.floor($(item).prop('name')));
                     }

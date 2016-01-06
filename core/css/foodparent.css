@@ -31,7 +31,7 @@
   display: none;
   height: 20px;
   max-width: 250px;
-  padding: 2px 4px;
+  padding: 2px 2px;
   overflow: hidden;
   line-height: 20px;
   text-align: left;
@@ -39,6 +39,10 @@
   /*white-space: nowrap;*/
   vertical-align: middle;
   border-bottom: 1px solid #DDD;
+}
+
+.backgrid td:first-child {
+    padding-left: 8px;
 }
 
 .backgrid th.renderable,
@@ -110,7 +114,7 @@
   display: block;
   width: 100%;
   height: 100%;
-  padding: 0 5px;
+  padding: 0 2px;
   margin: 0;
   background-color: transparent;
   border: 0;
@@ -12431,16 +12435,16 @@ button.close {
     }
 }
 @media all {
-    .list-tree td, .new-tree td, .list-people td, .list-people th, .new-person td {
+    .list-tree td, .new-tree td, .list-people td, .list-people th, .new-person td, .list-adoption td {
         color: #222222;
         font-size: small;
     }
 
-    .list-tree a, .new-tree a, .list-tree a, .new-person a {
+    .list-tree a, .new-tree a, .list-tree a, .new-person a, .list-adoption a {
         font-size: small;
     }
 
-    .list-tree .backgrid .select-cell, .new-tree .backgrid .select-cell, .list-people .backgrid .select-cell, .new-person .backgrid .select-cell {
+    .list-tree .backgrid .select-cell, .new-tree .backgrid .select-cell, .list-people .backgrid .select-cell, .new-person .backgrid .select-cell, .list-adoption .backgrid .select-cell {
         text-align: left;
     }
 
@@ -12494,8 +12498,8 @@ button.close {
     .list-people .backgrid .neighborhood {
         width: 15%;
     }
-    .list-people .backgrid .adoption {
-        width: 30%;
+    .list-people .backgrid .trees {
+        width: 20%;
     }
 
     .new-person .backgrid .auth {
@@ -12511,6 +12515,23 @@ button.close {
         width: 25%;
     }
     .new-person .backgrid .neighborhood {
+        width: 20%;
+    }
+
+
+    .list-adoption .backgrid .auth {
+        width: 15%;
+    }
+    .list-adoption .backgrid .name {
+        width: 15%;
+    }
+    .list-adoption .backgrid .contact {
+        width: 25%;
+    }
+    .list-adoption .backgrid .neighborhood {
+        width: 20%;
+    }
+    .list-adoption .backgrid .trees {
         width: 20%;
     }
 
@@ -12531,10 +12552,14 @@ button.close {
         box-shadow: inset 0 0 1px 1px rgba(0,0,0,0.25);
         background-color: rgba(0, 0, 0, 0.05);
     }
+
+    .list-adoption td {
+        border-bottom: 1px solid rgba(94, 78, 81, 0.15);
+    }
 }
 @media all {
     #wrapper-pop .outer-frame {
-        background-color: #d4d0cf;
+        background-color: rgba(212, 208, 207, 0.6);
         padding: 6px;
     }
 
@@ -12548,6 +12573,65 @@ button.close {
         display: flex;
         justify-content: center;
         align-items: center;
+    }
+
+    #wrapper-manage-adoption {
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+    }
+    #wrapper-manage-adoption .outer-frame {
+        width: 100%;
+        height: 100%;
+        padding: 4px;
+        overflow: hidden;
+    }
+
+    #wrapper-manage-adoption .inner-frame {
+        width: 100%;
+        height: 100%;
+        padding: 4px;
+        overflow: hidden;
+        border: 3px solid rgba(94, 78, 81, 0.75);
+    }
+
+    #wrapper-manage-adoption-table {
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        display: flex;
+        justify-content: flex-start;
+        align-items: flex-start;
+    }
+
+    #content-manage-adoption-table {
+        height: 100%;
+        flex-grow: 1;
+        padding: 4px 4px 4px 0;
+        overflow: auto;
+    }
+
+    #wrapper-manage-adoption-table #wrapper-tablemenu {
+        padding: 4px;
+    }
+
+    #wrapper-manage-adoption-table .view-title {
+        color: #222222;
+        font-size: x-large;
+        font-weight: 700;
+        padding: 8px 4px;
+    }
+
+    #wrapper-pop .top-right-button {
+        position: absolute;
+        top: 32px;
+        right: 36px;
+        color: rgba(94, 78, 81, 0.75);
+        cursor: pointer;
+    }
+
+    .view-description {
+        margin: 4px 0;
     }
 }
 @media all {
@@ -12754,6 +12838,14 @@ button.close {
         display: flex;
         justify-content: center;
         align-items: center;
+    }
+
+    .blank-marker-control-item {
+        display: block;
+        width: 30px;
+        height: 30px;
+        margin: 2px;
+        padding: 2px;
     }
 
     .marker-control-item {

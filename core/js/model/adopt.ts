@@ -88,5 +88,13 @@
             });
             return result;
         }
+
+        public checkAdoption(treeId: number, parentId: number): boolean {
+            var self: Adopts = this;
+            if (self.findWhere({ tree: treeId, parent: parentId })) {
+                return true;
+            }
+            return false;
+        }
     }
 }

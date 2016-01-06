@@ -94,6 +94,13 @@ var FoodParent;
             });
             return result;
         };
+        Adopts.prototype.checkAdoption = function (treeId, parentId) {
+            var self = this;
+            if (self.findWhere({ tree: treeId, parent: parentId })) {
+                return true;
+            }
+            return false;
+        };
         return Adopts;
     })(Backbone.Collection);
     FoodParent.Adopts = Adopts;

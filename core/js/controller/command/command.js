@@ -89,7 +89,7 @@ var FoodParent;
         }
         RenderManagePeopleViewCommand.prototype.execute = function () {
             var self = this;
-            if (FoodParent.View.getManageTreesView()) {
+            if (FoodParent.View.getManagePeopleView()) {
             }
             else {
                 var view = FoodParent.ManagePeopleViewFractory.create(self._el, self._viewMode, self._id).render();
@@ -120,6 +120,23 @@ var FoodParent;
         return RenderConfirmViewCommand;
     })();
     FoodParent.RenderConfirmViewCommand = RenderConfirmViewCommand;
+    var RenderManageAdoptionViewCommand = (function () {
+        function RenderManageAdoptionViewCommand(args) {
+            var self = this;
+            self._el = args.el;
+            self._tree = args.tree;
+        }
+        RenderManageAdoptionViewCommand.prototype.execute = function () {
+            var self = this;
+            var view = FoodParent.AdoptionManageViewFactory.create(self._el, self._tree).render();
+            FoodParent.View.setPopupView(view);
+            FoodParent.View.setViewStatus(FoodParent.VIEW_STATUS.MANAGE_ADOPTION);
+        };
+        RenderManageAdoptionViewCommand.prototype.undo = function () {
+        };
+        return RenderManageAdoptionViewCommand;
+    })();
+    FoodParent.RenderManageAdoptionViewCommand = RenderManageAdoptionViewCommand;
     var RenderAlertViewCommand = (function () {
         function RenderAlertViewCommand(args) {
             var self = this;

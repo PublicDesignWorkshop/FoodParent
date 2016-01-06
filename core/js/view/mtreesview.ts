@@ -97,7 +97,7 @@ module FoodParent {
                 emptyText: Setting.getNoDataText(),
             });
             grid.render();
-            //grid.sort("name", "ascending");
+            grid.sort("id", "ascending");
             self.$(".list-tree").html(grid.el);
         }
 
@@ -186,7 +186,7 @@ module FoodParent {
 
                 // Apply food filtering
                 var foodIds = new Array<number>();
-                $.each($('.filter-food input'), function (index: number, item: JQuery) {
+                $.each(self.$('.filter-food input'), function (index: number, item: JQuery) {
                     if ($(item).prop('checked') == true) {
                         foodIds.push(Math.floor($(item).prop('name')));
                     }
@@ -209,7 +209,7 @@ module FoodParent {
 
                 // Apply adopt filtering
                 var adoptIds = new Array<number>();
-                $.each($('.filter-adopt input'), function (index: number, item: JQuery) {
+                $.each(self.$('.filter-adopt input'), function (index: number, item: JQuery) {
                     if ($(item).prop('checked') == true) {
                         adoptIds.push(Math.floor($(item).prop('name')));
                     }
@@ -708,7 +708,12 @@ module FoodParent {
         }
         private _mouseClick(event: Event): void {
             var self: ManageTreesMapView = this;
-            EventHandler.handleMouseClick($(event.currentTarget), self, {marker: self._selectedMarker});
+            if (self._selectedMarker != undefined) {
+                EventHandler.handleMouseClick($(event.currentTarget), self, { marker: self._selectedMarker, tree: self._selectedMarker.options.id });
+            } else {
+                EventHandler.handleMouseClick($(event.currentTarget), self, { marker: self._selectedMarker });
+            }
+            
         }
         private _openCollapsible(event: Event): void {
             var self: ManageTreesMapView = this;
@@ -732,7 +737,7 @@ module FoodParent {
 
                 // Apply food filtering
                 var foodIds = new Array<number>();
-                $.each($('.filter-food input'), function (index: number, item: JQuery) {
+                $.each(self.$('.filter-food input'), function (index: number, item: JQuery) {
                     if ($(item).prop('checked') == true) {
                         foodIds.push(Math.floor($(item).prop('name')));
                     }
@@ -752,7 +757,7 @@ module FoodParent {
 
                 // Apply adopt filtering
                 var adoptIds = new Array<number>();
-                $.each($('.filter-adopt input'), function (index: number, item: JQuery) {
+                $.each(self.$('.filter-adopt input'), function (index: number, item: JQuery) {
                     if ($(item).prop('checked') == true) {
                         adoptIds.push(Math.floor($(item).prop('name')));
                     }

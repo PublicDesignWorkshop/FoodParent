@@ -9,7 +9,7 @@
         UPDATE_NAME, UPDATE_ADDRESS, UPDATE_CONTACT, UPDATE_NEIGHBORHOOD, UPDATE_AUTH
     }
     export enum VIEW_STATUS {
-        NONE, HOME, MANAGE_TREES, PARENT_TREES, GEO_ERROR, NETWORK_ERROR, CONFIRM, MANAGE_PEOPLE
+        NONE, HOME, MANAGE_TREES, PARENT_TREES, GEO_ERROR, NETWORK_ERROR, CONFIRM, MANAGE_PEOPLE, MANAGE_ADOPTION
     }
     export enum VIEW_MODE {
         NONE, MAP, GRAPHIC, TABLE
@@ -44,9 +44,9 @@
             Controller.abortAllXHR();
             Pace.restart();
             new RemoveAlertViewCommand().execute();
-            if (View.getViewStatus() != viewStatus) {
+            //if (View.getViewStatus() != viewStatus) {
                 new RemoveChildViewCommand({ parent: View }).execute();
-            }
+            //}
             
             new RenderNavViewCommand({ el: Setting.getNavWrapperElement(), viewStatus: viewStatus }).execute();
             if (viewStatus == VIEW_STATUS.HOME) {
@@ -59,6 +59,7 @@
                 new MovePaceBarToUnderNav().execute();
                 new RenderManagePeopleViewCommand({ el: Setting.getMainWrapperElement(), viewMode: option.viewMode, id: option.id }).execute();
             }
+
             View.getNavView().setActiveNavItem(viewStatus);
             View.setViewStatus(viewStatus);
         }
@@ -116,6 +117,8 @@
                             el.html('<i class="fa fa-lock fa-2x"></i>');
                             options.marker._popup.setContent('<div class="marker-control-wrapper">' + $('.marker-control-wrapper').html() + '</div>');
                         }
+                    } else if (el.hasClass('marker-control-adoption')) {
+                        new RenderManageAdoptionViewCommand({ el: Setting.getPopWrapperElement(), tree: options.tree }).execute();
                     } else if (el.hasClass('marker-control-info')) {
 
                     } else if (el.hasClass('marker-control-delete')) {
@@ -127,6 +130,13 @@
                         new NavigateCommand({ hash: 'mtrees', viewMode: VIEW_MODE.MAP, id: 0 }).execute();
                     } else if (el.hasClass('mapview-item')) {   // Switch to map item view.
                         new NavigateCommand({ hash: 'mtrees', viewMode: VIEW_MODE.MAP, id: options.id }).execute();
+                    } else if (el.hasClass('manage-adoption-item')) {
+                        new RenderManageAdoptionViewCommand({ el: Setting.getPopWrapperElement(), tree: options.tree }).execute();
+                    }
+                    break;
+                case VIEW_STATUS.MANAGE_ADOPTION:
+                    if (el.hasClass('button-close')) {
+                        new RemoveAlertViewCommand({ delay: Setting.getRemovePopupDuration() }).execute();
                     }
                     break;
             }

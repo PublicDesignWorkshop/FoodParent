@@ -195,6 +195,7 @@
     <TypeScriptCompile Include="core\js\model\person.ts" />
     <TypeScriptCompile Include="core\js\model\tree.ts" />
     <TypeScriptCompile Include="core\js\view\alertview.ts" />
+    <TypeScriptCompile Include="core\js\view\gridformat\adoptiongridformat.ts" />
     <TypeScriptCompile Include="core\js\view\gridformat\gridformat.ts" />
     <TypeScriptCompile Include="core\js\view\gridformat\persongridformat.ts" />
     <TypeScriptCompile Include="core\js\view\gridformat\treegridformat.ts" />

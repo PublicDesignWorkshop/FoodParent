@@ -37535,6 +37535,7 @@ var FoodParent;
         VIEW_STATUS[VIEW_STATUS["NETWORK_ERROR"] = 5] = "NETWORK_ERROR";
         VIEW_STATUS[VIEW_STATUS["CONFIRM"] = 6] = "CONFIRM";
         VIEW_STATUS[VIEW_STATUS["MANAGE_PEOPLE"] = 7] = "MANAGE_PEOPLE";
+        VIEW_STATUS[VIEW_STATUS["MANAGE_ADOPTION"] = 8] = "MANAGE_ADOPTION";
     })(FoodParent.VIEW_STATUS || (FoodParent.VIEW_STATUS = {}));
     var VIEW_STATUS = FoodParent.VIEW_STATUS;
     (function (VIEW_MODE) {
@@ -37572,9 +37573,9 @@ var FoodParent;
             FoodParent.Controller.abortAllXHR();
             Pace.restart();
             new FoodParent.RemoveAlertViewCommand().execute();
-            if (FoodParent.View.getViewStatus() != viewStatus) {
-                new FoodParent.RemoveChildViewCommand({ parent: FoodParent.View }).execute();
-            }
+            //if (View.getViewStatus() != viewStatus) {
+            new FoodParent.RemoveChildViewCommand({ parent: FoodParent.View }).execute();
+            //}
             new FoodParent.RenderNavViewCommand({ el: FoodParent.Setting.getNavWrapperElement(), viewStatus: viewStatus }).execute();
             if (viewStatus == VIEW_STATUS.HOME) {
                 new FoodParent.MovePaceBarToTop().execute();
@@ -37647,6 +37648,9 @@ var FoodParent;
                             options.marker._popup.setContent('<div class="marker-control-wrapper">' + $('.marker-control-wrapper').html() + '</div>');
                         }
                     }
+                    else if (el.hasClass('marker-control-adoption')) {
+                        new FoodParent.RenderManageAdoptionViewCommand({ el: FoodParent.Setting.getPopWrapperElement(), tree: options.tree }).execute();
+                    }
                     else if (el.hasClass('marker-control-info')) {
                     }
                     else if (el.hasClass('marker-control-delete')) {
@@ -37661,6 +37665,14 @@ var FoodParent;
                     }
                     else if (el.hasClass('mapview-item')) {
                         new FoodParent.NavigateCommand({ hash: 'mtrees', viewMode: VIEW_MODE.MAP, id: options.id }).execute();
+                    }
+                    else if (el.hasClass('manage-adoption-item')) {
+                        new FoodParent.RenderManageAdoptionViewCommand({ el: FoodParent.Setting.getPopWrapperElement(), tree: options.tree }).execute();
+                    }
+                    break;
+                case VIEW_STATUS.MANAGE_ADOPTION:
+                    if (el.hasClass('button-close')) {
+                        new FoodParent.RemoveAlertViewCommand({ delay: FoodParent.Setting.getRemovePopupDuration() }).execute();
                     }
                     break;
             }
@@ -37894,7 +37906,7 @@ var FoodParent;
         }
         RenderManagePeopleViewCommand.prototype.execute = function () {
             var self = this;
-            if (FoodParent.View.getManageTreesView()) {
+            if (FoodParent.View.getManagePeopleView()) {
             }
             else {
                 var view = FoodParent.ManagePeopleViewFractory.create(self._el, self._viewMode, self._id).render();
@@ -37925,6 +37937,23 @@ var FoodParent;
         return RenderConfirmViewCommand;
     })();
     FoodParent.RenderConfirmViewCommand = RenderConfirmViewCommand;
+    var RenderManageAdoptionViewCommand = (function () {
+        function RenderManageAdoptionViewCommand(args) {
+            var self = this;
+            self._el = args.el;
+            self._tree = args.tree;
+        }
+        RenderManageAdoptionViewCommand.prototype.execute = function () {
+            var self = this;
+            var view = FoodParent.AdoptionManageViewFactory.create(self._el, self._tree).render();
+            FoodParent.View.setPopupView(view);
+            FoodParent.View.setViewStatus(FoodParent.VIEW_STATUS.MANAGE_ADOPTION);
+        };
+        RenderManageAdoptionViewCommand.prototype.undo = function () {
+        };
+        return RenderManageAdoptionViewCommand;
+    })();
+    FoodParent.RenderManageAdoptionViewCommand = RenderManageAdoptionViewCommand;
     var RenderAlertViewCommand = (function () {
         function RenderAlertViewCommand(args) {
             var self = this;
@@ -39314,6 +39343,24 @@ var TreeMapViewCell = Backgrid.Cell.extend({
         return this;
     }
 });
+var ManageAdoptionViewCell = Backgrid.Cell.extend({
+    template: _.template('<div class="marker-control-item manage-adoption-item" data-target="<%= treeid %>"><i class="fa fa-user fa-2x"></i></div>'),
+    events: {
+        "click .marker-control-item": "_manageAdoption"
+    },
+    _manageAdoption: function (event) {
+        var tree = parseInt($(event.target).attr('data-target'));
+        FoodParent.EventHandler.handleMouseClick($(event.currentTarget), this, { tree: tree });
+        //FoodParent.Router.getInstance().navigate("tree/" + this.model.getId(), { trigger: true });
+    },
+    render: function () {
+        $(this.el).html(this.template({
+            treeid: this.model.getId(),
+        }));
+        this.delegateEvents();
+        return this;
+    }
+});
 var TreeDetailCell = Backgrid.Cell.extend({
     template: _.template('<div class="marker-control-item"><i class="fa fa-sticky-note-o fa-2x"></i></div>'),
     events: {
@@ -39573,6 +39620,11 @@ var TreeColumn = [
         sortable: false,
         editable: false,
         cell: TreeMapViewCell,
+    }, {
+        label: "",
+        sortable: false,
+        editable: false,
+        cell: ManageAdoptionViewCell,
     }, {
         label: "",
         sortable: false,
@@ -40216,6 +40268,133 @@ var NewPersonColumn = [
     }
 ];
 
+var AdoptionAuthCell = Backgrid.Cell.extend({
+    template: _.template('<div><%= auth %></div>'),
+    render: function () {
+        var person = this.model;
+        $(this.el).html(this.template({
+            auth: FoodParent.Model.getAuths().findWhere({ id: person.getAuth() }).getName(),
+        }));
+        this.delegateEvents();
+        return this;
+    }
+});
+var AdoptionNameCell = Backgrid.Cell.extend({
+    template: _.template('<div><%= name %></div>'),
+    render: function () {
+        var person = this.model;
+        $(this.el).html(this.template({
+            name: person.getName(),
+        }));
+        this.delegateEvents();
+        return this;
+    }
+});
+var AdoptionContactCell = Backgrid.Cell.extend({
+    template: _.template('<div><%= contact %></div>'),
+    render: function () {
+        var person = this.model;
+        $(this.el).html(this.template({
+            contact: person.getContact(),
+        }));
+        this.delegateEvents();
+        return this;
+    }
+});
+var AdoptionNeighborhoodCell = Backgrid.Cell.extend({
+    template: _.template('<div><%= neighborhood %></div>'),
+    render: function () {
+        var person = this.model;
+        $(this.el).html(this.template({
+            neighborhood: person.getNeighboorhood(),
+        }));
+        this.delegateEvents();
+        return this;
+    }
+});
+var AdoptionAddCell = Backgrid.Cell.extend({
+    template: _.template('<div class="marker-control-item"><i class="fa fa-plus-square fa-2x"></i></div>'),
+    events: {
+        "click .marker-control-item": "_addAdoption"
+    },
+    _addAdoption: function (e) {
+        //FoodParent.Router.getInstance().navigate("tree/" + this.model.getId(), { trigger: true });
+    },
+    render: function () {
+        var self = this;
+        var person = this.model;
+        var treeId = parseInt($('.list-adoption').attr('data-target'));
+        if (FoodParent.Model.getAdopts().checkAdoption(treeId, person.getId())) {
+            $(self.el).html('<div class="blank-marker-control-item"></div>');
+        }
+        else {
+            $(self.el).html(self.template());
+        }
+        this.delegateEvents();
+        return this;
+    }
+});
+var AdoptionDeleteCell = Backgrid.Cell.extend({
+    template: _.template('<div class="marker-control-item"><i class="fa fa-minus-square fa-2x"></i></div>'),
+    events: {
+        "click .marker-control-item": "_removeAdoption"
+    },
+    _removeAdoption: function (e) {
+        //FoodParent.Router.getInstance().navigate("tree/" + this.model.getId(), { trigger: true });
+    },
+    render: function () {
+        var self = this;
+        var person = this.model;
+        var treeId = parseInt($('.list-adoption').attr('data-target'));
+        if (FoodParent.Model.getAdopts().checkAdoption(treeId, person.getId())) {
+            $(self.el).html(self.template());
+        }
+        else {
+            $(self.el).html('<div class="blank-marker-control-item"></div>');
+        }
+        this.delegateEvents();
+        return this;
+    }
+});
+var AdoptionColumn = [
+    {
+        name: "auth",
+        label: "Auth",
+        editable: false,
+        cell: AdoptionAuthCell,
+    }, {
+        name: "name",
+        label: "Name",
+        editable: false,
+        cell: AdoptionNameCell,
+    }, {
+        name: "contact",
+        label: "Contact",
+        editable: false,
+        cell: AdoptionContactCell,
+    }, {
+        name: "neighborhood",
+        label: "Neighborhood",
+        editable: false,
+        cell: AdoptionNeighborhoodCell,
+    }, {
+        name: "trees",
+        label: "Adoption",
+        editable: false,
+        cell: PersonAdoptionCell,
+    }, {
+        label: "",
+        sortable: false,
+        editable: false,
+        cell: AdoptionAddCell,
+    }, {
+        label: "",
+        sortable: false,
+        editable: false,
+        cell: AdoptionDeleteCell,
+    }
+];
+
 var FoodParent;
 (function (FoodParent) {
     var Template = (function () {
@@ -40387,7 +40566,7 @@ var FoodParent;
             template += '<div class="marker-control-item marker-control-lock">';
             template += '<i class="fa fa-lock fa-2x"></i>';
             template += '</div>';
-            template += '<div class="marker-control-item marker-control-info">';
+            template += '<div class="marker-control-item marker-control-adoption">';
             template += '<i class="fa fa-user fa-2x"></i>';
             template += '</div>';
             template += '<div class="marker-control-item marker-control-info">';
@@ -40544,6 +40723,48 @@ var FoodParent;
             template += '<% }); %>';
             return template;
         };
+        Template.getAdoptionFilterListTemplate = function () {
+            var template = '';
+            template += '<div data-toggle="buttons">';
+            template += '<label class="btn filter-checkbox active list-hiearchy1">';
+            template += '<input type="checkbox" name="adoptsall" checked>';
+            template += '<i class="fa fa-square-o fa-1x"></i>';
+            template += '<i class="fa fa-check-square-o fa-1x"></i>';
+            template += ' Parenting Status (show all / hide)</label>';
+            template += '</div>';
+            template += '<div data-toggle="buttons">';
+            template += '<label class="btn filter-checkbox filter-adopt active list-hiearchy2">';
+            template += '<input type="checkbox" name="1" checked>';
+            template += '<i class="fa fa-square-o fa-1x"></i>';
+            template += '<i class="fa fa-check-square-o fa-1x"></i>';
+            template += ' Parenting</label>';
+            template += '</div>';
+            template += '<div data-toggle="buttons">';
+            template += '<label class="btn filter-checkbox filter-adopt active list-hiearchy2">';
+            template += '<input type="checkbox" name="0" checked>';
+            template += '<i class="fa fa-square-o fa-1x"></i>';
+            template += '<i class="fa fa-check-square-o fa-1x"></i>';
+            template += ' Non-Parenting</label>';
+            template += '</div>';
+            template += '<hr />';
+            template += '<div data-toggle="buttons">';
+            template += '<label class="btn filter-checkbox active list-hiearchy1">';
+            template += '<input type="checkbox" name="authsall" checked>';
+            template += '<i class="fa fa-square-o fa-1x"></i>';
+            template += '<i class="fa fa-check-square-o fa-1x"></i>';
+            template += ' Auth Type (show all / hide)</label>';
+            template += '</div>';
+            template += '<% _.each(auths.models, function (auth) { %>';
+            template += '<div data-toggle="buttons">';
+            template += '<label class="btn filter-checkbox filter-auth active list-hiearchy2">';
+            template += '<input type="checkbox" name="<%= auth.getId() %>" checked>';
+            template += '<i class="fa fa-square-o fa-1x"></i>';
+            template += '<i class="fa fa-check-square-o fa-1x"></i>';
+            template += ' <%= auth.getName() %></label>';
+            template += '</div>';
+            template += '<% }); %>';
+            return template;
+        };
         Template.getAdoptTreeCellTemplate = function () {
             //<%= address %>
             var template = "";
@@ -40565,6 +40786,35 @@ var FoodParent;
             template += '<% }); %>';
             //template += '<div class="cell-button cell-edit"><i class="fa fa-edit fa-1x"></i></div>';
             //template += '</div>';
+            return template;
+        };
+        Template.getManageAdoptionViewTemplate = function () {
+            var template = '';
+            template += '<div id="wrapper-manage-adoption">';
+            template += '<div class="outer-frame">';
+            template += '<div class="inner-frame">';
+            template += '<div id="wrapper-manage-adoption-table">';
+            template += '<div id="wrapper-tablemenu">';
+            template += '<div class="button-outer-frame2 button3"><div class="button-inner-frame2 collapsible-button" data-target="#filter-list">Filter List</div></div>';
+            template += '<div id="filter-list" class="collapsible-list">';
+            template += '</div>';
+            template += '<div class="button-outer-frame2 button3"><div class="button-inner-frame2 collapsible-button" data-target="#forage-list">Foragable List</div></div>';
+            template += '<div id="forage-list" class="collapsible-list hidden">';
+            template += '</div>';
+            template += '</div>';
+            template += '<div id="content-manage-adoption-table">';
+            template += '<div class="view-title">Tree Adoption</div>';
+            template += '<div class="view-description">Click <i class="fa fa-plus-square fa-1x"></i> icon to assign a new parent for <strong><i><%= treename %></i></strong>.</div>';
+            template += '<div class="list-adoption" data-target="<%= treeId %>">';
+            template += '</div>';
+            template += '</div>';
+            template += '</div>';
+            template += '<div class="top-right-button button-close">';
+            template += '<i class="fa fa-remove fa-2x"></i>';
+            template += '</div>';
+            template += '</div>';
+            template += '</div>';
+            template += '</div>';
             return template;
         };
         Template._instance = new Template();
@@ -41025,6 +41275,26 @@ var __extends = (this && this.__extends) || function (d, b) {
 };
 var FoodParent;
 (function (FoodParent) {
+    var AdoptionManageViewFactory = (function () {
+        function AdoptionManageViewFactory(args) {
+            if (AdoptionManageViewFactory._instance) {
+                throw new Error("Error: Instantiation failed: Use AdoptionManageViewFactory.getInstance() instead of new.");
+            }
+            AdoptionManageViewFactory._instance = this;
+        }
+        AdoptionManageViewFactory.getInstance = function () {
+            return AdoptionManageViewFactory._instance;
+        };
+        AdoptionManageViewFactory.create = function (el, tree) {
+            var view = new AdoptionManageView({ el: el });
+            console.log(tree);
+            view.setTree(tree);
+            return view;
+        };
+        AdoptionManageViewFactory._instance = new AdoptionManageViewFactory();
+        return AdoptionManageViewFactory;
+    })();
+    FoodParent.AdoptionManageViewFactory = AdoptionManageViewFactory;
     var ConfirmViewFractory = (function () {
         function ConfirmViewFractory(args) {
             if (ConfirmViewFractory._instance) {
@@ -41234,6 +41504,168 @@ var FoodParent;
         return ConfirmView;
     })(PopupView);
     FoodParent.ConfirmView = ConfirmView;
+    var AdoptionManageView = (function (_super) {
+        __extends(AdoptionManageView, _super);
+        function AdoptionManageView(options) {
+            var _this = this;
+            _super.call(this, options);
+            this.renderPersons = function () {
+                var self = _this;
+                FoodParent.Controller.fetchAllPersonsAndAuthsAndFoodAndTreesAndAdopts(function () {
+                    // add grid instance for existing data
+                    self.renderPersonsList(FoodParent.Model.getPersons());
+                    self.renderFilterList();
+                }, function () {
+                    FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+                });
+            };
+            this.renderFilterList = function () {
+                var self = _this;
+                var template = _.template(FoodParent.Template.getAdoptionFilterListTemplate());
+                var data = {
+                    auths: FoodParent.Model.getAuths(),
+                };
+                self.$('#filter-list').html(template(data));
+            };
+            this.renderPersonsList = function (persons) {
+                var self = _this;
+                var grid = new Backgrid.Grid({
+                    columns: AdoptionColumn,
+                    collection: persons,
+                    emptyText: FoodParent.Setting.getNoDataText(),
+                });
+                grid.render();
+                grid.sort("name", "ascending");
+                self.$(".list-adoption").html(grid.el);
+            };
+            var self = this;
+            self.bDebug = true;
+            //$(window).resize(_.debounce(that.customResize, Setting.getInstance().getResizeTimeout()));
+            self.events = {
+                "click .confirm-confirm": "_executeCommand",
+                "click .confirm-cancel": "_mouseClick",
+                "click .button-close": "_mouseClick",
+                "click .filter-checkbox": "_applyFilter",
+            };
+            self.delegateEvents();
+        }
+        AdoptionManageView.prototype.setTree = function (treeId) {
+            var self = this;
+            console.log(treeId);
+            self._tree = FoodParent.Model.getTrees().findWhere({ id: treeId });
+        };
+        AdoptionManageView.prototype.getTree = function () {
+            var self = this;
+            return self._tree;
+        };
+        AdoptionManageView.prototype.render = function (args) {
+            if (this.bRendered) {
+                this.update(args);
+                return;
+            }
+            this.bRendered = true;
+            /////
+            var self = this;
+            if (self.bDebug)
+                console.log(AdoptionManageView.TAG + "render()");
+            var food = FoodParent.Model.getFoods().findWhere({ id: self._tree.getFoodId() });
+            var template = _.template(FoodParent.Template.getManageAdoptionViewTemplate());
+            var data = {
+                treename: food.getName() + " " + self._tree.getName(),
+                treeId: self._tree.getId(),
+            };
+            self.$el.html(template(data));
+            self.setElement(self.$('#wrapper-manage-adoption'));
+            self.renderPersons();
+            self.setVisible();
+            self.resize();
+            return self;
+        };
+        AdoptionManageView.prototype.update = function (args) {
+            if (!this.bRendered) {
+                this.render(args);
+                return;
+            }
+            /////
+            var self = this;
+            if (self.bDebug)
+                console.log(AdoptionManageView.TAG + "update()");
+            return self;
+        };
+        AdoptionManageView.prototype.resize = function () {
+            var self = this;
+            $('#content-manage-adoption-table').css({ width: self.getWidth() - $('#wrapper-tablemenu').outerWidth() });
+            $('#wrapper-main').css({ height: FoodParent.View.getHeight() - 60 });
+            $('#wrapper-mtrees').css({ height: FoodParent.View.getHeight() - 60 });
+            $('.collapsible-list').css({ height: self.getHeight() - 34 * 2 - 30 });
+        };
+        AdoptionManageView.prototype._mouseClick = function (event) {
+            var self = this;
+            FoodParent.EventHandler.handleMouseClick($(event.currentTarget), self);
+        };
+        AdoptionManageView.prototype.setVisible = function () {
+            var self = this;
+            FoodParent.Setting.getPopWrapperElement().removeClass('hidden');
+        };
+        AdoptionManageView.prototype.setInvisible = function () {
+            var self = this;
+            FoodParent.Setting.getPopWrapperElement().addClass('hidden');
+        };
+        AdoptionManageView.prototype._applyFilter = function (event) {
+            var self = this;
+            var persons = FoodParent.Model.getPersons();
+            setTimeout(function () {
+                // Filtering food type.
+                if (event != undefined) {
+                    if ($(event.target).find('input').prop('name') == 'authsall') {
+                        if ($(event.target).find('input').prop('checked') == true) {
+                            $('.filter-auth').addClass('active');
+                            $('.filter-auth input').prop({ 'checked': 'checked' });
+                        }
+                        else {
+                            $('.filter-auth').removeClass('active');
+                            $('.filter-auth input').prop({ 'checked': '' });
+                        }
+                    }
+                }
+                // Apply auth filtering
+                var authIds = new Array();
+                $.each(self.$('.filter-auth input'), function (index, item) {
+                    if ($(item).prop('checked') == true) {
+                        authIds.push(Math.floor($(item).prop('name')));
+                    }
+                });
+                persons = persons.filterByAuthIds(authIds);
+                // Filtering adoption status.
+                if (event != undefined) {
+                    if ($(event.target).find('input').prop('name') == 'adoptsall') {
+                        if ($(event.target).find('input').prop('checked') == true) {
+                            $('.filter-adopt').addClass('active');
+                            $('.filter-adopt input').prop({ 'checked': 'checked' });
+                        }
+                        else {
+                            $('.filter-adopt').removeClass('active');
+                            $('.filter-adopt input').prop({ 'checked': '' });
+                        }
+                    }
+                }
+                // Apply adopt filtering
+                var adoptIds = new Array();
+                $.each(self.$('.filter-adopt input'), function (index, item) {
+                    console.log($(item).prop('checked'));
+                    if ($(item).prop('checked') == true) {
+                        adoptIds.push(Math.floor($(item).prop('name')));
+                    }
+                });
+                persons = persons.filterByAdoptStatusForTree(adoptIds, self._tree.getId());
+                // update markers
+                self.renderPersonsList(persons);
+            }, 1);
+        };
+        AdoptionManageView.TAG = "AdoptionManageView - ";
+        return AdoptionManageView;
+    })(PopupView);
+    FoodParent.AdoptionManageView = AdoptionManageView;
 })(FoodParent || (FoodParent = {}));
 
 var __extends = (this && this.__extends) || function (d, b) {
@@ -41309,7 +41741,7 @@ var FoodParent;
                     emptyText: FoodParent.Setting.getNoDataText(),
                 });
                 grid.render();
-                //grid.sort("name", "ascending");
+                grid.sort("id", "ascending");
                 self.$(".list-tree").html(grid.el);
             };
             this._addNewTree = function () {
@@ -41416,7 +41848,7 @@ var FoodParent;
                 }
                 // Apply food filtering
                 var foodIds = new Array();
-                $.each($('.filter-food input'), function (index, item) {
+                $.each(self.$('.filter-food input'), function (index, item) {
                     if ($(item).prop('checked') == true) {
                         foodIds.push(Math.floor($(item).prop('name')));
                     }
@@ -41437,7 +41869,7 @@ var FoodParent;
                 }
                 // Apply adopt filtering
                 var adoptIds = new Array();
-                $.each($('.filter-adopt input'), function (index, item) {
+                $.each(self.$('.filter-adopt input'), function (index, item) {
                     if ($(item).prop('checked') == true) {
                         adoptIds.push(Math.floor($(item).prop('name')));
                     }
@@ -41900,7 +42332,12 @@ var FoodParent;
         };
         ManageTreesMapView.prototype._mouseClick = function (event) {
             var self = this;
-            FoodParent.EventHandler.handleMouseClick($(event.currentTarget), self, { marker: self._selectedMarker });
+            if (self._selectedMarker != undefined) {
+                FoodParent.EventHandler.handleMouseClick($(event.currentTarget), self, { marker: self._selectedMarker, tree: self._selectedMarker.options.id });
+            }
+            else {
+                FoodParent.EventHandler.handleMouseClick($(event.currentTarget), self, { marker: self._selectedMarker });
+            }
         };
         ManageTreesMapView.prototype._openCollapsible = function (event) {
             var self = this;
@@ -41924,7 +42361,7 @@ var FoodParent;
                 }
                 // Apply food filtering
                 var foodIds = new Array();
-                $.each($('.filter-food input'), function (index, item) {
+                $.each(self.$('.filter-food input'), function (index, item) {
                     if ($(item).prop('checked') == true) {
                         foodIds.push(Math.floor($(item).prop('name')));
                     }
@@ -41943,7 +42380,7 @@ var FoodParent;
                 }
                 // Apply adopt filtering
                 var adoptIds = new Array();
-                $.each($('.filter-adopt input'), function (index, item) {
+                $.each(self.$('.filter-adopt input'), function (index, item) {
                     if ($(item).prop('checked') == true) {
                         adoptIds.push(Math.floor($(item).prop('name')));
                     }
@@ -42279,7 +42716,7 @@ var FoodParent;
                     emptyText: FoodParent.Setting.getNoDataText(),
                 });
                 grid.render();
-                //grid.sort("name", "ascending");
+                grid.sort("name", "ascending");
                 self.$(".list-people").html(grid.el);
             };
             this._addNewPerson = function () {
@@ -42368,7 +42805,7 @@ var FoodParent;
                 }
                 // Apply auth filtering
                 var authIds = new Array();
-                $.each($('.filter-auth input'), function (index, item) {
+                $.each(self.$('.filter-auth input'), function (index, item) {
                     if ($(item).prop('checked') == true) {
                         authIds.push(Math.floor($(item).prop('name')));
                     }
@@ -42389,7 +42826,7 @@ var FoodParent;
                 }
                 // Apply adopt filtering
                 var adoptIds = new Array();
-                $.each($('.filter-adopt input'), function (index, item) {
+                $.each(self.$('.filter-adopt input'), function (index, item) {
                     if ($(item).prop('checked') == true) {
                         adoptIds.push(Math.floor($(item).prop('name')));
                     }
@@ -42843,6 +43280,13 @@ var FoodParent;
                 }
             });
             return result;
+        };
+        Adopts.prototype.checkAdoption = function (treeId, parentId) {
+            var self = this;
+            if (self.findWhere({ tree: treeId, parent: parentId })) {
+                return true;
+            }
+            return false;
         };
         return Adopts;
     })(Backbone.Collection);
@@ -43595,6 +44039,28 @@ var FoodParent;
                 }
                 if ($.inArray(1, idArray) > -1) {
                     if (person.get('trees').length >= 1) {
+                        if (persons.where({ id: person.getId() }) != undefined) {
+                            persons.add(person);
+                        }
+                    }
+                }
+            });
+            return persons;
+        };
+        Persons.prototype.filterByAdoptStatusForTree = function (idArray, treeId) {
+            var self = this;
+            var persons = new Persons();
+            $.each(self.models, function (index, person) {
+                if ($.inArray(0, idArray) > -1) {
+                    console.log($.inArray(treeId, person.get('trees')));
+                    if (person.get('trees').length == 0 || $.inArray(treeId, person.get('trees')) < 0) {
+                        if (persons.where({ id: person.getId() }) != undefined) {
+                            persons.add(person);
+                        }
+                    }
+                }
+                if ($.inArray(1, idArray) > -1) {
+                    if ($.inArray(treeId, person.get('trees')) > -1) {
                         if (persons.where({ id: person.getId() }) != undefined) {
                             persons.add(person);
                         }

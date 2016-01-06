@@ -71,7 +71,7 @@ var FoodParent;
                     emptyText: FoodParent.Setting.getNoDataText(),
                 });
                 grid.render();
-                //grid.sort("name", "ascending");
+                grid.sort("id", "ascending");
                 self.$(".list-tree").html(grid.el);
             };
             this._addNewTree = function () {
@@ -178,7 +178,7 @@ var FoodParent;
                 }
                 // Apply food filtering
                 var foodIds = new Array();
-                $.each($('.filter-food input'), function (index, item) {
+                $.each(self.$('.filter-food input'), function (index, item) {
                     if ($(item).prop('checked') == true) {
                         foodIds.push(Math.floor($(item).prop('name')));
                     }
@@ -199,7 +199,7 @@ var FoodParent;
                 }
                 // Apply adopt filtering
                 var adoptIds = new Array();
-                $.each($('.filter-adopt input'), function (index, item) {
+                $.each(self.$('.filter-adopt input'), function (index, item) {
                     if ($(item).prop('checked') == true) {
                         adoptIds.push(Math.floor($(item).prop('name')));
                     }
@@ -662,7 +662,12 @@ var FoodParent;
         };
         ManageTreesMapView.prototype._mouseClick = function (event) {
             var self = this;
-            FoodParent.EventHandler.handleMouseClick($(event.currentTarget), self, { marker: self._selectedMarker });
+            if (self._selectedMarker != undefined) {
+                FoodParent.EventHandler.handleMouseClick($(event.currentTarget), self, { marker: self._selectedMarker, tree: self._selectedMarker.options.id });
+            }
+            else {
+                FoodParent.EventHandler.handleMouseClick($(event.currentTarget), self, { marker: self._selectedMarker });
+            }
         };
         ManageTreesMapView.prototype._openCollapsible = function (event) {
             var self = this;
@@ -686,7 +691,7 @@ var FoodParent;
                 }
                 // Apply food filtering
                 var foodIds = new Array();
-                $.each($('.filter-food input'), function (index, item) {
+                $.each(self.$('.filter-food input'), function (index, item) {
                     if ($(item).prop('checked') == true) {
                         foodIds.push(Math.floor($(item).prop('name')));
                     }
@@ -705,7 +710,7 @@ var FoodParent;
                 }
                 // Apply adopt filtering
                 var adoptIds = new Array();
-                $.each($('.filter-adopt input'), function (index, item) {
+                $.each(self.$('.filter-adopt input'), function (index, item) {
                     if ($(item).prop('checked') == true) {
                         adoptIds.push(Math.floor($(item).prop('name')));
                     }

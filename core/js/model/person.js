@@ -140,6 +140,28 @@ var FoodParent;
             });
             return persons;
         };
+        Persons.prototype.filterByAdoptStatusForTree = function (idArray, treeId) {
+            var self = this;
+            var persons = new Persons();
+            $.each(self.models, function (index, person) {
+                if ($.inArray(0, idArray) > -1) {
+                    console.log($.inArray(treeId, person.get('trees')));
+                    if (person.get('trees').length == 0 || $.inArray(treeId, person.get('trees')) < 0) {
+                        if (persons.where({ id: person.getId() }) != undefined) {
+                            persons.add(person);
+                        }
+                    }
+                }
+                if ($.inArray(1, idArray) > -1) {
+                    if ($.inArray(treeId, person.get('trees')) > -1) {
+                        if (persons.where({ id: person.getId() }) != undefined) {
+                            persons.add(person);
+                        }
+                    }
+                }
+            });
+            return persons;
+        };
         Persons.prototype.updateTrees = function () {
             var self = this;
             $.each(self.models, function (index, model) {

@@ -188,7 +188,7 @@
             template +=     '<div class="marker-control-item marker-control-lock">';
             template +=         '<i class="fa fa-lock fa-2x"></i>';
             template +=     '</div>';
-            template +=     '<div class="marker-control-item marker-control-info">';
+            template +=     '<div class="marker-control-item marker-control-adoption">';
             template +=         '<i class="fa fa-user fa-2x"></i>';
             template +=     '</div>';
             template +=     '<div class="marker-control-item marker-control-info">';
@@ -377,6 +377,58 @@
             return template;
         }
 
+        public static getAdoptionFilterListTemplate(): string {
+            var template = '';
+            template += '<div data-toggle="buttons">';
+            template += '<label class="btn filter-checkbox active list-hiearchy1">';
+            template += '<input type="checkbox" name="adoptsall" checked>';
+            template += '<i class="fa fa-square-o fa-1x"></i>';
+            template += '<i class="fa fa-check-square-o fa-1x"></i>';
+            template += ' Parenting Status (show all / hide)</label>';
+            template += '</div>';
+
+            template += '<div data-toggle="buttons">';
+            template += '<label class="btn filter-checkbox filter-adopt active list-hiearchy2">';
+            template += '<input type="checkbox" name="1" checked>';
+            template += '<i class="fa fa-square-o fa-1x"></i>';
+            template += '<i class="fa fa-check-square-o fa-1x"></i>';
+            template += ' Parenting</label>';
+            template += '</div>';
+
+            template += '<div data-toggle="buttons">';
+            template += '<label class="btn filter-checkbox filter-adopt active list-hiearchy2">';
+            template += '<input type="checkbox" name="0" checked>';
+            template += '<i class="fa fa-square-o fa-1x"></i>';
+            template += '<i class="fa fa-check-square-o fa-1x"></i>';
+            template += ' Non-Parenting</label>';
+            template += '</div>';
+
+            template += '<hr />';
+
+            template += '<div data-toggle="buttons">';
+            template += '<label class="btn filter-checkbox active list-hiearchy1">';
+            template += '<input type="checkbox" name="authsall" checked>';
+            template += '<i class="fa fa-square-o fa-1x"></i>';
+            template += '<i class="fa fa-check-square-o fa-1x"></i>';
+            template += ' Auth Type (show all / hide)</label>';
+            template += '</div>';
+
+            template += '<% _.each(auths.models, function (auth) { %>';
+
+            template += '<div data-toggle="buttons">';
+            template += '<label class="btn filter-checkbox filter-auth active list-hiearchy2">';
+            template += '<input type="checkbox" name="<%= auth.getId() %>" checked>';
+            template += '<i class="fa fa-square-o fa-1x"></i>';
+            template += '<i class="fa fa-check-square-o fa-1x"></i>';
+            template += ' <%= auth.getName() %></label>';
+            template += '</div>';
+
+            template += '<% }); %>';
+
+
+            return template;
+        }
+
         public static getAdoptTreeCellTemplate(): string {
             //<%= address %>
             var template = "";
@@ -399,6 +451,44 @@
             template += '<% }); %>';
             //template += '<div class="cell-button cell-edit"><i class="fa fa-edit fa-1x"></i></div>';
             //template += '</div>';
+            return template;
+        }
+
+
+        public static getManageAdoptionViewTemplate(): string {
+            var template = '';
+            template += '<div id="wrapper-manage-adoption">';
+            template += '<div class="outer-frame">';
+            template += '<div class="inner-frame">';
+            
+
+            template +=     '<div id="wrapper-manage-adoption-table">';
+            template +=         '<div id="wrapper-tablemenu">';
+            template +=             '<div class="button-outer-frame2 button3"><div class="button-inner-frame2 collapsible-button" data-target="#filter-list">Filter List</div></div>';
+            template +=             '<div id="filter-list" class="collapsible-list">';
+            template +=             '</div>';
+
+            template +=             '<div class="button-outer-frame2 button3"><div class="button-inner-frame2 collapsible-button" data-target="#forage-list">Foragable List</div></div>';
+            template +=             '<div id="forage-list" class="collapsible-list hidden">';
+            template +=             '</div>';
+            template +=         '</div>';
+
+            template +=         '<div id="content-manage-adoption-table">';
+            template +=             '<div class="view-title">Tree Adoption</div>';
+            template +=             '<div class="view-description">Click <i class="fa fa-plus-square fa-1x"></i> icon to assign a new parent for <strong><i><%= treename %></i></strong>.</div>';
+            template +=             '<div class="list-adoption" data-target="<%= treeId %>">';
+            template +=             '</div>';
+            template +=         '</div>';
+            template +=     '</div>';
+
+            template +=     '<div class="top-right-button button-close">';
+            template +=         '<i class="fa fa-remove fa-2x"></i>';
+            template +=     '</div>';
+
+
+            template += '</div>';
+            template += '</div>';
+            template += '</div>';
             return template;
         }
     }

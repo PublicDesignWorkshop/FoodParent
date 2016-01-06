@@ -39,6 +39,7 @@
       "core/js/view/gridformat/gridformat.js",
       "core/js/view/gridformat/treegridformat.js",
       "core/js/view/gridformat/persongridformat.js",
+      "core/js/view/gridformat/adoptiongridformat.js",
       // View
       "core/js/view/template.js",
       "core/js/view/baseview.js",

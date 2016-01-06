@@ -69,7 +69,7 @@
         public execute(): any {
             var self: RenderManageTreesViewCommand = this;
             if (View.getManageTreesView()) {
-
+                
             } else {
                 var view: ManageTreesView = ManageTreesViewFractory.create(self._el, self._viewMode, self._id).render();
                 View.addChild(view);
@@ -93,7 +93,7 @@
         }
         public execute(): any {
             var self: RenderManagePeopleViewCommand = this;
-            if (View.getManageTreesView()) {
+            if (View.getManagePeopleView()) {
 
             } else {
                 var view: ManagePeopleView = ManagePeopleViewFractory.create(self._el, self._viewMode, self._id).render();
@@ -121,6 +121,25 @@
             var view: AlertView = ConfirmViewFractory.create(self._el, self._message, self._command).render();
             View.setPopupView(view);
             View.setViewStatus(VIEW_STATUS.CONFIRM);
+        }
+        public undo(): any {
+
+        }
+    }
+
+    export class RenderManageAdoptionViewCommand implements Command {
+        private _el: JQuery;
+        private _tree: number;
+        constructor(args?: any) {
+            var self: RenderManageAdoptionViewCommand = this;
+            self._el = args.el;
+            self._tree = args.tree;
+        }
+        public execute(): any {
+            var self: RenderManageAdoptionViewCommand = this;
+            var view: AlertView = AdoptionManageViewFactory.create(self._el, self._tree).render();
+            View.setPopupView(view);
+            View.setViewStatus(VIEW_STATUS.MANAGE_ADOPTION);
         }
         public undo(): any {
 
