@@ -45,12 +45,7 @@
                 data = {
 
                 }
-            } else if (args.viewStatus == VIEW_STATUS.MANAGE_TREES) {
-                template = _.template(Template.getNavViewManageTemplate());
-                data = {
-
-                }
-            } else if (args.viewStatus == VIEW_STATUS.MANAGE_PEOPLE) {
+            } else if (args.viewStatus == VIEW_STATUS.MANAGE_TREES || args.viewStatus == VIEW_STATUS.MANAGE_PEOPLE || args.viewStatus == VIEW_STATUS.DETAIL_TREE) {
                 template = _.template(Template.getNavViewManageTemplate());
                 data = {
 
@@ -64,10 +59,7 @@
             if (args.viewStatus == VIEW_STATUS.HOME) {
                 self.urenderNavItems();
                 self.$('#background-nav-left').css({ left: '-69%' });
-            } else if (args.viewStatus == VIEW_STATUS.MANAGE_TREES) {
-                self.renderNavManageItems();
-                self.$('#background-nav-left').css({ left: '-40%' });
-            } else if (args.viewStatus == VIEW_STATUS.MANAGE_PEOPLE) {
+            } else if (args.viewStatus == VIEW_STATUS.MANAGE_TREES || args.viewStatus == VIEW_STATUS.MANAGE_PEOPLE || args.viewStatus == VIEW_STATUS.DETAIL_TREE) {
                 self.renderNavManageItems();
                 self.$('#background-nav-left').css({ left: '-40%' });
             }
@@ -86,7 +78,7 @@
             if (args.viewStatus == VIEW_STATUS.HOME) {
                 self.urenderNavItems();
                 self.$('#background-nav-left').animate({ left: '-69%' }, Setting.getNavAnimDuration());
-            } else if (args.viewStatus == VIEW_STATUS.MANAGE_TREES) {
+            } else if (args.viewStatus == VIEW_STATUS.MANAGE_TREES || args.viewStatus == VIEW_STATUS.MANAGE_PEOPLE || args.viewStatus == VIEW_STATUS.DETAIL_TREE) {
                 self.renderNavManageItems();
                 self.$('#background-nav-left').animate({ left: '-40%' }, Setting.getNavAnimDuration());
             }
@@ -123,6 +115,7 @@
             var self: NavView = this;
             switch (viewStatus) {
                 case VIEW_STATUS.MANAGE_TREES:
+                case VIEW_STATUS.DETAIL_TREE:
                     self.$('.item-nav').removeClass('active');
                     self.$('.trees').addClass('active');
                     break;

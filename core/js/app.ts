@@ -1,4 +1,5 @@
 ﻿declare var Pace;
+declare var rating;
 
 var htmlEncode = function (str) {
     str = str.replace(/&/g, "&amp;");

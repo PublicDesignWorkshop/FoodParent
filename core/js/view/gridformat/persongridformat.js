@@ -324,7 +324,7 @@ var PersonAdoptionCell = Backgrid.Cell.extend({
     }
 });
 var PersonDetailCell = Backgrid.Cell.extend({
-    template: _.template('<div class="marker-control-item"><i class="fa fa-sticky-note-o fa-2x"></i></div>'),
+    template: _.template('<div class="marker-control-item"><i class="fa fa-arrow-circle-right fa-2x"></i></div>'),
     events: {
         "click": "_showDetail"
     },

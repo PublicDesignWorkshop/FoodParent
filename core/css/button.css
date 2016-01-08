@@ -38,6 +38,21 @@
         background-color: #84a757;
     }
 
+    .button2 .button-inner-frame2 {
+        color: #5e4e51;
+        border: 2px solid #5e4e51;
+    }
+
+    .button2 .button-inner-frame2:hover {
+        color: rgba(255, 255, 255, 0.95);
+        border: 2px solid rgba(255, 255, 255, 0.85);
+    }
+
+    .button2 .button-inner-frame2:active {
+        text-shadow: 1px 1px 1px #403537;
+        box-shadow: inset 0 0 1px 1px #403537;
+    }
+
     /* Button Style 2 */
 
     .button-outer-frame2 {
@@ -75,5 +90,36 @@
 
     .btn input, .btn i {
         pointer-events: none;
+    }
+
+    .button-description {
+        color: #eeeeee;
+        font-size: small;
+        padding: 2px;
+    }
+
+    .button4 {
+        background-color: #84a757;
+    }
+
+    .button4 .button-inner-frame2 {
+        font-size: medium;
+        color: #5e4e51;
+        border: 2px solid #5e4e51;
+    }
+
+    .button4 .button-inner-frame2:hover {
+        color: rgba(255, 255, 255, 0.95);
+        border: 2px solid rgba(255, 255, 255, 0.85);
+    }
+
+    .button4 .button-inner-frame2:active {
+        text-shadow: 1px 1px 1px #403537;
+        box-shadow: inset 0 0 1px 1px #403537;
+    }
+
+    .tree-info-name .btn {
+        font-size: x-large;
+        font-weight: 700;
     }
 }

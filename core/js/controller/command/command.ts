@@ -106,6 +106,31 @@
         }
     }
 
+    export class RenderDetailTreeViewCommand implements Command {
+        private _el: JQuery;
+        private _viewMode: VIEW_MODE;
+        private _id: number;
+        constructor(args?: any) {
+            var self: RenderDetailTreeViewCommand = this;
+            self._el = args.el;
+            self._viewMode = args.viewMode;
+            self._id = args.id;
+        }
+        public execute(): any {
+            var self: RenderDetailTreeViewCommand = this;
+            if (View.getDetailTreeView()) {
+
+            } else {
+                var view: DetailTreeView = DetailTreeViewFractory.create(self._el, self._viewMode, self._id).render();
+                View.addChild(view);
+                View.setDetailTreeView(view);
+            }
+        }
+        public undo(): any {
+
+        }
+    }
+
     export class RenderConfirmViewCommand implements Command {
         private _el: JQuery;
         private _message: string;
@@ -140,6 +165,25 @@
             var view: AlertView = AdoptionManageViewFactory.create(self._el, self._tree).render();
             View.setPopupView(view);
             View.setViewStatus(VIEW_STATUS.MANAGE_ADOPTION);
+        }
+        public undo(): any {
+
+        }
+    }
+
+    export class RenderImageNoteViewCommand implements Command {
+        private _el: JQuery;
+        private _note: Note;
+        constructor(args?: any) {
+            var self: RenderImageNoteViewCommand = this;
+            self._el = args.el;
+            self._note = args.note;
+        }
+        public execute(): any {
+            var self: RenderImageNoteViewCommand = this;
+            var view: AlertView = ImageNoteViewFactory.create(self._el, self._note).render();
+            View.setPopupView(view);
+            View.setViewStatus(VIEW_STATUS.IMAGENOTE_TREE);
         }
         public undo(): any {
 

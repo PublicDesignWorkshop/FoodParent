@@ -102,6 +102,28 @@ var FoodParent;
         return RenderManagePeopleViewCommand;
     })();
     FoodParent.RenderManagePeopleViewCommand = RenderManagePeopleViewCommand;
+    var RenderDetailTreeViewCommand = (function () {
+        function RenderDetailTreeViewCommand(args) {
+            var self = this;
+            self._el = args.el;
+            self._viewMode = args.viewMode;
+            self._id = args.id;
+        }
+        RenderDetailTreeViewCommand.prototype.execute = function () {
+            var self = this;
+            if (FoodParent.View.getDetailTreeView()) {
+            }
+            else {
+                var view = FoodParent.DetailTreeViewFractory.create(self._el, self._viewMode, self._id).render();
+                FoodParent.View.addChild(view);
+                FoodParent.View.setDetailTreeView(view);
+            }
+        };
+        RenderDetailTreeViewCommand.prototype.undo = function () {
+        };
+        return RenderDetailTreeViewCommand;
+    })();
+    FoodParent.RenderDetailTreeViewCommand = RenderDetailTreeViewCommand;
     var RenderConfirmViewCommand = (function () {
         function RenderConfirmViewCommand(args) {
             var self = this;
@@ -137,6 +159,23 @@ var FoodParent;
         return RenderManageAdoptionViewCommand;
     })();
     FoodParent.RenderManageAdoptionViewCommand = RenderManageAdoptionViewCommand;
+    var RenderImageNoteViewCommand = (function () {
+        function RenderImageNoteViewCommand(args) {
+            var self = this;
+            self._el = args.el;
+            self._note = args.note;
+        }
+        RenderImageNoteViewCommand.prototype.execute = function () {
+            var self = this;
+            var view = FoodParent.ImageNoteViewFactory.create(self._el, self._note).render();
+            FoodParent.View.setPopupView(view);
+            FoodParent.View.setViewStatus(FoodParent.VIEW_STATUS.IMAGENOTE_TREE);
+        };
+        RenderImageNoteViewCommand.prototype.undo = function () {
+        };
+        return RenderImageNoteViewCommand;
+    })();
+    FoodParent.RenderImageNoteViewCommand = RenderImageNoteViewCommand;
     var RenderAlertViewCommand = (function () {
         function RenderAlertViewCommand(args) {
             var self = this;

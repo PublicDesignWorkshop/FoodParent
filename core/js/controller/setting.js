@@ -31,6 +31,9 @@ var FoodParent;
         Setting.getMarkerShadowPath = function () {
             return Setting.getCoreImageDir() + "marker-shadow.png";
         };
+        Setting.getBlankImagePath = function () {
+            return Setting.getCoreImageDir() + "picture-blank.jpg";
+        };
         Setting.getNavWrapperElement = function () {
             return $('#wrapper-nav');
         };
@@ -69,11 +72,20 @@ var FoodParent;
         Setting.getMapCenterZoomLevel = function () {
             return 16;
         };
+        Setting.getDateForDatePicker = function () {
+            return "YYYY/MM/DD";
+        };
         Setting.getDateFormat = function () {
-            return "DD MMM";
+            return "DD MMM YYYY";
+        };
+        Setting.getDateFormat2 = function () {
+            return "Do MMM YYYY";
         };
         Setting.getDateTimeFormat = function () {
             return "YYYY-MM-DD HH:mm:ss";
+        };
+        Setting.getDateHourFormat = function () {
+            return "ha ddd Do MMM YYYY";
         };
         Setting.getDevContact = function () {
             return "captainwhale52@gmail.com";
@@ -84,8 +96,14 @@ var FoodParent;
         Setting.getNumRecentActivitiesShown = function () {
             return 5;
         };
+        Setting.getLargeNumRecentActivitiesShown = function () {
+            return 10;
+        };
         Setting.getNoDataText = function () {
             return "No Data";
+        };
+        Setting.getMaxRating = function () {
+            return 10;
         };
         Setting._instance = new Setting();
         return Setting;

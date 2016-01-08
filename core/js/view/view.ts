@@ -9,6 +9,7 @@
         private _messageView: MessageView;
         private _manageTreesView: ManageTreesView;
         private _managePeopleView: ManagePeopleView;
+        private _detailTreeView: DetailTreeView;
 
         constructor(options?: Backbone.ViewOptions<Backbone.Model>) {
             super(options);
@@ -74,6 +75,7 @@
             }
             View._instance._manageTreesView = null;
             View._instance._managePeopleView = null;
+            View._instance._detailTreeView = null;
         }
 
         public static setMessageView(view: MessageView): void {
@@ -105,6 +107,12 @@
         }
         public static getManagePeopleView(): ManagePeopleView {
             return View._instance._managePeopleView;
+        }
+        public static setDetailTreeView(view: DetailTreeView): void {
+            View._instance._detailTreeView = view;
+        }
+        public static getDetailTreeView(): DetailTreeView {
+            return View._instance._detailTreeView;
         }
         public static removeNavView(): void {
             var self: View = View._instance;

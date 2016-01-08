@@ -297,7 +297,7 @@ var TreeMapViewCell = Backgrid.Cell.extend({
 });
 
 var ManageAdoptionViewCell = Backgrid.Cell.extend({
-    template: _.template('<div class="marker-control-item manage-adoption-item" data-target="<%= treeid %>"><i class="fa fa-user fa-2x"></i></div>'),
+    template: _.template('<div class="marker-control-item manage-adoption-item" data-target="<%= treeid %>"><i class="fa fa-user-plus fa-2x"></i></div>'),
     events: {
         "click .marker-control-item": "_manageAdoption"
     },
@@ -316,15 +316,19 @@ var ManageAdoptionViewCell = Backgrid.Cell.extend({
 });
 
 var TreeDetailCell = Backgrid.Cell.extend({
-    template: _.template('<div class="marker-control-item"><i class="fa fa-sticky-note-o fa-2x"></i></div>'),
+    template: _.template('<div class="marker-control-item tree-detail" data-target="<%= treeid %>"><i class="fa fa-arrow-circle-right fa-2x"></i></div>'),
     events: {
-        "click": "_showDetail"
+        "click .marker-control-item": "_showDetail"
     },
-    _showDetail: function (e) {
+    _showDetail: function (event) {
+        var tree: number = parseInt($(event.target).attr('data-target'));
+        FoodParent.EventHandler.handleMouseClick($(event.currentTarget), this, { tree: tree });
         //FoodParent.Router.getInstance().navigate("tree/" + this.model.getId(), { trigger: true });
     },
     render: function () {
-        $(this.el).html(this.template());
+        $(this.el).html(this.template({
+            treeid: this.model.getId(),
+        }));
         this.delegateEvents();
         return this;
     }

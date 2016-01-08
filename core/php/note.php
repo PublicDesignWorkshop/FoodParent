@@ -24,7 +24,7 @@
             read();
             break;
         case 'PUT':
-            //update();
+            update();
             break;
         case 'DELETE':
             delete();
@@ -51,6 +51,48 @@
             $result = $stmt->fetchAll(PDO::FETCH_OBJ);
             $pdo = null;
             echo json_encode($result);
+        } catch(PDOException $e) {
+            echo '{"error":{"text":'. $e->getMessage() .'}}';
+        }
+    }
+    
+    function update() {
+        $data = json_decode(file_get_contents('php://input'));
+        $params = null;
+        if ($data != null) {
+            $params = array(
+                "id" => $data->{'id'},
+                "type" => $data->{'type'},
+                "tree" => $data->{'tree'},
+                "person" => $data->{'person'},
+                "comment" => $data->{'comment'},
+                "picture" => $data->{'picture'},
+                "rate" => $data->{'rate'},
+                "date" => $data->{'date'},
+            );
+        }
+        $sql = "UPDATE `note` SET `type` = :type, `tree` = :tree, `person` = :person, `comment` = :comment, `picture` = :picture, `rate` = :rate, `date` = :date WHERE (`id` = :id)";
+        
+        try {
+            $pdo = getConnection();
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute($params);
+            
+            $sql = "SELECT * FROM `note` WHERE (`id` = :id)";
+            $params = array(
+                "id" => $data->{'id'},
+            );
+            
+            try {
+                $stmt = $pdo->prepare($sql);
+                $stmt->execute($params);
+                $result = $stmt->fetch();
+                $pdo = null;
+                echo json_encode($result);
+            } catch(PDOException $e) {
+                echo '{"error":{"text":'. $e->getMessage() .'}}';
+            }
+                
         } catch(PDOException $e) {
             echo '{"error":{"text":'. $e->getMessage() .'}}';
         }

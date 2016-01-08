@@ -19,6 +19,8 @@ var FoodParent;
         DATA_MODE[DATA_MODE["UPDATE_CONTACT"] = 10] = "UPDATE_CONTACT";
         DATA_MODE[DATA_MODE["UPDATE_NEIGHBORHOOD"] = 11] = "UPDATE_NEIGHBORHOOD";
         DATA_MODE[DATA_MODE["UPDATE_AUTH"] = 12] = "UPDATE_AUTH";
+        DATA_MODE[DATA_MODE["UPDATE_COMMENT"] = 13] = "UPDATE_COMMENT";
+        DATA_MODE[DATA_MODE["UPDATE_RATING"] = 14] = "UPDATE_RATING";
     })(FoodParent.DATA_MODE || (FoodParent.DATA_MODE = {}));
     var DATA_MODE = FoodParent.DATA_MODE;
     (function (VIEW_STATUS) {
@@ -31,6 +33,8 @@ var FoodParent;
         VIEW_STATUS[VIEW_STATUS["CONFIRM"] = 6] = "CONFIRM";
         VIEW_STATUS[VIEW_STATUS["MANAGE_PEOPLE"] = 7] = "MANAGE_PEOPLE";
         VIEW_STATUS[VIEW_STATUS["MANAGE_ADOPTION"] = 8] = "MANAGE_ADOPTION";
+        VIEW_STATUS[VIEW_STATUS["DETAIL_TREE"] = 9] = "DETAIL_TREE";
+        VIEW_STATUS[VIEW_STATUS["IMAGENOTE_TREE"] = 10] = "IMAGENOTE_TREE";
     })(FoodParent.VIEW_STATUS || (FoodParent.VIEW_STATUS = {}));
     var VIEW_STATUS = FoodParent.VIEW_STATUS;
     (function (VIEW_MODE) {
@@ -83,6 +87,10 @@ var FoodParent;
             else if (viewStatus == VIEW_STATUS.MANAGE_PEOPLE) {
                 new FoodParent.MovePaceBarToUnderNav().execute();
                 new FoodParent.RenderManagePeopleViewCommand({ el: FoodParent.Setting.getMainWrapperElement(), viewMode: option.viewMode, id: option.id }).execute();
+            }
+            else if (viewStatus == VIEW_STATUS.DETAIL_TREE) {
+                new FoodParent.MovePaceBarToUnderNav().execute();
+                new FoodParent.RenderDetailTreeViewCommand({ el: FoodParent.Setting.getMainWrapperElement(), viewMode: option.viewMode, id: option.id }).execute();
             }
             FoodParent.View.getNavView().setActiveNavItem(viewStatus);
             FoodParent.View.setViewStatus(viewStatus);
@@ -150,6 +158,7 @@ var FoodParent;
                         new FoodParent.RenderManageAdoptionViewCommand({ el: FoodParent.Setting.getPopWrapperElement(), tree: options.tree }).execute();
                     }
                     else if (el.hasClass('marker-control-info')) {
+                        new FoodParent.NavigateCommand({ hash: 'mtree', viewMode: VIEW_MODE.GRAPHIC, id: options.tree }).execute();
                     }
                     else if (el.hasClass('marker-control-delete')) {
                         var tree = FoodParent.Model.getTrees().findWhere({ id: options.marker.options.id });
@@ -167,10 +176,26 @@ var FoodParent;
                     else if (el.hasClass('manage-adoption-item')) {
                         new FoodParent.RenderManageAdoptionViewCommand({ el: FoodParent.Setting.getPopWrapperElement(), tree: options.tree }).execute();
                     }
+                    else if (el.hasClass('tree-detail')) {
+                        new FoodParent.NavigateCommand({ hash: 'mtree', viewMode: VIEW_MODE.GRAPHIC, id: options.tree }).execute();
+                    }
                     break;
                 case VIEW_STATUS.MANAGE_ADOPTION:
                     if (el.hasClass('button-close')) {
                         new FoodParent.RemoveAlertViewCommand({ delay: FoodParent.Setting.getRemovePopupDuration() }).execute();
+                    }
+                    break;
+                case VIEW_STATUS.DETAIL_TREE:
+                    if (el.hasClass('content-chart')) {
+                        new FoodParent.RenderImageNoteViewCommand({ el: FoodParent.Setting.getPopWrapperElement(), note: options.note }).execute();
+                    }
+                    break;
+                case VIEW_STATUS.IMAGENOTE_TREE:
+                    if (el.hasClass('button-close')) {
+                        new FoodParent.RemoveAlertViewCommand({ delay: FoodParent.Setting.getRemovePopupDuration() }).execute();
+                        if (FoodParent.View.getDetailTreeView()) {
+                            FoodParent.View.getDetailTreeView().refreshTreeInfo();
+                        }
                     }
                     break;
             }
@@ -226,6 +251,21 @@ var FoodParent;
                     break;
                 case DATA_MODE.CREATE:
                     self._lastCommand = new FoodParent.CreatePerson({ person: person }, success, error);
+                    break;
+            }
+            if (self._lastCommand != undefined) {
+                self._lastCommand.execute();
+            }
+        };
+        EventHandler.handleNoteData = function (note, dataMode, args, success, error, undoSuccess) {
+            var self = EventHandler._instance;
+            self._lastCommand = null;
+            switch (dataMode) {
+                case DATA_MODE.UPDATE_COMMENT:
+                    self._lastCommand = new FoodParent.UpdateNoteComment({ note: note, comment: args.comment }, success, error);
+                    break;
+                case DATA_MODE.UPDATE_RATING:
+                    self._lastCommand = new FoodParent.UpdateNoteRating({ note: note, rate: args.rate }, success, error);
                     break;
             }
             if (self._lastCommand != undefined) {

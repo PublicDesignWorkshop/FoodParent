@@ -1,6 +1,25 @@
 ﻿declare var AdoptionColumn;
 
 module FoodParent {
+    export class ImageNoteViewFactory {
+        private static _instance: ImageNoteViewFactory = new ImageNoteViewFactory();
+        private baseUrl: string;
+        constructor(args?: any) {
+            if (ImageNoteViewFactory._instance) {
+                throw new Error("Error: Instantiation failed: Use ImageNoteViewFactory.getInstance() instead of new.");
+            }
+            ImageNoteViewFactory._instance = this;
+        }
+        public static getInstance(): ImageNoteViewFactory {
+            return ImageNoteViewFactory._instance;
+        }
+        public static create(el: JQuery, note: Note): ImageNoteView {
+            var view: ImageNoteView = new ImageNoteView({ el: el });
+            view.setNote(note);
+            return view;
+        }
+    }
+
     export class AdoptionManageViewFactory {
         private static _instance: AdoptionManageViewFactory = new AdoptionManageViewFactory();
         private baseUrl: string;
@@ -62,6 +81,181 @@ module FoodParent {
 
     export class PopupView extends BaseView {
 
+    }
+
+    export class ImageNoteView extends PopupView {
+        private static TAG: string = "ImageNoteView - ";
+        private _note: Note;
+        constructor(options?: Backbone.ViewOptions<Backbone.Model>) {
+            super(options);
+            var self: ImageNoteView = this;
+            self.bDebug = true;
+            //$(window).resize(_.debounce(that.customResize, Setting.getInstance().getResizeTimeout()));
+            self.events = <any>{
+                "click .alert-confirm": "_mouseClick",
+                "click .top-right-button": "_mouseClick",
+                "click .prev-note": "_prevNote",
+                "click .next-note": "_nextNote",
+            };
+            self.delegateEvents();
+        }
+        public setNote(note: Note): void {
+            var self: ImageNoteView = this;
+            self._note = note;
+        }
+        public render(args?: any): any {
+            if (this.bRendered) {
+                this.update(args);
+                return;
+            }
+            this.bRendered = true;
+            /////
+            var self: ImageNoteView = this;
+            if (self.bDebug) console.log(ImageNoteView.TAG + "render()");
+            var tree: Tree = Model.getTrees().findWhere({ id: self._note.getTreeId() });
+            var food: Food = Model.getFoods().findWhere({ id: tree.getFoodId() });
+            var template = _.template(Template.getImageNoteViewTemplate());
+            var data = {
+                name: food.getName() + " " + tree.getName(),
+                image: Setting.getBlankImagePath(),
+                value: self._note.getRate(),
+                comment: self._note.getComment(),
+                date: self._note.getFormattedHourTime(),
+            }
+            self.$el.html(template(data));
+            self.setElement(self.$('#wrapper-note'));
+
+            self.$('.wrapper-note-content img').attr('src', self._note.getPicturePath()).load(function () {
+
+            }).error(function () {
+                self.$('.wrapper-note-content img').attr('src', Setting.getBlankImagePath());
+            });
+            self.renderImageNote(self._note);
+            self.setVisible();
+
+            return self;
+        }
+
+        public renderImageNote(note: Note) {
+            var self: ImageNoteView = this;
+            var tree: Tree = Model.getTrees().findWhere({ id: note.getTreeId() });
+            var food: Food = Model.getFoods().findWhere({ id: tree.getFoodId() });
+            self.$('.name').html(food.getName() + " " + tree.getName());
+            self.$('.input-rating').replaceWith('<div class="input-rating"></div>');
+            self.$('.input-rating').html(Math.ceil(note.getRate()).toFixed(2) + " / " + Setting.getMaxRating().toFixed(2));
+
+            self.$('.input-rating-slider').html("");
+            var rate = rating(self.$('.input-rating-slider')[0], note.getRate().toFixed(2), Setting.getMaxRating(), function (rate) {
+                if (Math.ceil(note.getRate()) != rate) {
+                    EventHandler.handleNoteData(self._note, DATA_MODE.UPDATE_RATING, { rate: rate }, function () {
+                        EventHandler.handleDataChange("Rating of <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has changed successfully.", true);
+                        self.renderImageNote(self._note);
+                    }, function () {
+                        EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
+                    });
+                } else {
+                    self.renderImageNote(self._note);
+                }
+            });
+
+            self.$('.input-comment').replaceWith('<div class="input-comment"></div>');
+            self.$('.input-comment').html(note.getComment());
+            self.$('.input-date').html(note.getFormattedHourTime());
+            self.$('.wrapper-note-content img').attr('src', note.getPicturePath()).load(function () {
+            }).error(function () {
+                self.$('.wrapper-note-content img').attr('src', Setting.getBlankImagePath());
+            });
+
+            self.$('.input-comment').on('click', function (event) {
+                console.log($(this).text());
+                //$(this).replaceWith("<input type='text' class='input-comment form-control' value='" + htmlEncode($(this).text()) + "' />");
+                $(this).replaceWith("<textarea rows='5' class='input-comment form-control'>" + htmlEncode($(this).text()) + "</textarea>");
+                //self.$('.input-lat').css({ width: width });
+                self.$('.input-comment').focus();
+                self.$('.input-comment').on('focusout', function (event) {
+                    var comment: string = self.$('.input-comment').val();
+                    if (self._note.getComment().trim() != comment.trim()) {
+                        EventHandler.handleNoteData(self._note, DATA_MODE.UPDATE_COMMENT, { comment: comment }, function () {
+                            EventHandler.handleDataChange("Comment of <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has changed successfully.", true);
+                            self.renderImageNote(self._note);
+                        }, function () {
+                            EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
+                        });
+                    } else {
+                        self.renderImageNote(self._note);
+                    }
+                });
+            });
+        }
+
+        public update(args?: any): any {
+            if (!this.bRendered) {
+                this.render(args);
+                return self;
+            }
+            /////
+            return self;
+        }
+
+        public resize(): any {
+            var self: ImageNoteView = this;
+        }
+
+        private _mouseEnter(event: Event): void {
+            var self: ImageNoteView = this;
+            EventHandler.handleMouseEnter($(event.currentTarget), self);
+        }
+        private _mouseClick(event: Event): void {
+            var self: ImageNoteView = this;
+            EventHandler.handleMouseClick($(event.currentTarget), self);
+        }
+
+        private _prevNote(event: Event): void {
+            var self: ImageNoteView = this;
+            var notes: Notes = new Notes(Model.getNotes().where({ tree: self._note.getTreeId(), type: NoteType.IMAGE }));
+            notes.sortByAscendingDate();
+            var bFound: boolean = false;
+            $.each(notes.models, function (index: number, note: Note) {
+                if (self._note.getId() == note.getId() && !bFound) {
+                    bFound = true;
+                    if (index == 0) {
+                        self._note = notes.models[notes.models.length - 1];
+                    } else {
+                        self._note = notes.models[index - 1];
+                    }
+                    self.renderImageNote(self._note);
+                    return;
+                }
+            });
+        }
+
+        private _nextNote(event: Event): void {
+            var self: ImageNoteView = this;
+            var notes: Notes = new Notes(Model.getNotes().where({ tree: self._note.getTreeId(), type: NoteType.IMAGE }));
+            notes.sortByAscendingDate();
+            var bFound: boolean = false;
+            $.each(notes.models, function (index: number, note: Note) {
+                if (self._note.getId() == note.getId() && !bFound) {
+                    bFound = true;
+                    if (index == notes.models.length - 1) {
+                        self._note = notes.models[0];
+                    } else {
+                        self._note = notes.models[index + 1];
+                    }
+                    self.renderImageNote(self._note);
+                    return;
+                }
+            });
+        }
+
+        public setVisible(): void {
+            var self: ImageNoteView = this;
+            Setting.getPopWrapperElement().removeClass('hidden');
+        }
+        public setInvisible(): void {
+            var self: ImageNoteView = this;
+            Setting.getPopWrapperElement().addClass('hidden');
+        }
     }
 
     export class AlertView extends PopupView {

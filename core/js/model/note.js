@@ -65,8 +65,11 @@ var FoodParent;
         Note.prototype.getPicturePath = function () {
             return FoodParent.Setting.getContentPictureDir() + this.get('picture');
         };
-        Note.prototype.getFakePicturePath = function () {
-            return FoodParent.Setting.getCoreImageDir() + "placeholder-image.jpg";
+        Note.prototype.getBlankPicturePath = function () {
+            return FoodParent.Setting.getCoreImageDir() + "picture-blank.jpg";
+        };
+        Note.prototype.getDateForDatePicker = function () {
+            return moment(this.get('date')).format(FoodParent.Setting.getDateForDatePicker());
         };
         Note.prototype.getFormattedDate = function () {
             return moment(this.get('date')).format(FoodParent.Setting.getDateFormat());
@@ -74,11 +77,20 @@ var FoodParent;
         Note.prototype.getFormattedDateTime = function () {
             return moment(this.get('date')).format(FoodParent.Setting.getDateTimeFormat());
         };
+        Note.prototype.getFormattedHourTime = function () {
+            return moment(this.get('date')).format(FoodParent.Setting.getDateHourFormat());
+        };
         Note.prototype.getDateValueOf = function () {
             return moment(this.get('date')).valueOf();
         };
         Note.prototype.getRate = function () {
             return parseFloat(this.get('rate'));
+        };
+        Note.prototype.getType = function () {
+            return parseInt(this.get('type'));
+        };
+        Note.prototype.getTreeId = function () {
+            return parseInt(this.get('tree'));
         };
         return Note;
     })(Backbone.Model);
@@ -115,6 +127,23 @@ var FoodParent;
             var that = this;
             that.sortType = SortType.ASCENDING;
             that.sort();
+        };
+        Notes.prototype.getLatestImageNoteOfDate = function (treeId, date, noteType) {
+            var self = this;
+            if (self.models.length == 0) {
+                return null;
+            }
+            self.sortByAscendingDate();
+            var result = self.models[0];
+            $.each(self.models, function (index, note) {
+                if (date > note.getDateValueOf() && note.getType() == noteType && note.getTreeId() == treeId) {
+                    result = note;
+                }
+                else {
+                    return result;
+                }
+            });
+            return result;
         };
         return Notes;
     })(Backbone.Collection);

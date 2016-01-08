@@ -128,7 +128,7 @@
 
         public static getNavViewManageItemsTemplate(): string {
             var template = '';
-            template += '<div class="item-nav item-manage-title">FoodParent&#8482;</div>';
+            template += '<div class="item-nav item-manage-title">FoodParent</div>';
             template += '<div class="item-nav item-manage trees">TREES</div>';
             template += '<div class="item-nav item-manage people">PEOPLE</div>';
             template += '<div class="item-nav item-manage adops">ADOPTS</div>';
@@ -189,10 +189,10 @@
             template +=         '<i class="fa fa-lock fa-2x"></i>';
             template +=     '</div>';
             template +=     '<div class="marker-control-item marker-control-adoption">';
-            template +=         '<i class="fa fa-user fa-2x"></i>';
+            template +=         '<i class="fa fa-user-plus fa-2x"></i>';
             template +=     '</div>';
             template +=     '<div class="marker-control-item marker-control-info">';
-            template +=         '<i class="fa fa-sticky-note-o fa-2x"></i>';
+            template +=         '<i class="fa fa-arrow-circle-right fa-2x"></i>';
             template +=     '</div>';
             template +=     '<div class="marker-control-item marker-control-delete">';
             template +=         '<i class="fa fa-remove fa-2x"></i>';
@@ -218,7 +218,7 @@
         public static getTreeInfoTemplate(): string {
             var template = '';
             template += '<div class="tree-info-name"><div class="input-food"><%= foodname %></div>&nbsp;<%= treename %></div>';
-            template += '<div class="tree-info-coordinate">@&nbsp;<div class="input-lat"><%= lat %></div>,&nbsp;<div class="input-lng"><%= lng %></div></div>';
+            template += '<div class="tree-info-coordinate"><div>@&nbsp;</div><div class="input-lat"><%= lat %></div>,&nbsp;<div class="input-lng"><%= lng %></div></div>';
             template += '<div class="tree-info-address"><div>&nbsp;</div><div>&nbsp;</div></div>';
 
             template += '<div class="hr"><hr /></div>';
@@ -228,7 +228,7 @@
             template += '</div>';
 
             template += '<div class="hr"><hr /></div>';
-            template += '<div class="info-header"><i class="fa fa-users fa-1x"></i> Parents</div>';
+            template += '<div class="info-header"><i class="fa fa-user fa-1x"></i> Parents</div>';
             template += '<div class="info-group info-group-flex">';
             template += '<% _.each(persons.models, function (person, index) { %>';
             template +=     '<% if (index < persons.models.length - 1) { %>';
@@ -273,6 +273,54 @@
             template += '<div>&nbsp;</div>';
             template += '</div>';
 
+
+            return template;
+        }
+
+        public static getTreeInfoTemplate2(): string {
+            var template = '';
+            template += '<div class="tree-info-name"><div class="info-group-flex"><div class="input-food"><%= foodname %></div>&nbsp;<%= treename %></div>';
+            template +=     '<div class="tree-info-coordinate">@&nbsp;<div class="input-lat"><%= lat %></div>,&nbsp;<div class="input-lng"><%= lng %></div></div>';
+            template += '</div>';
+
+            template += '<div class="tree-info-address"><div>&nbsp;</div></div>';
+            template += '<div class="info-group info-group-flex">';
+            template +=     '<i class="fa fa-sticky-note fa-1x"></i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<div class="input-description"><%= description %></div>';
+            template += '</div>';
+
+            template += '<div class="info-group info-group-flex"><i class="fa fa-user fa-1x"></i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+            template += '<% _.each(persons.models, function (person, index) { %>';
+            template += '<% if (index < persons.models.length - 1) { %>';
+            template += '<div><%= person.getName() %>,&nbsp;</div>';
+            template += '<% } else { %>';
+            template += '<div><%= person.getName() %></div>';
+            template += '<% } %>';
+            template += '<% }); %>';
+            template += '</div>';
+
+            template += '<div class="info-group info-group-flex"><div class="button-group-tag"><i class="fa fa-tag fa-1x"></i>&nbsp;</div>';
+            template += '<div data-toggle="buttons">';
+            template += '<% _.each(flags.models, function (flag) { %>';
+            template += '<label class="btn flag-radio" data-target="<%= flag.getId() %>">';
+            template += '<input type="radio" name="flag">';
+            template += '<i class="fa fa-circle-o fa-1x"></i>';
+            template += '<i class="fa fa-check-circle-o fa-1x"></i>';
+            template += ' <%= flag.getName() %></label>';
+            template += '<% }); %>';
+            template += '</div>';
+            template += '</div>';
+
+            template += '<div class="info-group info-group-flex"><div class="button-group-tag"><i class="fa fa-home fa-1x"></i>&nbsp;</div>';
+            template += '<div data-toggle="buttons">';
+            template += '<% _.each(ownerships.models, function (ownership) { %>';
+            template += '<label class="btn ownership-radio" data-target="<%= ownership.getId() %>">';
+            template += '<input type="radio" name="ownership">';
+            template += '<i class="fa fa-circle-o fa-1x"></i>';
+            template += '<i class="fa fa-check-circle-o fa-1x"></i>';
+            template += ' <%= ownership.getName() %></label>';
+            template += '<% }); %>';
+            template += '</div>';
+            template += '</div>';
 
             return template;
         }
@@ -501,6 +549,111 @@
             template += '</div>';
             template += '</div>';
             template += '</div>';
+            return template;
+        }
+
+        public static getDetailTreeGraphicViewTemplate(): string {
+            var template = '';
+            template += '<div id="wrapper-mtree">';
+
+            template += '<div id="wrapper-graph">';
+
+            template +=     '<div id="wrapper-chart"></div>';
+
+            template +=     '<div id="wrapper-tooltip" class="hidden"></div>';
+
+            template +=     '<div id="wrapper-mapmenu">';
+            template +=         '<div class="button-outer-frame2 button3"><div class="button-inner-frame2">Switch To Map View</div></div>';
+            template +=     '</div>';
+
+            template +=     '<div id="wrapper-date-select">';
+            template +=     '<div class="wrapper-date-select-item"><span class="date-select-label">From:</span><input type="text" class="form-control tree-graph-start" /></div>';
+            template +=     '<div class="wrapper-date-select-item"><span class="date-select-label">To:</span><input type="text" class="form-control tree-graph-end" /></div>';
+            template +=     '</div>';
+
+            
+            template += '</div>';   // end of #wrapper-graph
+
+
+
+            template += '<div id="wrapper-tree-detail">';
+
+            template += '<div class="content-tree-info">';
+            template += '</div>';   // end of .content-tree-info
+
+            template += '<div class="content-tree-recentactivities">';
+            template +=     '<div class="info-header"><i class="fa fa-leaf fa-1x"></i> Recent Activities</div>';
+            template +=     '<div id="list-activities" class="info-group">';
+            template +=     '</div>';
+            template += '</div>';   // end of .content-tree-recentactivities
+
+            template += '<div class="content-tree-control">';
+            template +=     '<div class="button-outer-frame2 button4"><div class="button-inner-frame2">Update Status</div></div>';
+            template +=     '<div class="button-outer-frame2 button4"><div class="button-inner-frame2">Manage Parents</div></div>';
+            template +=     '<div class="button-outer-frame2 button4"><div class="button-inner-frame2">Delete Tree*</div></div>';
+            template +=     '<div class="button-description">* marked operation cannot be undone.</div>';
+            template += '</div>';   // end of .tree-control
+            
+            template += '</div>';   // end of #wrapper-tree-detail
+
+            
+            template += '</div>';   // end of #wrapper-mtree
+            return template;
+        }
+
+        public static getToolTipTemplate(): string {
+            var template = '';
+            template += '<img src="<%= image %>" />';
+            template += '<div class="rate"><i class="fa fa-star-half-o"></i> <%= value %></div>';
+            template += '<div class="comment"><i class="fa fa-comment"></i> <%= comment %></div>';
+            template += '<div class="date"><%= date %></div>';
+            return template;
+        }
+
+        public static getImageNoteViewTemplate(): string {
+            var template = '';
+            template += '<div id="wrapper-note">';
+            template +=     '<div class="outer-frame">';
+            template +=         '<div class="inner-frame">';
+            template +=             '<div class="wrapper-note-content">';
+            template +=                 '<div class="image-wrapper"><img src="<%= image %>" /></div>';
+            template +=                 '<div class="wrapper-note-info">';
+            template +=                     '<div class="name"><%= name %></div>';
+            
+            template += '<div class="hr"><hr /></div>';
+            template += '<div class="info-header"><i class="fa fa-star-half-o"></i> Rating</div>';
+            template += '<div class="info-group">';
+            template += '<div class="input-rating"><%= value %></div>';
+            template += '<div class="input-rating-slider"></div>';
+            template += '</div>';
+
+            template += '<div class="hr"><hr /></div>';
+            template += '<div class="info-header"><i class="fa fa-comment"></i> Comment</div>';
+            template += '<div class="info-group">';
+            template += '<div class="input-comment"><%= comment %></div>';
+            template += '</div>';
+
+            template += '<div class="hr"><hr /></div>';
+            template += '<div class="info-header"><i class="fa fa-calendar-o"></i> Posted</div>';
+            template += '<div class="info-group">';
+            template += '<div class="input-date"><%= date %></div>';
+            template += '</div>';
+
+            template += '<div class="hr"><hr /></div>';
+            template += '<div class="info-button-group">';
+            template += '<div class="button-outer-frame2 button3"><div class="button-inner-frame2 prev-note"><i class="fa fa-caret-left"></i></div></div>';
+            template += '<div class="button-outer-frame2 button3"><div class="button-inner-frame2 next-note"><i class="fa fa-caret-right"></i></div></div>';
+            template += '</div>';
+
+            template +=                 '</div>';
+
+            template +=             '</div>';   // end of .wrapper-note-content
+            template +=         '</div>';   // end of .inner-frame
+            template +=         '<div class="top-right-button button-close">';
+            template +=             '<i class="fa fa-remove fa-2x"></i>';
+            template +=         '</div>';   // end of top-right-button button-close
+            template +=     '</div>';   // end of .outer-frame
+            template += '</div>';   // end of #wrapper-note
             return template;
         }
     }

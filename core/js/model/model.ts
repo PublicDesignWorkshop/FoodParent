@@ -194,7 +194,7 @@
                     
                 },
                 success(collection?: any, response?: any, options?: any): void {
-                    console.log("success fetch with " + collection.models.length + " auths");
+                    //console.log("success fetch with " + collection.models.length + " auths");
                 },
                 error(collection?: any, jqxhr?: JQueryXHR, options?: any): void {
                     console.log("error while fetching item data from the server");
@@ -216,7 +216,7 @@
                     id: 0,
                 },
                 success(collection?: any, response?: any, options?: any): void {
-                    console.log("success fetch with " + collection.models.length + " foods");
+                    //console.log("success fetch with " + collection.models.length + " foods");
                 },
                 error(collection?: any, jqxhr?: JQueryXHR, options?: any): void {
                     console.log("error while fetching item data from the server");
@@ -245,7 +245,7 @@
                     east: 0,
                 },
                 success(collection?: any, response?: any, options?: any): void {
-                    console.log("success fetch with " + collection.models.length + " trees");
+                    //console.log("success fetch with " + collection.models.length + " trees");
                     //that.fetchFoods(that.foods.getUndetectedIds(that.trees.getFoodIds()));
                 },
                 error(collection?: any, jqxhr?: JQueryXHR, options?: any): void {
@@ -266,7 +266,7 @@
                     
                 },
                 success(collection?: any, response?: any, options?: any): void {
-                    console.log("success fetch with " + collection.models.length + " trees");
+                    //console.log("success fetch with " + collection.models.length + " trees");
                     //that.fetchFoods(that.foods.getUndetectedIds(that.trees.getFoodIds()));
                 },
                 error(collection?: any, jqxhr?: JQueryXHR, options?: any): void {
@@ -287,7 +287,7 @@
 
                 },
                 success(collection?: any, response?: any, options?: any): void {
-                    console.log("success fetch with " + collection.models.length + " trees");
+                    //console.log("success fetch with " + collection.models.length + " trees");
                     //that.fetchFoods(that.foods.getUndetectedIds(that.trees.getFoodIds()));
                 },
                 error(collection?: any, jqxhr?: JQueryXHR, options?: any): void {
@@ -308,7 +308,7 @@
 
                 },
                 success(collection?: any, response?: any, options?: any): void {
-                    console.log("success fetch with " + collection.models.length + " trees");
+                    //console.log("success fetch with " + collection.models.length + " trees");
                     //that.fetchFoods(that.foods.getUndetectedIds(that.trees.getFoodIds()));
                 },
                 error(collection?: any, jqxhr?: JQueryXHR, options?: any): void {
@@ -329,7 +329,7 @@
 
                 },
                 success(collection?: any, response?: any, options?: any): void {
-                    console.log("success fetch with " + collection.models.length + " trees");
+                    //console.log("success fetch with " + collection.models.length + " trees");
                     //that.fetchFoods(that.foods.getUndetectedIds(that.trees.getFoodIds()));
                 },
                 error(collection?: any, jqxhr?: JQueryXHR, options?: any): void {
@@ -345,16 +345,47 @@
             }
             if (ids.length != 0) {
                 return self.notes.fetch({
-                    remove: true,	// if remove == false, it only adds new items, not removing old items.
+                    remove: false,	// if remove == false, it only adds new items, not removing old items.
                     processData: true,
                     data: {
                         mode: 0,    // 0: fetch only the number of the size from offset, 1: fetch all
                         trees: ids.toString(),
+                        start: "",
+                        end: "",
                         size: size,
                         offset: offset,
                     },
                     success(collection?: any, response?: any, options?: any): void {
-                        console.log("success fetch with " + collection.models.length + " notes");
+                        //console.log("success fetch with " + collection.models.length + " notes");
+                        //Controller.getInstance().renderTreesOnMap();
+                    },
+                    error(collection?: any, jqxhr?: JQueryXHR, options?: any): void {
+                        console.log("error while fetching item data from the server");
+                    }
+                });
+            }
+            return null;
+        }
+
+        public static fetchImageNotesOfTreesDuringPeriod(ids: Array<number>, start: string, end: string, size: number, offset: number): JQueryXHR {
+            var self: Model = Model._instance;
+            if (self.notes == undefined) {
+                self.notes = new Notes();
+            }
+            if (ids.length != 0) {
+                return self.notes.fetch({
+                    remove: false,	// if remove == false, it only adds new items, not removing old items.
+                    processData: true,
+                    data: {
+                        mode: 1,    // 0: fetch only the number of the size from offset, 1: fetch image notes between start and end
+                        trees: ids.toString(),
+                        start: start,
+                        end: end,
+                        size: size,
+                        offset: offset,
+                    },
+                    success(collection?: any, response?: any, options?: any): void {
+                        //console.log("success fetch with " + collection.models.length + " notes");
                         //Controller.getInstance().renderTreesOnMap();
                     },
                     error(collection?: any, jqxhr?: JQueryXHR, options?: any): void {

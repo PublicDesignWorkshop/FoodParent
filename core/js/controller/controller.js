@@ -30,7 +30,6 @@ var FoodParent;
         };
         Controller.abortAllXHR = function () {
             var self = Controller._instance;
-            console.log(self.xhrPool);
             $.each(self.xhrPool, function (index, xhr) {
                 if (xhr != undefined) {
                     xhr.abort();
@@ -124,6 +123,25 @@ var FoodParent;
                 }
             });
         };
+        Controller.fetchImageNotesOfTreesDuringPeriod = function (trees, startDate, endDate, size, offset, success, error) {
+            var ids = new Array();
+            $.each(trees, function (index, tree) {
+                ids.push(tree.getId());
+            });
+            var xhr1 = FoodParent.Model.fetchImageNotesOfTreesDuringPeriod(ids, startDate, endDate, size, offset);
+            Controller.pushXHR(xhr1);
+            $.when(xhr1).then(function () {
+                Controller.removeXHR(xhr1);
+                if (success) {
+                    success();
+                }
+            }, function () {
+                Controller.removeXHR(xhr1);
+                if (error) {
+                    error(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+                }
+            });
+        };
         Controller.fetchNotesOfTrees = function (trees, size, offset, success, error) {
             var ids = new Array();
             $.each(trees, function (index, tree) {
@@ -159,6 +177,7 @@ var FoodParent;
             this.routes = {
                 "": "home",
                 "mtrees/:viewMode/:id": "manageTrees",
+                "mtree/:viewMode/:id": "manageTree",
                 "mpeople/:viewMode/:id": "managePeople",
                 "ptrees": "parentTrees",
             };
@@ -174,6 +193,10 @@ var FoodParent;
         Router.prototype.manageTrees = function (viewMode, id) {
             console.log(Router.TAG + "we have loaded the manage trees page.");
             FoodParent.EventHandler.handleNavigate(FoodParent.VIEW_STATUS.MANAGE_TREES, { viewMode: viewMode, id: id });
+        };
+        Router.prototype.manageTree = function (viewMode, id) {
+            console.log(Router.TAG + "we have loaded the manage tree page.");
+            FoodParent.EventHandler.handleNavigate(FoodParent.VIEW_STATUS.DETAIL_TREE, { viewMode: viewMode, id: id });
         };
         Router.prototype.managePeople = function (viewMode, id) {
             console.log(Router.TAG + "we have loaded the manage trees page.");

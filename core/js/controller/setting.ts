@@ -32,6 +32,9 @@
         public static getMarkerShadowPath(): string {
             return Setting.getCoreImageDir() + "marker-shadow.png";
         }
+        public static getBlankImagePath(): string {
+            return Setting.getCoreImageDir() + "picture-blank.jpg";
+        }
         public static getNavWrapperElement(): JQuery {
             return $('#wrapper-nav');
         }
@@ -70,11 +73,20 @@
         public static getMapCenterZoomLevel(): number {
             return 16;
         }
+        public static getDateForDatePicker(): string {
+            return "YYYY/MM/DD";
+        }
         public static getDateFormat(): string {
-            return "DD MMM";
+            return "DD MMM YYYY";
+        }
+        public static getDateFormat2(): string {
+            return "Do MMM YYYY";
         }
         public static getDateTimeFormat(): string {
             return "YYYY-MM-DD HH:mm:ss";
+        }
+        public static getDateHourFormat(): string {
+            return "ha ddd Do MMM YYYY";
         }
         public static getDevContact(): string {
             return "captainwhale52@gmail.com";
@@ -85,8 +97,14 @@
         public static getNumRecentActivitiesShown(): number {
             return 5;
         }
+        public static getLargeNumRecentActivitiesShown(): number {
+            return 10;
+        }
         public static getNoDataText(): string {
             return "No Data";
+        }
+        public static getMaxRating(): number {
+            return 10
         }
     }
 }

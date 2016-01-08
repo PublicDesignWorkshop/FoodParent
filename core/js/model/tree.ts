@@ -98,7 +98,6 @@
         public getParents(): Persons {
             var persons: Persons = new Persons();
             $.each(this.get('parents'), function (index: number, item: number) {
-                console.log(item);
                 persons.add(Model.getPersons().findWhere({ id: item }));
             });
             return persons;

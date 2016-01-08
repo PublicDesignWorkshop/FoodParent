@@ -51,11 +51,7 @@ var FoodParent;
                 template = _.template(FoodParent.Template.getNavViewHomeTemplate());
                 data = {};
             }
-            else if (args.viewStatus == FoodParent.VIEW_STATUS.MANAGE_TREES) {
-                template = _.template(FoodParent.Template.getNavViewManageTemplate());
-                data = {};
-            }
-            else if (args.viewStatus == FoodParent.VIEW_STATUS.MANAGE_PEOPLE) {
+            else if (args.viewStatus == FoodParent.VIEW_STATUS.MANAGE_TREES || args.viewStatus == FoodParent.VIEW_STATUS.MANAGE_PEOPLE || args.viewStatus == FoodParent.VIEW_STATUS.DETAIL_TREE) {
                 template = _.template(FoodParent.Template.getNavViewManageTemplate());
                 data = {};
             }
@@ -64,11 +60,7 @@ var FoodParent;
                 self.urenderNavItems();
                 self.$('#background-nav-left').css({ left: '-69%' });
             }
-            else if (args.viewStatus == FoodParent.VIEW_STATUS.MANAGE_TREES) {
-                self.renderNavManageItems();
-                self.$('#background-nav-left').css({ left: '-40%' });
-            }
-            else if (args.viewStatus == FoodParent.VIEW_STATUS.MANAGE_PEOPLE) {
+            else if (args.viewStatus == FoodParent.VIEW_STATUS.MANAGE_TREES || args.viewStatus == FoodParent.VIEW_STATUS.MANAGE_PEOPLE || args.viewStatus == FoodParent.VIEW_STATUS.DETAIL_TREE) {
                 self.renderNavManageItems();
                 self.$('#background-nav-left').css({ left: '-40%' });
             }
@@ -87,7 +79,7 @@ var FoodParent;
                 self.urenderNavItems();
                 self.$('#background-nav-left').animate({ left: '-69%' }, FoodParent.Setting.getNavAnimDuration());
             }
-            else if (args.viewStatus == FoodParent.VIEW_STATUS.MANAGE_TREES) {
+            else if (args.viewStatus == FoodParent.VIEW_STATUS.MANAGE_TREES || args.viewStatus == FoodParent.VIEW_STATUS.MANAGE_PEOPLE || args.viewStatus == FoodParent.VIEW_STATUS.DETAIL_TREE) {
                 self.renderNavManageItems();
                 self.$('#background-nav-left').animate({ left: '-40%' }, FoodParent.Setting.getNavAnimDuration());
             }
@@ -117,6 +109,7 @@ var FoodParent;
             var self = this;
             switch (viewStatus) {
                 case FoodParent.VIEW_STATUS.MANAGE_TREES:
+                case FoodParent.VIEW_STATUS.DETAIL_TREE:
                     self.$('.item-nav').removeClass('active');
                     self.$('.trees').addClass('active');
                     break;

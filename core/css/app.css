@@ -96,4 +96,22 @@
         text-transform: uppercase;
     }
 
+    /* Let's get this party started */
+    ::-webkit-scrollbar {
+        width: 4px;
+    }
+ 
+    /* Track */
+    ::-webkit-scrollbar-track {
+
+    }
+ 
+    /* Handle */
+    ::-webkit-scrollbar-thumb {
+        background: rgba(187,168,164,0.3); 
+    }
+    ::-webkit-scrollbar-thumb:window-inactive {
+	    background: rgba(187,168,164,0.1); 
+    }
+
 }

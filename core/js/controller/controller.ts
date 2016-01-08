@@ -27,7 +27,6 @@
         }
         public static abortAllXHR() {
             var self: Controller = Controller._instance;
-            console.log(self.xhrPool);
             $.each(self.xhrPool, function (index: number, xhr: JQueryXHR) {
                 if (xhr != undefined) {
                     xhr.abort();
@@ -133,6 +132,28 @@
             });
         }
 
+        public static fetchImageNotesOfTreesDuringPeriod(trees: Array<Tree>, startDate: string, endDate: string, size: number, offset: number, success?: any, error?: any) {
+            var ids: Array<number> = new Array<number>();
+            $.each(trees, function (index: number, tree: Tree) {
+                ids.push(tree.getId());
+            });
+            var xhr1: JQueryXHR = Model.fetchImageNotesOfTreesDuringPeriod(ids, startDate, endDate, size, offset);
+            Controller.pushXHR(xhr1);
+            $.when(
+                xhr1
+            ).then(function () {
+                Controller.removeXHR(xhr1);
+                if (success) {
+                    success();
+                }
+            }, function () {
+                Controller.removeXHR(xhr1);
+                if (error) {
+                    error(ERROR_MODE.SEVER_CONNECTION_ERROR);
+                }
+            });
+        }
+
         public static fetchNotesOfTrees(trees: Array<Tree>, size: number, offset: number, success?: any, error?: any) {
             var ids: Array<number> = new Array<number>();
             $.each(trees, function (index: number, tree: Tree) {
@@ -168,6 +189,7 @@
             this.routes = {
                 "": "home",
                 "mtrees/:viewMode/:id": "manageTrees",
+                "mtree/:viewMode/:id": "manageTree",
                 "mpeople/:viewMode/:id": "managePeople",
                 "ptrees": "parentTrees",
             }
@@ -183,6 +205,10 @@
         manageTrees(viewMode: VIEW_MODE, id: number) {
             console.log(Router.TAG + "we have loaded the manage trees page.");
             EventHandler.handleNavigate(VIEW_STATUS.MANAGE_TREES, { viewMode: viewMode, id: id });
+        }
+        manageTree(viewMode: VIEW_MODE, id: number) {
+            console.log(Router.TAG + "we have loaded the manage tree page.");
+            EventHandler.handleNavigate(VIEW_STATUS.DETAIL_TREE, { viewMode: viewMode, id: id });
         }
         managePeople(viewMode: VIEW_MODE, id: number) {
             console.log(Router.TAG + "we have loaded the manage trees page.");

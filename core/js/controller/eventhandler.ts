@@ -6,10 +6,11 @@
     */
     export enum DATA_MODE {
         NONE, CREATE, DELETE, UPDATE_LOCATION, UPDATE_FLAG, UPDATE_OWNERSHIP, UPDATE_FOODTYPE, UPDATE_DESCRIPTION, 
-        UPDATE_NAME, UPDATE_ADDRESS, UPDATE_CONTACT, UPDATE_NEIGHBORHOOD, UPDATE_AUTH
+        UPDATE_NAME, UPDATE_ADDRESS, UPDATE_CONTACT, UPDATE_NEIGHBORHOOD, UPDATE_AUTH,
+        UPDATE_COMMENT, UPDATE_RATING
     }
     export enum VIEW_STATUS {
-        NONE, HOME, MANAGE_TREES, PARENT_TREES, GEO_ERROR, NETWORK_ERROR, CONFIRM, MANAGE_PEOPLE, MANAGE_ADOPTION
+        NONE, HOME, MANAGE_TREES, PARENT_TREES, GEO_ERROR, NETWORK_ERROR, CONFIRM, MANAGE_PEOPLE, MANAGE_ADOPTION, DETAIL_TREE, IMAGENOTE_TREE
     }
     export enum VIEW_MODE {
         NONE, MAP, GRAPHIC, TABLE
@@ -58,6 +59,9 @@
             } else if (viewStatus == VIEW_STATUS.MANAGE_PEOPLE) {
                 new MovePaceBarToUnderNav().execute();
                 new RenderManagePeopleViewCommand({ el: Setting.getMainWrapperElement(), viewMode: option.viewMode, id: option.id }).execute();
+            } else if (viewStatus == VIEW_STATUS.DETAIL_TREE) {
+                new MovePaceBarToUnderNav().execute();
+                new RenderDetailTreeViewCommand({ el: Setting.getMainWrapperElement(), viewMode: option.viewMode, id: option.id }).execute();
             }
 
             View.getNavView().setActiveNavItem(viewStatus);
@@ -122,7 +126,7 @@
                     } else if (el.hasClass('marker-control-adoption')) {
                         new RenderManageAdoptionViewCommand({ el: Setting.getPopWrapperElement(), tree: options.tree }).execute();
                     } else if (el.hasClass('marker-control-info')) {
-
+                        new NavigateCommand({ hash: 'mtree', viewMode: VIEW_MODE.GRAPHIC, id: options.tree }).execute();
                     } else if (el.hasClass('marker-control-delete')) {
                         var tree: Tree = Model.getTrees().findWhere({ id: options.marker.options.id });
                         (<ManageTreesMapView>view).deleteTree(tree);
@@ -134,11 +138,26 @@
                         new NavigateCommand({ hash: 'mtrees', viewMode: VIEW_MODE.MAP, id: options.id }).execute();
                     } else if (el.hasClass('manage-adoption-item')) {
                         new RenderManageAdoptionViewCommand({ el: Setting.getPopWrapperElement(), tree: options.tree }).execute();
+                    } else if (el.hasClass('tree-detail')) {
+                        new NavigateCommand({ hash: 'mtree', viewMode: VIEW_MODE.GRAPHIC, id: options.tree }).execute();
                     }
                     break;
                 case VIEW_STATUS.MANAGE_ADOPTION:
                     if (el.hasClass('button-close')) {
                         new RemoveAlertViewCommand({ delay: Setting.getRemovePopupDuration() }).execute();
+                    }
+                    break;
+                case VIEW_STATUS.DETAIL_TREE:
+                    if (el.hasClass('content-chart')) {
+                        new RenderImageNoteViewCommand({ el: Setting.getPopWrapperElement(), note: options.note }).execute();
+                    }
+                    break;
+                case VIEW_STATUS.IMAGENOTE_TREE:
+                    if (el.hasClass('button-close')) {
+                        new RemoveAlertViewCommand({ delay: Setting.getRemovePopupDuration() }).execute();
+                        if (View.getDetailTreeView()) {
+                            (<DetailTreeGraphicView>View.getDetailTreeView()).refreshTreeInfo();
+                        }
                     }
                     break;
             }
@@ -196,6 +215,22 @@
                     break;
                 case DATA_MODE.CREATE:
                     self._lastCommand = new CreatePerson({ person: person }, success, error);
+                    break;
+            }
+            if (self._lastCommand != undefined) {
+                self._lastCommand.execute();
+            }
+        }
+
+        public static handleNoteData(note: Note, dataMode: DATA_MODE, args: any, success?: Function, error?: Function, undoSuccess?: Function): void {
+            var self: EventHandler = EventHandler._instance;
+            self._lastCommand = null;
+            switch (dataMode) {
+                case DATA_MODE.UPDATE_COMMENT:
+                    self._lastCommand = new UpdateNoteComment({ note: note, comment: args.comment }, success, error);
+                    break;
+                case DATA_MODE.UPDATE_RATING:
+                    self._lastCommand = new UpdateNoteRating({ note: note, rate: args.rate }, success, error);
                     break;
             }
             if (self._lastCommand != undefined) {

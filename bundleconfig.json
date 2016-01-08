@@ -17,7 +17,15 @@
       "core/lib/bootstrap-toggle/js/bootstrap-toggle.js",
       "core/lib/bootstrap-select/js/bootstrap-select.js",
       "core/lib/bootstrap-list-filter/bootstrap-list-filter.src.js",
-      "core/lib/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js",
+      //"core/lib/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js",
+      // chart.js
+      "core/lib/chartjs/Chart.js",
+      // Five-Star-Rating
+      "core/lib/five-star-rating/rating.js",
+      // datepicker
+      "core/lib/pickdatejs/js/picker.js",
+      "core/lib/pickdatejs/js/picker.date.js",
+      "core/lib/pickdatejs/js/legacy.js",
 
       "core/lib/pace/pace.js",
       "core/lib/howler/howler.js",
@@ -36,6 +44,7 @@
       "core/js/controller/command/treecommand.js",
       "core/js/controller/command/personcommand.js",
       "core/js/controller/command/adoptioncommand.js",
+      "core/js/controller/command/notecommand.js",
       // View - GridFormat
       "core/js/view/gridformat/gridformat.js",
       "core/js/view/gridformat/treegridformat.js",
@@ -49,6 +58,7 @@
       "core/js/view/navview.js",
       "core/js/view/alertview.js",
       "core/js/view/mtreesview.js",
+      "core/js/view/mtreeview.js",
       "core/js/view/markerview.js",
       "core/js/view/messageview.js",
       "core/js/view/mpeopleview.js",
@@ -79,6 +89,11 @@
       "core/lib/leaflet-label/leaflet.label.css",
       // Font-Awesome
       "core/lib/font-awesome/css/font-awesome.css",
+      // Five-Star-Rating
+      "core/lib/five-star-rating/rating.css",
+      // datepicker
+      "core/lib/pickdatejs/css/default.css",
+      "core/lib/pickdatejs/css/default.date.css",
       // App
       "core/css/app.css",
       "core/css/base.css",
@@ -91,6 +106,7 @@
       "core/css/backgrid.css",
       "core/css/alert.css",
       "core/css/mtrees.css",
+      "core/css/mtree.css",
       "core/css/leaflet.css",
       "core/css/input.css",
       "core/css/mpeople.css",

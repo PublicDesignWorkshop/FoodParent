@@ -42,6 +42,7 @@
     <Content Include="core\css\home.css" />
     <Content Include="core\css\input.css" />
     <Content Include="core\css\message.css" />
+    <Content Include="core\css\mtree.css" />
     <Content Include="core\css\mtrees.css" />
     <Content Include="core\css\nav.css" />
     <Content Include="core\css\pace.css" />
@@ -49,7 +50,10 @@
     <Content Include="core\css\pop.css" />
     <Content Include="core\css\leaflet.css" />
     <Content Include="core\css\print.css" />
+    <Content Include="core\image\logo-green-32x32.png" />
+    <Content Include="core\image\logo-white-32x32.png" />
     <Content Include="core\image\marker-shadow.png" />
+    <Content Include="core\image\picture-blank.jpg" />
     <Content Include="core\image\placeholder-image.jpg" />
     <Content Include="core\js\foodparent.js" />
     <Content Include="core\js\foodparent.min.js">
@@ -84,6 +88,10 @@
     <Content Include="core\lib\bootstrap\js\bootstrap.js" />
     <Content Include="core\lib\bootstrap\js\bootstrap.min.js" />
     <Content Include="core\lib\bootstrap\js\npm.js" />
+    <Content Include="core\lib\chartjs\Chart.js" />
+    <Content Include="core\lib\five-star-rating\rating.css" />
+    <Content Include="core\lib\five-star-rating\rating.js" />
+    <Content Include="core\lib\five-star-rating\stars.svg" />
     <Content Include="core\lib\font-awesome\css\font-awesome.css" />
     <Content Include="core\lib\font-awesome\css\font-awesome.min.css" />
     <Content Include="core\lib\font-awesome\fonts\fontawesome-webfont.svg" />
@@ -104,6 +112,17 @@
     <Content Include="core\lib\leaflet\leaflet.js" />
     <Content Include="core\lib\momentjs\moment.js" />
     <Content Include="core\lib\pace\pace.js" />
+    <Content Include="core\lib\pickdatejs\css\classic.css" />
+    <Content Include="core\lib\pickdatejs\css\classic.date.css" />
+    <Content Include="core\lib\pickdatejs\css\classic.time.css" />
+    <Content Include="core\lib\pickdatejs\css\default.css" />
+    <Content Include="core\lib\pickdatejs\css\default.date.css" />
+    <Content Include="core\lib\pickdatejs\css\default.time.css" />
+    <Content Include="core\lib\pickdatejs\css\rtl.css" />
+    <Content Include="core\lib\pickdatejs\js\legacy.js" />
+    <Content Include="core\lib\pickdatejs\js\picker.date.js" />
+    <Content Include="core\lib\pickdatejs\js\picker.js" />
+    <Content Include="core\lib\pickdatejs\js\picker.time.js" />
     <Content Include="core\lib\underscore\underscore.js" />
     <Content Include="index.html" />
     <Content Include="web.config" />
@@ -176,11 +195,14 @@
       <DependentUpon>web.config</DependentUpon>
     </None>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="favicons\" />
+  </ItemGroup>
   <ItemGroup>
     <TypeScriptCompile Include="core\js\app.ts" />
     <TypeScriptCompile Include="core\js\controller\command\adoptioncommand.ts" />
     <TypeScriptCompile Include="core\js\controller\command\command.ts" />
+    <TypeScriptCompile Include="core\js\controller\command\notecommand.ts" />
     <TypeScriptCompile Include="core\js\controller\command\personcommand.ts" />
     <TypeScriptCompile Include="core\js\controller\command\treecommand.ts" />
     <TypeScriptCompile Include="core\js\controller\controller.ts" />
@@ -207,6 +229,7 @@
     <TypeScriptCompile Include="core\js\view\messageview.ts" />
     <TypeScriptCompile Include="core\js\view\mpeopleview.ts" />
     <TypeScriptCompile Include="core\js\view\mtreesview.ts" />
+    <TypeScriptCompile Include="core\js\view\mtreeview.ts" />
     <TypeScriptCompile Include="core\js\view\navview.ts" />
     <TypeScriptCompile Include="core\js\view\template.ts" />
     <TypeScriptCompile Include="core\js\view\view.ts" />
@@ -215,6 +238,7 @@
     <TypeScriptCompile Include="Scripts\typings\backgrid\backgrid.d.ts" />
     <TypeScriptCompile Include="Scripts\typings\bootstrap.v3.datetimepicker\bootstrap.v3.datetimepicker.d.ts" />
     <TypeScriptCompile Include="Scripts\typings\bootstrap\bootstrap.d.ts" />
+    <TypeScriptCompile Include="Scripts\typings\chartjs\chart.d.ts" />
     <TypeScriptCompile Include="Scripts\typings\d3\d3.d.ts" />
     <TypeScriptCompile Include="Scripts\typings\d3\plugins\d3.superformula.d.ts" />
     <TypeScriptCompile Include="Scripts\typings\jqueryui\jqueryui.d.ts" />

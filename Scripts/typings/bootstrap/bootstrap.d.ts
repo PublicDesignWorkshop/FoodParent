@@ -106,6 +106,8 @@ interface JQuery {
     typeahead(options?: TypeaheadOptions): JQuery;
 
     affix(options?: AffixOptions): JQuery;
+
+    pickadate(options?: any): any;
 }
 
 declare module "bootstrap" {

@@ -51,8 +51,11 @@
         public getPicturePath(): string {
             return Setting.getContentPictureDir() + this.get('picture');
         }
-        public getFakePicturePath(): string {
-            return Setting.getCoreImageDir() + "placeholder-image.jpg";
+        public getBlankPicturePath(): string {
+            return Setting.getCoreImageDir() + "picture-blank.jpg";
+        }
+        public getDateForDatePicker(): string {
+            return moment(this.get('date')).format(Setting.getDateForDatePicker());
         }
         public getFormattedDate(): string {
             return moment(this.get('date')).format(Setting.getDateFormat());
@@ -60,11 +63,20 @@
         public getFormattedDateTime(): string {
             return moment(this.get('date')).format(Setting.getDateTimeFormat());
         }
+        public getFormattedHourTime(): string {
+            return moment(this.get('date')).format(Setting.getDateHourFormat());
+        }
         public getDateValueOf(): number {
             return moment(this.get('date')).valueOf();
         }
         public getRate(): number {
             return parseFloat(this.get('rate'));
+        }
+        public getType(): number {
+            return parseInt(this.get('type'));
+        }
+        public getTreeId(): number {
+            return parseInt(this.get('tree'));
         }
     }
     export class Notes extends Backbone.Collection<Note> {
@@ -100,6 +112,24 @@
             var that: Notes = this;
             that.sortType = SortType.ASCENDING;
             that.sort();
+        }
+
+        public getLatestImageNoteOfDate(treeId: number, date: number, noteType: NoteType): Note {
+            var self: Notes = this;
+            if (self.models.length == 0) {
+                return null;
+            }
+            self.sortByAscendingDate();
+            var result: Note = self.models[0];
+
+            $.each(self.models, function (index: number, note: Note) {
+                if (date > note.getDateValueOf() && note.getType() == noteType && note.getTreeId() == treeId) {
+                    result = note;
+                } else {
+                    return result;
+                }
+            });
+            return result;
         }
     }
 }

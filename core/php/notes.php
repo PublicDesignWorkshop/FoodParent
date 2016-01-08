@@ -36,20 +36,29 @@
         $params = null;
         if ($data != null) {
             $params = array(
-                "mode" => $data->{'mode'},
+                "mode" => $data->{'mode'},        // 0: fetch only the number of the size from offset, 1: fetch image notes between start and end
                 "trees" => $data->{'trees'},
+                "start" => $data->{'start'},
+                "end" => $data->{'end'},
                 "size" => $data->{'size'},
                 "offset" => $data->{'offset'},
             );
         } else {
             $params = array(
-                "mode" => $_GET['mode'],
+                "mode" => $_GET['mode'],        // 0: fetch only the number of the size from offset, 1: fetch image notes between start and end
                 "trees" => $_GET['trees'],
+                "start" => $_GET['start'],
+                "end" => $_GET['end'],
                 "size" => $_GET['size'],
                 "offset" => $_GET['offset'],
             );
         }
-        $sql = "SELECT * FROM `note` WHERE (`tree` IN (".$params["trees"].")) ORDER BY `date` DESC LIMIT ".$params["size"]." OFFSET ".$params["offset"]."";
+        if ($params["mode"] == 0 || $params["mode"] == "0") {
+            $sql = "SELECT * FROM `note` WHERE (`tree` IN (".$params["trees"].")) ORDER BY `date` DESC LIMIT ".$params["size"]." OFFSET ".$params["offset"]."";
+        } else if ($params["mode"] == 1 || $params["mode"] == "1") {
+            $sql = "SELECT * FROM `note` WHERE `tree` IN (".$params["trees"].") AND (`type` = '1') AND (`date` BETWEEN '".$params["start"]."' AND '".$params["end"]."') ORDER BY `date` ASC LIMIT ".$params["size"]." OFFSET ".$params["offset"]."";
+        }
+        
         try {
             $pdo = getConnection();
             $stmt = $pdo->prepare($sql);

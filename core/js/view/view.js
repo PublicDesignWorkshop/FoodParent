@@ -71,6 +71,7 @@ var FoodParent;
             }
             View._instance._manageTreesView = null;
             View._instance._managePeopleView = null;
+            View._instance._detailTreeView = null;
         };
         View.setMessageView = function (view) {
             View._instance._messageView = view;
@@ -101,6 +102,12 @@ var FoodParent;
         };
         View.getManagePeopleView = function () {
             return View._instance._managePeopleView;
+        };
+        View.setDetailTreeView = function (view) {
+            View._instance._detailTreeView = view;
+        };
+        View.getDetailTreeView = function () {
+            return View._instance._detailTreeView;
         };
         View.removeNavView = function () {
             var self = View._instance;

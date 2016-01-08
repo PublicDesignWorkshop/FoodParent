@@ -180,7 +180,7 @@ var FoodParent;
                 processData: true,
                 data: {},
                 success: function (collection, response, options) {
-                    console.log("success fetch with " + collection.models.length + " auths");
+                    //console.log("success fetch with " + collection.models.length + " auths");
                 },
                 error: function (collection, jqxhr, options) {
                     console.log("error while fetching item data from the server");
@@ -201,7 +201,7 @@ var FoodParent;
                     id: 0,
                 },
                 success: function (collection, response, options) {
-                    console.log("success fetch with " + collection.models.length + " foods");
+                    //console.log("success fetch with " + collection.models.length + " foods");
                 },
                 error: function (collection, jqxhr, options) {
                     console.log("error while fetching item data from the server");
@@ -228,7 +228,7 @@ var FoodParent;
                     east: 0,
                 },
                 success: function (collection, response, options) {
-                    console.log("success fetch with " + collection.models.length + " trees");
+                    //console.log("success fetch with " + collection.models.length + " trees");
                     //that.fetchFoods(that.foods.getUndetectedIds(that.trees.getFoodIds()));
                 },
                 error: function (collection, jqxhr, options) {
@@ -246,7 +246,7 @@ var FoodParent;
                 processData: true,
                 data: {},
                 success: function (collection, response, options) {
-                    console.log("success fetch with " + collection.models.length + " trees");
+                    //console.log("success fetch with " + collection.models.length + " trees");
                     //that.fetchFoods(that.foods.getUndetectedIds(that.trees.getFoodIds()));
                 },
                 error: function (collection, jqxhr, options) {
@@ -264,7 +264,7 @@ var FoodParent;
                 processData: true,
                 data: {},
                 success: function (collection, response, options) {
-                    console.log("success fetch with " + collection.models.length + " trees");
+                    //console.log("success fetch with " + collection.models.length + " trees");
                     //that.fetchFoods(that.foods.getUndetectedIds(that.trees.getFoodIds()));
                 },
                 error: function (collection, jqxhr, options) {
@@ -282,7 +282,7 @@ var FoodParent;
                 processData: true,
                 data: {},
                 success: function (collection, response, options) {
-                    console.log("success fetch with " + collection.models.length + " trees");
+                    //console.log("success fetch with " + collection.models.length + " trees");
                     //that.fetchFoods(that.foods.getUndetectedIds(that.trees.getFoodIds()));
                 },
                 error: function (collection, jqxhr, options) {
@@ -300,7 +300,7 @@ var FoodParent;
                 processData: true,
                 data: {},
                 success: function (collection, response, options) {
-                    console.log("success fetch with " + collection.models.length + " trees");
+                    //console.log("success fetch with " + collection.models.length + " trees");
                     //that.fetchFoods(that.foods.getUndetectedIds(that.trees.getFoodIds()));
                 },
                 error: function (collection, jqxhr, options) {
@@ -315,16 +315,46 @@ var FoodParent;
             }
             if (ids.length != 0) {
                 return self.notes.fetch({
-                    remove: true,
+                    remove: false,
                     processData: true,
                     data: {
                         mode: 0,
                         trees: ids.toString(),
+                        start: "",
+                        end: "",
                         size: size,
                         offset: offset,
                     },
                     success: function (collection, response, options) {
-                        console.log("success fetch with " + collection.models.length + " notes");
+                        //console.log("success fetch with " + collection.models.length + " notes");
+                        //Controller.getInstance().renderTreesOnMap();
+                    },
+                    error: function (collection, jqxhr, options) {
+                        console.log("error while fetching item data from the server");
+                    }
+                });
+            }
+            return null;
+        };
+        Model.fetchImageNotesOfTreesDuringPeriod = function (ids, start, end, size, offset) {
+            var self = Model._instance;
+            if (self.notes == undefined) {
+                self.notes = new FoodParent.Notes();
+            }
+            if (ids.length != 0) {
+                return self.notes.fetch({
+                    remove: false,
+                    processData: true,
+                    data: {
+                        mode: 1,
+                        trees: ids.toString(),
+                        start: start,
+                        end: end,
+                        size: size,
+                        offset: offset,
+                    },
+                    success: function (collection, response, options) {
+                        //console.log("success fetch with " + collection.models.length + " notes");
                         //Controller.getInstance().renderTreesOnMap();
                     },
                     error: function (collection, jqxhr, options) {
