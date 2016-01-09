@@ -17,7 +17,6 @@
       "core/lib/bootstrap-toggle/js/bootstrap-toggle.js",
       "core/lib/bootstrap-select/js/bootstrap-select.js",
       "core/lib/bootstrap-list-filter/bootstrap-list-filter.src.js",
-      //"core/lib/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js",
       // chart.js
       "core/lib/chartjs/Chart.js",
       // Five-Star-Rating
@@ -111,7 +110,7 @@
       "core/css/input.css",
       "core/css/mpeople.css",
 
-
+      // Print (not working for safari)
       "core/css/print.css"
     ]
   }
