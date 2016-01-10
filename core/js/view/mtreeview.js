@@ -441,18 +441,8 @@ var FoodParent;
             else if ($(event.currentTarget).hasClass('1month')) {
                 self._startDate = moment(self._endDate).subtract(1, 'months').startOf('day').format(FoodParent.Setting.getDateTimeFormat());
             }
-            self.$('.tree-graph-start').attr({ 'data-value': moment(self._startDate).format(FoodParent.Setting.getDateFormat()) });
-            self.$('.tree-graph-start').pickadate({
-                format: "dd mmm yyyy",
-                today: '',
-                max: new Date(moment(new Date()).subtract('day', 2).valueOf()),
-                clear: '',
-                close: 'Close',
-                onClose: function () {
-                    self._startDate = moment(this.get()).startOf('day').format(FoodParent.Setting.getDateTimeFormat());
-                    self.renderTreeChart(self._tree, self._startDate, self._endDate);
-                }
-            });
+            //self.$('.tree-graph-start').attr({ 'data-value': moment(self._startDate).format(Setting.getDateFormat()) });
+            self.$('.tree-graph-start').pickadate('picker').set('select', moment(self._startDate).format(FoodParent.Setting.getDateFormat()), { format: 'dd mmm yyyy' });
             self.renderTreeChart(self._tree, self._startDate, self._endDate);
         };
         DetailTreeGraphicView.prototype._deleteTree = function () {
