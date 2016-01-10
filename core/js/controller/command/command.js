@@ -176,6 +176,23 @@ var FoodParent;
         return RenderImageNoteViewCommand;
     })();
     FoodParent.RenderImageNoteViewCommand = RenderImageNoteViewCommand;
+    var RenderPostNoteViewCommand = (function () {
+        function RenderPostNoteViewCommand(args) {
+            var self = this;
+            self._el = args.el;
+            self._tree = args.tree;
+        }
+        RenderPostNoteViewCommand.prototype.execute = function () {
+            var self = this;
+            var view = FoodParent.PostNoteViewFactory.create(self._el, self._tree).render();
+            FoodParent.View.setPopupView(view);
+            FoodParent.View.setViewStatus(FoodParent.VIEW_STATUS.POST_NOTE);
+        };
+        RenderPostNoteViewCommand.prototype.undo = function () {
+        };
+        return RenderPostNoteViewCommand;
+    })();
+    FoodParent.RenderPostNoteViewCommand = RenderPostNoteViewCommand;
     var RenderAlertViewCommand = (function () {
         function RenderAlertViewCommand(args) {
             var self = this;

@@ -35,6 +35,12 @@
         public static getBlankImagePath(): string {
             return Setting.getCoreImageDir() + "picture-blank.jpg";
         }
+        public static getFileUploadPath(): string {
+            return Setting.getPhpDir() + "upload.php";
+        }
+        public static getRelativeFileUploadPath(): string {
+            return "../../content/picture/";
+        }
         public static getNavWrapperElement(): JQuery {
             return $('#wrapper-nav');
         }

@@ -45,6 +45,7 @@
         height: 100%;
         padding: 24px 8px 8px 8px;
         overflow-y: auto;
+        min-width: 280px;
     }
 
 
@@ -252,12 +253,6 @@
         flex-grow: 4;
         height: 100%;
         overflow-y: auto;
-        border-radius: 2px;
-    }
-
-    .wrapper-note-content .image-wrapper img {
-        width: 100%;
-        border-radius: 2px;
     }
 
     .wrapper-note-content .wrapper-note-info {
@@ -323,7 +318,8 @@
         padding: 12px;
     }
     .wrapper-note-info .button-inner-frame2 {
-        font-size: x-large;
+        font-size: large;
+        text-align: center;
     }
 
     .wrapper-note-info input.input-comment, .wrapper-note-info textarea.input-comment {
@@ -344,5 +340,84 @@
 
     .wrapper-note-info .input-rating-slider li {
         list-style-type: none;
+    }
+
+    .wrapper-note-info .input-date {
+        font-size: large;
+    }
+
+    #wrapper-note .name {
+        font-size: xx-large;
+        font-weight: 700;
+        text-align: center;
+        padding: 0 16px;
+    }
+
+    .wrapper-post-note-content {
+        display: flex;
+        justify-content: flex-start;
+        align-items: flex-start;
+        padding: 4px 4px 48px 4px;
+        height: 100%;
+        text-align: left;
+    }
+
+
+
+    .wrapper-post-note-content .image-wrapper {
+        flex-grow: 2;
+        height: 100%;
+    }
+    .wrapper-post-note-content .wrapper-note-info {
+        flex-grow: 1;
+        height: 100%;
+        min-width: 320px;
+        max-width: 320px;
+    }
+
+    .image-wrapper .info-header {
+        font-weight: 700;
+        font-size: x-large;
+        text-align: left;
+        padding: 4px 16px 0 16px;
+    }
+    .image-wrapper .info-group {
+        font-weight: 400;
+        font-size: large;
+        text-align: left;
+        padding: 4px 24px;
+    }
+
+    .image-wrapper .hr {
+        height: 1px;
+        margin: 0;
+        padding: 0 8px;
+
+    }
+    .image-wrapper hr {
+        margin: 0;
+        padding: 0;
+    }
+
+    .image-group {
+        display: flex;
+        justify-content: flex-start;
+        align-items: flex-start;
+        -ms-flex-wrap: wrap;
+        -webkit-flex-wrap: wrap;
+        flex-wrap: wrap;
+        overflow-y: auto;
+        height: 100%;
+    }
+
+    .image-group img {
+        width: 48%;
+        margin: 4px;
+        border: 8px solid #ffffff;
+        cursor: pointer;
+    }
+
+    .image-group img.selected {
+        border: 8px solid rgba(132, 167, 87, 1);
     }
 }

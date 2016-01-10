@@ -1,6 +1,25 @@
 ﻿declare var AdoptionColumn;
 
 module FoodParent {
+    export class PostNoteViewFactory {
+        private static _instance: PostNoteViewFactory = new PostNoteViewFactory();
+        private baseUrl: string;
+        constructor(args?: any) {
+            if (PostNoteViewFactory._instance) {
+                throw new Error("Error: Instantiation failed: Use PostNoteViewFactory.getInstance() instead of new.");
+            }
+            PostNoteViewFactory._instance = this;
+        }
+        public static getInstance(): PostNoteViewFactory {
+            return PostNoteViewFactory._instance;
+        }
+        public static create(el: JQuery, tree: Tree): PostNoteView {
+            var view: PostNoteView = new PostNoteView({ el: el });
+            view.setTree(tree);
+            return view;
+        }
+    }
+
     export class ImageNoteViewFactory {
         private static _instance: ImageNoteViewFactory = new ImageNoteViewFactory();
         private baseUrl: string;
@@ -96,6 +115,7 @@ module FoodParent {
                 "click .top-right-button": "_mouseClick",
                 "click .prev-note": "_prevNote",
                 "click .next-note": "_nextNote",
+                "click .image-group img": "_changeCoverImage",
             };
             self.delegateEvents();
         }
@@ -125,11 +145,13 @@ module FoodParent {
             self.$el.html(template(data));
             self.setElement(self.$('#wrapper-note'));
 
-            self.$('.wrapper-note-content img').attr('src', self._note.getPicturePath()).load(function () {
+            /*
+            //self.$('.wrapper-note-content img').attr('src', self._note.getPicturePath()).load(function () {
 
             }).error(function () {
                 self.$('.wrapper-note-content img').attr('src', Setting.getBlankImagePath());
             });
+            */
             self.renderImageNote(self._note);
             self.setVisible();
 
@@ -159,17 +181,12 @@ module FoodParent {
             });
 
             self.$('.input-comment').replaceWith('<div class="input-comment"></div>');
-            self.$('.input-comment').html(note.getComment());
+            self.$('.input-comment').html(htmlDecode(self._note.getComment()));
             self.$('.input-date').html(note.getFormattedHourTime());
-            self.$('.wrapper-note-content img').attr('src', note.getPicturePath()).load(function () {
-            }).error(function () {
-                self.$('.wrapper-note-content img').attr('src', Setting.getBlankImagePath());
-            });
 
             self.$('.input-comment').on('click', function (event) {
-                console.log($(this).text());
                 //$(this).replaceWith("<input type='text' class='input-comment form-control' value='" + htmlEncode($(this).text()) + "' />");
-                $(this).replaceWith("<textarea rows='5' class='input-comment form-control'>" + htmlEncode($(this).text()) + "</textarea>");
+                $(this).replaceWith("<textarea rows='5' class='input-comment form-control'>" + self._note.getComment() + "</textarea>");
                 //self.$('.input-lat').css({ width: width });
                 self.$('.input-comment').focus();
                 self.$('.input-comment').on('focusout', function (event) {
@@ -186,6 +203,16 @@ module FoodParent {
                     }
                 });
             });
+
+            var tag = '';
+            $.each(note.getPictures(), function (index: number, filename: string) {
+                if (index == note.getCover()) {
+                    tag += '<img src="' + Setting.getContentPictureDir() + filename + '" data-target="' + index + '" class="selected" />';
+                } else {
+                    tag += '<img src="' + Setting.getContentPictureDir() + filename + '" data-target="' + index + '" />';
+                }
+            });
+            self.$('.image-group').html(tag);
         }
 
         public update(args?: any): any {
@@ -246,6 +273,31 @@ module FoodParent {
                     return;
                 }
             });
+        }
+
+        private _changeCoverImage(event: Event) {
+            var self: ImageNoteView = this;
+            var cover: number = parseInt($(event.target).attr('data-target'));
+            var tree: Tree = Model.getTrees().findWhere({ id: self._note.getTreeId() });
+            var food: Food = Model.getFoods().findWhere({ id: tree.getFoodId() });
+            if (self._note.getCover() != cover) {
+                EventHandler.handleNoteData(self._note, DATA_MODE.UPDATE_COVER, { cover: cover }, function () {
+                    EventHandler.handleDataChange("Cover picture of <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has changed successfully.", true);
+                    self.renderImageNote(self._note);
+                }, function () {
+                    EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
+                });
+                /*
+                
+                */
+            }
+            /*
+            $.each(self.$('.image-group img'), function (index: number, element: JQuery) {
+                $(element).removeClass('selected');
+            });
+            $(event.target).addClass('selected');
+            self._note.setCover();
+            */
         }
 
         public setVisible(): void {

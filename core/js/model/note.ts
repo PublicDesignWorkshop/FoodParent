@@ -17,6 +17,7 @@
                 "person": 0,
                 "comment": "",
                 "picture": "",
+                "cover": 0,
                 "rate": 0,
                 "date": moment(new Date()).format(Setting.getDateTimeFormat()),
             };
@@ -30,6 +31,11 @@
             response.person = parseInt(response.person);
             response.rate = parseFloat(response.rate);
             response.date = moment(response.date).format(Setting.getDateTimeFormat());
+            response.pictures = Array<string>();
+            if (response.picture != "") {
+                response.pictures = response.picture.split(",");
+            }
+            response.cover = parseInt(response.cover);
             return super.parse(response, options);
         }
         toJSON(options?: any): any {
@@ -37,6 +43,10 @@
             if (this.id != null) {
                 clone["id"] = this.id;
             }
+            if (clone["pictures"]) {
+                clone["picture"] = clone["pictures"].toString();
+            } 
+            delete clone["pictures"];
             return clone;
         }
         public getId(): number {
@@ -46,11 +56,15 @@
             return null;
         }
         public getComment(): string {
-            return this.get('comment');
+            if (this.get('comment') != "") {
+                return this.get('comment');
+            }
+            return "&nbsp;";
         }
-        public getPicturePath(): string {
-            return Setting.getContentPictureDir() + this.get('picture');
+        public setComment(comment: string): void {
+            this.set('comment', comment);
         }
+        
         public getBlankPicturePath(): string {
             return Setting.getCoreImageDir() + "picture-blank.jpg";
         }
@@ -72,11 +86,32 @@
         public getRate(): number {
             return parseFloat(this.get('rate'));
         }
+        public setRate(rate: number): void {
+            this.set('rate', Math.floor(rate));
+        }
         public getType(): number {
             return parseInt(this.get('type'));
         }
         public getTreeId(): number {
             return parseInt(this.get('tree'));
+        }
+        public addPicture(file: string): void {
+            if (this.get('pictures') == undefined) {
+                this.set('pictures', new Array<string>());
+            }
+            this.get('pictures').push(file);
+        }
+        public getPictures(): Array<string> {
+            return this.get('pictures');
+        }
+        public getCover(): number {
+            return parseInt(this.get('cover'));
+        }
+        public setCover(cover: number): void {
+            this.set('cover', Math.floor(cover));
+        }
+        public setDate(date: Moment): void {
+            this.set('date', date.format(Setting.getDateTimeFormat()));
         }
     }
     export class Notes extends Backbone.Collection<Note> {
@@ -120,7 +155,7 @@
                 return null;
             }
             self.sortByAscendingDate();
-            var result: Note = self.models[0];
+            var result: Note = self.findWhere({ type: treeId });
 
             $.each(self.models, function (index: number, note: Note) {
                 if (date > note.getDateValueOf() && note.getType() == noteType && note.getTreeId() == treeId) {

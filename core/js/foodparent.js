@@ -25246,7 +25246,7 @@ var skipLabels;
 			animation: true,
 
 			// Number - Number of animation steps
-			animationSteps: 60,
+			animationSteps: 90,
 
 			// String - Animation easing effect
 			animationEasing: "easeOutQuart",
@@ -26432,13 +26432,14 @@ var skipLabels;
 
 	Chart.Point = Chart.Element.extend({
 	    display: true,
-        active: false,
+	    active: false,
+        first: false,
 		inRange: function(chartX,chartY){
 			var hitDetectionRange = this.hitDetectionRadius + this.radius;
 			return ((Math.pow(chartX-this.x, 2)+Math.pow(chartY-this.y, 2)) < Math.pow(hitDetectionRange,2));
 		},
 		draw : function(){
-			if (this.display || this.active){
+			if (this.display || this.active || this.first){
 				var ctx = this.ctx;
 				ctx.beginPath();
 
@@ -27612,7 +27613,8 @@ var skipLabels;
 				strokeWidth : this.options.pointDotStrokeWidth,
 				radius : this.options.pointDotRadius,
 				display: this.options.pointDot,
-                active: false,
+				active: false,
+                first: false,
 				hitDetectionRadius : this.options.pointHitDetectionRadius,
 				ctx : this.chart.ctx,
 				inRange : function(mouseX){
@@ -27644,7 +27646,6 @@ var skipLabels;
 			}
 
 			skipLabels = this.options.labelskip;
-			console.log(skipLabels);
 			//Iterate through each of the datasets, and build this into a property of the chart
 			helpers.each(data.datasets,function(dataset){
 
@@ -27663,10 +27664,19 @@ var skipLabels;
 				helpers.each(dataset.data, function (dataPoint, index) {
 				    if (dataPoint instanceof FoodParent.Note) {
 				        //Add a new point for each piece of data, passing any required data to draw.
+				        var bFirst = false;
+				        if (index == 0) {
+				            bFirst = true;
+				        } else {
+				            if (dataset.data[index].getId() != dataset.data[index - 1].getId()) {
+				                bFirst = true;
+				            }
+				        }
 				        datasetObject.points.push(new this.PointClass({
 				            id: dataPoint.getId(),
 				            value: dataPoint.getRate(),
 				            label: data.labels[index],
+                            first: bFirst,
 				            datasetLabel: dataset.label,
 				            strokeColor: dataset.pointStrokeColor,
 				            fillColor: dataset.pointColor,
@@ -42828,6 +42838,10 @@ var htmlEncode = function (str) {
     str = str.replace(/'/g, "&#039;");
     return str;
 };
+var htmlDecode = function (str) {
+    str = str.replace(/\n/g, "<br />");
+    return str;
+};
 var replaceAt = function (str, index, character) {
     return str.substr(0, index) + character + str.substr(index + character.length);
 };
@@ -42874,6 +42888,12 @@ var FoodParent;
         };
         Setting.getBlankImagePath = function () {
             return Setting.getCoreImageDir() + "picture-blank.jpg";
+        };
+        Setting.getFileUploadPath = function () {
+            return Setting.getPhpDir() + "upload.php";
+        };
+        Setting.getRelativeFileUploadPath = function () {
+            return "../../content/picture/";
         };
         Setting.getNavWrapperElement = function () {
             return $('#wrapper-nav');
@@ -43115,6 +43135,40 @@ var FoodParent;
                 }
             });
         };
+        Controller.uploadFile = function (file, success, error) {
+            // Create a formdata object and add the files
+            var data = new FormData();
+            data.append("filename", file);
+            var xhr1 = $.ajax({
+                url: FoodParent.Setting.getFileUploadPath() + "?files",
+                type: "POST",
+                data: data,
+                cache: false,
+                dataType: "json",
+                processData: false,
+                contentType: false,
+                success: function (data, textStatus, jqXHR) {
+                    Controller.removeXHR(xhr1);
+                    if (typeof data.error === "undefined") {
+                        if (success) {
+                            success(data.files[0].replace(FoodParent.Setting.getRelativeFileUploadPath(), ""));
+                        }
+                    }
+                    else {
+                        if (error) {
+                            error();
+                        }
+                    }
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    Controller.removeXHR(xhr1);
+                    if (error) {
+                        error();
+                    }
+                }
+            });
+            Controller.pushXHR(xhr1);
+        };
         Controller._instance = new Controller();
         Controller.TAG = "Controller - ";
         return Controller;
@@ -43186,6 +43240,7 @@ var FoodParent;
         DATA_MODE[DATA_MODE["UPDATE_AUTH"] = 12] = "UPDATE_AUTH";
         DATA_MODE[DATA_MODE["UPDATE_COMMENT"] = 13] = "UPDATE_COMMENT";
         DATA_MODE[DATA_MODE["UPDATE_RATING"] = 14] = "UPDATE_RATING";
+        DATA_MODE[DATA_MODE["UPDATE_COVER"] = 15] = "UPDATE_COVER";
     })(FoodParent.DATA_MODE || (FoodParent.DATA_MODE = {}));
     var DATA_MODE = FoodParent.DATA_MODE;
     (function (VIEW_STATUS) {
@@ -43200,6 +43255,7 @@ var FoodParent;
         VIEW_STATUS[VIEW_STATUS["MANAGE_ADOPTION"] = 8] = "MANAGE_ADOPTION";
         VIEW_STATUS[VIEW_STATUS["DETAIL_TREE"] = 9] = "DETAIL_TREE";
         VIEW_STATUS[VIEW_STATUS["IMAGENOTE_TREE"] = 10] = "IMAGENOTE_TREE";
+        VIEW_STATUS[VIEW_STATUS["POST_NOTE"] = 11] = "POST_NOTE";
     })(FoodParent.VIEW_STATUS || (FoodParent.VIEW_STATUS = {}));
     var VIEW_STATUS = FoodParent.VIEW_STATUS;
     (function (VIEW_MODE) {
@@ -43354,8 +43410,22 @@ var FoodParent;
                     if (el.hasClass('content-chart')) {
                         new FoodParent.RenderImageNoteViewCommand({ el: FoodParent.Setting.getPopWrapperElement(), note: options.note }).execute();
                     }
+                    else if (el.hasClass('button-manage-adoption')) {
+                        new FoodParent.RenderManageAdoptionViewCommand({ el: FoodParent.Setting.getPopWrapperElement(), tree: options.tree.getId() }).execute();
+                    }
+                    else if (el.hasClass('button-new-note')) {
+                        new FoodParent.RenderPostNoteViewCommand({ el: FoodParent.Setting.getPopWrapperElement(), tree: options.tree }).execute();
+                    }
                     break;
                 case VIEW_STATUS.IMAGENOTE_TREE:
+                    if (el.hasClass('button-close')) {
+                        new FoodParent.RemoveAlertViewCommand({ delay: FoodParent.Setting.getRemovePopupDuration() }).execute();
+                        if (FoodParent.View.getDetailTreeView()) {
+                            FoodParent.View.getDetailTreeView().refreshTreeInfo();
+                        }
+                    }
+                    break;
+                case VIEW_STATUS.POST_NOTE:
                     if (el.hasClass('button-close')) {
                         new FoodParent.RemoveAlertViewCommand({ delay: FoodParent.Setting.getRemovePopupDuration() }).execute();
                         if (FoodParent.View.getDetailTreeView()) {
@@ -43431,6 +43501,12 @@ var FoodParent;
                     break;
                 case DATA_MODE.UPDATE_RATING:
                     self._lastCommand = new FoodParent.UpdateNoteRating({ note: note, rate: args.rate }, success, error);
+                    break;
+                case DATA_MODE.UPDATE_COVER:
+                    self._lastCommand = new FoodParent.UpdateNoteCover({ note: note, cover: args.cover }, success, error);
+                    break;
+                case DATA_MODE.CREATE:
+                    new FoodParent.CreateNote({ note: note }, success, error).execute();
                     break;
             }
             if (self._lastCommand != undefined) {
@@ -43711,6 +43787,23 @@ var FoodParent;
         return RenderImageNoteViewCommand;
     })();
     FoodParent.RenderImageNoteViewCommand = RenderImageNoteViewCommand;
+    var RenderPostNoteViewCommand = (function () {
+        function RenderPostNoteViewCommand(args) {
+            var self = this;
+            self._el = args.el;
+            self._tree = args.tree;
+        }
+        RenderPostNoteViewCommand.prototype.execute = function () {
+            var self = this;
+            var view = FoodParent.PostNoteViewFactory.create(self._el, self._tree).render();
+            FoodParent.View.setPopupView(view);
+            FoodParent.View.setViewStatus(FoodParent.VIEW_STATUS.POST_NOTE);
+        };
+        RenderPostNoteViewCommand.prototype.undo = function () {
+        };
+        return RenderPostNoteViewCommand;
+    })();
+    FoodParent.RenderPostNoteViewCommand = RenderPostNoteViewCommand;
     var RenderAlertViewCommand = (function () {
         function RenderAlertViewCommand(args) {
             var self = this;
@@ -45005,7 +45098,7 @@ var FoodParent;
                 'comment': self._comment,
             }, {
                 wait: true,
-                success: function (tree, response) {
+                success: function (note, response) {
                     if (self._success) {
                         self._success();
                     }
@@ -45023,7 +45116,7 @@ var FoodParent;
                 'comment': self._previousComment,
             }, {
                 wait: true,
-                success: function (tree, response) {
+                success: function (note, response) {
                     if (self._success) {
                         self._success();
                     }
@@ -45059,7 +45152,7 @@ var FoodParent;
                 'rate': self._rate,
             }, {
                 wait: true,
-                success: function (tree, response) {
+                success: function (note, response) {
                     if (self._success) {
                         self._success();
                     }
@@ -45077,7 +45170,7 @@ var FoodParent;
                 'rate': self._previousRate,
             }, {
                 wait: true,
-                success: function (tree, response) {
+                success: function (note, response) {
                     if (self._success) {
                         self._success();
                     }
@@ -45092,6 +45185,110 @@ var FoodParent;
         return UpdateNoteRating;
     })();
     FoodParent.UpdateNoteRating = UpdateNoteRating;
+    var UpdateNoteCover = (function () {
+        function UpdateNoteCover(args, success, error) {
+            var self = this;
+            if (args != undefined && args.note != undefined && args.cover != undefined) {
+                self._note = args.note;
+                self._cover = args.cover;
+            }
+            if (success) {
+                self._success = success;
+            }
+            if (error) {
+                self._error = error;
+            }
+        }
+        UpdateNoteCover.prototype.execute = function () {
+            var self = this;
+            self._previousCover = self._note.getCover();
+            self._note.save({
+                'cover': self._cover,
+            }, {
+                wait: true,
+                success: function (note, response) {
+                    if (self._success) {
+                        self._success();
+                    }
+                },
+                error: function (error, response) {
+                    if (self._error) {
+                        self._error();
+                    }
+                },
+            });
+        };
+        UpdateNoteCover.prototype.undo = function () {
+            var self = this;
+            self._note.save({
+                'cover': self._previousCover,
+            }, {
+                wait: true,
+                success: function (tree, response) {
+                    if (self._success) {
+                        self._success();
+                    }
+                },
+                error: function (error, response) {
+                    if (self._error) {
+                        self._error();
+                    }
+                },
+            });
+        };
+        return UpdateNoteCover;
+    })();
+    FoodParent.UpdateNoteCover = UpdateNoteCover;
+    var CreateNote = (function () {
+        function CreateNote(args, success, error) {
+            var self = this;
+            if (args != undefined && args.note != undefined) {
+                self._note = args.note;
+            }
+            if (success) {
+                self._success = success;
+            }
+            if (error) {
+                self._error = error;
+            }
+        }
+        CreateNote.prototype.execute = function () {
+            var self = this;
+            self._note.save({}, {
+                wait: true,
+                success: function (note, response) {
+                    FoodParent.Model.getNotes().add(self._note);
+                    if (self._success) {
+                        self._success();
+                    }
+                },
+                error: function (error, response) {
+                    if (self._error) {
+                        self._error();
+                    }
+                },
+            });
+        };
+        CreateNote.prototype.undo = function () {
+            var self = this;
+            FoodParent.Model.getNotes().remove(self._note);
+            self._note.destroy({
+                wait: true,
+                success: function (note, response) {
+                    if (self._success) {
+                        self._success();
+                    }
+                },
+                error: function (error, response) {
+                    if (self._error) {
+                        self._error();
+                    }
+                },
+            });
+        };
+        return CreateNote;
+    })();
+    FoodParent.CreateNote = CreateNote;
 })(FoodParent || (FoodParent = {}));
 
 var DatePickerCellEditor = Backgrid.InputCellEditor.extend({
@@ -46979,9 +47176,9 @@ var FoodParent;
             template += '</div>';
             template += '</div>'; // end of .content-tree-recentactivities
             template += '<div class="content-tree-control">';
-            template += '<div class="button-outer-frame2 button4"><div class="button-inner-frame2">Update Status</div></div>';
-            template += '<div class="button-outer-frame2 button4"><div class="button-inner-frame2">Manage Parents</div></div>';
-            template += '<div class="button-outer-frame2 button4"><div class="button-inner-frame2">Delete Tree*</div></div>';
+            template += '<div class="button-outer-frame2 button4"><div class="button-inner-frame2 button-new-note">Post New Note</div></div>';
+            template += '<div class="button-outer-frame2 button4"><div class="button-inner-frame2 button-manage-adoption">Manage Adoption</div></div>';
+            template += '<div class="button-outer-frame2 button4"><div class="button-inner-frame2 button-delete-tree">Delete Tree*</div></div>';
             template += '<div class="button-description">* marked operation cannot be undone.</div>';
             template += '</div>'; // end of .tree-control
             template += '</div>'; // end of #wrapper-tree-detail
@@ -47002,9 +47199,14 @@ var FoodParent;
             template += '<div class="outer-frame">';
             template += '<div class="inner-frame">';
             template += '<div class="wrapper-note-content">';
-            template += '<div class="image-wrapper"><img src="<%= image %>" /></div>';
+            template += '<div class="image-wrapper"><div class="image-group"></div></div>';
             template += '<div class="wrapper-note-info">';
             template += '<div class="name"><%= name %></div>';
+            template += '<div class="hr"><hr /></div>';
+            template += '<div class="info-button-group">';
+            template += '<div class="button-outer-frame2 button3"><div class="button-inner-frame2 prev-note"><i class="fa fa-caret-left"></i></div></div>';
+            template += '<div class="button-outer-frame2 button3"><div class="button-inner-frame2 next-note"><i class="fa fa-caret-right"></i></div></div>';
+            template += '</div>';
             template += '<div class="hr"><hr /></div>';
             template += '<div class="info-header"><i class="fa fa-star-half-o"></i> Rating</div>';
             template += '<div class="info-group">';
@@ -47021,13 +47223,56 @@ var FoodParent;
             template += '<div class="info-group">';
             template += '<div class="input-date"><%= date %></div>';
             template += '</div>';
-            template += '<div class="hr"><hr /></div>';
-            template += '<div class="info-button-group">';
-            template += '<div class="button-outer-frame2 button3"><div class="button-inner-frame2 prev-note"><i class="fa fa-caret-left"></i></div></div>';
-            template += '<div class="button-outer-frame2 button3"><div class="button-inner-frame2 next-note"><i class="fa fa-caret-right"></i></div></div>';
-            template += '</div>';
             template += '</div>';
             template += '</div>'; // end of .wrapper-note-content
+            template += '</div>'; // end of .inner-frame
+            template += '<div class="top-right-button button-close">';
+            template += '<i class="fa fa-remove fa-2x"></i>';
+            template += '</div>'; // end of top-right-button button-close
+            template += '</div>'; // end of .outer-frame
+            template += '</div>'; // end of #wrapper-note
+            return template;
+        };
+        Template.getPostNoteViewTemplate = function () {
+            var template = '';
+            template += '<div id="wrapper-note">';
+            template += '<div class="outer-frame">';
+            template += '<div class="inner-frame">';
+            template += '<div class="wrapper-post-note-content">';
+            template += '<div class="image-wrapper">';
+            template += '<div class="wrapper-input-upload-picture">';
+            template += '<input class="input-upload-picture fileupload" type="file" accept="image/*" capture="camera" />';
+            template += '</div>';
+            template += '<div class="wrapper-uploading-picture hidden">';
+            template += '<div class="uploading-picture">Uploading...</div>';
+            template += '</div>';
+            template += '<div class="info-header"><i class="fa fa-image"></i> Select Cover Picture</div>';
+            template += '<div class="image-group"></div>';
+            template += '</div>';
+            template += '<div class="wrapper-note-info">';
+            template += '<div class="name"><%= name %></div>';
+            template += '<div class="hr"><hr /></div>';
+            template += '<div class="info-header"><i class="fa fa-star-half-o"></i> Rating</div>';
+            template += '<div class="info-group">';
+            template += '<div class="input-rating"></div>';
+            template += '<div class="input-rating-slider"></div>';
+            template += '</div>';
+            template += '<div class="hr"><hr /></div>';
+            template += '<div class="info-header"><i class="fa fa-comment"></i> Comment</div>';
+            template += '<div class="info-group">';
+            template += '<div class="input-comment">&nbsp;</div>';
+            template += '</div>';
+            template += '<div class="hr"><hr /></div>';
+            template += '<div class="info-header"><i class="fa fa-calendar-o"></i> Posted</div>';
+            template += '<div class="info-group">';
+            template += '<input type="text" class="form-control input-date" />';
+            template += '</div>';
+            template += '<div class="hr"><hr /></div>';
+            template += '<div class="info-button-group">';
+            template += '<div class="button-outer-frame2 button3"><div class="button-inner-frame2 create-note"><i class="fa fa-save"></i> Save</div></div>';
+            template += '</div>';
+            template += '</div>'; // .wrapper-note-info
+            template += '</div>'; // end of .wrapper-post-note-content
             template += '</div>'; // end of .inner-frame
             template += '<div class="top-right-button button-close">';
             template += '<i class="fa fa-remove fa-2x"></i>';
@@ -47494,6 +47739,25 @@ var __extends = (this && this.__extends) || function (d, b) {
 };
 var FoodParent;
 (function (FoodParent) {
+    var PostNoteViewFactory = (function () {
+        function PostNoteViewFactory(args) {
+            if (PostNoteViewFactory._instance) {
+                throw new Error("Error: Instantiation failed: Use PostNoteViewFactory.getInstance() instead of new.");
+            }
+            PostNoteViewFactory._instance = this;
+        }
+        PostNoteViewFactory.getInstance = function () {
+            return PostNoteViewFactory._instance;
+        };
+        PostNoteViewFactory.create = function (el, tree) {
+            var view = new FoodParent.PostNoteView({ el: el });
+            view.setTree(tree);
+            return view;
+        };
+        PostNoteViewFactory._instance = new PostNoteViewFactory();
+        return PostNoteViewFactory;
+    })();
+    FoodParent.PostNoteViewFactory = PostNoteViewFactory;
     var ImageNoteViewFactory = (function () {
         function ImageNoteViewFactory(args) {
             if (ImageNoteViewFactory._instance) {
@@ -47592,6 +47856,7 @@ var FoodParent;
                 "click .top-right-button": "_mouseClick",
                 "click .prev-note": "_prevNote",
                 "click .next-note": "_nextNote",
+                "click .image-group img": "_changeCoverImage",
             };
             self.delegateEvents();
         }
@@ -47621,10 +47886,13 @@ var FoodParent;
             };
             self.$el.html(template(data));
             self.setElement(self.$('#wrapper-note'));
-            self.$('.wrapper-note-content img').attr('src', self._note.getPicturePath()).load(function () {
+            /*
+            //self.$('.wrapper-note-content img').attr('src', self._note.getPicturePath()).load(function () {
+
             }).error(function () {
-                self.$('.wrapper-note-content img').attr('src', FoodParent.Setting.getBlankImagePath());
+                self.$('.wrapper-note-content img').attr('src', Setting.getBlankImagePath());
             });
+            */
             self.renderImageNote(self._note);
             self.setVisible();
             return self;
@@ -47651,16 +47919,11 @@ var FoodParent;
                 }
             });
             self.$('.input-comment').replaceWith('<div class="input-comment"></div>');
-            self.$('.input-comment').html(note.getComment());
+            self.$('.input-comment').html(htmlDecode(self._note.getComment()));
             self.$('.input-date').html(note.getFormattedHourTime());
-            self.$('.wrapper-note-content img').attr('src', note.getPicturePath()).load(function () {
-            }).error(function () {
-                self.$('.wrapper-note-content img').attr('src', FoodParent.Setting.getBlankImagePath());
-            });
             self.$('.input-comment').on('click', function (event) {
-                console.log($(this).text());
                 //$(this).replaceWith("<input type='text' class='input-comment form-control' value='" + htmlEncode($(this).text()) + "' />");
-                $(this).replaceWith("<textarea rows='5' class='input-comment form-control'>" + htmlEncode($(this).text()) + "</textarea>");
+                $(this).replaceWith("<textarea rows='5' class='input-comment form-control'>" + self._note.getComment() + "</textarea>");
                 //self.$('.input-lat').css({ width: width });
                 self.$('.input-comment').focus();
                 self.$('.input-comment').on('focusout', function (event) {
@@ -47678,6 +47941,16 @@ var FoodParent;
                     }
                 });
             });
+            var tag = '';
+            $.each(note.getPictures(), function (index, filename) {
+                if (index == note.getCover()) {
+                    tag += '<img src="' + FoodParent.Setting.getContentPictureDir() + filename + '" data-target="' + index + '" class="selected" />';
+                }
+                else {
+                    tag += '<img src="' + FoodParent.Setting.getContentPictureDir() + filename + '" data-target="' + index + '" />';
+                }
+            });
+            self.$('.image-group').html(tag);
         };
         ImageNoteView.prototype.update = function (args) {
             if (!this.bRendered) {
@@ -47735,6 +48008,27 @@ var FoodParent;
                     return;
                 }
             });
+        };
+        ImageNoteView.prototype._changeCoverImage = function (event) {
+            var self = this;
+            var cover = parseInt($(event.target).attr('data-target'));
+            var tree = FoodParent.Model.getTrees().findWhere({ id: self._note.getTreeId() });
+            var food = FoodParent.Model.getFoods().findWhere({ id: tree.getFoodId() });
+            if (self._note.getCover() != cover) {
+                FoodParent.EventHandler.handleNoteData(self._note, FoodParent.DATA_MODE.UPDATE_COVER, { cover: cover }, function () {
+                    FoodParent.EventHandler.handleDataChange("Cover picture of <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has changed successfully.", true);
+                    self.renderImageNote(self._note);
+                }, function () {
+                    FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+                });
+            }
+            /*
+            $.each(self.$('.image-group img'), function (index: number, element: JQuery) {
+                $(element).removeClass('selected');
+            });
+            $(event.target).addClass('selected');
+            self._note.setCover();
+            */
         };
         ImageNoteView.prototype.setVisible = function () {
             var self = this;
@@ -48966,28 +49260,22 @@ var FoodParent;
                                 var data = {
                                     image: FoodParent.Setting.getBlankImagePath(),
                                     value: self._note.getRate().toFixed(2) + " / " + FoodParent.Setting.getMaxRating().toFixed(2),
-                                    comment: self._note.getComment(),
+                                    comment: htmlDecode(self._note.getComment()),
                                     date: tooltip.label,
                                 };
                                 self.$('#wrapper-tooltip').html(template(data));
-                                self.$('#wrapper-tooltip img').attr('src', self._note.getPicturePath()).load(function () {
-                                    $(this).removeClass('hidden');
-                                }).error(function () {
-                                    //$(this).attr('src', Setting.getBlankImagePath());
-                                    $(this).addClass('hidden');
-                                });
+                                if (self._note.getPictures().length > 0) {
+                                    self.$('#wrapper-tooltip img').attr('src', FoodParent.Setting.getContentPictureDir() + self._note.getPictures()[self._note.getCover()]).load(function () {
+                                        $(this).removeClass('hidden');
+                                    }).error(function () {
+                                        //$(this).attr('src', Setting.getBlankImagePath());
+                                        $(this).addClass('hidden');
+                                    });
+                                }
+                                else {
+                                    self.$('#wrapper-tooltip img').addClass('hidden');
+                                }
                             }
-                            // Otherwise, tooltip will be an object with all tooltip properties like:
-                            // tooltip.caretHeight
-                            // tooltip.caretPadding
-                            // tooltip.chart
-                            // tooltip.cornerRadius
-                            // tooltip.fillColor
-                            // tooltip.font...
-                            // tooltip.text
-                            // tooltip.x
-                            // tooltip.y
-                            // etc...
                             self.$('#wrapper-tooltip').removeClass('hidden');
                         },
                     });
@@ -49120,6 +49408,9 @@ var FoodParent;
                 "click .flag-radio": "_applyFlag",
                 "click .ownership-radio": "_applyOwnership",
                 "dblclick .content-chart": "_mouseClick",
+                "click .button-delete-tree": "_deleteTree",
+                "click .button-manage-adoption": "_mouseClick",
+                "click .button-new-note": "_mouseClick",
             };
             self.delegateEvents();
         }
@@ -49184,8 +49475,10 @@ var FoodParent;
             return self;
         };
         DetailTreeGraphicView.prototype.resize = function () {
+            var self = this;
             $('#wrapper-main').css({ height: FoodParent.View.getHeight() - 60 });
             $('#wrapper-mtree').css({ height: FoodParent.View.getHeight() - 60 });
+            self.$('.image-group').css({ height: self.$('.image-wrapper').innerHeight() - 60 });
         };
         DetailTreeGraphicView.prototype.refreshTreeInfo = function () {
             var self = this;
@@ -49269,9 +49562,18 @@ var FoodParent;
         };
         DetailTreeGraphicView.prototype._mouseClick = function (event) {
             var self = this;
-            if (self._note != undefined) {
-                FoodParent.EventHandler.handleMouseClick($(event.currentTarget), self, { note: self._note });
-            }
+            FoodParent.EventHandler.handleMouseClick($(event.currentTarget), self, { note: self._note, tree: self._tree });
+        };
+        DetailTreeGraphicView.prototype._deleteTree = function () {
+            var self = this;
+            var food = FoodParent.Model.getFoods().findWhere({ id: self._tree.getFoodId() });
+            var name = food.getName() + " " + self._tree.getName();
+            FoodParent.EventHandler.handleTreeData(self._tree, FoodParent.DATA_MODE.DELETE, {}, function () {
+                Backbone.history.history.back();
+                FoodParent.EventHandler.handleDataChange("<strong><i>" + name + "</i></strong> has deleted successfully.", false);
+            }, function () {
+                FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+            });
         };
         DetailTreeGraphicView.TAG = "DetailTreeGraphicView - ";
         return DetailTreeGraphicView;
@@ -49670,6 +49972,185 @@ var FoodParent;
         return ManagePeopleTableView;
     })(ManagePeopleView);
     FoodParent.ManagePeopleTableView = ManagePeopleTableView;
+})(FoodParent || (FoodParent = {}));
+
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var FoodParent;
+(function (FoodParent) {
+    var PostNoteView = (function (_super) {
+        __extends(PostNoteView, _super);
+        function PostNoteView(options) {
+            _super.call(this, options);
+            var self = this;
+            self.bDebug = true;
+            //$(window).resize(_.debounce(that.customResize, Setting.getInstance().getResizeTimeout()));
+            self.events = {
+                "click .alert-confirm": "_mouseClick",
+                "click .top-right-button": "_mouseClick",
+                "click .image-group img": "_selectCoverImage",
+                "click .create-note": "_createNote",
+            };
+            self.delegateEvents();
+        }
+        PostNoteView.prototype.setTree = function (tree) {
+            var self = this;
+            self._tree = tree;
+        };
+        PostNoteView.prototype.render = function (args) {
+            if (this.bRendered) {
+                this.update(args);
+                return;
+            }
+            this.bRendered = true;
+            /////
+            var self = this;
+            if (self.bDebug)
+                console.log(PostNoteView.TAG + "render()");
+            var food = FoodParent.Model.getFoods().findWhere({ id: self._tree.getFoodId() });
+            var template = _.template(FoodParent.Template.getPostNoteViewTemplate());
+            var data = {
+                name: food.getName() + " " + self._tree.getName(),
+            };
+            self.$el.html(template(data));
+            self.setElement(self.$('#wrapper-note'));
+            self.setVisible();
+            // Create a new note.
+            self._note = new FoodParent.Note({ type: FoodParent.NoteType.IMAGE, tree: self._tree.getId(), person: 0, comment: "", picture: "", rate: 0, cover: 0, date: moment(new Date()).format(FoodParent.Setting.getDateTimeFormat()) });
+            // Event listener for uploading a file.
+            self.$('input[type=file]').off('change');
+            self.$('input[type=file]').on('change', function (event) {
+                self.$('.wrapper-input-upload-picture').addClass('hidden');
+                self.$('.wrapper-uploading-picture').removeClass('hidden');
+                var files = event.target.files;
+                if (files.length > 0) {
+                    FoodParent.Controller.uploadFile(files[0], function (fileName) {
+                        self._note.addPicture(fileName);
+                        // Success
+                        self.$('input[type=file]').val("");
+                        self.$('.wrapper-uploading-picture').addClass('hidden');
+                        self.$('.wrapper-input-upload-picture').removeClass('hidden');
+                        self.renderNoteImages();
+                    }, function () {
+                        // Error
+                        self.$('.wrapper-uploading-picture').addClass('hidden');
+                        self.$('.wrapper-input-upload-picture').removeClass('hidden');
+                    });
+                }
+            });
+            self.renderNoteInfo();
+            self.resize();
+            return self;
+        };
+        PostNoteView.prototype.resize = function () {
+            var self = this;
+            self.$('.image-group').css({ height: self.$('.image-wrapper').innerHeight() - 60 });
+        };
+        PostNoteView.prototype.renderNoteInfo = function () {
+            var self = this;
+            self.$('.input-rating').replaceWith('<div class="input-rating"></div>');
+            self.$('.input-rating').html(Math.ceil(self._note.getRate()).toFixed(2) + " / " + FoodParent.Setting.getMaxRating().toFixed(2));
+            self.$('.input-rating-slider').html("");
+            var rate = rating(self.$('.input-rating-slider')[0], self._note.getRate().toFixed(2), FoodParent.Setting.getMaxRating(), function (rate) {
+                self._note.setRate(rate);
+                self.renderNoteInfo();
+            });
+            self.$('.input-comment').replaceWith('<div class="input-comment"></div>');
+            self.$('.input-comment').html(htmlDecode(self._note.getComment()));
+            self.$('.input-comment').on('click', function (event) {
+                //$(this).replaceWith("<input type='text' class='input-comment form-control' value='" + htmlEncode($(this).text()) + "' />");
+                $(this).replaceWith("<textarea rows='5' class='input-comment form-control'>" + self._note.getComment() + "</textarea>");
+                //self.$('.input-lat').css({ width: width });
+                self.$('.input-comment').focus();
+                self.$('.input-comment').on('focusout', function (event) {
+                    console.log(self.$('.input-comment').val());
+                    var comment = self.$('.input-comment').val();
+                    self._note.setComment(comment);
+                    self.renderNoteInfo();
+                });
+            });
+            var today = new Date();
+            self.$('.input-date').attr({ 'data-value': self._note.getFormattedDate() });
+            self.$('.input-date').pickadate({
+                format: "dd mmm yyyy",
+                today: 'Today',
+                max: today,
+                clear: '',
+                close: 'Close',
+                onClose: function () {
+                    self._note.setDate(moment(this.get()).hour(moment(new Date()).hour()));
+                    self.renderNoteInfo();
+                }
+            });
+        };
+        PostNoteView.prototype.renderNoteImages = function () {
+            var self = this;
+            var tag = '';
+            $.each(self._note.getPictures(), function (index, filename) {
+                tag += '<img src="' + FoodParent.Setting.getContentPictureDir() + filename + '" data-target="' + index + '" />';
+            });
+            self.$('.image-group').html(tag);
+            $.each(self.$('.image-group img'), function (index, element) {
+                if (parseInt($(element).attr('data-target')) == self._note.getCover()) {
+                    $(element).addClass('selected');
+                }
+                else {
+                    $(element).removeClass('selected');
+                }
+            });
+        };
+        PostNoteView.prototype._selectCoverImage = function (event) {
+            var self = this;
+            $.each(self.$('.image-group img'), function (index, element) {
+                $(element).removeClass('selected');
+            });
+            $(event.target).addClass('selected');
+            self._note.setCover(parseInt($(event.target).attr('data-target')));
+        };
+        PostNoteView.prototype._createNote = function (event) {
+            var self = this;
+            var food = FoodParent.Model.getFoods().findWhere({ id: self._tree.getFoodId() });
+            FoodParent.EventHandler.handleNoteData(self._note, FoodParent.DATA_MODE.CREATE, {}, function () {
+                FoodParent.EventHandler.handleDataChange("New note for <strong><i>" + food.getName() + " " + self._tree.getName() + "</i></strong> has been created.", false);
+                if (FoodParent.View.getDetailTreeView()) {
+                    FoodParent.View.getDetailTreeView().refreshTreeInfo();
+                }
+                new FoodParent.RemoveAlertViewCommand({ delay: FoodParent.Setting.getRemovePopupDuration() }).execute();
+            }, function () {
+                FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+            });
+        };
+        PostNoteView.prototype.update = function (args) {
+            if (!this.bRendered) {
+                this.render(args);
+                return self;
+            }
+            /////
+            return self;
+        };
+        PostNoteView.prototype._mouseEnter = function (event) {
+            var self = this;
+            FoodParent.EventHandler.handleMouseEnter($(event.currentTarget), self);
+        };
+        PostNoteView.prototype._mouseClick = function (event) {
+            var self = this;
+            FoodParent.EventHandler.handleMouseClick($(event.currentTarget), self);
+        };
+        PostNoteView.prototype.setVisible = function () {
+            var self = this;
+            FoodParent.Setting.getPopWrapperElement().removeClass('hidden');
+        };
+        PostNoteView.prototype.setInvisible = function () {
+            var self = this;
+            FoodParent.Setting.getPopWrapperElement().addClass('hidden');
+        };
+        PostNoteView.TAG = "PostNoteView - ";
+        return PostNoteView;
+    })(FoodParent.PopupView);
+    FoodParent.PostNoteView = PostNoteView;
 })(FoodParent || (FoodParent = {}));
 
 var FoodParent;
@@ -50686,6 +51167,7 @@ var FoodParent;
                 "person": 0,
                 "comment": "",
                 "picture": "",
+                "cover": 0,
                 "rate": 0,
                 "date": moment(new Date()).format(FoodParent.Setting.getDateTimeFormat()),
             };
@@ -50699,6 +51181,11 @@ var FoodParent;
             response.person = parseInt(response.person);
             response.rate = parseFloat(response.rate);
             response.date = moment(response.date).format(FoodParent.Setting.getDateTimeFormat());
+            response.pictures = Array();
+            if (response.picture != "") {
+                response.pictures = response.picture.split(",");
+            }
+            response.cover = parseInt(response.cover);
             return _super.prototype.parse.call(this, response, options);
         };
         Note.prototype.toJSON = function (options) {
@@ -50706,6 +51193,10 @@ var FoodParent;
             if (this.id != null) {
                 clone["id"] = this.id;
             }
+            if (clone["pictures"]) {
+                clone["picture"] = clone["pictures"].toString();
+            }
+            delete clone["pictures"];
             return clone;
         };
         Note.prototype.getId = function () {
@@ -50715,10 +51206,13 @@ var FoodParent;
             return null;
         };
         Note.prototype.getComment = function () {
-            return this.get('comment');
+            if (this.get('comment') != "") {
+                return this.get('comment');
+            }
+            return "&nbsp;";
         };
-        Note.prototype.getPicturePath = function () {
-            return FoodParent.Setting.getContentPictureDir() + this.get('picture');
+        Note.prototype.setComment = function (comment) {
+            this.set('comment', comment);
         };
         Note.prototype.getBlankPicturePath = function () {
             return FoodParent.Setting.getCoreImageDir() + "picture-blank.jpg";
@@ -50741,11 +51235,32 @@ var FoodParent;
         Note.prototype.getRate = function () {
             return parseFloat(this.get('rate'));
         };
+        Note.prototype.setRate = function (rate) {
+            this.set('rate', Math.floor(rate));
+        };
         Note.prototype.getType = function () {
             return parseInt(this.get('type'));
         };
         Note.prototype.getTreeId = function () {
             return parseInt(this.get('tree'));
+        };
+        Note.prototype.addPicture = function (file) {
+            if (this.get('pictures') == undefined) {
+                this.set('pictures', new Array());
+            }
+            this.get('pictures').push(file);
+        };
+        Note.prototype.getPictures = function () {
+            return this.get('pictures');
+        };
+        Note.prototype.getCover = function () {
+            return parseInt(this.get('cover'));
+        };
+        Note.prototype.setCover = function (cover) {
+            this.set('cover', Math.floor(cover));
+        };
+        Note.prototype.setDate = function (date) {
+            this.set('date', date.format(FoodParent.Setting.getDateTimeFormat()));
         };
         return Note;
     })(Backbone.Model);
@@ -50789,7 +51304,7 @@ var FoodParent;
                 return null;
             }
             self.sortByAscendingDate();
-            var result = self.models[0];
+            var result = self.findWhere({ type: treeId });
             $.each(self.models, function (index, note) {
                 if (date > note.getDateValueOf() && note.getType() == noteType && note.getTreeId() == treeId) {
                     result = note;
@@ -50956,7 +51471,6 @@ var FoodParent;
             var persons = new Persons();
             $.each(self.models, function (index, person) {
                 if ($.inArray(0, idArray) > -1) {
-                    console.log($.inArray(treeId, person.get('trees')));
                     if (person.get('trees').length == 0 || $.inArray(treeId, person.get('trees')) < 0) {
                         if (persons.where({ id: person.getId() }) != undefined) {
                             persons.add(person);

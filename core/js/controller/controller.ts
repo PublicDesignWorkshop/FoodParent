@@ -175,6 +175,41 @@
                 }
             });
         }
+
+        public static uploadFile(file: any, success?: Function, error?: Function) {
+            // Create a formdata object and add the files
+            var data = new FormData();
+            data.append("filename", file);
+
+            var xhr1: JQueryXHR = $.ajax({
+                url: Setting.getFileUploadPath() + "?files",
+                type: "POST",
+                data: data,
+                cache: false,
+                dataType: "json",
+                processData: false, // Don't process the files
+                contentType: false, // Set content type to false as jQuery will tell the server its a query string request
+                success: function (data, textStatus, jqXHR) {
+                    Controller.removeXHR(xhr1);
+                    if (typeof data.error === "undefined") {
+                        if (success) {
+                            success(data.files[0].replace(Setting.getRelativeFileUploadPath(), ""));
+                        }
+                    } else {
+                        if (error) {
+                            error();
+                        }
+                    }
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    Controller.removeXHR(xhr1);
+                    if (error) {
+                        error();
+                    }
+                }
+            });
+            Controller.pushXHR(xhr1);
+        }
     }
 
     export class Router extends Backbone.Router {

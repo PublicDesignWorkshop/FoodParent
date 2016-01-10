@@ -55,7 +55,7 @@ var skipLabels;
 			animation: true,
 
 			// Number - Number of animation steps
-			animationSteps: 60,
+			animationSteps: 90,
 
 			// String - Animation easing effect
 			animationEasing: "easeOutQuart",
@@ -1241,13 +1241,14 @@ var skipLabels;
 
 	Chart.Point = Chart.Element.extend({
 	    display: true,
-        active: false,
+	    active: false,
+        first: false,
 		inRange: function(chartX,chartY){
 			var hitDetectionRange = this.hitDetectionRadius + this.radius;
 			return ((Math.pow(chartX-this.x, 2)+Math.pow(chartY-this.y, 2)) < Math.pow(hitDetectionRange,2));
 		},
 		draw : function(){
-			if (this.display || this.active){
+			if (this.display || this.active || this.first){
 				var ctx = this.ctx;
 				ctx.beginPath();
 
@@ -2421,7 +2422,8 @@ var skipLabels;
 				strokeWidth : this.options.pointDotStrokeWidth,
 				radius : this.options.pointDotRadius,
 				display: this.options.pointDot,
-                active: false,
+				active: false,
+                first: false,
 				hitDetectionRadius : this.options.pointHitDetectionRadius,
 				ctx : this.chart.ctx,
 				inRange : function(mouseX){
@@ -2453,7 +2455,6 @@ var skipLabels;
 			}
 
 			skipLabels = this.options.labelskip;
-			console.log(skipLabels);
 			//Iterate through each of the datasets, and build this into a property of the chart
 			helpers.each(data.datasets,function(dataset){
 
@@ -2472,10 +2473,19 @@ var skipLabels;
 				helpers.each(dataset.data, function (dataPoint, index) {
 				    if (dataPoint instanceof FoodParent.Note) {
 				        //Add a new point for each piece of data, passing any required data to draw.
+				        var bFirst = false;
+				        if (index == 0) {
+				            bFirst = true;
+				        } else {
+				            if (dataset.data[index].getId() != dataset.data[index - 1].getId()) {
+				                bFirst = true;
+				            }
+				        }
 				        datasetObject.points.push(new this.PointClass({
 				            id: dataPoint.getId(),
 				            value: dataPoint.getRate(),
 				            label: data.labels[index],
+                            first: bFirst,
 				            datasetLabel: dataset.label,
 				            strokeColor: dataset.pointStrokeColor,
 				            fillColor: dataset.pointColor,

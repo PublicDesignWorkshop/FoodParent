@@ -49,6 +49,9 @@
                 "click .flag-radio": "_applyFlag",
                 "click .ownership-radio": "_applyOwnership",
                 "dblclick .content-chart": "_mouseClick",
+                "click .button-delete-tree": "_deleteTree",
+                "click .button-manage-adoption": "_mouseClick",
+                "click .button-new-note": "_mouseClick",
             };
             self.delegateEvents();
         }
@@ -123,8 +126,10 @@
         }
 
         public resize(): any {
+            var self: DetailTreeGraphicView = this;
             $('#wrapper-main').css({ height: View.getHeight() - 60 });
             $('#wrapper-mtree').css({ height: View.getHeight() - 60 });
+            self.$('.image-group').css({ height: self.$('.image-wrapper').innerHeight() - 60 });
         }
 
         public renderTreeChart = (tree: Tree, startDate: string, endDate: string) => {
@@ -194,29 +199,22 @@
                                 var data = {
                                     image: Setting.getBlankImagePath(),
                                     value: self._note.getRate().toFixed(2) + " / " + Setting.getMaxRating().toFixed(2),
-                                    comment: self._note.getComment(),
+                                    comment: htmlDecode(self._note.getComment()),
                                     date: tooltip.label,
                                 }
                                 self.$('#wrapper-tooltip').html(template(data));
-                                self.$('#wrapper-tooltip img').attr('src', self._note.getPicturePath()).load(function () {
-                                    $(this).removeClass('hidden');
-                                }).error(function () {
-                                    //$(this).attr('src', Setting.getBlankImagePath());
-                                    $(this).addClass('hidden');
-                                });  
-                            }
-                            // Otherwise, tooltip will be an object with all tooltip properties like:
 
-                            // tooltip.caretHeight
-                            // tooltip.caretPadding
-                            // tooltip.chart
-                            // tooltip.cornerRadius
-                            // tooltip.fillColor
-                            // tooltip.font...
-                            // tooltip.text
-                            // tooltip.x
-                            // tooltip.y
-                            // etc...
+                                if (self._note.getPictures().length > 0) {
+                                    self.$('#wrapper-tooltip img').attr('src', Setting.getContentPictureDir() + self._note.getPictures()[self._note.getCover()]).load(function () {
+                                        $(this).removeClass('hidden');
+                                    }).error(function () {
+                                        //$(this).attr('src', Setting.getBlankImagePath());
+                                        $(this).addClass('hidden');
+                                    });
+                                } else {
+                                    self.$('#wrapper-tooltip img').addClass('hidden');
+                                }
+                            }
                             self.$('#wrapper-tooltip').removeClass('hidden');
                         },
                     }
@@ -437,10 +435,19 @@
 
         private _mouseClick(event: Event): void {
             var self: DetailTreeGraphicView = this;
-            if (self._note != undefined) {
-                EventHandler.handleMouseClick($(event.currentTarget), self, { note: self._note });
-            }
+            EventHandler.handleMouseClick($(event.currentTarget), self, { note: self._note, tree: self._tree });
+        }
 
+        public _deleteTree() {
+            var self: DetailTreeGraphicView = this;
+            var food: Food = Model.getFoods().findWhere({ id: self._tree.getFoodId() });
+            var name: string = food.getName() + " " + self._tree.getName();
+            EventHandler.handleTreeData(self._tree, DATA_MODE.DELETE, {}, function () {
+                Backbone.history.history.back();
+                EventHandler.handleDataChange("<strong><i>" + name + "</i></strong> has deleted successfully.", false);
+            }, function () {
+                EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
+            });
         }
     }
 }

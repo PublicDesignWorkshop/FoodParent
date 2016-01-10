@@ -7,10 +7,10 @@
     export enum DATA_MODE {
         NONE, CREATE, DELETE, UPDATE_LOCATION, UPDATE_FLAG, UPDATE_OWNERSHIP, UPDATE_FOODTYPE, UPDATE_DESCRIPTION, 
         UPDATE_NAME, UPDATE_ADDRESS, UPDATE_CONTACT, UPDATE_NEIGHBORHOOD, UPDATE_AUTH,
-        UPDATE_COMMENT, UPDATE_RATING
+        UPDATE_COMMENT, UPDATE_RATING, UPDATE_COVER
     }
     export enum VIEW_STATUS {
-        NONE, HOME, MANAGE_TREES, PARENT_TREES, GEO_ERROR, NETWORK_ERROR, CONFIRM, MANAGE_PEOPLE, MANAGE_ADOPTION, DETAIL_TREE, IMAGENOTE_TREE
+        NONE, HOME, MANAGE_TREES, PARENT_TREES, GEO_ERROR, NETWORK_ERROR, CONFIRM, MANAGE_PEOPLE, MANAGE_ADOPTION, DETAIL_TREE, IMAGENOTE_TREE, POST_NOTE
     }
     export enum VIEW_MODE {
         NONE, MAP, GRAPHIC, TABLE
@@ -150,10 +150,22 @@
                 case VIEW_STATUS.DETAIL_TREE:
                     if (el.hasClass('content-chart')) {
                         new RenderImageNoteViewCommand({ el: Setting.getPopWrapperElement(), note: options.note }).execute();
+                    } else if (el.hasClass('button-manage-adoption')) {
+                        new RenderManageAdoptionViewCommand({ el: Setting.getPopWrapperElement(), tree: options.tree.getId() }).execute();
+                    } else if (el.hasClass('button-new-note')) {
+                        new RenderPostNoteViewCommand({ el: Setting.getPopWrapperElement(), tree: options.tree }).execute();
                     }
                     break;
                 case VIEW_STATUS.IMAGENOTE_TREE:
                     if (el.hasClass('button-close')) {
+                        new RemoveAlertViewCommand({ delay: Setting.getRemovePopupDuration() }).execute();
+                        if (View.getDetailTreeView()) {
+                            (<DetailTreeGraphicView>View.getDetailTreeView()).refreshTreeInfo();
+                        }
+                    }
+                    break;
+                case VIEW_STATUS.POST_NOTE:
+                     if (el.hasClass('button-close')) {
                         new RemoveAlertViewCommand({ delay: Setting.getRemovePopupDuration() }).execute();
                         if (View.getDetailTreeView()) {
                             (<DetailTreeGraphicView>View.getDetailTreeView()).refreshTreeInfo();
@@ -231,6 +243,12 @@
                     break;
                 case DATA_MODE.UPDATE_RATING:
                     self._lastCommand = new UpdateNoteRating({ note: note, rate: args.rate }, success, error);
+                    break;
+                case DATA_MODE.UPDATE_COVER:
+                    self._lastCommand = new UpdateNoteCover({ note: note, cover: args.cover }, success, error);
+                    break;
+                case DATA_MODE.CREATE:
+                    new CreateNote({ note: note }, success, error).execute();
                     break;
             }
             if (self._lastCommand != undefined) {

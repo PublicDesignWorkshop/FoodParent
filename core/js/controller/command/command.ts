@@ -190,6 +190,25 @@
         }
     }
 
+    export class RenderPostNoteViewCommand implements Command {
+        private _el: JQuery;
+        private _tree: Tree;
+        constructor(args?: any) {
+            var self: RenderPostNoteViewCommand = this;
+            self._el = args.el;
+            self._tree = args.tree;
+        }
+        public execute(): any {
+            var self: RenderPostNoteViewCommand = this;
+            var view: AlertView = PostNoteViewFactory.create(self._el, self._tree).render();
+            View.setPopupView(view);
+            View.setViewStatus(VIEW_STATUS.POST_NOTE);
+        }
+        public undo(): any {
+
+        }
+    }
+
     export class RenderAlertViewCommand implements Command {
         private _el: JQuery;
         private _errorMode: ERROR_MODE;

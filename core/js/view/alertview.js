@@ -5,6 +5,25 @@ var __extends = (this && this.__extends) || function (d, b) {
 };
 var FoodParent;
 (function (FoodParent) {
+    var PostNoteViewFactory = (function () {
+        function PostNoteViewFactory(args) {
+            if (PostNoteViewFactory._instance) {
+                throw new Error("Error: Instantiation failed: Use PostNoteViewFactory.getInstance() instead of new.");
+            }
+            PostNoteViewFactory._instance = this;
+        }
+        PostNoteViewFactory.getInstance = function () {
+            return PostNoteViewFactory._instance;
+        };
+        PostNoteViewFactory.create = function (el, tree) {
+            var view = new FoodParent.PostNoteView({ el: el });
+            view.setTree(tree);
+            return view;
+        };
+        PostNoteViewFactory._instance = new PostNoteViewFactory();
+        return PostNoteViewFactory;
+    })();
+    FoodParent.PostNoteViewFactory = PostNoteViewFactory;
     var ImageNoteViewFactory = (function () {
         function ImageNoteViewFactory(args) {
             if (ImageNoteViewFactory._instance) {
@@ -103,6 +122,7 @@ var FoodParent;
                 "click .top-right-button": "_mouseClick",
                 "click .prev-note": "_prevNote",
                 "click .next-note": "_nextNote",
+                "click .image-group img": "_changeCoverImage",
             };
             self.delegateEvents();
         }
@@ -132,10 +152,13 @@ var FoodParent;
             };
             self.$el.html(template(data));
             self.setElement(self.$('#wrapper-note'));
-            self.$('.wrapper-note-content img').attr('src', self._note.getPicturePath()).load(function () {
+            /*
+            //self.$('.wrapper-note-content img').attr('src', self._note.getPicturePath()).load(function () {
+
             }).error(function () {
-                self.$('.wrapper-note-content img').attr('src', FoodParent.Setting.getBlankImagePath());
+                self.$('.wrapper-note-content img').attr('src', Setting.getBlankImagePath());
             });
+            */
             self.renderImageNote(self._note);
             self.setVisible();
             return self;
@@ -162,16 +185,11 @@ var FoodParent;
                 }
             });
             self.$('.input-comment').replaceWith('<div class="input-comment"></div>');
-            self.$('.input-comment').html(note.getComment());
+            self.$('.input-comment').html(htmlDecode(self._note.getComment()));
             self.$('.input-date').html(note.getFormattedHourTime());
-            self.$('.wrapper-note-content img').attr('src', note.getPicturePath()).load(function () {
-            }).error(function () {
-                self.$('.wrapper-note-content img').attr('src', FoodParent.Setting.getBlankImagePath());
-            });
             self.$('.input-comment').on('click', function (event) {
-                console.log($(this).text());
                 //$(this).replaceWith("<input type='text' class='input-comment form-control' value='" + htmlEncode($(this).text()) + "' />");
-                $(this).replaceWith("<textarea rows='5' class='input-comment form-control'>" + htmlEncode($(this).text()) + "</textarea>");
+                $(this).replaceWith("<textarea rows='5' class='input-comment form-control'>" + self._note.getComment() + "</textarea>");
                 //self.$('.input-lat').css({ width: width });
                 self.$('.input-comment').focus();
                 self.$('.input-comment').on('focusout', function (event) {
@@ -189,6 +207,16 @@ var FoodParent;
                     }
                 });
             });
+            var tag = '';
+            $.each(note.getPictures(), function (index, filename) {
+                if (index == note.getCover()) {
+                    tag += '<img src="' + FoodParent.Setting.getContentPictureDir() + filename + '" data-target="' + index + '" class="selected" />';
+                }
+                else {
+                    tag += '<img src="' + FoodParent.Setting.getContentPictureDir() + filename + '" data-target="' + index + '" />';
+                }
+            });
+            self.$('.image-group').html(tag);
         };
         ImageNoteView.prototype.update = function (args) {
             if (!this.bRendered) {
@@ -246,6 +274,27 @@ var FoodParent;
                     return;
                 }
             });
+        };
+        ImageNoteView.prototype._changeCoverImage = function (event) {
+            var self = this;
+            var cover = parseInt($(event.target).attr('data-target'));
+            var tree = FoodParent.Model.getTrees().findWhere({ id: self._note.getTreeId() });
+            var food = FoodParent.Model.getFoods().findWhere({ id: tree.getFoodId() });
+            if (self._note.getCover() != cover) {
+                FoodParent.EventHandler.handleNoteData(self._note, FoodParent.DATA_MODE.UPDATE_COVER, { cover: cover }, function () {
+                    FoodParent.EventHandler.handleDataChange("Cover picture of <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has changed successfully.", true);
+                    self.renderImageNote(self._note);
+                }, function () {
+                    FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+                });
+            }
+            /*
+            $.each(self.$('.image-group img'), function (index: number, element: JQuery) {
+                $(element).removeClass('selected');
+            });
+            $(event.target).addClass('selected');
+            self._note.setCover();
+            */
         };
         ImageNoteView.prototype.setVisible = function () {
             var self = this;

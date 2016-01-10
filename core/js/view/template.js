@@ -496,9 +496,9 @@ var FoodParent;
             template += '</div>';
             template += '</div>'; // end of .content-tree-recentactivities
             template += '<div class="content-tree-control">';
-            template += '<div class="button-outer-frame2 button4"><div class="button-inner-frame2">Update Status</div></div>';
-            template += '<div class="button-outer-frame2 button4"><div class="button-inner-frame2">Manage Parents</div></div>';
-            template += '<div class="button-outer-frame2 button4"><div class="button-inner-frame2">Delete Tree*</div></div>';
+            template += '<div class="button-outer-frame2 button4"><div class="button-inner-frame2 button-new-note">Post New Note</div></div>';
+            template += '<div class="button-outer-frame2 button4"><div class="button-inner-frame2 button-manage-adoption">Manage Adoption</div></div>';
+            template += '<div class="button-outer-frame2 button4"><div class="button-inner-frame2 button-delete-tree">Delete Tree*</div></div>';
             template += '<div class="button-description">* marked operation cannot be undone.</div>';
             template += '</div>'; // end of .tree-control
             template += '</div>'; // end of #wrapper-tree-detail
@@ -519,9 +519,14 @@ var FoodParent;
             template += '<div class="outer-frame">';
             template += '<div class="inner-frame">';
             template += '<div class="wrapper-note-content">';
-            template += '<div class="image-wrapper"><img src="<%= image %>" /></div>';
+            template += '<div class="image-wrapper"><div class="image-group"></div></div>';
             template += '<div class="wrapper-note-info">';
             template += '<div class="name"><%= name %></div>';
+            template += '<div class="hr"><hr /></div>';
+            template += '<div class="info-button-group">';
+            template += '<div class="button-outer-frame2 button3"><div class="button-inner-frame2 prev-note"><i class="fa fa-caret-left"></i></div></div>';
+            template += '<div class="button-outer-frame2 button3"><div class="button-inner-frame2 next-note"><i class="fa fa-caret-right"></i></div></div>';
+            template += '</div>';
             template += '<div class="hr"><hr /></div>';
             template += '<div class="info-header"><i class="fa fa-star-half-o"></i> Rating</div>';
             template += '<div class="info-group">';
@@ -538,13 +543,56 @@ var FoodParent;
             template += '<div class="info-group">';
             template += '<div class="input-date"><%= date %></div>';
             template += '</div>';
-            template += '<div class="hr"><hr /></div>';
-            template += '<div class="info-button-group">';
-            template += '<div class="button-outer-frame2 button3"><div class="button-inner-frame2 prev-note"><i class="fa fa-caret-left"></i></div></div>';
-            template += '<div class="button-outer-frame2 button3"><div class="button-inner-frame2 next-note"><i class="fa fa-caret-right"></i></div></div>';
-            template += '</div>';
             template += '</div>';
             template += '</div>'; // end of .wrapper-note-content
+            template += '</div>'; // end of .inner-frame
+            template += '<div class="top-right-button button-close">';
+            template += '<i class="fa fa-remove fa-2x"></i>';
+            template += '</div>'; // end of top-right-button button-close
+            template += '</div>'; // end of .outer-frame
+            template += '</div>'; // end of #wrapper-note
+            return template;
+        };
+        Template.getPostNoteViewTemplate = function () {
+            var template = '';
+            template += '<div id="wrapper-note">';
+            template += '<div class="outer-frame">';
+            template += '<div class="inner-frame">';
+            template += '<div class="wrapper-post-note-content">';
+            template += '<div class="image-wrapper">';
+            template += '<div class="wrapper-input-upload-picture">';
+            template += '<input class="input-upload-picture fileupload" type="file" accept="image/*" capture="camera" />';
+            template += '</div>';
+            template += '<div class="wrapper-uploading-picture hidden">';
+            template += '<div class="uploading-picture">Uploading...</div>';
+            template += '</div>';
+            template += '<div class="info-header"><i class="fa fa-image"></i> Select Cover Picture</div>';
+            template += '<div class="image-group"></div>';
+            template += '</div>';
+            template += '<div class="wrapper-note-info">';
+            template += '<div class="name"><%= name %></div>';
+            template += '<div class="hr"><hr /></div>';
+            template += '<div class="info-header"><i class="fa fa-star-half-o"></i> Rating</div>';
+            template += '<div class="info-group">';
+            template += '<div class="input-rating"></div>';
+            template += '<div class="input-rating-slider"></div>';
+            template += '</div>';
+            template += '<div class="hr"><hr /></div>';
+            template += '<div class="info-header"><i class="fa fa-comment"></i> Comment</div>';
+            template += '<div class="info-group">';
+            template += '<div class="input-comment">&nbsp;</div>';
+            template += '</div>';
+            template += '<div class="hr"><hr /></div>';
+            template += '<div class="info-header"><i class="fa fa-calendar-o"></i> Posted</div>';
+            template += '<div class="info-group">';
+            template += '<input type="text" class="form-control input-date" />';
+            template += '</div>';
+            template += '<div class="hr"><hr /></div>';
+            template += '<div class="info-button-group">';
+            template += '<div class="button-outer-frame2 button3"><div class="button-inner-frame2 create-note"><i class="fa fa-save"></i> Save</div></div>';
+            template += '</div>';
+            template += '</div>'; // .wrapper-note-info
+            template += '</div>'; // end of .wrapper-post-note-content
             template += '</div>'; // end of .inner-frame
             template += '<div class="top-right-button button-close">';
             template += '<i class="fa fa-remove fa-2x"></i>';

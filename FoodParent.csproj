@@ -10,7 +10,7 @@
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <DebugType>full</DebugType>
     <DebugSymbols>true</DebugSymbols>
-    <TypeScriptToolsVersion>1.6</TypeScriptToolsVersion>
+    <TypeScriptToolsVersion>1.7</TypeScriptToolsVersion>
     <UseIISExpress>true</UseIISExpress>
     <IISExpressSSLPort />
     <IISExpressAnonymousAuthentication />
@@ -188,6 +188,7 @@
     <Content Include="core\php\persons.php" />
     <Content Include="core\php\auth.php" />
     <Content Include="core\php\auths.php" />
+    <Content Include="core\php\upload.php" />
     <None Include="web.Debug.config">
       <DependentUpon>web.config</DependentUpon>
     </None>
@@ -231,6 +232,7 @@
     <TypeScriptCompile Include="core\js\view\mtreesview.ts" />
     <TypeScriptCompile Include="core\js\view\mtreeview.ts" />
     <TypeScriptCompile Include="core\js\view\navview.ts" />
+    <TypeScriptCompile Include="core\js\view\postview.ts" />
     <TypeScriptCompile Include="core\js\view\template.ts" />
     <TypeScriptCompile Include="core\js\view\view.ts" />
     <TypeScriptCompile Include="Scripts\typings\backbone.paginator\backbone.paginator.d.ts" />

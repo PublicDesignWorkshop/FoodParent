@@ -21,6 +21,7 @@ var FoodParent;
         DATA_MODE[DATA_MODE["UPDATE_AUTH"] = 12] = "UPDATE_AUTH";
         DATA_MODE[DATA_MODE["UPDATE_COMMENT"] = 13] = "UPDATE_COMMENT";
         DATA_MODE[DATA_MODE["UPDATE_RATING"] = 14] = "UPDATE_RATING";
+        DATA_MODE[DATA_MODE["UPDATE_COVER"] = 15] = "UPDATE_COVER";
     })(FoodParent.DATA_MODE || (FoodParent.DATA_MODE = {}));
     var DATA_MODE = FoodParent.DATA_MODE;
     (function (VIEW_STATUS) {
@@ -35,6 +36,7 @@ var FoodParent;
         VIEW_STATUS[VIEW_STATUS["MANAGE_ADOPTION"] = 8] = "MANAGE_ADOPTION";
         VIEW_STATUS[VIEW_STATUS["DETAIL_TREE"] = 9] = "DETAIL_TREE";
         VIEW_STATUS[VIEW_STATUS["IMAGENOTE_TREE"] = 10] = "IMAGENOTE_TREE";
+        VIEW_STATUS[VIEW_STATUS["POST_NOTE"] = 11] = "POST_NOTE";
     })(FoodParent.VIEW_STATUS || (FoodParent.VIEW_STATUS = {}));
     var VIEW_STATUS = FoodParent.VIEW_STATUS;
     (function (VIEW_MODE) {
@@ -189,8 +191,22 @@ var FoodParent;
                     if (el.hasClass('content-chart')) {
                         new FoodParent.RenderImageNoteViewCommand({ el: FoodParent.Setting.getPopWrapperElement(), note: options.note }).execute();
                     }
+                    else if (el.hasClass('button-manage-adoption')) {
+                        new FoodParent.RenderManageAdoptionViewCommand({ el: FoodParent.Setting.getPopWrapperElement(), tree: options.tree.getId() }).execute();
+                    }
+                    else if (el.hasClass('button-new-note')) {
+                        new FoodParent.RenderPostNoteViewCommand({ el: FoodParent.Setting.getPopWrapperElement(), tree: options.tree }).execute();
+                    }
                     break;
                 case VIEW_STATUS.IMAGENOTE_TREE:
+                    if (el.hasClass('button-close')) {
+                        new FoodParent.RemoveAlertViewCommand({ delay: FoodParent.Setting.getRemovePopupDuration() }).execute();
+                        if (FoodParent.View.getDetailTreeView()) {
+                            FoodParent.View.getDetailTreeView().refreshTreeInfo();
+                        }
+                    }
+                    break;
+                case VIEW_STATUS.POST_NOTE:
                     if (el.hasClass('button-close')) {
                         new FoodParent.RemoveAlertViewCommand({ delay: FoodParent.Setting.getRemovePopupDuration() }).execute();
                         if (FoodParent.View.getDetailTreeView()) {
@@ -266,6 +282,12 @@ var FoodParent;
                     break;
                 case DATA_MODE.UPDATE_RATING:
                     self._lastCommand = new FoodParent.UpdateNoteRating({ note: note, rate: args.rate }, success, error);
+                    break;
+                case DATA_MODE.UPDATE_COVER:
+                    self._lastCommand = new FoodParent.UpdateNoteCover({ note: note, cover: args.cover }, success, error);
+                    break;
+                case DATA_MODE.CREATE:
+                    new FoodParent.CreateNote({ note: note }, success, error).execute();
                     break;
             }
             if (self._lastCommand != undefined) {

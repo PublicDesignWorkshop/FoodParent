@@ -31,6 +31,7 @@ var FoodParent;
                 "person": 0,
                 "comment": "",
                 "picture": "",
+                "cover": 0,
                 "rate": 0,
                 "date": moment(new Date()).format(FoodParent.Setting.getDateTimeFormat()),
             };
@@ -44,6 +45,11 @@ var FoodParent;
             response.person = parseInt(response.person);
             response.rate = parseFloat(response.rate);
             response.date = moment(response.date).format(FoodParent.Setting.getDateTimeFormat());
+            response.pictures = Array();
+            if (response.picture != "") {
+                response.pictures = response.picture.split(",");
+            }
+            response.cover = parseInt(response.cover);
             return _super.prototype.parse.call(this, response, options);
         };
         Note.prototype.toJSON = function (options) {
@@ -51,6 +57,10 @@ var FoodParent;
             if (this.id != null) {
                 clone["id"] = this.id;
             }
+            if (clone["pictures"]) {
+                clone["picture"] = clone["pictures"].toString();
+            }
+            delete clone["pictures"];
             return clone;
         };
         Note.prototype.getId = function () {
@@ -60,10 +70,13 @@ var FoodParent;
             return null;
         };
         Note.prototype.getComment = function () {
-            return this.get('comment');
+            if (this.get('comment') != "") {
+                return this.get('comment');
+            }
+            return "&nbsp;";
         };
-        Note.prototype.getPicturePath = function () {
-            return FoodParent.Setting.getContentPictureDir() + this.get('picture');
+        Note.prototype.setComment = function (comment) {
+            this.set('comment', comment);
         };
         Note.prototype.getBlankPicturePath = function () {
             return FoodParent.Setting.getCoreImageDir() + "picture-blank.jpg";
@@ -86,11 +99,32 @@ var FoodParent;
         Note.prototype.getRate = function () {
             return parseFloat(this.get('rate'));
         };
+        Note.prototype.setRate = function (rate) {
+            this.set('rate', Math.floor(rate));
+        };
         Note.prototype.getType = function () {
             return parseInt(this.get('type'));
         };
         Note.prototype.getTreeId = function () {
             return parseInt(this.get('tree'));
+        };
+        Note.prototype.addPicture = function (file) {
+            if (this.get('pictures') == undefined) {
+                this.set('pictures', new Array());
+            }
+            this.get('pictures').push(file);
+        };
+        Note.prototype.getPictures = function () {
+            return this.get('pictures');
+        };
+        Note.prototype.getCover = function () {
+            return parseInt(this.get('cover'));
+        };
+        Note.prototype.setCover = function (cover) {
+            this.set('cover', Math.floor(cover));
+        };
+        Note.prototype.setDate = function (date) {
+            this.set('date', date.format(FoodParent.Setting.getDateTimeFormat()));
         };
         return Note;
     })(Backbone.Model);
@@ -134,7 +168,7 @@ var FoodParent;
                 return null;
             }
             self.sortByAscendingDate();
-            var result = self.models[0];
+            var result = self.findWhere({ type: treeId });
             $.each(self.models, function (index, note) {
                 if (date > note.getDateValueOf() && note.getType() == noteType && note.getTreeId() == treeId) {
                     result = note;

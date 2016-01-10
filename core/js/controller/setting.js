@@ -34,6 +34,12 @@ var FoodParent;
         Setting.getBlankImagePath = function () {
             return Setting.getCoreImageDir() + "picture-blank.jpg";
         };
+        Setting.getFileUploadPath = function () {
+            return Setting.getPhpDir() + "upload.php";
+        };
+        Setting.getRelativeFileUploadPath = function () {
+            return "../../content/picture/";
+        };
         Setting.getNavWrapperElement = function () {
             return $('#wrapper-nav');
         };

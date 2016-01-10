@@ -61,6 +61,7 @@
       "core/js/view/markerview.js",
       "core/js/view/messageview.js",
       "core/js/view/mpeopleview.js",
+      "core/js/view/postview.js",
       // Model
       "core/js/model/model.js",
       "core/js/model/adopt.js",

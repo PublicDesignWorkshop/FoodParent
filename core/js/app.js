@@ -6,6 +6,10 @@ var htmlEncode = function (str) {
     str = str.replace(/'/g, "&#039;");
     return str;
 };
+var htmlDecode = function (str) {
+    str = str.replace(/\n/g, "<br />");
+    return str;
+};
 var replaceAt = function (str, index, character) {
     return str.substr(0, index) + character + str.substr(index + character.length);
 };

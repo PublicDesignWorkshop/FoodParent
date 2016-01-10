@@ -311,6 +311,7 @@ declare module Backbone {
         navigate(fragment: string, options?: any): boolean;
         started: boolean;
         options: any;
+        history: any;
 
         private _updateHash(location: Location, fragment: string, replace: boolean): void;
     }

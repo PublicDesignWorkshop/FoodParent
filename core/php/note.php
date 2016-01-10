@@ -67,11 +67,12 @@
                 "person" => $data->{'person'},
                 "comment" => $data->{'comment'},
                 "picture" => $data->{'picture'},
+                "cover" => $data->{'cover'},
                 "rate" => $data->{'rate'},
                 "date" => $data->{'date'},
             );
         }
-        $sql = "UPDATE `note` SET `type` = :type, `tree` = :tree, `person` = :person, `comment` = :comment, `picture` = :picture, `rate` = :rate, `date` = :date WHERE (`id` = :id)";
+        $sql = "UPDATE `note` SET `type` = :type, `tree` = :tree, `person` = :person, `comment` = :comment, `picture` = :picture, `cover` = :cover, `rate` = :rate, `date` = :date WHERE (`id` = :id)";
         
         try {
             $pdo = getConnection();
@@ -106,10 +107,12 @@
             "person" => $data->{'person'},
             "comment" => $data->{'comment'},
             "picture" => $data->{'picture'},
+            "cover" => $data->{'cover'},
             "rate" => $data->{'rate'},
-            "date" => date("Y-m-d H:i:s"),
+            //"date" => date("Y-m-d H:i:s"),
+            "date" => $data->{'date'},
         );
-        $sql = "INSERT INTO `note` VALUES ( NULL, :type, :tree, :person, :comment, :picture, :rate, :date )";
+        $sql = "INSERT INTO `note` VALUES ( NULL, :type, :tree, :person, :comment, :picture, :cover, :rate, :date )";
         
         try {
             $pdo = getConnection();
