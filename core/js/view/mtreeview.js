@@ -69,7 +69,13 @@ var FoodParent;
                     var start = moment(startDate).set('hour', 13).set('minute', 0).set('seconds', 0).set('milliseconds', 0);
                     for (var i = moment(start).valueOf(); i < moment(endDate).valueOf(); i += 1000 * 60 * 60 * 24) {
                         labels.push(moment(i).format(FoodParent.Setting.getDateHourFormat()));
-                        notes.push(FoodParent.Model.getNotes().getLatestImageNoteOfDate(self._tree.getId(), i, FoodParent.NoteType.IMAGE));
+                        var note = FoodParent.Model.getNotes().getLatestImageNoteOfDate(self._tree.getId(), i, FoodParent.NoteType.IMAGE);
+                        if (note) {
+                            notes.push(note);
+                        }
+                        else {
+                            notes.push(new FoodParent.Note({ type: FoodParent.NoteType.IMAGE, tree: self._tree.getId(), person: 0, comment: "", picture: "", rate: 0, cover: 0, date: moment(i).format(FoodParent.Setting.getDateTimeFormat()) }));
+                        }
                     }
                     var labelSkip = Math.floor(labels.length / (self.$('#content-chart').innerWidth() / 150));
                     if (self._chart) {
@@ -98,6 +104,8 @@ var FoodParent;
                         customTooltips: function (tooltip) {
                             // tooltip will be false if tooltip is not visible or should be hidden
                             if (!tooltip || !tooltip.id) {
+                                self._note = null;
+                                self.$('#wrapper-tooltip').addClass('hidden');
                                 return;
                             }
                             self._note = FoodParent.Model.getNotes().findWhere({ id: tooltip.id });
@@ -114,7 +122,7 @@ var FoodParent;
                                     self.$('#wrapper-tooltip img').attr('src', FoodParent.Setting.getContentPictureDir() + self._note.getPictures()[self._note.getCover()]).load(function () {
                                         $(this).removeClass('hidden');
                                     }).error(function () {
-                                        //$(this).attr('src', Setting.getBlankImagePath());
+                                        $(this).attr('src', FoodParent.Setting.getBlankImagePath());
                                         $(this).addClass('hidden');
                                     });
                                 }
@@ -257,6 +265,7 @@ var FoodParent;
                 "click .button-delete-tree": "_deleteTree",
                 "click .button-manage-adoption": "_mouseClick",
                 "click .button-new-note": "_mouseClick",
+                "click .date-preset": "_datePreset",
             };
             self.delegateEvents();
         }
@@ -409,6 +418,34 @@ var FoodParent;
         DetailTreeGraphicView.prototype._mouseClick = function (event) {
             var self = this;
             FoodParent.EventHandler.handleMouseClick($(event.currentTarget), self, { note: self._note, tree: self._tree });
+        };
+        DetailTreeGraphicView.prototype._datePreset = function (event) {
+            var self = this;
+            if ($(event.currentTarget).hasClass('2years')) {
+                self._startDate = moment(self._endDate).subtract(2, 'years').startOf('day').format(FoodParent.Setting.getDateTimeFormat());
+            }
+            else if ($(event.currentTarget).hasClass('1year')) {
+                self._startDate = moment(self._endDate).subtract(1, 'years').startOf('day').format(FoodParent.Setting.getDateTimeFormat());
+            }
+            else if ($(event.currentTarget).hasClass('6months')) {
+                self._startDate = moment(self._endDate).subtract(6, 'months').startOf('day').format(FoodParent.Setting.getDateTimeFormat());
+            }
+            else if ($(event.currentTarget).hasClass('1month')) {
+                self._startDate = moment(self._endDate).subtract(1, 'months').startOf('day').format(FoodParent.Setting.getDateTimeFormat());
+            }
+            self.$('.tree-graph-start').attr({ 'data-value': moment(self._startDate).format(FoodParent.Setting.getDateFormat()) });
+            self.$('.tree-graph-start').pickadate({
+                format: "dd mmm yyyy",
+                today: '',
+                max: new Date(moment(new Date()).subtract('day', 2).valueOf()),
+                clear: '',
+                close: 'Close',
+                onClose: function () {
+                    self._startDate = moment(this.get()).startOf('day').format(FoodParent.Setting.getDateTimeFormat());
+                    self.renderTreeChart(self._tree, self._startDate, self._endDate);
+                }
+            });
+            self.renderTreeChart(self._tree, self._startDate, self._endDate);
         };
         DetailTreeGraphicView.prototype._deleteTree = function () {
             var self = this;

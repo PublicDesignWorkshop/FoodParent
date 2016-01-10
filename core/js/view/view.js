@@ -34,6 +34,9 @@ var FoodParent;
         View.getViewStatus = function () {
             return View._instance._viewStatus[View._instance._viewStatus.length - 1];
         };
+        View.getAllViewStatus = function () {
+            return View._instance._viewStatus.toString();
+        };
         /*
         public static setActionStatus(actionStatus: ACTION_STATUS): void {
             View._instance._actionStatus = actionStatus;

@@ -116,6 +116,7 @@ module FoodParent {
                 "click .prev-note": "_prevNote",
                 "click .next-note": "_nextNote",
                 "click .image-group img": "_changeCoverImage",
+                "click .delete-note": "_deleteNote",
             };
             self.delegateEvents();
         }
@@ -207,12 +208,20 @@ module FoodParent {
             var tag = '';
             $.each(note.getPictures(), function (index: number, filename: string) {
                 if (index == note.getCover()) {
-                    tag += '<img src="' + Setting.getContentPictureDir() + filename + '" data-target="' + index + '" class="selected" />';
+                    tag += '<img src="' + Setting.getBlankImagePath() + '" data-target="' + index + '" class="selected" />';
                 } else {
-                    tag += '<img src="' + Setting.getContentPictureDir() + filename + '" data-target="' + index + '" />';
+                    tag += '<img src="' + Setting.getBlankImagePath() + '" data-target="' + index + '" />';
                 }
             });
             self.$('.image-group').html(tag);
+            $.each(self.$('.image-group img'), function (index: number, element: JQuery) {
+                $(element).attr('src', Setting.getContentPictureDir() + note.getPictures()[index]).load(function () {
+
+                }).error(function () {
+                    $(element).attr('src', Setting.getBlankImagePath());
+                });
+            });
+            
         }
 
         public update(args?: any): any {
@@ -298,6 +307,20 @@ module FoodParent {
             $(event.target).addClass('selected');
             self._note.setCover();
             */
+        }
+
+        private _deleteNote(event: Event) {
+            var self: ImageNoteView = this;
+            var tree: Tree = Model.getTrees().findWhere({ id: self._note.getTreeId() });
+            var food: Food = Model.getFoods().findWhere({ id: tree.getFoodId() });
+            EventHandler.handleNoteData(self._note, DATA_MODE.DELETE, { }, function () {
+                EventHandler.handleDataChange("Note of <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has been deleted successfully.", true);
+                if (View.getDetailTreeView()) {
+                    (<DetailTreeGraphicView>View.getDetailTreeView()).refreshTreeInfo();
+                }
+            }, function () {
+                EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
+            });
         }
 
         public setVisible(): void {

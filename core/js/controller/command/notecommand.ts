@@ -250,4 +250,43 @@
             );
         }
     }
+
+    export class DeleteNote implements Command {
+        private _success: Function;
+        private _error: Function;
+        private _note: Note;
+        constructor(args?: any, success?: Function, error?: Function) {
+            var self: DeleteNote = this;
+            if (args != undefined && args.note != undefined) {
+                self._note = args.note;
+            }
+            if (success) {
+                self._success = success;
+            }
+            if (error) {
+                self._error = error;
+            }
+        }
+        public execute(): any {
+            var self: DeleteNote = this;
+            Model.getNotes().remove(self._note);
+            self._note.destroy({
+                    wait: true,
+                    success: function (note: Note, response: any) {
+                        if (self._success) {
+                            self._success();
+                        }
+                    },
+                    error: function (error, response) {
+                        if (self._error) {
+                            self._error();
+                        }
+                    },
+                }
+            );
+        }
+        public undo(): any {
+            
+        }
+    }
 }

@@ -148,10 +148,10 @@
             var food: Food = Model.getFoods().findWhere({ id: self._tree.getFoodId() });
             EventHandler.handleNoteData(self._note, DATA_MODE.CREATE, { }, function () {
                 EventHandler.handleDataChange("New note for <strong><i>" + food.getName() + " " + self._tree.getName() + "</i></strong> has been created.", false);
+                new RemoveAlertViewCommand({ delay: Setting.getRemovePopupDuration() }).execute();
                 if (View.getDetailTreeView()) {
                     (<DetailTreeGraphicView>View.getDetailTreeView()).refreshTreeInfo();
                 }
-                new RemoveAlertViewCommand({ delay: Setting.getRemovePopupDuration() }).execute();
             }, function () {
                 EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
             });

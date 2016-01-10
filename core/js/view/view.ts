@@ -38,6 +38,9 @@
         public static getViewStatus(): VIEW_STATUS {
             return View._instance._viewStatus[View._instance._viewStatus.length - 1];
         }
+        public static getAllViewStatus(): string {
+            return View._instance._viewStatus.toString();
+        }
         /*
         public static setActionStatus(actionStatus: ACTION_STATUS): void {
             View._instance._actionStatus = actionStatus;

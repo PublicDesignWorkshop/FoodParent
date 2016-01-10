@@ -212,4 +212,39 @@ var FoodParent;
         return CreateNote;
     })();
     FoodParent.CreateNote = CreateNote;
+    var DeleteNote = (function () {
+        function DeleteNote(args, success, error) {
+            var self = this;
+            if (args != undefined && args.note != undefined) {
+                self._note = args.note;
+            }
+            if (success) {
+                self._success = success;
+            }
+            if (error) {
+                self._error = error;
+            }
+        }
+        DeleteNote.prototype.execute = function () {
+            var self = this;
+            FoodParent.Model.getNotes().remove(self._note);
+            self._note.destroy({
+                wait: true,
+                success: function (note, response) {
+                    if (self._success) {
+                        self._success();
+                    }
+                },
+                error: function (error, response) {
+                    if (self._error) {
+                        self._error();
+                    }
+                },
+            });
+        };
+        DeleteNote.prototype.undo = function () {
+        };
+        return DeleteNote;
+    })();
+    FoodParent.DeleteNote = DeleteNote;
 })(FoodParent || (FoodParent = {}));

@@ -149,7 +149,9 @@
                     break;
                 case VIEW_STATUS.DETAIL_TREE:
                     if (el.hasClass('content-chart')) {
-                        new RenderImageNoteViewCommand({ el: Setting.getPopWrapperElement(), note: options.note }).execute();
+                        if (options.note) {
+                            new RenderImageNoteViewCommand({ el: Setting.getPopWrapperElement(), note: options.note }).execute();
+                        }
                     } else if (el.hasClass('button-manage-adoption')) {
                         new RenderManageAdoptionViewCommand({ el: Setting.getPopWrapperElement(), tree: options.tree.getId() }).execute();
                     } else if (el.hasClass('button-new-note')) {
@@ -249,6 +251,11 @@
                     break;
                 case DATA_MODE.CREATE:
                     new CreateNote({ note: note }, success, error).execute();
+                    break;
+                case DATA_MODE.DELETE:
+                    View.popViewStatus();
+                    var command: Command = new DeleteNote({ note: note }, success, error);
+                    new RenderConfirmViewCommand({ el: Setting.getPopWrapperElement(), message: "Are you sure to delete this note?", command: command }).execute();
                     break;
             }
             if (self._lastCommand != undefined) {

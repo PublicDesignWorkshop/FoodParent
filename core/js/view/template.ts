@@ -567,8 +567,14 @@
             template +=     '</div>';
 
             template +=     '<div id="wrapper-date-select">';
-            template +=     '<div class="wrapper-date-select-item"><span class="date-select-label">From:</span><input type="text" class="form-control tree-graph-start" /></div>';
-            template +=     '<div class="wrapper-date-select-item"><span class="date-select-label">To:</span><input type="text" class="form-control tree-graph-end" /></div>';
+            template +=         '<div class="wrapper-date-preset">';
+            template +=             '<div class="button-outer-frame2 button3 date-preset 2years"><div class="button-inner-frame2">2 Year</div></div>';
+            template +=             '<div class="button-outer-frame2 button3 date-preset 1year"><div class="button-inner-frame2">1 Year</div></div>';
+            template +=             '<div class="button-outer-frame2 button3 date-preset 6months"><div class="button-inner-frame2">6 months</div></div>';
+            template +=             '<div class="button-outer-frame2 button3 date-preset 1month"><div class="button-inner-frame2">1 month</div></div>';
+            template +=         '</div>';
+            template +=         '<div class="wrapper-date-select-item"><span class="date-select-label">From:</span><input type="text" class="form-control tree-graph-start" /></div>';
+            template +=         '<div class="wrapper-date-select-item"><span class="date-select-label">To:</span><input type="text" class="form-control tree-graph-end" /></div>';
             template +=     '</div>';
 
             
@@ -650,6 +656,10 @@
             template += '<div class="input-date"><%= date %></div>';
             template += '</div>';
 
+            template += '<div class="hr"><hr /></div>';
+            template += '<div class="info-button-group">';
+            template += '<div class="button-outer-frame2 button3"><div class="button-inner-frame2 delete-note"><i class="fa fa-remove"></i> Delete</div></div>';
+            template += '</div>';
             
 
             template +=                 '</div>';

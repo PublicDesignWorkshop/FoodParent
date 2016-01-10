@@ -43103,6 +43103,7 @@ var FoodParent;
                 ids.push(tree.getId());
             });
             var xhr1 = FoodParent.Model.fetchImageNotesOfTreesDuringPeriod(ids, startDate, endDate, size, offset);
+            //var xhr1: JQueryXHR = Model.fetchImageNotesOfTreesDuringPeriod(ids, moment(new Date()).subtract(2, 'years').startOf('day').format(Setting.getDateTimeFormat()), endDate, size, offset);
             Controller.pushXHR(xhr1);
             $.when(xhr1).then(function () {
                 Controller.removeXHR(xhr1);
@@ -43408,7 +43409,9 @@ var FoodParent;
                     break;
                 case VIEW_STATUS.DETAIL_TREE:
                     if (el.hasClass('content-chart')) {
-                        new FoodParent.RenderImageNoteViewCommand({ el: FoodParent.Setting.getPopWrapperElement(), note: options.note }).execute();
+                        if (options.note) {
+                            new FoodParent.RenderImageNoteViewCommand({ el: FoodParent.Setting.getPopWrapperElement(), note: options.note }).execute();
+                        }
                     }
                     else if (el.hasClass('button-manage-adoption')) {
                         new FoodParent.RenderManageAdoptionViewCommand({ el: FoodParent.Setting.getPopWrapperElement(), tree: options.tree.getId() }).execute();
@@ -43507,6 +43510,11 @@ var FoodParent;
                     break;
                 case DATA_MODE.CREATE:
                     new FoodParent.CreateNote({ note: note }, success, error).execute();
+                    break;
+                case DATA_MODE.DELETE:
+                    FoodParent.View.popViewStatus();
+                    var command = new FoodParent.DeleteNote({ note: note }, success, error);
+                    new FoodParent.RenderConfirmViewCommand({ el: FoodParent.Setting.getPopWrapperElement(), message: "Are you sure to delete this note?", command: command }).execute();
                     break;
             }
             if (self._lastCommand != undefined) {
@@ -45289,6 +45297,41 @@ var FoodParent;
         return CreateNote;
     })();
     FoodParent.CreateNote = CreateNote;
+    var DeleteNote = (function () {
+        function DeleteNote(args, success, error) {
+            var self = this;
+            if (args != undefined && args.note != undefined) {
+                self._note = args.note;
+            }
+            if (success) {
+                self._success = success;
+            }
+            if (error) {
+                self._error = error;
+            }
+        }
+        DeleteNote.prototype.execute = function () {
+            var self = this;
+            FoodParent.Model.getNotes().remove(self._note);
+            self._note.destroy({
+                wait: true,
+                success: function (note, response) {
+                    if (self._success) {
+                        self._success();
+                    }
+                },
+                error: function (error, response) {
+                    if (self._error) {
+                        self._error();
+                    }
+                },
+            });
+        };
+        DeleteNote.prototype.undo = function () {
+        };
+        return DeleteNote;
+    })();
+    FoodParent.DeleteNote = DeleteNote;
 })(FoodParent || (FoodParent = {}));
 
 var DatePickerCellEditor = Backgrid.InputCellEditor.extend({
@@ -47163,6 +47206,12 @@ var FoodParent;
             template += '<div class="button-outer-frame2 button3"><div class="button-inner-frame2">Switch To Map View</div></div>';
             template += '</div>';
             template += '<div id="wrapper-date-select">';
+            template += '<div class="wrapper-date-preset">';
+            template += '<div class="button-outer-frame2 button3 date-preset 2years"><div class="button-inner-frame2">2 Year</div></div>';
+            template += '<div class="button-outer-frame2 button3 date-preset 1year"><div class="button-inner-frame2">1 Year</div></div>';
+            template += '<div class="button-outer-frame2 button3 date-preset 6months"><div class="button-inner-frame2">6 months</div></div>';
+            template += '<div class="button-outer-frame2 button3 date-preset 1month"><div class="button-inner-frame2">1 month</div></div>';
+            template += '</div>';
             template += '<div class="wrapper-date-select-item"><span class="date-select-label">From:</span><input type="text" class="form-control tree-graph-start" /></div>';
             template += '<div class="wrapper-date-select-item"><span class="date-select-label">To:</span><input type="text" class="form-control tree-graph-end" /></div>';
             template += '</div>';
@@ -47222,6 +47271,10 @@ var FoodParent;
             template += '<div class="info-header"><i class="fa fa-calendar-o"></i> Posted</div>';
             template += '<div class="info-group">';
             template += '<div class="input-date"><%= date %></div>';
+            template += '</div>';
+            template += '<div class="hr"><hr /></div>';
+            template += '<div class="info-button-group">';
+            template += '<div class="button-outer-frame2 button3"><div class="button-inner-frame2 delete-note"><i class="fa fa-remove"></i> Delete</div></div>';
             template += '</div>';
             template += '</div>';
             template += '</div>'; // end of .wrapper-note-content
@@ -47435,6 +47488,9 @@ var FoodParent;
         };
         View.getViewStatus = function () {
             return View._instance._viewStatus[View._instance._viewStatus.length - 1];
+        };
+        View.getAllViewStatus = function () {
+            return View._instance._viewStatus.toString();
         };
         /*
         public static setActionStatus(actionStatus: ACTION_STATUS): void {
@@ -47857,6 +47913,7 @@ var FoodParent;
                 "click .prev-note": "_prevNote",
                 "click .next-note": "_nextNote",
                 "click .image-group img": "_changeCoverImage",
+                "click .delete-note": "_deleteNote",
             };
             self.delegateEvents();
         }
@@ -47944,13 +48001,19 @@ var FoodParent;
             var tag = '';
             $.each(note.getPictures(), function (index, filename) {
                 if (index == note.getCover()) {
-                    tag += '<img src="' + FoodParent.Setting.getContentPictureDir() + filename + '" data-target="' + index + '" class="selected" />';
+                    tag += '<img src="' + FoodParent.Setting.getBlankImagePath() + '" data-target="' + index + '" class="selected" />';
                 }
                 else {
-                    tag += '<img src="' + FoodParent.Setting.getContentPictureDir() + filename + '" data-target="' + index + '" />';
+                    tag += '<img src="' + FoodParent.Setting.getBlankImagePath() + '" data-target="' + index + '" />';
                 }
             });
             self.$('.image-group').html(tag);
+            $.each(self.$('.image-group img'), function (index, element) {
+                $(element).attr('src', FoodParent.Setting.getContentPictureDir() + note.getPictures()[index]).load(function () {
+                }).error(function () {
+                    $(element).attr('src', FoodParent.Setting.getBlankImagePath());
+                });
+            });
         };
         ImageNoteView.prototype.update = function (args) {
             if (!this.bRendered) {
@@ -48029,6 +48092,19 @@ var FoodParent;
             $(event.target).addClass('selected');
             self._note.setCover();
             */
+        };
+        ImageNoteView.prototype._deleteNote = function (event) {
+            var self = this;
+            var tree = FoodParent.Model.getTrees().findWhere({ id: self._note.getTreeId() });
+            var food = FoodParent.Model.getFoods().findWhere({ id: tree.getFoodId() });
+            FoodParent.EventHandler.handleNoteData(self._note, FoodParent.DATA_MODE.DELETE, {}, function () {
+                FoodParent.EventHandler.handleDataChange("Note of <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has been deleted successfully.", true);
+                if (FoodParent.View.getDetailTreeView()) {
+                    FoodParent.View.getDetailTreeView().refreshTreeInfo();
+                }
+            }, function () {
+                FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+            });
         };
         ImageNoteView.prototype.setVisible = function () {
             var self = this;
@@ -49223,7 +49299,13 @@ var FoodParent;
                     var start = moment(startDate).set('hour', 13).set('minute', 0).set('seconds', 0).set('milliseconds', 0);
                     for (var i = moment(start).valueOf(); i < moment(endDate).valueOf(); i += 1000 * 60 * 60 * 24) {
                         labels.push(moment(i).format(FoodParent.Setting.getDateHourFormat()));
-                        notes.push(FoodParent.Model.getNotes().getLatestImageNoteOfDate(self._tree.getId(), i, FoodParent.NoteType.IMAGE));
+                        var note = FoodParent.Model.getNotes().getLatestImageNoteOfDate(self._tree.getId(), i, FoodParent.NoteType.IMAGE);
+                        if (note) {
+                            notes.push(note);
+                        }
+                        else {
+                            notes.push(new FoodParent.Note({ type: FoodParent.NoteType.IMAGE, tree: self._tree.getId(), person: 0, comment: "", picture: "", rate: 0, cover: 0, date: moment(i).format(FoodParent.Setting.getDateTimeFormat()) }));
+                        }
                     }
                     var labelSkip = Math.floor(labels.length / (self.$('#content-chart').innerWidth() / 150));
                     if (self._chart) {
@@ -49252,6 +49334,8 @@ var FoodParent;
                         customTooltips: function (tooltip) {
                             // tooltip will be false if tooltip is not visible or should be hidden
                             if (!tooltip || !tooltip.id) {
+                                self._note = null;
+                                self.$('#wrapper-tooltip').addClass('hidden');
                                 return;
                             }
                             self._note = FoodParent.Model.getNotes().findWhere({ id: tooltip.id });
@@ -49268,7 +49352,7 @@ var FoodParent;
                                     self.$('#wrapper-tooltip img').attr('src', FoodParent.Setting.getContentPictureDir() + self._note.getPictures()[self._note.getCover()]).load(function () {
                                         $(this).removeClass('hidden');
                                     }).error(function () {
-                                        //$(this).attr('src', Setting.getBlankImagePath());
+                                        $(this).attr('src', FoodParent.Setting.getBlankImagePath());
                                         $(this).addClass('hidden');
                                     });
                                 }
@@ -49411,6 +49495,7 @@ var FoodParent;
                 "click .button-delete-tree": "_deleteTree",
                 "click .button-manage-adoption": "_mouseClick",
                 "click .button-new-note": "_mouseClick",
+                "click .date-preset": "_datePreset",
             };
             self.delegateEvents();
         }
@@ -49563,6 +49648,34 @@ var FoodParent;
         DetailTreeGraphicView.prototype._mouseClick = function (event) {
             var self = this;
             FoodParent.EventHandler.handleMouseClick($(event.currentTarget), self, { note: self._note, tree: self._tree });
+        };
+        DetailTreeGraphicView.prototype._datePreset = function (event) {
+            var self = this;
+            if ($(event.currentTarget).hasClass('2years')) {
+                self._startDate = moment(self._endDate).subtract(2, 'years').startOf('day').format(FoodParent.Setting.getDateTimeFormat());
+            }
+            else if ($(event.currentTarget).hasClass('1year')) {
+                self._startDate = moment(self._endDate).subtract(1, 'years').startOf('day').format(FoodParent.Setting.getDateTimeFormat());
+            }
+            else if ($(event.currentTarget).hasClass('6months')) {
+                self._startDate = moment(self._endDate).subtract(6, 'months').startOf('day').format(FoodParent.Setting.getDateTimeFormat());
+            }
+            else if ($(event.currentTarget).hasClass('1month')) {
+                self._startDate = moment(self._endDate).subtract(1, 'months').startOf('day').format(FoodParent.Setting.getDateTimeFormat());
+            }
+            self.$('.tree-graph-start').attr({ 'data-value': moment(self._startDate).format(FoodParent.Setting.getDateFormat()) });
+            self.$('.tree-graph-start').pickadate({
+                format: "dd mmm yyyy",
+                today: '',
+                max: new Date(moment(new Date()).subtract('day', 2).valueOf()),
+                clear: '',
+                close: 'Close',
+                onClose: function () {
+                    self._startDate = moment(this.get()).startOf('day').format(FoodParent.Setting.getDateTimeFormat());
+                    self.renderTreeChart(self._tree, self._startDate, self._endDate);
+                }
+            });
+            self.renderTreeChart(self._tree, self._startDate, self._endDate);
         };
         DetailTreeGraphicView.prototype._deleteTree = function () {
             var self = this;
@@ -50115,10 +50228,10 @@ var FoodParent;
             var food = FoodParent.Model.getFoods().findWhere({ id: self._tree.getFoodId() });
             FoodParent.EventHandler.handleNoteData(self._note, FoodParent.DATA_MODE.CREATE, {}, function () {
                 FoodParent.EventHandler.handleDataChange("New note for <strong><i>" + food.getName() + " " + self._tree.getName() + "</i></strong> has been created.", false);
+                new FoodParent.RemoveAlertViewCommand({ delay: FoodParent.Setting.getRemovePopupDuration() }).execute();
                 if (FoodParent.View.getDetailTreeView()) {
                     FoodParent.View.getDetailTreeView().refreshTreeInfo();
                 }
-                new FoodParent.RemoveAlertViewCommand({ delay: FoodParent.Setting.getRemovePopupDuration() }).execute();
             }, function () {
                 FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
             });

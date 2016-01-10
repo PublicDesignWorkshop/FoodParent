@@ -52,6 +52,7 @@
                 "click .button-delete-tree": "_deleteTree",
                 "click .button-manage-adoption": "_mouseClick",
                 "click .button-new-note": "_mouseClick",
+                "click .date-preset": "_datePreset",
             };
             self.delegateEvents();
         }
@@ -160,9 +161,13 @@
 
                 for (var i: number = moment(start).valueOf(); i < moment(endDate).valueOf(); i += 1000 * 60 * 60 * 24) {
                     labels.push(moment(i).format(Setting.getDateHourFormat()));
-                    notes.push(Model.getNotes().getLatestImageNoteOfDate(self._tree.getId(), i, NoteType.IMAGE));
+                    var note: Note = Model.getNotes().getLatestImageNoteOfDate(self._tree.getId(), i, NoteType.IMAGE);
+                    if (note) {
+                        notes.push(note);
+                    } else {
+                        notes.push(new Note({ type: NoteType.IMAGE, tree: self._tree.getId(), person: 0, comment: "", picture: "", rate: 0, cover: 0, date: moment(i).format(Setting.getDateTimeFormat()) }));
+                    }
                 }
-
                 var labelSkip: number = Math.floor(labels.length / (self.$('#content-chart').innerWidth() / 150));
                 if (self._chart) {
                     self._chart.destroy();
@@ -191,6 +196,8 @@
                         customTooltips: function (tooltip) {
                             // tooltip will be false if tooltip is not visible or should be hidden
                             if (!tooltip || !tooltip.id) {
+                                self._note = null;
+                                self.$('#wrapper-tooltip').addClass('hidden');
                                 return;
                             }
                             self._note = Model.getNotes().findWhere({ id: tooltip.id });
@@ -208,7 +215,7 @@
                                     self.$('#wrapper-tooltip img').attr('src', Setting.getContentPictureDir() + self._note.getPictures()[self._note.getCover()]).load(function () {
                                         $(this).removeClass('hidden');
                                     }).error(function () {
-                                        //$(this).attr('src', Setting.getBlankImagePath());
+                                        $(this).attr('src', Setting.getBlankImagePath());
                                         $(this).addClass('hidden');
                                     });
                                 } else {
@@ -436,6 +443,32 @@
         private _mouseClick(event: Event): void {
             var self: DetailTreeGraphicView = this;
             EventHandler.handleMouseClick($(event.currentTarget), self, { note: self._note, tree: self._tree });
+        }
+
+        private _datePreset(event: Event): void {
+            var self: DetailTreeGraphicView = this;
+            if ($(event.currentTarget).hasClass('2years')) {
+                self._startDate = moment(self._endDate).subtract(2, 'years').startOf('day').format(Setting.getDateTimeFormat());
+            } else if ($(event.currentTarget).hasClass('1year')) {
+                self._startDate = moment(self._endDate).subtract(1, 'years').startOf('day').format(Setting.getDateTimeFormat());
+            } else if ($(event.currentTarget).hasClass('6months')) {
+                self._startDate = moment(self._endDate).subtract(6, 'months').startOf('day').format(Setting.getDateTimeFormat());
+            } else if ($(event.currentTarget).hasClass('1month')) {
+                self._startDate = moment(self._endDate).subtract(1, 'months').startOf('day').format(Setting.getDateTimeFormat());
+            }
+            self.$('.tree-graph-start').attr({ 'data-value': moment(self._startDate).format(Setting.getDateFormat()) });
+            self.$('.tree-graph-start').pickadate({
+                format: "dd mmm yyyy",
+                today: '',
+                max: new Date(moment(new Date()).subtract('day', 2).valueOf()),
+                clear: '',
+                close: 'Close',
+                onClose: function () {
+                    self._startDate = moment(this.get()).startOf('day').format(Setting.getDateTimeFormat());
+                    self.renderTreeChart(self._tree, self._startDate, self._endDate);
+                }
+            });
+            self.renderTreeChart(self._tree, self._startDate, self._endDate);
         }
 
         public _deleteTree() {

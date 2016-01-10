@@ -148,8 +148,6 @@
         position: absolute;
         top: 0;
         right: 0;
-        width: 35%;
-        max-width: 480px;
         padding: 12px 8px 8px 8px;
         color: #5e4e51;
         display: flex;
@@ -320,6 +318,7 @@
     .wrapper-note-info .button-inner-frame2 {
         font-size: large;
         text-align: center;
+        font-weight: 400;
     }
 
     .wrapper-note-info input.input-comment, .wrapper-note-info textarea.input-comment {
@@ -419,5 +418,13 @@
 
     .image-group img.selected {
         border: 8px solid rgba(132, 167, 87, 1);
+    }
+
+    .wrapper-date-preset {
+        display: flex;
+        justify-content: flex-start;
+        align-items: flex-start;
+        padding-right: 8px;
+        padding-top: 4px;
     }
 }

@@ -189,7 +189,9 @@ var FoodParent;
                     break;
                 case VIEW_STATUS.DETAIL_TREE:
                     if (el.hasClass('content-chart')) {
-                        new FoodParent.RenderImageNoteViewCommand({ el: FoodParent.Setting.getPopWrapperElement(), note: options.note }).execute();
+                        if (options.note) {
+                            new FoodParent.RenderImageNoteViewCommand({ el: FoodParent.Setting.getPopWrapperElement(), note: options.note }).execute();
+                        }
                     }
                     else if (el.hasClass('button-manage-adoption')) {
                         new FoodParent.RenderManageAdoptionViewCommand({ el: FoodParent.Setting.getPopWrapperElement(), tree: options.tree.getId() }).execute();
@@ -288,6 +290,11 @@ var FoodParent;
                     break;
                 case DATA_MODE.CREATE:
                     new FoodParent.CreateNote({ note: note }, success, error).execute();
+                    break;
+                case DATA_MODE.DELETE:
+                    FoodParent.View.popViewStatus();
+                    var command = new FoodParent.DeleteNote({ note: note }, success, error);
+                    new FoodParent.RenderConfirmViewCommand({ el: FoodParent.Setting.getPopWrapperElement(), message: "Are you sure to delete this note?", command: command }).execute();
                     break;
             }
             if (self._lastCommand != undefined) {
