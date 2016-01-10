@@ -101,6 +101,7 @@ var FoodParent;
                         scaleSteps: 1,
                         scaleStepWidth: 10,
                         scaleStartValue: 0,
+                        pointDotRadius: 3,
                         pointDotStrokeWidth: 2,
                         bezierCurve: false,
                         pointHitDetectionRadius: self.$('#content-chart').innerWidth() / notes.length * 0.5,
