@@ -162,6 +162,60 @@ var FoodParent;
         return UpdateNoteCover;
     })();
     FoodParent.UpdateNoteCover = UpdateNoteCover;
+    var UpdateNoteDate = (function () {
+        function UpdateNoteDate(args, success, error) {
+            var self = this;
+            if (args != undefined && args.note != undefined && args.date != undefined) {
+                self._note = args.note;
+                self._date = args.date;
+            }
+            if (success) {
+                self._success = success;
+            }
+            if (error) {
+                self._error = error;
+            }
+        }
+        UpdateNoteDate.prototype.execute = function () {
+            var self = this;
+            self._previousDate = self._note.getFormattedDateTime();
+            self._note.save({
+                'date': self._date,
+            }, {
+                wait: true,
+                success: function (note, response) {
+                    if (self._success) {
+                        self._success();
+                    }
+                },
+                error: function (error, response) {
+                    if (self._error) {
+                        self._error();
+                    }
+                },
+            });
+        };
+        UpdateNoteDate.prototype.undo = function () {
+            var self = this;
+            self._note.save({
+                'date': self._previousDate,
+            }, {
+                wait: true,
+                success: function (tree, response) {
+                    if (self._success) {
+                        self._success();
+                    }
+                },
+                error: function (error, response) {
+                    if (self._error) {
+                        self._error();
+                    }
+                },
+            });
+        };
+        return UpdateNoteDate;
+    })();
+    FoodParent.UpdateNoteDate = UpdateNoteDate;
     var CreateNote = (function () {
         function CreateNote(args, success, error) {
             var self = this;

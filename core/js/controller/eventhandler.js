@@ -22,6 +22,7 @@ var FoodParent;
         DATA_MODE[DATA_MODE["UPDATE_COMMENT"] = 13] = "UPDATE_COMMENT";
         DATA_MODE[DATA_MODE["UPDATE_RATING"] = 14] = "UPDATE_RATING";
         DATA_MODE[DATA_MODE["UPDATE_COVER"] = 15] = "UPDATE_COVER";
+        DATA_MODE[DATA_MODE["UPDATE_DATE"] = 16] = "UPDATE_DATE";
     })(FoodParent.DATA_MODE || (FoodParent.DATA_MODE = {}));
     var DATA_MODE = FoodParent.DATA_MODE;
     (function (VIEW_STATUS) {
@@ -287,6 +288,9 @@ var FoodParent;
                     break;
                 case DATA_MODE.UPDATE_COVER:
                     self._lastCommand = new FoodParent.UpdateNoteCover({ note: note, cover: args.cover }, success, error);
+                    break;
+                case DATA_MODE.UPDATE_DATE:
+                    self._lastCommand = new FoodParent.UpdateNoteDate({ note: note, date: args.date }, success, error);
                     break;
                 case DATA_MODE.CREATE:
                     new FoodParent.CreateNote({ note: note }, success, error).execute();

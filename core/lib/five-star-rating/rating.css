@@ -24,6 +24,16 @@
   cursor: pointer;
 }
 
+.c-rating__item2 {
+  -webkit-box-flex: 0;
+  -webkit-flex: 0 0 24px;
+      -ms-flex: 0 0 24px;
+          flex: 0 0 24px;
+  height: 24px;
+  background-position: 0 0;
+  cursor: pointer;
+}
+
 .c-rating__item:hover,
 .c-rating__item.is-active {
   background-position: -24px 0;

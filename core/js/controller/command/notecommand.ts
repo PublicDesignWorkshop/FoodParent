@@ -194,6 +194,71 @@
         }
     }
 
+    export class UpdateNoteDate implements Command {
+        private _date: string;
+        private _previousDate: string;
+        private _success: Function;
+        private _error: Function;
+        private _note: Note;
+        constructor(args?: any, success?: Function, error?: Function) {
+            var self: UpdateNoteDate = this;
+            if (args != undefined && args.note != undefined && args.date != undefined) {
+                self._note = args.note;
+                self._date = args.date;
+            }
+            if (success) {
+                self._success = success;
+            }
+            if (error) {
+                self._error = error;
+            }
+        }
+        public execute(): any {
+            var self: UpdateNoteDate = this;
+            self._previousDate = self._note.getFormattedDateTime();
+            self._note.save(
+                {
+                    'date': self._date,
+                },
+                {
+                    wait: true,
+                    success: function (note: Note, response: any) {
+                        if (self._success) {
+                            self._success();
+                        }
+                    },
+                    error: function (error, response) {
+                        if (self._error) {
+                            self._error();
+                        }
+                    },
+                }
+            );
+
+        }
+        public undo(): any {
+            var self: UpdateNoteDate = this;
+            self._note.save(
+                {
+                    'date': self._previousDate,
+                },
+                {
+                    wait: true,
+                    success: function (tree: Tree, response: any) {
+                        if (self._success) {
+                            self._success();
+                        }
+                    },
+                    error: function (error, response) {
+                        if (self._error) {
+                            self._error();
+                        }
+                    },
+                }
+            );
+        }
+    }
+
 
     export class CreateNote implements Command {
         private _success: Function;

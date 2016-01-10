@@ -12022,6 +12022,16 @@ button.close {
   cursor: pointer;
 }
 
+.c-rating__item2 {
+  -webkit-box-flex: 0;
+  -webkit-flex: 0 0 24px;
+      -ms-flex: 0 0 24px;
+          flex: 0 0 24px;
+  height: 24px;
+  background-position: 0 0;
+  cursor: pointer;
+}
+
 .c-rating__item:hover,
 .c-rating__item.is-active {
   background-position: -24px 0;
@@ -13568,7 +13578,7 @@ button.close {
         display: flex;
         justify-content: space-between;
         align-items: flex-start;
-        margin-right: 32px;
+        margin-right: 4px;
         font-size: medium;
         vertical-align: central;
         padding-top: 8px;
@@ -13600,13 +13610,15 @@ button.close {
         height: 100%;
         overflow: hidden;
         padding: 60px 20px 10px 0;
-        cursor: pointer;
+        pointer-events: none;
     }
 
     #content-chart {
         width: 100%;
         height: 100%;
         overflow: hidden;
+        cursor: pointer;
+        pointer-events: all;
     }
     #wrapper-tooltip {
         position: absolute;
@@ -13631,7 +13643,7 @@ button.close {
 
     #wrapper-tooltip .rate {
         padding: 0 6px 0 6px;
-        font-size: xx-large;
+        font-size: x-large;
         font-weight: 700;
     }
     #wrapper-tooltip .comment {

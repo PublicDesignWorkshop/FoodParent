@@ -82,8 +82,8 @@
             self.$('.input-rating').html(Math.ceil(self._note.getRate()).toFixed(2) + " / " + Setting.getMaxRating().toFixed(2));
 
             self.$('.input-rating-slider').html("");
-            var rate = rating(self.$('.input-rating-slider')[0], self._note.getRate().toFixed(2), Setting.getMaxRating(), function (rate) {
-                self._note.setRate(rate);
+            var rate = rating(self.$('.input-rating-slider')[0], (self._note.getRate() + 1).toFixed(2), Setting.getMaxRating()+1, function (rate) {
+                self._note.setRate(rate - 1);
                 self.renderNoteInfo();
             });
             self.$('.input-comment').replaceWith('<div class="input-comment"></div>');

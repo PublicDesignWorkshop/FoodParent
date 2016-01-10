@@ -430,8 +430,8 @@ var skipLabels;
 				rangeOrderOfMagnitude = calculateOrderOfMagnitude(valueRange),
 				graphMax = Math.ceil(maxValue / (1 * Math.pow(10, rangeOrderOfMagnitude))) * Math.pow(10, rangeOrderOfMagnitude),
 				graphMin = (startFromZero) ? 0 : Math.floor(minValue / (1 * Math.pow(10, rangeOrderOfMagnitude))) * Math.pow(10, rangeOrderOfMagnitude),
-				//graphRange = graphMax - graphMin,
-                graphRange = FoodParent.Setting.getMaxRating(),
+				graphRange = graphMax - graphMin,
+                //graphRange = FoodParent.Setting.getMaxRating(),
 				stepValue = Math.pow(10, rangeOrderOfMagnitude),
 				numberOfSteps = Math.round(graphRange / stepValue);
 

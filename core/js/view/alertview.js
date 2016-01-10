@@ -172,9 +172,9 @@ var FoodParent;
             self.$('.input-rating').replaceWith('<div class="input-rating"></div>');
             self.$('.input-rating').html(Math.ceil(note.getRate()).toFixed(2) + " / " + FoodParent.Setting.getMaxRating().toFixed(2));
             self.$('.input-rating-slider').html("");
-            var rate = rating(self.$('.input-rating-slider')[0], note.getRate().toFixed(2), FoodParent.Setting.getMaxRating(), function (rate) {
-                if (Math.ceil(note.getRate()) != rate) {
-                    FoodParent.EventHandler.handleNoteData(self._note, FoodParent.DATA_MODE.UPDATE_RATING, { rate: rate }, function () {
+            var rate = rating(self.$('.input-rating-slider')[0], (note.getRate() + 1).toFixed(2), FoodParent.Setting.getMaxRating() + 1, function (rate) {
+                if (Math.ceil(note.getRate()) != (rate - 1)) {
+                    FoodParent.EventHandler.handleNoteData(self._note, FoodParent.DATA_MODE.UPDATE_RATING, { rate: (rate - 1) }, function () {
                         FoodParent.EventHandler.handleDataChange("Rating of <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has changed successfully.", true);
                         self.renderImageNote(self._note);
                     }, function () {
@@ -185,9 +185,27 @@ var FoodParent;
                     self.renderImageNote(self._note);
                 }
             });
+            var today = new Date();
+            self.$('.input-date').attr({ 'data-value': note.getFormattedDate() });
+            self.$('.input-date').pickadate({
+                format: "dd mmm yyyy",
+                today: 'Today',
+                max: today,
+                clear: '',
+                close: 'Close',
+                onClose: function () {
+                    FoodParent.EventHandler.handleNoteData(self._note, FoodParent.DATA_MODE.UPDATE_DATE, { date: moment(this.get()).hour(moment(new Date()).hour()).format(FoodParent.Setting.getDateTimeFormat()) }, function () {
+                        FoodParent.EventHandler.handleDataChange("Date of this <strong><i>Note</i></strong> has changed successfully.", true);
+                        self.renderImageNote(note);
+                    }, function () {
+                        FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+                    });
+                    //self._note.setDate(moment(this.get()).hour(moment(new Date()).hour()));
+                    //self.renderImageNote(note);
+                }
+            });
             self.$('.input-comment').replaceWith('<div class="input-comment"></div>');
             self.$('.input-comment').html(htmlDecode(self._note.getComment()));
-            self.$('.input-date').html(note.getFormattedHourTime());
             self.$('.input-comment').on('click', function (event) {
                 //$(this).replaceWith("<input type='text' class='input-comment form-control' value='" + htmlEncode($(this).text()) + "' />");
                 $(this).replaceWith("<textarea rows='5' class='input-comment form-control'>" + self._note.getComment() + "</textarea>");

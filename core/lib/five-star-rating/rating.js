@@ -34,8 +34,13 @@
       if (currentRating < 0 || currentRating > maxRating) { throw Error('Current rating is out of bounds.'); }
 
       for (var i = 0; i < maxRating; i++) {
-        var star = document.createElement('li');
-        star.classList.add('c-rating__item');
+          var star = document.createElement('li');
+          if (i == 0) {
+              star.classList.add('c-rating__item2');
+          } else {
+              star.classList.add('c-rating__item');
+          }
+        
         star.setAttribute('data-index', i);
         if (i < currentRating) { star.classList.add('is-active'); }
         el.appendChild(star);

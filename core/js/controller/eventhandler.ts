@@ -7,7 +7,7 @@
     export enum DATA_MODE {
         NONE, CREATE, DELETE, UPDATE_LOCATION, UPDATE_FLAG, UPDATE_OWNERSHIP, UPDATE_FOODTYPE, UPDATE_DESCRIPTION, 
         UPDATE_NAME, UPDATE_ADDRESS, UPDATE_CONTACT, UPDATE_NEIGHBORHOOD, UPDATE_AUTH,
-        UPDATE_COMMENT, UPDATE_RATING, UPDATE_COVER
+        UPDATE_COMMENT, UPDATE_RATING, UPDATE_COVER, UPDATE_DATE
     }
     export enum VIEW_STATUS {
         NONE, HOME, MANAGE_TREES, PARENT_TREES, GEO_ERROR, NETWORK_ERROR, CONFIRM, MANAGE_PEOPLE, MANAGE_ADOPTION, DETAIL_TREE, IMAGENOTE_TREE, POST_NOTE
@@ -248,6 +248,9 @@
                     break;
                 case DATA_MODE.UPDATE_COVER:
                     self._lastCommand = new UpdateNoteCover({ note: note, cover: args.cover }, success, error);
+                    break;
+                case DATA_MODE.UPDATE_DATE:
+                    self._lastCommand = new UpdateNoteDate({ note: note, date: args.date }, success, error);
                     break;
                 case DATA_MODE.CREATE:
                     new CreateNote({ note: note }, success, error).execute();

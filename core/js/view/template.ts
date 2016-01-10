@@ -574,8 +574,8 @@
             template +=             '<div class="button-outer-frame2 button3 date-preset 6months"><div class="button-inner-frame2">6 months</div></div>';
             template +=             '<div class="button-outer-frame2 button3 date-preset 1month"><div class="button-inner-frame2">1 month</div></div>';
             template +=         '</div>';
-            template +=         '<div class="wrapper-date-select-item"><span class="date-select-label">From:</span><input type="text" class="form-control tree-graph-start" /></div>';
-            template +=         '<div class="wrapper-date-select-item"><span class="date-select-label">To:</span><input type="text" class="form-control tree-graph-end" /></div>';
+            template +=         '<div class="wrapper-date-select-item"><input type="text" class="form-control tree-graph-start" /></div>';
+            template +=         '<div class="wrapper-date-select-item"><span class="date-select-label">~</span><input type="text" class="form-control tree-graph-end" /></div>';
             template +=     '</div>';
 
             
@@ -654,7 +654,7 @@
             template += '<div class="hr"><hr /></div>';
             template += '<div class="info-header"><i class="fa fa-calendar-o"></i> Posted</div>';
             template += '<div class="info-group">';
-            template += '<div class="input-date"><%= date %></div>';
+            template += '<input type="text" class="form-control input-date" />';
             template += '</div>';
 
             template += '<div class="hr"><hr /></div>';

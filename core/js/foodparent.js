@@ -25621,8 +25621,8 @@ var skipLabels;
 				rangeOrderOfMagnitude = calculateOrderOfMagnitude(valueRange),
 				graphMax = Math.ceil(maxValue / (1 * Math.pow(10, rangeOrderOfMagnitude))) * Math.pow(10, rangeOrderOfMagnitude),
 				graphMin = (startFromZero) ? 0 : Math.floor(minValue / (1 * Math.pow(10, rangeOrderOfMagnitude))) * Math.pow(10, rangeOrderOfMagnitude),
-				//graphRange = graphMax - graphMin,
-                graphRange = FoodParent.Setting.getMaxRating(),
+				graphRange = graphMax - graphMin,
+                //graphRange = FoodParent.Setting.getMaxRating(),
 				stepValue = Math.pow(10, rangeOrderOfMagnitude),
 				numberOfSteps = Math.round(graphRange / stepValue);
 
@@ -28039,8 +28039,13 @@ var skipLabels;
       if (currentRating < 0 || currentRating > maxRating) { throw Error('Current rating is out of bounds.'); }
 
       for (var i = 0; i < maxRating; i++) {
-        var star = document.createElement('li');
-        star.classList.add('c-rating__item');
+          var star = document.createElement('li');
+          if (i == 0) {
+              star.classList.add('c-rating__item2');
+          } else {
+              star.classList.add('c-rating__item');
+          }
+        
         star.setAttribute('data-index', i);
         if (i < currentRating) { star.classList.add('is-active'); }
         el.appendChild(star);
@@ -43242,6 +43247,7 @@ var FoodParent;
         DATA_MODE[DATA_MODE["UPDATE_COMMENT"] = 13] = "UPDATE_COMMENT";
         DATA_MODE[DATA_MODE["UPDATE_RATING"] = 14] = "UPDATE_RATING";
         DATA_MODE[DATA_MODE["UPDATE_COVER"] = 15] = "UPDATE_COVER";
+        DATA_MODE[DATA_MODE["UPDATE_DATE"] = 16] = "UPDATE_DATE";
     })(FoodParent.DATA_MODE || (FoodParent.DATA_MODE = {}));
     var DATA_MODE = FoodParent.DATA_MODE;
     (function (VIEW_STATUS) {
@@ -43507,6 +43513,9 @@ var FoodParent;
                     break;
                 case DATA_MODE.UPDATE_COVER:
                     self._lastCommand = new FoodParent.UpdateNoteCover({ note: note, cover: args.cover }, success, error);
+                    break;
+                case DATA_MODE.UPDATE_DATE:
+                    self._lastCommand = new FoodParent.UpdateNoteDate({ note: note, date: args.date }, success, error);
                     break;
                 case DATA_MODE.CREATE:
                     new FoodParent.CreateNote({ note: note }, success, error).execute();
@@ -45247,6 +45256,60 @@ var FoodParent;
         return UpdateNoteCover;
     })();
     FoodParent.UpdateNoteCover = UpdateNoteCover;
+    var UpdateNoteDate = (function () {
+        function UpdateNoteDate(args, success, error) {
+            var self = this;
+            if (args != undefined && args.note != undefined && args.date != undefined) {
+                self._note = args.note;
+                self._date = args.date;
+            }
+            if (success) {
+                self._success = success;
+            }
+            if (error) {
+                self._error = error;
+            }
+        }
+        UpdateNoteDate.prototype.execute = function () {
+            var self = this;
+            self._previousDate = self._note.getFormattedDateTime();
+            self._note.save({
+                'date': self._date,
+            }, {
+                wait: true,
+                success: function (note, response) {
+                    if (self._success) {
+                        self._success();
+                    }
+                },
+                error: function (error, response) {
+                    if (self._error) {
+                        self._error();
+                    }
+                },
+            });
+        };
+        UpdateNoteDate.prototype.undo = function () {
+            var self = this;
+            self._note.save({
+                'date': self._previousDate,
+            }, {
+                wait: true,
+                success: function (tree, response) {
+                    if (self._success) {
+                        self._success();
+                    }
+                },
+                error: function (error, response) {
+                    if (self._error) {
+                        self._error();
+                    }
+                },
+            });
+        };
+        return UpdateNoteDate;
+    })();
+    FoodParent.UpdateNoteDate = UpdateNoteDate;
     var CreateNote = (function () {
         function CreateNote(args, success, error) {
             var self = this;
@@ -47213,8 +47276,8 @@ var FoodParent;
             template += '<div class="button-outer-frame2 button3 date-preset 6months"><div class="button-inner-frame2">6 months</div></div>';
             template += '<div class="button-outer-frame2 button3 date-preset 1month"><div class="button-inner-frame2">1 month</div></div>';
             template += '</div>';
-            template += '<div class="wrapper-date-select-item"><span class="date-select-label">From:</span><input type="text" class="form-control tree-graph-start" /></div>';
-            template += '<div class="wrapper-date-select-item"><span class="date-select-label">To:</span><input type="text" class="form-control tree-graph-end" /></div>';
+            template += '<div class="wrapper-date-select-item"><input type="text" class="form-control tree-graph-start" /></div>';
+            template += '<div class="wrapper-date-select-item"><span class="date-select-label">~</span><input type="text" class="form-control tree-graph-end" /></div>';
             template += '</div>';
             template += '</div>'; // end of #wrapper-graph
             template += '<div id="wrapper-tree-detail">';
@@ -47271,7 +47334,7 @@ var FoodParent;
             template += '<div class="hr"><hr /></div>';
             template += '<div class="info-header"><i class="fa fa-calendar-o"></i> Posted</div>';
             template += '<div class="info-group">';
-            template += '<div class="input-date"><%= date %></div>';
+            template += '<input type="text" class="form-control input-date" />';
             template += '</div>';
             template += '<div class="hr"><hr /></div>';
             template += '<div class="info-button-group">';
@@ -47963,9 +48026,9 @@ var FoodParent;
             self.$('.input-rating').replaceWith('<div class="input-rating"></div>');
             self.$('.input-rating').html(Math.ceil(note.getRate()).toFixed(2) + " / " + FoodParent.Setting.getMaxRating().toFixed(2));
             self.$('.input-rating-slider').html("");
-            var rate = rating(self.$('.input-rating-slider')[0], note.getRate().toFixed(2), FoodParent.Setting.getMaxRating(), function (rate) {
-                if (Math.ceil(note.getRate()) != rate) {
-                    FoodParent.EventHandler.handleNoteData(self._note, FoodParent.DATA_MODE.UPDATE_RATING, { rate: rate }, function () {
+            var rate = rating(self.$('.input-rating-slider')[0], (note.getRate() + 1).toFixed(2), FoodParent.Setting.getMaxRating() + 1, function (rate) {
+                if (Math.ceil(note.getRate()) != (rate - 1)) {
+                    FoodParent.EventHandler.handleNoteData(self._note, FoodParent.DATA_MODE.UPDATE_RATING, { rate: (rate - 1) }, function () {
                         FoodParent.EventHandler.handleDataChange("Rating of <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has changed successfully.", true);
                         self.renderImageNote(self._note);
                     }, function () {
@@ -47976,9 +48039,27 @@ var FoodParent;
                     self.renderImageNote(self._note);
                 }
             });
+            var today = new Date();
+            self.$('.input-date').attr({ 'data-value': note.getFormattedDate() });
+            self.$('.input-date').pickadate({
+                format: "dd mmm yyyy",
+                today: 'Today',
+                max: today,
+                clear: '',
+                close: 'Close',
+                onClose: function () {
+                    FoodParent.EventHandler.handleNoteData(self._note, FoodParent.DATA_MODE.UPDATE_DATE, { date: moment(this.get()).hour(moment(new Date()).hour()).format(FoodParent.Setting.getDateTimeFormat()) }, function () {
+                        FoodParent.EventHandler.handleDataChange("Date of this <strong><i>Note</i></strong> has changed successfully.", true);
+                        self.renderImageNote(note);
+                    }, function () {
+                        FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+                    });
+                    //self._note.setDate(moment(this.get()).hour(moment(new Date()).hour()));
+                    //self.renderImageNote(note);
+                }
+            });
             self.$('.input-comment').replaceWith('<div class="input-comment"></div>');
             self.$('.input-comment').html(htmlDecode(self._note.getComment()));
-            self.$('.input-date').html(note.getFormattedHourTime());
             self.$('.input-comment').on('click', function (event) {
                 //$(this).replaceWith("<input type='text' class='input-comment form-control' value='" + htmlEncode($(this).text()) + "' />");
                 $(this).replaceWith("<textarea rows='5' class='input-comment form-control'>" + self._note.getComment() + "</textarea>");
@@ -49328,6 +49409,10 @@ var FoodParent;
                             },
                         ]
                     }, {
+                        scaleOverride: true,
+                        scaleSteps: 1,
+                        scaleStepWidth: 10,
+                        scaleStartValue: 0,
                         pointDotStrokeWidth: 2,
                         bezierCurve: false,
                         pointHitDetectionRadius: self.$('#content-chart').innerWidth() / notes.length * 0.5,
@@ -50172,8 +50257,8 @@ var FoodParent;
             self.$('.input-rating').replaceWith('<div class="input-rating"></div>');
             self.$('.input-rating').html(Math.ceil(self._note.getRate()).toFixed(2) + " / " + FoodParent.Setting.getMaxRating().toFixed(2));
             self.$('.input-rating-slider').html("");
-            var rate = rating(self.$('.input-rating-slider')[0], self._note.getRate().toFixed(2), FoodParent.Setting.getMaxRating(), function (rate) {
-                self._note.setRate(rate);
+            var rate = rating(self.$('.input-rating-slider')[0], (self._note.getRate() + 1).toFixed(2), FoodParent.Setting.getMaxRating() + 1, function (rate) {
+                self._note.setRate(rate - 1);
                 self.renderNoteInfo();
             });
             self.$('.input-comment').replaceWith('<div class="input-comment"></div>');
