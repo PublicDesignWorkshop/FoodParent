@@ -426,11 +426,12 @@ var skipLabels;
 				}
 			}
 
-			var	valueRange = Math.abs(maxValue - minValue),
+			var valueRange = Math.abs(maxValue - minValue),
 				rangeOrderOfMagnitude = calculateOrderOfMagnitude(valueRange),
 				graphMax = Math.ceil(maxValue / (1 * Math.pow(10, rangeOrderOfMagnitude))) * Math.pow(10, rangeOrderOfMagnitude),
 				graphMin = (startFromZero) ? 0 : Math.floor(minValue / (1 * Math.pow(10, rangeOrderOfMagnitude))) * Math.pow(10, rangeOrderOfMagnitude),
-				graphRange = graphMax - graphMin,
+				//graphRange = graphMax - graphMin,
+                graphRange = FoodParent.Setting.getMaxRating(),
 				stepValue = Math.pow(10, rangeOrderOfMagnitude),
 				numberOfSteps = Math.round(graphRange / stepValue);
 
@@ -1583,7 +1584,6 @@ var skipLabels;
 			this.yLabels = [];
 
 			var stepDecimalPlaces = getDecimalPlaces(this.stepValue);
-
 			for (var i=0; i<=this.steps; i++){
 				this.yLabels.push(template(this.templateString,{value:(this.min + (i * this.stepValue)).toFixed(stepDecimalPlaces)}));
 			}

@@ -168,6 +168,7 @@
                         notes.push(new Note({ type: NoteType.IMAGE, tree: self._tree.getId(), person: 0, comment: "", picture: "", rate: 0, cover: 0, date: moment(i).format(Setting.getDateTimeFormat()) }));
                     }
                 }
+                console.log("Graph Points Length: " + notes.length);
                 var labelSkip: number = Math.floor(labels.length / (self.$('#content-chart').innerWidth() / 150));
                 if (self._chart) {
                     self._chart.destroy();
@@ -447,7 +448,9 @@
 
         private _datePreset(event: Event): void {
             var self: DetailTreeGraphicView = this;
-            if ($(event.currentTarget).hasClass('2years')) {
+            if ($(event.currentTarget).hasClass('4years')) {
+                self._startDate = moment(self._endDate).subtract(4, 'years').startOf('day').format(Setting.getDateTimeFormat());
+            } else if ($(event.currentTarget).hasClass('2years')) {
                 self._startDate = moment(self._endDate).subtract(2, 'years').startOf('day').format(Setting.getDateTimeFormat());
             } else if ($(event.currentTarget).hasClass('1year')) {
                 self._startDate = moment(self._endDate).subtract(1, 'years').startOf('day').format(Setting.getDateTimeFormat());

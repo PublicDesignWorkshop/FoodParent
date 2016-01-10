@@ -25617,11 +25617,12 @@ var skipLabels;
 				}
 			}
 
-			var	valueRange = Math.abs(maxValue - minValue),
+			var valueRange = Math.abs(maxValue - minValue),
 				rangeOrderOfMagnitude = calculateOrderOfMagnitude(valueRange),
 				graphMax = Math.ceil(maxValue / (1 * Math.pow(10, rangeOrderOfMagnitude))) * Math.pow(10, rangeOrderOfMagnitude),
 				graphMin = (startFromZero) ? 0 : Math.floor(minValue / (1 * Math.pow(10, rangeOrderOfMagnitude))) * Math.pow(10, rangeOrderOfMagnitude),
-				graphRange = graphMax - graphMin,
+				//graphRange = graphMax - graphMin,
+                graphRange = FoodParent.Setting.getMaxRating(),
 				stepValue = Math.pow(10, rangeOrderOfMagnitude),
 				numberOfSteps = Math.round(graphRange / stepValue);
 
@@ -26774,7 +26775,6 @@ var skipLabels;
 			this.yLabels = [];
 
 			var stepDecimalPlaces = getDecimalPlaces(this.stepValue);
-
 			for (var i=0; i<=this.steps; i++){
 				this.yLabels.push(template(this.templateString,{value:(this.min + (i * this.stepValue)).toFixed(stepDecimalPlaces)}));
 			}
@@ -47207,6 +47207,7 @@ var FoodParent;
             template += '</div>';
             template += '<div id="wrapper-date-select">';
             template += '<div class="wrapper-date-preset">';
+            template += '<div class="button-outer-frame2 button3 date-preset 4years"><div class="button-inner-frame2">4 Year</div></div>';
             template += '<div class="button-outer-frame2 button3 date-preset 2years"><div class="button-inner-frame2">2 Year</div></div>';
             template += '<div class="button-outer-frame2 button3 date-preset 1year"><div class="button-inner-frame2">1 Year</div></div>';
             template += '<div class="button-outer-frame2 button3 date-preset 6months"><div class="button-inner-frame2">6 months</div></div>';
@@ -49307,6 +49308,7 @@ var FoodParent;
                             notes.push(new FoodParent.Note({ type: FoodParent.NoteType.IMAGE, tree: self._tree.getId(), person: 0, comment: "", picture: "", rate: 0, cover: 0, date: moment(i).format(FoodParent.Setting.getDateTimeFormat()) }));
                         }
                     }
+                    console.log("Graph Points Length: " + notes.length);
                     var labelSkip = Math.floor(labels.length / (self.$('#content-chart').innerWidth() / 150));
                     if (self._chart) {
                         self._chart.destroy();
@@ -49651,7 +49653,10 @@ var FoodParent;
         };
         DetailTreeGraphicView.prototype._datePreset = function (event) {
             var self = this;
-            if ($(event.currentTarget).hasClass('2years')) {
+            if ($(event.currentTarget).hasClass('4years')) {
+                self._startDate = moment(self._endDate).subtract(4, 'years').startOf('day').format(FoodParent.Setting.getDateTimeFormat());
+            }
+            else if ($(event.currentTarget).hasClass('2years')) {
                 self._startDate = moment(self._endDate).subtract(2, 'years').startOf('day').format(FoodParent.Setting.getDateTimeFormat());
             }
             else if ($(event.currentTarget).hasClass('1year')) {
