@@ -31,7 +31,6 @@ var FoodParent;
                 "person": 0,
                 "comment": "",
                 "picture": "",
-                "cover": 0,
                 "rate": 0,
                 "date": moment(new Date()).format(FoodParent.Setting.getDateTimeFormat()),
             };
@@ -49,7 +48,6 @@ var FoodParent;
             if (response.picture != "") {
                 response.pictures = response.picture.split(",");
             }
-            response.cover = parseInt(response.cover);
             return _super.prototype.parse.call(this, response, options);
         };
         Note.prototype.toJSON = function (options) {
@@ -108,20 +106,35 @@ var FoodParent;
         Note.prototype.getTreeId = function () {
             return parseInt(this.get('tree'));
         };
-        Note.prototype.addPicture = function (file) {
+        Note.prototype.addPicture = function (filename) {
             if (this.get('pictures') == undefined) {
                 this.set('pictures', new Array());
             }
-            this.get('pictures').push(file);
+            this.get('pictures').push(filename);
         };
         Note.prototype.getPictures = function () {
+            if (this.get('pictures') == undefined) {
+                this.set('pictures', new Array());
+            }
             return this.get('pictures');
         };
-        Note.prototype.getCover = function () {
-            return parseInt(this.get('cover'));
+        Note.prototype.getPicture = function (index) {
+            return this.get('pictures')[index];
         };
-        Note.prototype.setCover = function (cover) {
-            this.set('cover', Math.floor(cover));
+        Note.prototype.removePicture = function (filename) {
+            var self = this;
+            self.set('pictures', _.without(self.getPictures(), filename));
+        };
+        Note.prototype.setCover = function (index) {
+            var self = this;
+            var picture = self.getPictures()[index];
+            self.set('pictures', _.without(self.getPictures(), picture));
+            self.getPictures().unshift(picture);
+        };
+        Note.prototype.setCoverPicture = function (picture) {
+            var self = this;
+            self.set('pictures', _.without(self.getPictures(), picture));
+            self.getPictures().unshift(picture);
         };
         Note.prototype.setDate = function (date) {
             this.set('date', date.format(FoodParent.Setting.getDateTimeFormat()));

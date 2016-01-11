@@ -177,13 +177,13 @@
             });
         }
 
-        public static uploadFile(file: any, success?: Function, error?: Function) {
+        public static uploadNotePictureFile(file: any, foodname: string, success?: Function, error?: Function) {
             // Create a formdata object and add the files
             var data = new FormData();
             data.append("filename", file);
 
             var xhr1: JQueryXHR = $.ajax({
-                url: Setting.getFileUploadPath() + "?files",
+                url: Setting.getFileUploadPath() + "?foodname=" + htmlEncode(foodname) + "&files",
                 type: "POST",
                 data: data,
                 cache: false,

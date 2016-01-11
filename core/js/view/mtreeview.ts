@@ -57,6 +57,11 @@
             self.delegateEvents();
         }
 
+        public resetNote(): void {
+            var self: DetailTreeGraphicView = this;
+            self._note = null;
+        }
+
         public render(args?: any): any {
             if (this.bRendered) {
                 this.update(args);
@@ -88,7 +93,7 @@
                 //    self._startDate = moment(notes.models[0].getFormattedDate()).format(Setting.getDateTimeFormat());
                 //} else {
                 self.$('.tree-graph-start').attr({ 'data-value': moment(new Date()).subtract(1, 'month').format(Setting.getDateFormat()) });
-                self._startDate = moment(moment(new Date()).subtract(1, 'month').format(Setting.getDateFormat())).format(Setting.getDateTimeFormat());
+                self._startDate = moment(moment(new Date()).subtract(3, 'month').format(Setting.getDateFormat())).format(Setting.getDateTimeFormat());
                 //}
 
                 self.$('.tree-graph-start').pickadate({
@@ -202,7 +207,6 @@
                         customTooltips: function (tooltip) {
                             // tooltip will be false if tooltip is not visible or should be hidden
                             if (!tooltip || !tooltip.id) {
-                                self._note = null;
                                 self.$('#wrapper-tooltip').addClass('hidden');
                                 return;
                             }
@@ -216,9 +220,8 @@
                                     date: tooltip.label,
                                 }
                                 self.$('#wrapper-tooltip').html(template(data));
-
                                 if (self._note.getPictures().length > 0) {
-                                    self.$('#wrapper-tooltip img').attr('src', Setting.getContentPictureDir() + self._note.getPictures()[self._note.getCover()]).load(function () {
+                                    self.$('#wrapper-tooltip img').attr('src', Setting.getContentPictureDir() + self._note.getPictures()[0]).load(function () {
                                         $(this).removeClass('hidden');
                                     }).error(function () {
                                         $(this).attr('src', Setting.getBlankImagePath());
@@ -227,6 +230,8 @@
                                 } else {
                                     self.$('#wrapper-tooltip img').addClass('hidden');
                                 }
+                            } else {
+                                self.$('#wrapper-tooltip img').addClass('hidden');
                             }
                             self.$('#wrapper-tooltip').removeClass('hidden');
                         },
@@ -378,6 +383,10 @@
                     $(item).removeClass('active');
                     $(item).find('input').prop({ 'checked': '' });
                 }
+                if (parseInt($(item).attr('data-target')) == 0) {
+                    $(this).attr('disabled', 'disabled');
+                    $(item).addClass('disabled');
+                }
             });
         }
 
@@ -390,6 +399,10 @@
                 } else {
                     $(item).removeClass('active');
                     $(item).find('input').prop({ 'checked': '' });
+                }
+                if (parseInt($(item).attr('data-target')) == 0) {
+                    $(this).attr('disabled', 'disabled');
+                    $(item).addClass('disabled');
                 }
             });
         }
@@ -404,6 +417,7 @@
                 var template = _.template(Template.getRecentActivitiesTemplate());
                 var data = {
                     notes: notes,
+                    size: Setting.getLargeNumRecentActivitiesShown(),
                     coordinate: '@ ' + tree.getLat().toFixed(4) + ", " + tree.getLng().toFixed(4),
                     flags: Model.getFlags(),
                     ownerships: Model.getOwnerships(),
@@ -461,8 +475,8 @@
                 self._startDate = moment(self._endDate).subtract(1, 'years').startOf('day').format(Setting.getDateTimeFormat());
             } else if ($(event.currentTarget).hasClass('6months')) {
                 self._startDate = moment(self._endDate).subtract(6, 'months').startOf('day').format(Setting.getDateTimeFormat());
-            } else if ($(event.currentTarget).hasClass('1month')) {
-                self._startDate = moment(self._endDate).subtract(1, 'months').startOf('day').format(Setting.getDateTimeFormat());
+            } else if ($(event.currentTarget).hasClass('3month')) {
+                self._startDate = moment(self._endDate).subtract(3, 'months').startOf('day').format(Setting.getDateTimeFormat());
             }
             //self.$('.tree-graph-start').attr({ 'data-value': moment(self._startDate).format(Setting.getDateFormat()) });
             self.$('.tree-graph-start').pickadate('picker').set('select', moment(self._startDate).format(Setting.getDateFormat()), { format: 'dd mmm yyyy' })

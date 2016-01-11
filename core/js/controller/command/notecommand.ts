@@ -130,8 +130,8 @@
     }
 
     export class UpdateNoteCover implements Command {
-        private _cover: number;
-        private _previousCover: number;
+        private _picture: string;
+        private _previousPicture: string;
         private _success: Function;
         private _error: Function;
         private _note: Note;
@@ -139,7 +139,7 @@
             var self: UpdateNoteCover = this;
             if (args != undefined && args.note != undefined && args.cover != undefined) {
                 self._note = args.note;
-                self._cover = args.cover;
+                self._picture = self._note.getPicture(args.cover);
             }
             if (success) {
                 self._success = success;
@@ -150,11 +150,10 @@
         }
         public execute(): any {
             var self: UpdateNoteCover = this;
-            self._previousCover = self._note.getCover();
+            self._previousPicture = self._note.getPicture(0);
+            self._note.setCoverPicture(self._picture);
             self._note.save(
-                {
-                    'cover': self._cover,
-                },
+                {},
                 {
                     wait: true,
                     success: function (note: Note, response: any) {
@@ -173,10 +172,9 @@
         }
         public undo(): any {
             var self: UpdateNoteCover = this;
+            self._note.setCoverPicture(self._previousPicture);
             self._note.save(
-                {
-                    'cover': self._previousCover,
-                },
+                {},
                 {
                     wait: true,
                     success: function (tree: Tree, response: any) {
@@ -247,6 +245,73 @@
                     success: function (tree: Tree, response: any) {
                         if (self._success) {
                             self._success();
+                        }
+                    },
+                    error: function (error, response) {
+                        if (self._error) {
+                            self._error();
+                        }
+                    },
+                }
+            );
+        }
+    }
+
+    export class AddNotePicture implements Command {
+        private _filename: string;
+        private _success: Function;
+        private _error: Function;
+        private _undoSuccess: Function;
+        private _note: Note;
+        constructor(args?: any, success?: Function, error?: Function, undoSuccess?: Function) {
+            var self: AddNotePicture = this;
+            console.log(args.note);
+            console.log(args.filename);
+            if (args != undefined && args.note != undefined && args.filename != undefined) {
+                self._note = args.note;
+                self._filename = args.filename;
+            }
+            if (success) {
+                self._success = success;
+            }
+            if (error) {
+                self._error = error;
+            }
+            if (undoSuccess) {
+                self._undoSuccess = undoSuccess;
+            }
+        }
+        public execute(): any {
+            var self: AddNotePicture = this;
+            self._note.addPicture(self._filename);
+            self._note.save(
+                {},
+                {
+                    wait: true,
+                    success: function (note: Note, response: any) {
+                        if (self._success) {
+                            self._success();
+                        }
+                    },
+                    error: function (error, response) {
+                        if (self._error) {
+                            self._error();
+                        }
+                    },
+                }
+            );
+
+        }
+        public undo(): any {
+            var self: AddNotePicture = this;
+            self._note.removePicture(self._filename);
+            self._note.save(
+                {},
+                {
+                    wait: true,
+                    success: function (tree: Tree, response: any) {
+                        if (self._undoSuccess) {
+                            self._undoSuccess();
                         }
                     },
                     error: function (error, response) {

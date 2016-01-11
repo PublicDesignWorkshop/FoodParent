@@ -162,6 +162,7 @@ var FoodParent;
             */
             self.renderImageNote();
             self.setVisible();
+            self.resize();
             return self;
         };
         ImageNoteView.prototype.renderImageNote = function () {
@@ -227,9 +228,46 @@ var FoodParent;
                     }
                 });
             });
+            self.renderNoteImages();
+            // Event listener for uploading a file.
+            self.$('input[type=file]').off('change');
+            self.$('input[type=file]').on('change', function (event) {
+                self.$('.wrapper-input-upload-picture').addClass('hidden');
+                self.$('.wrapper-uploading-picture').removeClass('hidden');
+                var files = event.target.files;
+                if (files.length > 0) {
+                    FoodParent.Controller.uploadNotePictureFile(files[0], food.getName() + "_" + tree.getId(), function (fileName) {
+                        FoodParent.EventHandler.handleNoteData(self._note, FoodParent.DATA_MODE.ADD_PICTURE, { filename: fileName }, function () {
+                            FoodParent.EventHandler.handleDataChange("<strong><i>" + fileName + "</i></strong> has been added successfully.", true);
+                            // Success
+                            self.$('input[type=file]').val("");
+                            self.$('.wrapper-uploading-picture').addClass('hidden');
+                            self.$('.wrapper-input-upload-picture').removeClass('hidden');
+                            self.renderNoteImages();
+                        }, function () {
+                            FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+                        }, function () {
+                            FoodParent.EventHandler.handleDataChange("<strong><i>" + fileName + "</i></strong> has been removed successfully.", true);
+                            // Success
+                            self.$('input[type=file]').val("");
+                            self.$('.wrapper-uploading-picture').addClass('hidden');
+                            self.$('.wrapper-input-upload-picture').removeClass('hidden');
+                            self.renderNoteImages();
+                        });
+                        //self._note.addPicture(fileName);
+                    }, function () {
+                        // Error
+                        self.$('.wrapper-uploading-picture').addClass('hidden');
+                        self.$('.wrapper-input-upload-picture').removeClass('hidden');
+                    });
+                }
+            });
+        };
+        ImageNoteView.prototype.renderNoteImages = function () {
+            var self = this;
             var tag = '';
             $.each(self._note.getPictures(), function (index, filename) {
-                if (index == self._note.getCover()) {
+                if (index == 0) {
                     tag += '<img src="' + FoodParent.Setting.getBlankImagePath() + '" data-target="' + index + '" class="selected" />';
                 }
                 else {
@@ -254,6 +292,7 @@ var FoodParent;
         };
         ImageNoteView.prototype.resize = function () {
             var self = this;
+            self.$('.image-group').css({ height: self.$('.image-wrapper').innerHeight() - 120 });
         };
         ImageNoteView.prototype._mouseEnter = function (event) {
             var self = this;
@@ -306,7 +345,7 @@ var FoodParent;
             var cover = parseInt($(event.target).attr('data-target'));
             var tree = FoodParent.Model.getTrees().findWhere({ id: self._note.getTreeId() });
             var food = FoodParent.Model.getFoods().findWhere({ id: tree.getFoodId() });
-            if (self._note.getCover() != cover) {
+            if (cover != 0) {
                 FoodParent.EventHandler.handleNoteData(self._note, FoodParent.DATA_MODE.UPDATE_COVER, { cover: cover }, function () {
                     FoodParent.EventHandler.handleDataChange("Cover picture of <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has changed successfully.", true);
                     self.renderImageNote();
@@ -330,6 +369,7 @@ var FoodParent;
                 FoodParent.EventHandler.handleDataChange("Note of <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has been deleted successfully.", true);
                 if (FoodParent.View.getDetailTreeView()) {
                     FoodParent.View.getDetailTreeView().refreshTreeInfo();
+                    FoodParent.View.getDetailTreeView().resetNote();
                 }
             }, function () {
                 FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);

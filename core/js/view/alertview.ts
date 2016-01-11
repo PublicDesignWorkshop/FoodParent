@@ -155,6 +155,7 @@ module FoodParent {
             */
             self.renderImageNote();
             self.setVisible();
+            self.resize();
 
             return self;
         }
@@ -226,9 +227,50 @@ module FoodParent {
                 });
             });
 
+            self.renderNoteImages();
+
+            // Event listener for uploading a file.
+            self.$('input[type=file]').off('change');
+            self.$('input[type=file]').on('change', function (event: Event) {
+                self.$('.wrapper-input-upload-picture').addClass('hidden');
+                self.$('.wrapper-uploading-picture').removeClass('hidden');
+                var files = (<any>event.target).files;
+                if (files.length > 0) {
+                    Controller.uploadNotePictureFile(files[0], food.getName() + "_" + tree.getId(), function (fileName: string) {
+                        EventHandler.handleNoteData(self._note, DATA_MODE.ADD_PICTURE, { filename: fileName }, function () {
+                            EventHandler.handleDataChange("<strong><i>" + fileName + "</i></strong> has been added successfully.", true);
+                            // Success
+                            self.$('input[type=file]').val("");
+                            self.$('.wrapper-uploading-picture').addClass('hidden');
+                            self.$('.wrapper-input-upload-picture').removeClass('hidden');
+                            self.renderNoteImages();
+                        }, function () {
+                            EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
+                        }, function () {
+                            EventHandler.handleDataChange("<strong><i>" + fileName + "</i></strong> has been removed successfully.", true);
+                            // Success
+                            self.$('input[type=file]').val("");
+                            self.$('.wrapper-uploading-picture').addClass('hidden');
+                            self.$('.wrapper-input-upload-picture').removeClass('hidden');
+                            self.renderNoteImages();
+                        });
+                        
+                        //self._note.addPicture(fileName);
+                    }, function () {
+                        // Error
+                        self.$('.wrapper-uploading-picture').addClass('hidden');
+                        self.$('.wrapper-input-upload-picture').removeClass('hidden');
+                    });
+                }
+
+            });
+        }
+
+        public renderNoteImages() {
+            var self: ImageNoteView = this;
             var tag = '';
             $.each(self._note.getPictures(), function (index: number, filename: string) {
-                if (index == self._note.getCover()) {
+                if (index == 0) {
                     tag += '<img src="' + Setting.getBlankImagePath() + '" data-target="' + index + '" class="selected" />';
                 } else {
                     tag += '<img src="' + Setting.getBlankImagePath() + '" data-target="' + index + '" />';
@@ -242,7 +284,6 @@ module FoodParent {
                     $(element).attr('src', Setting.getBlankImagePath());
                 });
             });
-            
         }
 
         public update(args?: any): any {
@@ -256,6 +297,7 @@ module FoodParent {
 
         public resize(): any {
             var self: ImageNoteView = this;
+            self.$('.image-group').css({ height: self.$('.image-wrapper').innerHeight() - 120 });
         }
 
         private _mouseEnter(event: Event): void {
@@ -310,16 +352,13 @@ module FoodParent {
             var cover: number = parseInt($(event.target).attr('data-target'));
             var tree: Tree = Model.getTrees().findWhere({ id: self._note.getTreeId() });
             var food: Food = Model.getFoods().findWhere({ id: tree.getFoodId() });
-            if (self._note.getCover() != cover) {
+            if (cover != 0) {
                 EventHandler.handleNoteData(self._note, DATA_MODE.UPDATE_COVER, { cover: cover }, function () {
                     EventHandler.handleDataChange("Cover picture of <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has changed successfully.", true);
                     self.renderImageNote();
                 }, function () {
                     EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
                 });
-                /*
-                
-                */
             }
             /*
             $.each(self.$('.image-group img'), function (index: number, element: JQuery) {
@@ -338,6 +377,7 @@ module FoodParent {
                 EventHandler.handleDataChange("Note of <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has been deleted successfully.", true);
                 if (View.getDetailTreeView()) {
                     (<DetailTreeGraphicView>View.getDetailTreeView()).refreshTreeInfo();
+                    (<DetailTreeGraphicView>View.getDetailTreeView()).resetNote();
                 }
             }, function () {
                 EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);

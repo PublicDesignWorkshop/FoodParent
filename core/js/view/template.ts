@@ -327,8 +327,10 @@
 
         public static getRecentActivitiesTemplate(): string {
             var template = '';
-            template += '<% _.each(notes.models, function (note) { %>';
-            template += '<div class="item-activity"><i class="fa fa-caret-right fa-1x"></i> <div><%= note.getComment() %></div></div>';
+            template += '<% _.each(notes.models, function (note, index) { %>';
+            template += '<% if (index < size) { %>';
+            template +=     '<div class="item-activity"><i class="fa fa-caret-right fa-1x"></i> <div><%= note.getComment() %></div></div>';
+            template += '<% } %>';
             template += '<% }); %>';
             return template;
         }
@@ -572,7 +574,7 @@
             template +=             '<div class="button-outer-frame2 button3 date-preset 2years"><div class="button-inner-frame2">2 Year</div></div>';
             template +=             '<div class="button-outer-frame2 button3 date-preset 1year"><div class="button-inner-frame2">1 Year</div></div>';
             template +=             '<div class="button-outer-frame2 button3 date-preset 6months"><div class="button-inner-frame2">6 months</div></div>';
-            template +=             '<div class="button-outer-frame2 button3 date-preset 1month"><div class="button-inner-frame2">1 month</div></div>';
+            template +=             '<div class="button-outer-frame2 button3 date-preset 1month"><div class="button-inner-frame2">3 month</div></div>';
             template +=         '</div>';
             template +=         '<div class="wrapper-date-select-item"><input type="text" class="form-control tree-graph-start" /></div>';
             template +=         '<div class="wrapper-date-select-item"><span class="date-select-label">~</span><input type="text" class="form-control tree-graph-end" /></div>';
@@ -623,7 +625,19 @@
             template +=     '<div class="outer-frame">';
             template +=         '<div class="inner-frame">';
             template +=             '<div class="wrapper-note-content">';
-            template +=                 '<div class="image-wrapper"><div class="image-group"></div></div>';
+            template +=                 '<div class="image-wrapper">';
+
+            template += '<div class="wrapper-input-upload-picture">';
+            template += '<input class="input-upload-picture fileupload" type="file" accept="image/*" capture="camera" />';
+            template += '</div>';
+            template += '<div class="wrapper-uploading-picture hidden">';
+            template += '<div class="uploading-picture">Uploading...</div>';
+            template += '</div>';
+            template += '<div class="info-header"><i class="fa fa-image"></i> Select Cover Picture</div>';
+
+            template +=                     '<div class="image-group"></div>';
+            template +=                 '</div>';   // end of .image-wrapper
+
             template +=                 '<div class="wrapper-note-info">';
 
 

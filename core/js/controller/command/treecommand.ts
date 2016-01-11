@@ -34,8 +34,9 @@
                             type: NoteType.INFO,
                             tree: self._tree.getId(),
                             person: 0,
-                            comment: "Status has changed from '" + Model.getFlags().findWhere({ id: self._previousFlag }).getName()
-                            + "' to '" + Model.getFlags().findWhere({ id: self._flag }).getName() + "'",
+                            //comment: "Status has changed from '" + Model.getFlags().findWhere({ id: self._previousFlag }).getName()
+                            //+ "' to '" + Model.getFlags().findWhere({ id: self._flag }).getName() + "'",
+                            comment: "Status has changed as '" + Model.getFlags().findWhere({ id: self._flag }).getName() + "'",
                             picture: "",
                             rate: -1,
                             date: moment(new Date()).format(Setting.getDateTimeFormat()),
@@ -134,8 +135,9 @@
                             type: NoteType.INFO,
                             tree: self._tree.getId(),
                             person: 0,
-                            comment: "Ownership has changed from '" + Model.getOwnerships().findWhere({ id: self._previousOwnership }).getName()
-                            + "' to '" + Model.getOwnerships().findWhere({ id: self._ownership }).getName() + "'",
+                            //comment: "Ownership has changed from '" + Model.getOwnerships().findWhere({ id: self._previousOwnership }).getName()
+                            //+ "' to '" + Model.getOwnerships().findWhere({ id: self._ownership }).getName() + "'",
+                            comment: "Ownership has changed as '" + Model.getOwnerships().findWhere({ id: self._ownership }).getName() + "'",
                             picture: "",
                             rate: -1,
                             date: moment(new Date()).format(Setting.getDateTimeFormat()),
@@ -239,8 +241,9 @@
                             type: NoteType.INFO,
                             tree: self._tree.getId(),
                             person: 0,
-                            comment: "Location has changed from '@ " + self._prevLocation.lat.toFixed(4) + ", " + self._prevLocation.lng.toFixed(4)
-                            + "' to '" + '@ ' + self._location.lat.toFixed(4) + ", " + self._location.lng.toFixed(4) + "'",
+                            //comment: "Location has changed from '@ " + self._prevLocation.lat.toFixed(4) + ", " + self._prevLocation.lng.toFixed(4)
+                            //+ "' to '" + '@ ' + self._location.lat.toFixed(4) + ", " + self._location.lng.toFixed(4) + "'",
+                            comment: "Location has changed as '" + '@ ' + self._location.lat.toFixed(4) + ", " + self._location.lng.toFixed(4) + "'",
                             picture: "",
                             rate: -1,
                             date: moment(new Date()).format(Setting.getDateTimeFormat()),
@@ -343,8 +346,9 @@
                             type: NoteType.INFO,
                             tree: self._tree.getId(),
                             person: 0,
-                            comment: "Food type has changed from '" + Model.getFoods().findWhere({ id: self._previousFood }).getName()
-                            + "' to '" + Model.getFoods().findWhere({ id: self._food }).getName() + "'",
+                            //comment: "Food type has changed from '" + Model.getFoods().findWhere({ id: self._previousFood }).getName()
+                            //+ "' to '" + Model.getFoods().findWhere({ id: self._food }).getName() + "'",
+                            comment: "Food type has changed as '" + Model.getFoods().findWhere({ id: self._food }).getName() + "'",
                             picture: "",
                             rate: -1,
                             date: moment(new Date()).format(Setting.getDateTimeFormat()),
@@ -443,7 +447,7 @@
                             type: NoteType.INFO,
                             tree: self._tree.getId(),
                             person: 0,
-                            comment: "Description has changed.",
+                            comment: "Description has changed as '" + self._description + "'",
                             picture: "",
                             rate: -1,
                             date: moment(new Date()).format(Setting.getDateTimeFormat()),
@@ -531,6 +535,7 @@
         }
         public execute(): any {
             var self: AddNewTree = this;
+            var food: Food = Model.getFoods().findWhere({ id: self._tree.getFoodId() });
             self._tree.save(
                 {},
                 {
@@ -541,7 +546,7 @@
                             type: NoteType.INFO,
                             tree: self._tree.getId(),
                             person: 0,
-                            comment: "Tree has been added.",
+                            comment: "'" + food.getName() + " " + self._tree.getName() + "' has been added.",
                             picture: "",
                             rate: -1,
                             date: moment(new Date()).format(Setting.getDateTimeFormat()),

@@ -17,7 +17,6 @@
                 "person": 0,
                 "comment": "",
                 "picture": "",
-                "cover": 0,
                 "rate": 0,
                 "date": moment(new Date()).format(Setting.getDateTimeFormat()),
             };
@@ -35,7 +34,6 @@
             if (response.picture != "") {
                 response.pictures = response.picture.split(",");
             }
-            response.cover = parseInt(response.cover);
             return super.parse(response, options);
         }
         toJSON(options?: any): any {
@@ -95,20 +93,35 @@
         public getTreeId(): number {
             return parseInt(this.get('tree'));
         }
-        public addPicture(file: string): void {
+        public addPicture(filename: string): void {
             if (this.get('pictures') == undefined) {
                 this.set('pictures', new Array<string>());
             }
-            this.get('pictures').push(file);
+            this.get('pictures').push(filename);
         }
         public getPictures(): Array<string> {
+            if (this.get('pictures') == undefined) {
+                this.set('pictures', new Array<string>());
+            }
             return this.get('pictures');
         }
-        public getCover(): number {
-            return parseInt(this.get('cover'));
+        public getPicture(index: number): string {
+            return this.get('pictures')[index];
         }
-        public setCover(cover: number): void {
-            this.set('cover', Math.floor(cover));
+        public removePicture(filename: string): void {
+            var self: Note = this;
+            self.set('pictures', _.without(self.getPictures(), filename));
+        }
+        public setCover(index: number): void {
+            var self: Note = this;
+            var picture = self.getPictures()[index];
+            self.set('pictures', _.without(self.getPictures(), picture));
+            self.getPictures().unshift(picture);
+        }
+        public setCoverPicture(picture: string): void {
+            var self: Note = this;
+            self.set('pictures', _.without(self.getPictures(), picture));
+            self.getPictures().unshift(picture);
         }
         public setDate(date: Moment): void {
             this.set('date', date.format(Setting.getDateTimeFormat()));

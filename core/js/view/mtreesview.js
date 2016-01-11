@@ -577,6 +577,10 @@ var FoodParent;
                     $(item).removeClass('active');
                     $(item).find('input').prop({ 'checked': '' });
                 }
+                if (parseInt($(item).attr('data-target')) == 0) {
+                    $(this).attr('disabled', 'disabled');
+                    $(item).addClass('disabled');
+                }
             });
         };
         ManageTreesMapView.prototype.renderFlagInfo = function (flag) {
@@ -590,6 +594,10 @@ var FoodParent;
                     $(item).removeClass('active');
                     $(item).find('input').prop({ 'checked': '' });
                 }
+                if (parseInt($(item).attr('data-target')) == 0) {
+                    $(this).attr('disabled', 'disabled');
+                    $(item).addClass('disabled');
+                }
             });
         };
         ManageTreesMapView.prototype.renderRecentActivities = function (tree) {
@@ -602,6 +610,7 @@ var FoodParent;
                 var template = _.template(FoodParent.Template.getRecentActivitiesTemplate());
                 var data = {
                     notes: notes,
+                    size: FoodParent.Setting.getNumRecentActivitiesShown(),
                     coordinate: '@ ' + tree.getLat().toFixed(4) + ", " + tree.getLng().toFixed(4),
                     flags: FoodParent.Model.getFlags(),
                     ownerships: FoodParent.Model.getOwnerships(),

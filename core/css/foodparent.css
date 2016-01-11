@@ -12606,6 +12606,11 @@ button.close {
         text-transform: uppercase;
     }
 
+    .disabled {
+        pointer-events: none;
+        text-decoration:line-through;
+    }
+
     /* Let's get this party started */
     ::-webkit-scrollbar {
         width: 4px;
@@ -13792,6 +13797,7 @@ button.close {
         height: 100%;
         min-width: 320px;
         max-width: 320px;
+        padding: 40px 0 0 0;
     }
 
     .image-wrapper .info-header {

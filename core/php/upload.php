@@ -2,6 +2,8 @@
  
 $data = array();
 $count = 0;
+
+$foodname = $_GET['foodname'];
  
 if(isset($_GET['files'])) {  
 	$error = false;
@@ -15,7 +17,7 @@ if(isset($_GET['files'])) {
     $tempName = str_replace(".".$extension, "", $fileName);
     $tempName = preg_replace('/[^A-Za-z0-9\-]/', '', $tempName);
     if (!file_exists($uploaddir.$fileName)) {
-      $fileName = $tempName.'_0.'.$extension;
+      $fileName = $foodname.'_0.'.$extension;
     }
 		while( file_exists($uploaddir.$fileName) ) {
 			$info = pathinfo($fileName);
@@ -23,7 +25,7 @@ if(isset($_GET['files'])) {
 			$name = str_replace(".".$extension, "", $fileName);
 			
 			$count++;
-			$fileName = $tempName.'_'.$count.".".$extension;
+			$fileName = $foodname.'_'.$count.".".$extension;
 		}
     
 		if( move_uploaded_file($file['tmp_name'], $uploaddir.$fileName) ) {

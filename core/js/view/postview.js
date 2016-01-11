@@ -51,7 +51,7 @@ var FoodParent;
                 self.$('.wrapper-uploading-picture').removeClass('hidden');
                 var files = event.target.files;
                 if (files.length > 0) {
-                    FoodParent.Controller.uploadFile(files[0], function (fileName) {
+                    FoodParent.Controller.uploadNotePictureFile(files[0], food.getName() + "_" + self._tree.getId(), function (fileName) {
                         self._note.addPicture(fileName);
                         // Success
                         self.$('input[type=file]').val("");
@@ -114,16 +114,19 @@ var FoodParent;
             var self = this;
             var tag = '';
             $.each(self._note.getPictures(), function (index, filename) {
-                tag += '<img src="' + FoodParent.Setting.getContentPictureDir() + filename + '" data-target="' + index + '" />';
+                if (index == 0) {
+                    tag += '<img src="' + FoodParent.Setting.getBlankImagePath() + '" data-target="' + index + '" class="selected" />';
+                }
+                else {
+                    tag += '<img src="' + FoodParent.Setting.getBlankImagePath() + '" data-target="' + index + '" />';
+                }
             });
             self.$('.image-group').html(tag);
             $.each(self.$('.image-group img'), function (index, element) {
-                if (parseInt($(element).attr('data-target')) == self._note.getCover()) {
-                    $(element).addClass('selected');
-                }
-                else {
-                    $(element).removeClass('selected');
-                }
+                $(element).attr('src', FoodParent.Setting.getContentPictureDir() + self._note.getPictures()[index]).load(function () {
+                }).error(function () {
+                    $(element).attr('src', FoodParent.Setting.getBlankImagePath());
+                });
             });
         };
         PostNoteView.prototype._selectCoverImage = function (event) {

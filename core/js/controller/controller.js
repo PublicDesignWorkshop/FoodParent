@@ -162,12 +162,12 @@ var FoodParent;
                 }
             });
         };
-        Controller.uploadFile = function (file, success, error) {
+        Controller.uploadNotePictureFile = function (file, foodname, success, error) {
             // Create a formdata object and add the files
             var data = new FormData();
             data.append("filename", file);
             var xhr1 = $.ajax({
-                url: FoodParent.Setting.getFileUploadPath() + "?files",
+                url: FoodParent.Setting.getFileUploadPath() + "?foodname=" + htmlEncode(foodname) + "&files",
                 type: "POST",
                 data: data,
                 cache: false,

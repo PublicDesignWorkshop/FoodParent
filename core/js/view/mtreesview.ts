@@ -461,6 +461,10 @@ module FoodParent {
                     $(item).removeClass('active');
                     $(item).find('input').prop({ 'checked': '' });
                 }
+                if (parseInt($(item).attr('data-target')) == 0) {
+                    $(this).attr('disabled', 'disabled');
+                    $(item).addClass('disabled');
+                }
             });
         }
 
@@ -473,6 +477,10 @@ module FoodParent {
                } else {
                    $(item).removeClass('active');
                    $(item).find('input').prop({ 'checked': '' });
+               }
+               if (parseInt($(item).attr('data-target')) == 0) {
+                   $(this).attr('disabled', 'disabled');
+                   $(item).addClass('disabled');
                }
            });
         }
@@ -487,6 +495,7 @@ module FoodParent {
                var template = _.template(Template.getRecentActivitiesTemplate());
                var data = {
                    notes: notes,
+                   size: Setting.getNumRecentActivitiesShown(),
                    coordinate: '@ ' + tree.getLat().toFixed(4) + ", " + tree.getLng().toFixed(4),
                    flags: Model.getFlags(),
                    ownerships: Model.getOwnerships(),

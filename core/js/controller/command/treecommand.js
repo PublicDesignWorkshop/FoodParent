@@ -26,8 +26,9 @@ var FoodParent;
                         type: FoodParent.NoteType.INFO,
                         tree: self._tree.getId(),
                         person: 0,
-                        comment: "Status has changed from '" + FoodParent.Model.getFlags().findWhere({ id: self._previousFlag }).getName()
-                            + "' to '" + FoodParent.Model.getFlags().findWhere({ id: self._flag }).getName() + "'",
+                        //comment: "Status has changed from '" + Model.getFlags().findWhere({ id: self._previousFlag }).getName()
+                        //+ "' to '" + Model.getFlags().findWhere({ id: self._flag }).getName() + "'",
+                        comment: "Status has changed as '" + FoodParent.Model.getFlags().findWhere({ id: self._flag }).getName() + "'",
                         picture: "",
                         rate: -1,
                         date: moment(new Date()).format(FoodParent.Setting.getDateTimeFormat()),
@@ -112,8 +113,9 @@ var FoodParent;
                         type: FoodParent.NoteType.INFO,
                         tree: self._tree.getId(),
                         person: 0,
-                        comment: "Ownership has changed from '" + FoodParent.Model.getOwnerships().findWhere({ id: self._previousOwnership }).getName()
-                            + "' to '" + FoodParent.Model.getOwnerships().findWhere({ id: self._ownership }).getName() + "'",
+                        //comment: "Ownership has changed from '" + Model.getOwnerships().findWhere({ id: self._previousOwnership }).getName()
+                        //+ "' to '" + Model.getOwnerships().findWhere({ id: self._ownership }).getName() + "'",
+                        comment: "Ownership has changed as '" + FoodParent.Model.getOwnerships().findWhere({ id: self._ownership }).getName() + "'",
                         picture: "",
                         rate: -1,
                         date: moment(new Date()).format(FoodParent.Setting.getDateTimeFormat()),
@@ -202,8 +204,9 @@ var FoodParent;
                         type: FoodParent.NoteType.INFO,
                         tree: self._tree.getId(),
                         person: 0,
-                        comment: "Location has changed from '@ " + self._prevLocation.lat.toFixed(4) + ", " + self._prevLocation.lng.toFixed(4)
-                            + "' to '" + '@ ' + self._location.lat.toFixed(4) + ", " + self._location.lng.toFixed(4) + "'",
+                        //comment: "Location has changed from '@ " + self._prevLocation.lat.toFixed(4) + ", " + self._prevLocation.lng.toFixed(4)
+                        //+ "' to '" + '@ ' + self._location.lat.toFixed(4) + ", " + self._location.lng.toFixed(4) + "'",
+                        comment: "Location has changed as '" + '@ ' + self._location.lat.toFixed(4) + ", " + self._location.lng.toFixed(4) + "'",
                         picture: "",
                         rate: -1,
                         date: moment(new Date()).format(FoodParent.Setting.getDateTimeFormat()),
@@ -292,8 +295,9 @@ var FoodParent;
                         type: FoodParent.NoteType.INFO,
                         tree: self._tree.getId(),
                         person: 0,
-                        comment: "Food type has changed from '" + FoodParent.Model.getFoods().findWhere({ id: self._previousFood }).getName()
-                            + "' to '" + FoodParent.Model.getFoods().findWhere({ id: self._food }).getName() + "'",
+                        //comment: "Food type has changed from '" + Model.getFoods().findWhere({ id: self._previousFood }).getName()
+                        //+ "' to '" + Model.getFoods().findWhere({ id: self._food }).getName() + "'",
+                        comment: "Food type has changed as '" + FoodParent.Model.getFoods().findWhere({ id: self._food }).getName() + "'",
                         picture: "",
                         rate: -1,
                         date: moment(new Date()).format(FoodParent.Setting.getDateTimeFormat()),
@@ -378,7 +382,7 @@ var FoodParent;
                         type: FoodParent.NoteType.INFO,
                         tree: self._tree.getId(),
                         person: 0,
-                        comment: "Description has changed.",
+                        comment: "Description has changed as '" + self._description + "'",
                         picture: "",
                         rate: -1,
                         date: moment(new Date()).format(FoodParent.Setting.getDateTimeFormat()),
@@ -455,6 +459,7 @@ var FoodParent;
         }
         AddNewTree.prototype.execute = function () {
             var self = this;
+            var food = FoodParent.Model.getFoods().findWhere({ id: self._tree.getFoodId() });
             self._tree.save({}, {
                 wait: true,
                 success: function (tree, response) {
@@ -463,7 +468,7 @@ var FoodParent;
                         type: FoodParent.NoteType.INFO,
                         tree: self._tree.getId(),
                         person: 0,
-                        comment: "Tree has been added.",
+                        comment: "'" + food.getName() + " " + self._tree.getName() + "' has been added.",
                         picture: "",
                         rate: -1,
                         date: moment(new Date()).format(FoodParent.Setting.getDateTimeFormat()),

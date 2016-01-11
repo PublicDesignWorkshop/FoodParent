@@ -113,7 +113,7 @@ var FoodParent;
             var self = this;
             if (args != undefined && args.note != undefined && args.cover != undefined) {
                 self._note = args.note;
-                self._cover = args.cover;
+                self._picture = self._note.getPicture(args.cover);
             }
             if (success) {
                 self._success = success;
@@ -124,10 +124,9 @@ var FoodParent;
         }
         UpdateNoteCover.prototype.execute = function () {
             var self = this;
-            self._previousCover = self._note.getCover();
-            self._note.save({
-                'cover': self._cover,
-            }, {
+            self._previousPicture = self._note.getPicture(0);
+            self._note.setCoverPicture(self._picture);
+            self._note.save({}, {
                 wait: true,
                 success: function (note, response) {
                     if (self._success) {
@@ -143,9 +142,8 @@ var FoodParent;
         };
         UpdateNoteCover.prototype.undo = function () {
             var self = this;
-            self._note.save({
-                'cover': self._previousCover,
-            }, {
+            self._note.setCoverPicture(self._previousPicture);
+            self._note.save({}, {
                 wait: true,
                 success: function (tree, response) {
                     if (self._success) {
@@ -216,6 +214,62 @@ var FoodParent;
         return UpdateNoteDate;
     })();
     FoodParent.UpdateNoteDate = UpdateNoteDate;
+    var AddNotePicture = (function () {
+        function AddNotePicture(args, success, error, undoSuccess) {
+            var self = this;
+            console.log(args.note);
+            console.log(args.filename);
+            if (args != undefined && args.note != undefined && args.filename != undefined) {
+                self._note = args.note;
+                self._filename = args.filename;
+            }
+            if (success) {
+                self._success = success;
+            }
+            if (error) {
+                self._error = error;
+            }
+            if (undoSuccess) {
+                self._undoSuccess = undoSuccess;
+            }
+        }
+        AddNotePicture.prototype.execute = function () {
+            var self = this;
+            self._note.addPicture(self._filename);
+            self._note.save({}, {
+                wait: true,
+                success: function (note, response) {
+                    if (self._success) {
+                        self._success();
+                    }
+                },
+                error: function (error, response) {
+                    if (self._error) {
+                        self._error();
+                    }
+                },
+            });
+        };
+        AddNotePicture.prototype.undo = function () {
+            var self = this;
+            self._note.removePicture(self._filename);
+            self._note.save({}, {
+                wait: true,
+                success: function (tree, response) {
+                    if (self._undoSuccess) {
+                        self._undoSuccess();
+                    }
+                },
+                error: function (error, response) {
+                    if (self._error) {
+                        self._error();
+                    }
+                },
+            });
+        };
+        return AddNotePicture;
+    })();
+    FoodParent.AddNotePicture = AddNotePicture;
     var CreateNote = (function () {
         function CreateNote(args, success, error) {
             var self = this;

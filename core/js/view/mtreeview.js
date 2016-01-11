@@ -110,7 +110,6 @@ var FoodParent;
                         customTooltips: function (tooltip) {
                             // tooltip will be false if tooltip is not visible or should be hidden
                             if (!tooltip || !tooltip.id) {
-                                self._note = null;
                                 self.$('#wrapper-tooltip').addClass('hidden');
                                 return;
                             }
@@ -125,7 +124,7 @@ var FoodParent;
                                 };
                                 self.$('#wrapper-tooltip').html(template(data));
                                 if (self._note.getPictures().length > 0) {
-                                    self.$('#wrapper-tooltip img').attr('src', FoodParent.Setting.getContentPictureDir() + self._note.getPictures()[self._note.getCover()]).load(function () {
+                                    self.$('#wrapper-tooltip img').attr('src', FoodParent.Setting.getContentPictureDir() + self._note.getPictures()[0]).load(function () {
                                         $(this).removeClass('hidden');
                                     }).error(function () {
                                         $(this).attr('src', FoodParent.Setting.getBlankImagePath());
@@ -135,6 +134,9 @@ var FoodParent;
                                 else {
                                     self.$('#wrapper-tooltip img').addClass('hidden');
                                 }
+                            }
+                            else {
+                                self.$('#wrapper-tooltip img').addClass('hidden');
                             }
                             self.$('#wrapper-tooltip').removeClass('hidden');
                         },
@@ -275,6 +277,10 @@ var FoodParent;
             };
             self.delegateEvents();
         }
+        DetailTreeGraphicView.prototype.resetNote = function () {
+            var self = this;
+            self._note = null;
+        };
         DetailTreeGraphicView.prototype.render = function (args) {
             if (this.bRendered) {
                 this.update(args);
@@ -302,7 +308,7 @@ var FoodParent;
                 //    self._startDate = moment(notes.models[0].getFormattedDate()).format(Setting.getDateTimeFormat());
                 //} else {
                 self.$('.tree-graph-start').attr({ 'data-value': moment(new Date()).subtract(1, 'month').format(FoodParent.Setting.getDateFormat()) });
-                self._startDate = moment(moment(new Date()).subtract(1, 'month').format(FoodParent.Setting.getDateFormat())).format(FoodParent.Setting.getDateTimeFormat());
+                self._startDate = moment(moment(new Date()).subtract(3, 'month').format(FoodParent.Setting.getDateFormat())).format(FoodParent.Setting.getDateTimeFormat());
                 //}
                 self.$('.tree-graph-start').pickadate({
                     format: "dd mmm yyyy",
@@ -357,6 +363,10 @@ var FoodParent;
                     $(item).removeClass('active');
                     $(item).find('input').prop({ 'checked': '' });
                 }
+                if (parseInt($(item).attr('data-target')) == 0) {
+                    $(this).attr('disabled', 'disabled');
+                    $(item).addClass('disabled');
+                }
             });
         };
         DetailTreeGraphicView.prototype.renderFlagInfo = function (flag) {
@@ -370,6 +380,10 @@ var FoodParent;
                     $(item).removeClass('active');
                     $(item).find('input').prop({ 'checked': '' });
                 }
+                if (parseInt($(item).attr('data-target')) == 0) {
+                    $(this).attr('disabled', 'disabled');
+                    $(item).addClass('disabled');
+                }
             });
         };
         DetailTreeGraphicView.prototype.renderRecentActivities = function (tree) {
@@ -382,6 +396,7 @@ var FoodParent;
                 var template = _.template(FoodParent.Template.getRecentActivitiesTemplate());
                 var data = {
                     notes: notes,
+                    size: FoodParent.Setting.getLargeNumRecentActivitiesShown(),
                     coordinate: '@ ' + tree.getLat().toFixed(4) + ", " + tree.getLng().toFixed(4),
                     flags: FoodParent.Model.getFlags(),
                     ownerships: FoodParent.Model.getOwnerships(),
@@ -439,8 +454,8 @@ var FoodParent;
             else if ($(event.currentTarget).hasClass('6months')) {
                 self._startDate = moment(self._endDate).subtract(6, 'months').startOf('day').format(FoodParent.Setting.getDateTimeFormat());
             }
-            else if ($(event.currentTarget).hasClass('1month')) {
-                self._startDate = moment(self._endDate).subtract(1, 'months').startOf('day').format(FoodParent.Setting.getDateTimeFormat());
+            else if ($(event.currentTarget).hasClass('3month')) {
+                self._startDate = moment(self._endDate).subtract(3, 'months').startOf('day').format(FoodParent.Setting.getDateTimeFormat());
             }
             //self.$('.tree-graph-start').attr({ 'data-value': moment(self._startDate).format(Setting.getDateFormat()) });
             self.$('.tree-graph-start').pickadate('picker').set('select', moment(self._startDate).format(FoodParent.Setting.getDateFormat()), { format: 'dd mmm yyyy' });

@@ -43141,12 +43141,12 @@ var FoodParent;
                 }
             });
         };
-        Controller.uploadFile = function (file, success, error) {
+        Controller.uploadNotePictureFile = function (file, foodname, success, error) {
             // Create a formdata object and add the files
             var data = new FormData();
             data.append("filename", file);
             var xhr1 = $.ajax({
-                url: FoodParent.Setting.getFileUploadPath() + "?files",
+                url: FoodParent.Setting.getFileUploadPath() + "?foodname=" + htmlEncode(foodname) + "&files",
                 type: "POST",
                 data: data,
                 cache: false,
@@ -43248,6 +43248,7 @@ var FoodParent;
         DATA_MODE[DATA_MODE["UPDATE_RATING"] = 14] = "UPDATE_RATING";
         DATA_MODE[DATA_MODE["UPDATE_COVER"] = 15] = "UPDATE_COVER";
         DATA_MODE[DATA_MODE["UPDATE_DATE"] = 16] = "UPDATE_DATE";
+        DATA_MODE[DATA_MODE["ADD_PICTURE"] = 17] = "ADD_PICTURE";
     })(FoodParent.DATA_MODE || (FoodParent.DATA_MODE = {}));
     var DATA_MODE = FoodParent.DATA_MODE;
     (function (VIEW_STATUS) {
@@ -43516,6 +43517,9 @@ var FoodParent;
                     break;
                 case DATA_MODE.UPDATE_DATE:
                     self._lastCommand = new FoodParent.UpdateNoteDate({ note: note, date: args.date }, success, error);
+                    break;
+                case DATA_MODE.ADD_PICTURE:
+                    self._lastCommand = new FoodParent.AddNotePicture({ note: note, filename: args.filename }, success, error, undoSuccess);
                     break;
                 case DATA_MODE.CREATE:
                     new FoodParent.CreateNote({ note: note }, success, error).execute();
@@ -44011,8 +44015,9 @@ var FoodParent;
                         type: FoodParent.NoteType.INFO,
                         tree: self._tree.getId(),
                         person: 0,
-                        comment: "Status has changed from '" + FoodParent.Model.getFlags().findWhere({ id: self._previousFlag }).getName()
-                            + "' to '" + FoodParent.Model.getFlags().findWhere({ id: self._flag }).getName() + "'",
+                        //comment: "Status has changed from '" + Model.getFlags().findWhere({ id: self._previousFlag }).getName()
+                        //+ "' to '" + Model.getFlags().findWhere({ id: self._flag }).getName() + "'",
+                        comment: "Status has changed as '" + FoodParent.Model.getFlags().findWhere({ id: self._flag }).getName() + "'",
                         picture: "",
                         rate: -1,
                         date: moment(new Date()).format(FoodParent.Setting.getDateTimeFormat()),
@@ -44097,8 +44102,9 @@ var FoodParent;
                         type: FoodParent.NoteType.INFO,
                         tree: self._tree.getId(),
                         person: 0,
-                        comment: "Ownership has changed from '" + FoodParent.Model.getOwnerships().findWhere({ id: self._previousOwnership }).getName()
-                            + "' to '" + FoodParent.Model.getOwnerships().findWhere({ id: self._ownership }).getName() + "'",
+                        //comment: "Ownership has changed from '" + Model.getOwnerships().findWhere({ id: self._previousOwnership }).getName()
+                        //+ "' to '" + Model.getOwnerships().findWhere({ id: self._ownership }).getName() + "'",
+                        comment: "Ownership has changed as '" + FoodParent.Model.getOwnerships().findWhere({ id: self._ownership }).getName() + "'",
                         picture: "",
                         rate: -1,
                         date: moment(new Date()).format(FoodParent.Setting.getDateTimeFormat()),
@@ -44187,8 +44193,9 @@ var FoodParent;
                         type: FoodParent.NoteType.INFO,
                         tree: self._tree.getId(),
                         person: 0,
-                        comment: "Location has changed from '@ " + self._prevLocation.lat.toFixed(4) + ", " + self._prevLocation.lng.toFixed(4)
-                            + "' to '" + '@ ' + self._location.lat.toFixed(4) + ", " + self._location.lng.toFixed(4) + "'",
+                        //comment: "Location has changed from '@ " + self._prevLocation.lat.toFixed(4) + ", " + self._prevLocation.lng.toFixed(4)
+                        //+ "' to '" + '@ ' + self._location.lat.toFixed(4) + ", " + self._location.lng.toFixed(4) + "'",
+                        comment: "Location has changed as '" + '@ ' + self._location.lat.toFixed(4) + ", " + self._location.lng.toFixed(4) + "'",
                         picture: "",
                         rate: -1,
                         date: moment(new Date()).format(FoodParent.Setting.getDateTimeFormat()),
@@ -44277,8 +44284,9 @@ var FoodParent;
                         type: FoodParent.NoteType.INFO,
                         tree: self._tree.getId(),
                         person: 0,
-                        comment: "Food type has changed from '" + FoodParent.Model.getFoods().findWhere({ id: self._previousFood }).getName()
-                            + "' to '" + FoodParent.Model.getFoods().findWhere({ id: self._food }).getName() + "'",
+                        //comment: "Food type has changed from '" + Model.getFoods().findWhere({ id: self._previousFood }).getName()
+                        //+ "' to '" + Model.getFoods().findWhere({ id: self._food }).getName() + "'",
+                        comment: "Food type has changed as '" + FoodParent.Model.getFoods().findWhere({ id: self._food }).getName() + "'",
                         picture: "",
                         rate: -1,
                         date: moment(new Date()).format(FoodParent.Setting.getDateTimeFormat()),
@@ -44363,7 +44371,7 @@ var FoodParent;
                         type: FoodParent.NoteType.INFO,
                         tree: self._tree.getId(),
                         person: 0,
-                        comment: "Description has changed.",
+                        comment: "Description has changed as '" + self._description + "'",
                         picture: "",
                         rate: -1,
                         date: moment(new Date()).format(FoodParent.Setting.getDateTimeFormat()),
@@ -44440,6 +44448,7 @@ var FoodParent;
         }
         AddNewTree.prototype.execute = function () {
             var self = this;
+            var food = FoodParent.Model.getFoods().findWhere({ id: self._tree.getFoodId() });
             self._tree.save({}, {
                 wait: true,
                 success: function (tree, response) {
@@ -44448,7 +44457,7 @@ var FoodParent;
                         type: FoodParent.NoteType.INFO,
                         tree: self._tree.getId(),
                         person: 0,
-                        comment: "Tree has been added.",
+                        comment: "'" + food.getName() + " " + self._tree.getName() + "' has been added.",
                         picture: "",
                         rate: -1,
                         date: moment(new Date()).format(FoodParent.Setting.getDateTimeFormat()),
@@ -45207,7 +45216,7 @@ var FoodParent;
             var self = this;
             if (args != undefined && args.note != undefined && args.cover != undefined) {
                 self._note = args.note;
-                self._cover = args.cover;
+                self._picture = self._note.getPicture(args.cover);
             }
             if (success) {
                 self._success = success;
@@ -45218,10 +45227,9 @@ var FoodParent;
         }
         UpdateNoteCover.prototype.execute = function () {
             var self = this;
-            self._previousCover = self._note.getCover();
-            self._note.save({
-                'cover': self._cover,
-            }, {
+            self._previousPicture = self._note.getPicture(0);
+            self._note.setCoverPicture(self._picture);
+            self._note.save({}, {
                 wait: true,
                 success: function (note, response) {
                     if (self._success) {
@@ -45237,9 +45245,8 @@ var FoodParent;
         };
         UpdateNoteCover.prototype.undo = function () {
             var self = this;
-            self._note.save({
-                'cover': self._previousCover,
-            }, {
+            self._note.setCoverPicture(self._previousPicture);
+            self._note.save({}, {
                 wait: true,
                 success: function (tree, response) {
                     if (self._success) {
@@ -45310,6 +45317,62 @@ var FoodParent;
         return UpdateNoteDate;
     })();
     FoodParent.UpdateNoteDate = UpdateNoteDate;
+    var AddNotePicture = (function () {
+        function AddNotePicture(args, success, error, undoSuccess) {
+            var self = this;
+            console.log(args.note);
+            console.log(args.filename);
+            if (args != undefined && args.note != undefined && args.filename != undefined) {
+                self._note = args.note;
+                self._filename = args.filename;
+            }
+            if (success) {
+                self._success = success;
+            }
+            if (error) {
+                self._error = error;
+            }
+            if (undoSuccess) {
+                self._undoSuccess = undoSuccess;
+            }
+        }
+        AddNotePicture.prototype.execute = function () {
+            var self = this;
+            self._note.addPicture(self._filename);
+            self._note.save({}, {
+                wait: true,
+                success: function (note, response) {
+                    if (self._success) {
+                        self._success();
+                    }
+                },
+                error: function (error, response) {
+                    if (self._error) {
+                        self._error();
+                    }
+                },
+            });
+        };
+        AddNotePicture.prototype.undo = function () {
+            var self = this;
+            self._note.removePicture(self._filename);
+            self._note.save({}, {
+                wait: true,
+                success: function (tree, response) {
+                    if (self._undoSuccess) {
+                        self._undoSuccess();
+                    }
+                },
+                error: function (error, response) {
+                    if (self._error) {
+                        self._error();
+                    }
+                },
+            });
+        };
+        return AddNotePicture;
+    })();
+    FoodParent.AddNotePicture = AddNotePicture;
     var CreateNote = (function () {
         function CreateNote(args, success, error) {
             var self = this;
@@ -47076,8 +47139,10 @@ var FoodParent;
         };
         Template.getRecentActivitiesTemplate = function () {
             var template = '';
-            template += '<% _.each(notes.models, function (note) { %>';
+            template += '<% _.each(notes.models, function (note, index) { %>';
+            template += '<% if (index < size) { %>';
             template += '<div class="item-activity"><i class="fa fa-caret-right fa-1x"></i> <div><%= note.getComment() %></div></div>';
+            template += '<% } %>';
             template += '<% }); %>';
             return template;
         };
@@ -47274,7 +47339,7 @@ var FoodParent;
             template += '<div class="button-outer-frame2 button3 date-preset 2years"><div class="button-inner-frame2">2 Year</div></div>';
             template += '<div class="button-outer-frame2 button3 date-preset 1year"><div class="button-inner-frame2">1 Year</div></div>';
             template += '<div class="button-outer-frame2 button3 date-preset 6months"><div class="button-inner-frame2">6 months</div></div>';
-            template += '<div class="button-outer-frame2 button3 date-preset 1month"><div class="button-inner-frame2">1 month</div></div>';
+            template += '<div class="button-outer-frame2 button3 date-preset 1month"><div class="button-inner-frame2">3 month</div></div>';
             template += '</div>';
             template += '<div class="wrapper-date-select-item"><input type="text" class="form-control tree-graph-start" /></div>';
             template += '<div class="wrapper-date-select-item"><span class="date-select-label">~</span><input type="text" class="form-control tree-graph-end" /></div>';
@@ -47312,7 +47377,16 @@ var FoodParent;
             template += '<div class="outer-frame">';
             template += '<div class="inner-frame">';
             template += '<div class="wrapper-note-content">';
-            template += '<div class="image-wrapper"><div class="image-group"></div></div>';
+            template += '<div class="image-wrapper">';
+            template += '<div class="wrapper-input-upload-picture">';
+            template += '<input class="input-upload-picture fileupload" type="file" accept="image/*" capture="camera" />';
+            template += '</div>';
+            template += '<div class="wrapper-uploading-picture hidden">';
+            template += '<div class="uploading-picture">Uploading...</div>';
+            template += '</div>';
+            template += '<div class="info-header"><i class="fa fa-image"></i> Select Cover Picture</div>';
+            template += '<div class="image-group"></div>';
+            template += '</div>'; // end of .image-wrapper
             template += '<div class="wrapper-note-info">';
             template += '<div class="name"><%= name %></div>';
             template += '<div class="hr"><hr /></div>';
@@ -48016,6 +48090,7 @@ var FoodParent;
             */
             self.renderImageNote();
             self.setVisible();
+            self.resize();
             return self;
         };
         ImageNoteView.prototype.renderImageNote = function () {
@@ -48081,9 +48156,46 @@ var FoodParent;
                     }
                 });
             });
+            self.renderNoteImages();
+            // Event listener for uploading a file.
+            self.$('input[type=file]').off('change');
+            self.$('input[type=file]').on('change', function (event) {
+                self.$('.wrapper-input-upload-picture').addClass('hidden');
+                self.$('.wrapper-uploading-picture').removeClass('hidden');
+                var files = event.target.files;
+                if (files.length > 0) {
+                    FoodParent.Controller.uploadNotePictureFile(files[0], food.getName() + "_" + tree.getId(), function (fileName) {
+                        FoodParent.EventHandler.handleNoteData(self._note, FoodParent.DATA_MODE.ADD_PICTURE, { filename: fileName }, function () {
+                            FoodParent.EventHandler.handleDataChange("<strong><i>" + fileName + "</i></strong> has been added successfully.", true);
+                            // Success
+                            self.$('input[type=file]').val("");
+                            self.$('.wrapper-uploading-picture').addClass('hidden');
+                            self.$('.wrapper-input-upload-picture').removeClass('hidden');
+                            self.renderNoteImages();
+                        }, function () {
+                            FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+                        }, function () {
+                            FoodParent.EventHandler.handleDataChange("<strong><i>" + fileName + "</i></strong> has been removed successfully.", true);
+                            // Success
+                            self.$('input[type=file]').val("");
+                            self.$('.wrapper-uploading-picture').addClass('hidden');
+                            self.$('.wrapper-input-upload-picture').removeClass('hidden');
+                            self.renderNoteImages();
+                        });
+                        //self._note.addPicture(fileName);
+                    }, function () {
+                        // Error
+                        self.$('.wrapper-uploading-picture').addClass('hidden');
+                        self.$('.wrapper-input-upload-picture').removeClass('hidden');
+                    });
+                }
+            });
+        };
+        ImageNoteView.prototype.renderNoteImages = function () {
+            var self = this;
             var tag = '';
             $.each(self._note.getPictures(), function (index, filename) {
-                if (index == self._note.getCover()) {
+                if (index == 0) {
                     tag += '<img src="' + FoodParent.Setting.getBlankImagePath() + '" data-target="' + index + '" class="selected" />';
                 }
                 else {
@@ -48108,6 +48220,7 @@ var FoodParent;
         };
         ImageNoteView.prototype.resize = function () {
             var self = this;
+            self.$('.image-group').css({ height: self.$('.image-wrapper').innerHeight() - 120 });
         };
         ImageNoteView.prototype._mouseEnter = function (event) {
             var self = this;
@@ -48160,7 +48273,7 @@ var FoodParent;
             var cover = parseInt($(event.target).attr('data-target'));
             var tree = FoodParent.Model.getTrees().findWhere({ id: self._note.getTreeId() });
             var food = FoodParent.Model.getFoods().findWhere({ id: tree.getFoodId() });
-            if (self._note.getCover() != cover) {
+            if (cover != 0) {
                 FoodParent.EventHandler.handleNoteData(self._note, FoodParent.DATA_MODE.UPDATE_COVER, { cover: cover }, function () {
                     FoodParent.EventHandler.handleDataChange("Cover picture of <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has changed successfully.", true);
                     self.renderImageNote();
@@ -48184,6 +48297,7 @@ var FoodParent;
                 FoodParent.EventHandler.handleDataChange("Note of <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has been deleted successfully.", true);
                 if (FoodParent.View.getDetailTreeView()) {
                     FoodParent.View.getDetailTreeView().refreshTreeInfo();
+                    FoodParent.View.getDetailTreeView().resetNote();
                 }
             }, function () {
                 FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
@@ -49106,6 +49220,10 @@ var FoodParent;
                     $(item).removeClass('active');
                     $(item).find('input').prop({ 'checked': '' });
                 }
+                if (parseInt($(item).attr('data-target')) == 0) {
+                    $(this).attr('disabled', 'disabled');
+                    $(item).addClass('disabled');
+                }
             });
         };
         ManageTreesMapView.prototype.renderFlagInfo = function (flag) {
@@ -49119,6 +49237,10 @@ var FoodParent;
                     $(item).removeClass('active');
                     $(item).find('input').prop({ 'checked': '' });
                 }
+                if (parseInt($(item).attr('data-target')) == 0) {
+                    $(this).attr('disabled', 'disabled');
+                    $(item).addClass('disabled');
+                }
             });
         };
         ManageTreesMapView.prototype.renderRecentActivities = function (tree) {
@@ -49131,6 +49253,7 @@ var FoodParent;
                 var template = _.template(FoodParent.Template.getRecentActivitiesTemplate());
                 var data = {
                     notes: notes,
+                    size: FoodParent.Setting.getNumRecentActivitiesShown(),
                     coordinate: '@ ' + tree.getLat().toFixed(4) + ", " + tree.getLng().toFixed(4),
                     flags: FoodParent.Model.getFlags(),
                     ownerships: FoodParent.Model.getOwnerships(),
@@ -49423,7 +49546,6 @@ var FoodParent;
                         customTooltips: function (tooltip) {
                             // tooltip will be false if tooltip is not visible or should be hidden
                             if (!tooltip || !tooltip.id) {
-                                self._note = null;
                                 self.$('#wrapper-tooltip').addClass('hidden');
                                 return;
                             }
@@ -49438,7 +49560,7 @@ var FoodParent;
                                 };
                                 self.$('#wrapper-tooltip').html(template(data));
                                 if (self._note.getPictures().length > 0) {
-                                    self.$('#wrapper-tooltip img').attr('src', FoodParent.Setting.getContentPictureDir() + self._note.getPictures()[self._note.getCover()]).load(function () {
+                                    self.$('#wrapper-tooltip img').attr('src', FoodParent.Setting.getContentPictureDir() + self._note.getPictures()[0]).load(function () {
                                         $(this).removeClass('hidden');
                                     }).error(function () {
                                         $(this).attr('src', FoodParent.Setting.getBlankImagePath());
@@ -49448,6 +49570,9 @@ var FoodParent;
                                 else {
                                     self.$('#wrapper-tooltip img').addClass('hidden');
                                 }
+                            }
+                            else {
+                                self.$('#wrapper-tooltip img').addClass('hidden');
                             }
                             self.$('#wrapper-tooltip').removeClass('hidden');
                         },
@@ -49588,6 +49713,10 @@ var FoodParent;
             };
             self.delegateEvents();
         }
+        DetailTreeGraphicView.prototype.resetNote = function () {
+            var self = this;
+            self._note = null;
+        };
         DetailTreeGraphicView.prototype.render = function (args) {
             if (this.bRendered) {
                 this.update(args);
@@ -49615,7 +49744,7 @@ var FoodParent;
                 //    self._startDate = moment(notes.models[0].getFormattedDate()).format(Setting.getDateTimeFormat());
                 //} else {
                 self.$('.tree-graph-start').attr({ 'data-value': moment(new Date()).subtract(1, 'month').format(FoodParent.Setting.getDateFormat()) });
-                self._startDate = moment(moment(new Date()).subtract(1, 'month').format(FoodParent.Setting.getDateFormat())).format(FoodParent.Setting.getDateTimeFormat());
+                self._startDate = moment(moment(new Date()).subtract(3, 'month').format(FoodParent.Setting.getDateFormat())).format(FoodParent.Setting.getDateTimeFormat());
                 //}
                 self.$('.tree-graph-start').pickadate({
                     format: "dd mmm yyyy",
@@ -49670,6 +49799,10 @@ var FoodParent;
                     $(item).removeClass('active');
                     $(item).find('input').prop({ 'checked': '' });
                 }
+                if (parseInt($(item).attr('data-target')) == 0) {
+                    $(this).attr('disabled', 'disabled');
+                    $(item).addClass('disabled');
+                }
             });
         };
         DetailTreeGraphicView.prototype.renderFlagInfo = function (flag) {
@@ -49683,6 +49816,10 @@ var FoodParent;
                     $(item).removeClass('active');
                     $(item).find('input').prop({ 'checked': '' });
                 }
+                if (parseInt($(item).attr('data-target')) == 0) {
+                    $(this).attr('disabled', 'disabled');
+                    $(item).addClass('disabled');
+                }
             });
         };
         DetailTreeGraphicView.prototype.renderRecentActivities = function (tree) {
@@ -49695,6 +49832,7 @@ var FoodParent;
                 var template = _.template(FoodParent.Template.getRecentActivitiesTemplate());
                 var data = {
                     notes: notes,
+                    size: FoodParent.Setting.getLargeNumRecentActivitiesShown(),
                     coordinate: '@ ' + tree.getLat().toFixed(4) + ", " + tree.getLng().toFixed(4),
                     flags: FoodParent.Model.getFlags(),
                     ownerships: FoodParent.Model.getOwnerships(),
@@ -49752,8 +49890,8 @@ var FoodParent;
             else if ($(event.currentTarget).hasClass('6months')) {
                 self._startDate = moment(self._endDate).subtract(6, 'months').startOf('day').format(FoodParent.Setting.getDateTimeFormat());
             }
-            else if ($(event.currentTarget).hasClass('1month')) {
-                self._startDate = moment(self._endDate).subtract(1, 'months').startOf('day').format(FoodParent.Setting.getDateTimeFormat());
+            else if ($(event.currentTarget).hasClass('3month')) {
+                self._startDate = moment(self._endDate).subtract(3, 'months').startOf('day').format(FoodParent.Setting.getDateTimeFormat());
             }
             //self.$('.tree-graph-start').attr({ 'data-value': moment(self._startDate).format(Setting.getDateFormat()) });
             self.$('.tree-graph-start').pickadate('picker').set('select', moment(self._startDate).format(FoodParent.Setting.getDateFormat()), { format: 'dd mmm yyyy' });
@@ -50222,7 +50360,7 @@ var FoodParent;
                 self.$('.wrapper-uploading-picture').removeClass('hidden');
                 var files = event.target.files;
                 if (files.length > 0) {
-                    FoodParent.Controller.uploadFile(files[0], function (fileName) {
+                    FoodParent.Controller.uploadNotePictureFile(files[0], food.getName() + "_" + self._tree.getId(), function (fileName) {
                         self._note.addPicture(fileName);
                         // Success
                         self.$('input[type=file]').val("");
@@ -50285,16 +50423,19 @@ var FoodParent;
             var self = this;
             var tag = '';
             $.each(self._note.getPictures(), function (index, filename) {
-                tag += '<img src="' + FoodParent.Setting.getContentPictureDir() + filename + '" data-target="' + index + '" />';
+                if (index == 0) {
+                    tag += '<img src="' + FoodParent.Setting.getBlankImagePath() + '" data-target="' + index + '" class="selected" />';
+                }
+                else {
+                    tag += '<img src="' + FoodParent.Setting.getBlankImagePath() + '" data-target="' + index + '" />';
+                }
             });
             self.$('.image-group').html(tag);
             $.each(self.$('.image-group img'), function (index, element) {
-                if (parseInt($(element).attr('data-target')) == self._note.getCover()) {
-                    $(element).addClass('selected');
-                }
-                else {
-                    $(element).removeClass('selected');
-                }
+                $(element).attr('src', FoodParent.Setting.getContentPictureDir() + self._note.getPictures()[index]).load(function () {
+                }).error(function () {
+                    $(element).attr('src', FoodParent.Setting.getBlankImagePath());
+                });
             });
         };
         PostNoteView.prototype._selectCoverImage = function (event) {
@@ -51362,7 +51503,6 @@ var FoodParent;
                 "person": 0,
                 "comment": "",
                 "picture": "",
-                "cover": 0,
                 "rate": 0,
                 "date": moment(new Date()).format(FoodParent.Setting.getDateTimeFormat()),
             };
@@ -51380,7 +51520,6 @@ var FoodParent;
             if (response.picture != "") {
                 response.pictures = response.picture.split(",");
             }
-            response.cover = parseInt(response.cover);
             return _super.prototype.parse.call(this, response, options);
         };
         Note.prototype.toJSON = function (options) {
@@ -51439,20 +51578,35 @@ var FoodParent;
         Note.prototype.getTreeId = function () {
             return parseInt(this.get('tree'));
         };
-        Note.prototype.addPicture = function (file) {
+        Note.prototype.addPicture = function (filename) {
             if (this.get('pictures') == undefined) {
                 this.set('pictures', new Array());
             }
-            this.get('pictures').push(file);
+            this.get('pictures').push(filename);
         };
         Note.prototype.getPictures = function () {
+            if (this.get('pictures') == undefined) {
+                this.set('pictures', new Array());
+            }
             return this.get('pictures');
         };
-        Note.prototype.getCover = function () {
-            return parseInt(this.get('cover'));
+        Note.prototype.getPicture = function (index) {
+            return this.get('pictures')[index];
         };
-        Note.prototype.setCover = function (cover) {
-            this.set('cover', Math.floor(cover));
+        Note.prototype.removePicture = function (filename) {
+            var self = this;
+            self.set('pictures', _.without(self.getPictures(), filename));
+        };
+        Note.prototype.setCover = function (index) {
+            var self = this;
+            var picture = self.getPictures()[index];
+            self.set('pictures', _.without(self.getPictures(), picture));
+            self.getPictures().unshift(picture);
+        };
+        Note.prototype.setCoverPicture = function (picture) {
+            var self = this;
+            self.set('pictures', _.without(self.getPictures(), picture));
+            self.getPictures().unshift(picture);
         };
         Note.prototype.setDate = function (date) {
             this.set('date', date.format(FoodParent.Setting.getDateTimeFormat()));

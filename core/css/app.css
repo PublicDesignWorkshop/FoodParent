@@ -96,6 +96,11 @@
         text-transform: uppercase;
     }
 
+    .disabled {
+        pointer-events: none;
+        text-decoration:line-through;
+    }
+
     /* Let's get this party started */
     ::-webkit-scrollbar {
         width: 4px;

@@ -50,7 +50,7 @@
                 self.$('.wrapper-uploading-picture').removeClass('hidden');
                 var files = (<any>event.target).files;
                 if (files.length > 0) {
-                    Controller.uploadFile(files[0], function (fileName: string) {
+                    Controller.uploadNotePictureFile(files[0], food.getName() + "_" + self._tree.getId(), function (fileName: string) {
                         self._note.addPicture(fileName);
                         // Success
                         self.$('input[type=file]').val("");
@@ -120,17 +120,19 @@
             var self: PostNoteView = this;
             var tag = '';
             $.each(self._note.getPictures(), function (index: number, filename: string) {
-                tag += '<img src="' + Setting.getContentPictureDir() + filename + '" data-target="' + index + '" />';
-            });
-            
-            self.$('.image-group').html(tag);
-
-            $.each(self.$('.image-group img'), function (index: number, element: JQuery) {
-                if (parseInt($(element).attr('data-target')) == self._note.getCover()) {
-                    $(element).addClass('selected');
+                if (index == 0) {
+                    tag += '<img src="' + Setting.getBlankImagePath() + '" data-target="' + index + '" class="selected" />';
                 } else {
-                    $(element).removeClass('selected');
+                    tag += '<img src="' + Setting.getBlankImagePath() + '" data-target="' + index + '" />';
                 }
+            });
+            self.$('.image-group').html(tag);
+            $.each(self.$('.image-group img'), function (index: number, element: JQuery) {
+                $(element).attr('src', Setting.getContentPictureDir() + self._note.getPictures()[index]).load(function () {
+
+                }).error(function () {
+                    $(element).attr('src', Setting.getBlankImagePath());
+                });
             });
         }
 
