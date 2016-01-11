@@ -49490,11 +49490,11 @@ var FoodParent;
                     self.$('#content-chart').attr({ 'width': self.$('#content-chart').innerWidth(), 'height': self.$('#content-chart').innerHeight() });
                     var ctx = canvas.getContext("2d");
                     self.$('#wrapper-graph').on('mousemove', function (event) {
-                        if (event.clientX + 24 + $('#wrapper-tooltip').outerWidth() > self.$('#content-chart').innerWidth()) {
-                            self.$('#wrapper-tooltip').css({ top: event.clientY - 60, left: event.clientX - 24 - self.$('#wrapper-tooltip').outerWidth() });
+                        if (event.clientX - 24 - $('#wrapper-tooltip').outerWidth() < 0) {
+                            self.$('#wrapper-tooltip').css({ top: event.clientY - 60, left: event.clientX + 24 });
                         }
                         else {
-                            self.$('#wrapper-tooltip').css({ top: event.clientY - 60, left: event.clientX + 24 });
+                            self.$('#wrapper-tooltip').css({ top: event.clientY - 60, left: event.clientX - 24 - self.$('#wrapper-tooltip').outerWidth() });
                         }
                     });
                     self.$('#wrapper-graph').on('mouseleave', function (event) {
