@@ -12703,26 +12703,31 @@ button.close {
 @media all {
     #wrapper-home {
         position: absolute;
-        top: 0;
+        top: -60px;
         left: 0;
         width: 100%;
         height: 100%;
+        display: -webkit-flex;
         display: flex;
-        justify-content: center;
+        -webkit-justify-content: space-around;
+        justify-content: space-around;
+        -webkit-align-items: center;
         align-items: center;
     }
     .home-menu-left {
-        padding: 0 80px 120px 0;
+        padding: 0 20px 20px 10px;
         color: #eeeeee;
         cursor: pointer;
+        text-align: left;
     }
     .home-menu-left:hover {
         color: #83a656;
     }
     .home-menu-right {
-        padding: 0 0 120px 80px;
+        padding: 0 10px 20px 20px;
         color: #eeeeee;
         cursor: pointer;
+        text-align: right;
     }
     .home-menu-right:hover {
         color: #5e4e51;
@@ -12734,7 +12739,7 @@ button.close {
         font-size: 150px;
     }
     .enter-left {
-        font-size: 50px;
+        font-size: 30px;
     }
 }
 
@@ -12774,16 +12779,23 @@ button.close {
         width: 100%;
         height: 60px;
         z-index: 5000;
+        display: -webkit-flex;
         display: flex;
         -ms-flex-direction: row;
         -webkit-flex-direction: row;
         flex-direction: row;
-        justify-content: space-around;
+        -webkit-justify-content: space-between;
+        justify-content: space-between;
+        -webkit-align-items: center;
         align-items: center;
         -moz-user-select: none;
         -ms-user-select: none;
         -webkit-user-select: none;
         user-select: none;
+    }
+    #list-nav::-webkit-scrollbar {
+        width: 0 !important;
+        height: 0 !important;
     }
 
     #list-nav .item-nav {
@@ -12791,6 +12803,7 @@ button.close {
         letter-spacing: 2px;
         font-weight: 700;
         padding: 20px 20px;
+        flex-grow: 1;
     }
 
     #list-nav .item-manage-title {
@@ -12818,6 +12831,7 @@ button.close {
     #list-nav .item-manage {
         font-size: large;
         cursor: pointer;
+        background-color: #5e4e51;
     }
 
     #list-nav .item-manage:hover {
@@ -12842,6 +12856,15 @@ button.close {
         font-size: large;
         color: #5e4e51;
         cursor: pointer;
+        background-color: #83a656;
+        transform: skew(-10deg, 0);
+        height: 60px;
+    }
+
+    #list-nav .item-manage-parent div {
+        cursor: pointer;
+        background-color: #83a656;
+        transform: skew(10deg, 0);
     }
 
     #list-nav .item-manage-parent:hover {
@@ -14168,4 +14191,50 @@ button.close {
         overflow: hidden;
         border: none;
     }
+}
+/* #### Mobile Phones Portrait #### */
+@media screen and (max-device-width: 480px) and (orientation: portrait){
+    #list-nav {
+        overflow-x: auto;
+        overflow-y: hidden;
+    }
+}
+
+/* #### Mobile Phones Landscape #### */
+@media screen and (max-device-width: 640px) and (orientation: landscape){
+  /* some CSS here */
+  #list-nav {
+        overflow-x: auto;
+        overflow-y: hidden;
+    }
+}
+
+/* #### Mobile Phones Portrait or Landscape #### */
+@media screen and (max-device-width: 640px){
+  /* some CSS here */
+}
+
+/* #### iPhone 4+ Portrait or Landscape #### */
+@media screen and (min-device-width: 320px) and (-webkit-min-device-pixel-ratio: 2){
+  /* some CSS here */
+}
+
+/* #### iPhone 5 Portrait or Landscape #### */
+@media (device-height: 568px) and (device-width: 320px) and (-webkit-min-device-pixel-ratio: 2){
+  /* some CSS here */
+}
+
+/* #### iPhone 6 and 6 plus Portrait or Landscape #### */
+@media (min-device-height: 667px) and (min-device-width: 375px) and (-webkit-min-device-pixel-ratio: 3){
+  /* some CSS here */
+}
+
+/* #### Tablets Portrait or Landscape #### */
+@media screen and (min-device-width: 768px) and (max-device-width: 1024px){
+  /* some CSS here */
+}
+
+/* #### Desktops #### */
+@media screen and (min-width: 1024px){
+  /* some CSS here */
 }

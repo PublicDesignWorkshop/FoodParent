@@ -43,6 +43,7 @@
             }
             self.$el.html(template(data));
             self.setElement(self.$('#wrapper-home'));
+            self.resize();
             return self;
         }
 
@@ -50,7 +51,15 @@
             super.update();
             var self: HomeView = this;
             if (self.bDebug) console.log(HomeView.TAG + "update()");
+            self.resize();
             return self;
+        }
+
+        public resize(): any {
+            var self: HomeView = this;
+            self.$('.title-left').css({ 'font-size': Math.floor(self.getWidth() * 0.15) + 'px' });
+            self.$('.title-right').css({ 'font-size': Math.floor(self.getWidth() * 0.15) + 'px' });
+            self.$('.enter-left').css({ 'font-size': Math.floor(self.getWidth() * 0.15 * 0.2) + 'px' });
         }
         private _mouseEnter(event: Event): void {
             var self: HomeView = this;

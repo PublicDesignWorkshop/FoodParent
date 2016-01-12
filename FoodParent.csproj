@@ -39,6 +39,7 @@
     <Content Include="core\css\foodparent.min.css">
       <DependentUpon>foodparent.css</DependentUpon>
     </Content>
+    <Content Include="core\css\device.css" />
     <Content Include="core\css\home.css" />
     <Content Include="core\css\input.css" />
     <Content Include="core\css\message.css" />

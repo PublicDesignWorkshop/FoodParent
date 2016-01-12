@@ -46864,11 +46864,11 @@ var FoodParent;
             template += '<div id="wrapper-home">';
             template += '<div class="home-menu-left">';
             template += '<div class="title-left">Food</div>';
-            template += '<div class="enter-left"><i class="fa fa-angle-left"></i> manage food assets</div>';
+            template += '<div class="enter-left"><i class="fa fa-angle-left"></i> managing food assets</div>';
             template += '</div>';
             template += '<div class="home-menu-right">';
             template += '<div class="title-right">Parent</div>';
-            template += '<div class="enter-left">parent food assets <i class="fa fa-angle-right"></i></div>';
+            template += '<div class="enter-left">parenting & caring food assets <i class="fa fa-angle-right"></i></div>';
             template += '</div>';
             template += '</div>';
             return template;
@@ -46968,7 +46968,7 @@ var FoodParent;
             template += '<div class="item-nav item-manage people">PEOPLE</div>';
             template += '<div class="item-nav item-manage adops">ADOPTS</div>';
             template += '<div class="item-nav item-manage donations">DONATIONS</div>';
-            template += '<div class="item-nav item-manage-parent parent">PARENT</div>';
+            template += '<div class="item-nav item-manage-parent parent"><div>PARENT</div></div>';
             return template;
         };
         Template.getAlertViewTemplate = function () {
@@ -47772,6 +47772,7 @@ var FoodParent;
             var data = {};
             self.$el.html(template(data));
             self.setElement(self.$('#wrapper-home'));
+            self.resize();
             return self;
         };
         HomeView.prototype.update = function (args) {
@@ -47779,7 +47780,14 @@ var FoodParent;
             var self = this;
             if (self.bDebug)
                 console.log(HomeView.TAG + "update()");
+            self.resize();
             return self;
+        };
+        HomeView.prototype.resize = function () {
+            var self = this;
+            self.$('.title-left').css({ 'font-size': Math.floor(self.getWidth() * 0.15) + 'px' });
+            self.$('.title-right').css({ 'font-size': Math.floor(self.getWidth() * 0.15) + 'px' });
+            self.$('.enter-left').css({ 'font-size': Math.floor(self.getWidth() * 0.15 * 0.2) + 'px' });
         };
         HomeView.prototype._mouseEnter = function (event) {
             var self = this;
@@ -47855,12 +47863,15 @@ var FoodParent;
             self.$el.html(template(data));
             if (args.viewStatus == FoodParent.VIEW_STATUS.HOME) {
                 self.urenderNavItems();
-                self.$('#background-nav-left').css({ left: '-69%' });
+                self.$('#background-nav-left').css({ left: '-76%' });
+                self.$('#background-nav-left').css({ transform: 'skew(-10deg, 0)' });
             }
             else if (args.viewStatus == FoodParent.VIEW_STATUS.MANAGE_TREES || args.viewStatus == FoodParent.VIEW_STATUS.MANAGE_PEOPLE || args.viewStatus == FoodParent.VIEW_STATUS.DETAIL_TREE) {
                 self.renderNavManageItems();
-                self.$('#background-nav-left').css({ left: '-40%' });
+                self.$('#background-nav-left').css({ left: '-30%' });
+                self.$('#background-nav-left').css({ transform: 'skew(-0deg, 0)' });
             }
+            self.resize();
             return self;
         };
         NavView.prototype.update = function (args) {
@@ -47874,21 +47885,27 @@ var FoodParent;
                 console.log(NavView.TAG + "update()");
             if (args.viewStatus == FoodParent.VIEW_STATUS.HOME) {
                 self.urenderNavItems();
-                self.$('#background-nav-left').animate({ left: '-69%' }, FoodParent.Setting.getNavAnimDuration());
+                self.$('#background-nav-left').animate({ left: '-76%' }, FoodParent.Setting.getNavAnimDuration());
+                self.$('#background-nav-left').css({ transform: 'skew(-10deg, 0)' });
             }
             else if (args.viewStatus == FoodParent.VIEW_STATUS.MANAGE_TREES || args.viewStatus == FoodParent.VIEW_STATUS.MANAGE_PEOPLE || args.viewStatus == FoodParent.VIEW_STATUS.DETAIL_TREE) {
                 self.renderNavManageItems();
-                self.$('#background-nav-left').animate({ left: '-40%' }, FoodParent.Setting.getNavAnimDuration());
+                self.$('#background-nav-left').animate({ left: '-30%' }, FoodParent.Setting.getNavAnimDuration());
+                self.$('#background-nav-left').css({ transform: 'skew(-0deg, 0)' });
             }
+            self.resize();
             return self;
+        };
+        NavView.prototype.resize = function () {
+            var self = this;
         };
         NavView.prototype.focusOnLeft = function () {
             var self = this;
-            self.$('#background-nav-left').animate({ left: '-66%' }, FoodParent.Setting.getNavAnimDuration());
+            self.$('#background-nav-left').animate({ left: '-72%' }, FoodParent.Setting.getNavAnimDuration());
         };
         NavView.prototype.focusOnRight = function () {
             var self = this;
-            self.$('#background-nav-left').animate({ left: '-70%' }, FoodParent.Setting.getNavAnimDuration());
+            self.$('#background-nav-left').animate({ left: '-76%' }, FoodParent.Setting.getNavAnimDuration());
         };
         NavView.prototype.urenderNavItems = function () {
             var self = this;

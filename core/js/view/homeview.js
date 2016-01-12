@@ -47,6 +47,7 @@ var FoodParent;
             var data = {};
             self.$el.html(template(data));
             self.setElement(self.$('#wrapper-home'));
+            self.resize();
             return self;
         };
         HomeView.prototype.update = function (args) {
@@ -54,7 +55,14 @@ var FoodParent;
             var self = this;
             if (self.bDebug)
                 console.log(HomeView.TAG + "update()");
+            self.resize();
             return self;
+        };
+        HomeView.prototype.resize = function () {
+            var self = this;
+            self.$('.title-left').css({ 'font-size': Math.floor(self.getWidth() * 0.15) + 'px' });
+            self.$('.title-right').css({ 'font-size': Math.floor(self.getWidth() * 0.15) + 'px' });
+            self.$('.enter-left').css({ 'font-size': Math.floor(self.getWidth() * 0.15 * 0.2) + 'px' });
         };
         HomeView.prototype._mouseEnter = function (event) {
             var self = this;

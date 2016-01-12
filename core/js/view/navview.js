@@ -58,12 +58,15 @@ var FoodParent;
             self.$el.html(template(data));
             if (args.viewStatus == FoodParent.VIEW_STATUS.HOME) {
                 self.urenderNavItems();
-                self.$('#background-nav-left').css({ left: '-69%' });
+                self.$('#background-nav-left').css({ left: '-76%' });
+                self.$('#background-nav-left').css({ transform: 'skew(-10deg, 0)' });
             }
             else if (args.viewStatus == FoodParent.VIEW_STATUS.MANAGE_TREES || args.viewStatus == FoodParent.VIEW_STATUS.MANAGE_PEOPLE || args.viewStatus == FoodParent.VIEW_STATUS.DETAIL_TREE) {
                 self.renderNavManageItems();
-                self.$('#background-nav-left').css({ left: '-40%' });
+                self.$('#background-nav-left').css({ left: '-30%' });
+                self.$('#background-nav-left').css({ transform: 'skew(-0deg, 0)' });
             }
+            self.resize();
             return self;
         };
         NavView.prototype.update = function (args) {
@@ -77,21 +80,27 @@ var FoodParent;
                 console.log(NavView.TAG + "update()");
             if (args.viewStatus == FoodParent.VIEW_STATUS.HOME) {
                 self.urenderNavItems();
-                self.$('#background-nav-left').animate({ left: '-69%' }, FoodParent.Setting.getNavAnimDuration());
+                self.$('#background-nav-left').animate({ left: '-76%' }, FoodParent.Setting.getNavAnimDuration());
+                self.$('#background-nav-left').css({ transform: 'skew(-10deg, 0)' });
             }
             else if (args.viewStatus == FoodParent.VIEW_STATUS.MANAGE_TREES || args.viewStatus == FoodParent.VIEW_STATUS.MANAGE_PEOPLE || args.viewStatus == FoodParent.VIEW_STATUS.DETAIL_TREE) {
                 self.renderNavManageItems();
-                self.$('#background-nav-left').animate({ left: '-40%' }, FoodParent.Setting.getNavAnimDuration());
+                self.$('#background-nav-left').animate({ left: '-30%' }, FoodParent.Setting.getNavAnimDuration());
+                self.$('#background-nav-left').css({ transform: 'skew(-0deg, 0)' });
             }
+            self.resize();
             return self;
+        };
+        NavView.prototype.resize = function () {
+            var self = this;
         };
         NavView.prototype.focusOnLeft = function () {
             var self = this;
-            self.$('#background-nav-left').animate({ left: '-66%' }, FoodParent.Setting.getNavAnimDuration());
+            self.$('#background-nav-left').animate({ left: '-72%' }, FoodParent.Setting.getNavAnimDuration());
         };
         NavView.prototype.focusOnRight = function () {
             var self = this;
-            self.$('#background-nav-left').animate({ left: '-70%' }, FoodParent.Setting.getNavAnimDuration());
+            self.$('#background-nav-left').animate({ left: '-76%' }, FoodParent.Setting.getNavAnimDuration());
         };
         NavView.prototype.urenderNavItems = function () {
             var self = this;

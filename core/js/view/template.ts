@@ -17,11 +17,11 @@
             template += '<div id="wrapper-home">';
             template +=     '<div class="home-menu-left">';
             template +=         '<div class="title-left">Food</div>';
-            template +=         '<div class="enter-left"><i class="fa fa-angle-left"></i> manage food assets</div>';
+            template +=         '<div class="enter-left"><i class="fa fa-angle-left"></i> managing food assets</div>';
             template +=     '</div>';
             template +=     '<div class="home-menu-right">';
             template +=         '<div class="title-right">Parent</div>';
-            template +=         '<div class="enter-left">parent food assets <i class="fa fa-angle-right"></i></div>';
+            template +=         '<div class="enter-left">parenting & caring food assets <i class="fa fa-angle-right"></i></div>';
             template +=     '</div>';
             template += '</div>';
             return template;
@@ -133,7 +133,7 @@
             template += '<div class="item-nav item-manage people">PEOPLE</div>';
             template += '<div class="item-nav item-manage adops">ADOPTS</div>';
             template += '<div class="item-nav item-manage donations">DONATIONS</div>';
-            template += '<div class="item-nav item-manage-parent parent">PARENT</div>';
+            template += '<div class="item-nav item-manage-parent parent"><div>PARENT</div></div>';
             return template;
         }
 

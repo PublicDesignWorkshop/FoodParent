@@ -112,7 +112,9 @@
       "core/css/mpeople.css",
 
       // Print (not working for safari)
-      "core/css/print.css"
+      "core/css/print.css",
+
+      "core/css/device.css"
     ]
   }
 ]

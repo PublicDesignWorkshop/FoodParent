@@ -58,12 +58,15 @@
             
             if (args.viewStatus == VIEW_STATUS.HOME) {
                 self.urenderNavItems();
-                self.$('#background-nav-left').css({ left: '-69%' });
+                self.$('#background-nav-left').css({ left: '-76%' });
+                self.$('#background-nav-left').css({ transform: 'skew(-10deg, 0)' });
             } else if (args.viewStatus == VIEW_STATUS.MANAGE_TREES || args.viewStatus == VIEW_STATUS.MANAGE_PEOPLE || args.viewStatus == VIEW_STATUS.DETAIL_TREE) {
                 self.renderNavManageItems();
-                self.$('#background-nav-left').css({ left: '-40%' });
+                self.$('#background-nav-left').css({ left: '-30%' });
+                self.$('#background-nav-left').css({ transform: 'skew(-0deg, 0)' });
             }
 
+            self.resize();
             return self;
         }
 
@@ -77,22 +80,30 @@
             if (self.bDebug) console.log(NavView.TAG + "update()");
             if (args.viewStatus == VIEW_STATUS.HOME) {
                 self.urenderNavItems();
-                self.$('#background-nav-left').animate({ left: '-69%' }, Setting.getNavAnimDuration());
+                self.$('#background-nav-left').animate({ left: '-76%' }, Setting.getNavAnimDuration());
+                self.$('#background-nav-left').css({ transform: 'skew(-10deg, 0)' });
             } else if (args.viewStatus == VIEW_STATUS.MANAGE_TREES || args.viewStatus == VIEW_STATUS.MANAGE_PEOPLE || args.viewStatus == VIEW_STATUS.DETAIL_TREE) {
                 self.renderNavManageItems();
-                self.$('#background-nav-left').animate({ left: '-40%' }, Setting.getNavAnimDuration());
+                self.$('#background-nav-left').animate({ left: '-30%' }, Setting.getNavAnimDuration());
+                self.$('#background-nav-left').css({ transform: 'skew(-0deg, 0)' });
             }
+
+            self.resize();
             return self;
+        }
+
+        public resize(): any {
+            var self: NavView = this;
         }
 
         public focusOnLeft(): void {
             var self: NavView = this;
-            self.$('#background-nav-left').animate({ left: '-66%' }, Setting.getNavAnimDuration());
+            self.$('#background-nav-left').animate({ left: '-72%' }, Setting.getNavAnimDuration());
         }
 
         public focusOnRight(): void {
             var self: NavView = this;
-            self.$('#background-nav-left').animate({ left: '-70%' }, Setting.getNavAnimDuration());
+            self.$('#background-nav-left').animate({ left: '-76%' }, Setting.getNavAnimDuration());
         }
 
         public urenderNavItems(): void {
