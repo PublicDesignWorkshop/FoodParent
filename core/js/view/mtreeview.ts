@@ -164,7 +164,7 @@
                 var notes: Array<Note> = new Array<Note>();
                 var start: Moment = moment(startDate).set('hour', 13).set('minute', 0).set('seconds', 0).set('milliseconds', 0);
 
-                for (var i: number = moment(start).valueOf(); i < moment(endDate).valueOf(); i += 1000 * 60 * 60 * 24) {
+                for (var i: number = moment(start).valueOf(); i < moment(endDate).add('day', 1).valueOf(); i += 1000 * 60 * 60 * 24) {
                     labels.push(moment(i).format(Setting.getDateHourFormat()));
                     var note: Note = Model.getNotes().getLatestImageNoteOfDate(self._tree.getId(), i, NoteType.IMAGE);
                     if (note) {

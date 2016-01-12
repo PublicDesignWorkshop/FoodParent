@@ -67,7 +67,7 @@ var FoodParent;
                     var labels = new Array();
                     var notes = new Array();
                     var start = moment(startDate).set('hour', 13).set('minute', 0).set('seconds', 0).set('milliseconds', 0);
-                    for (var i = moment(start).valueOf(); i < moment(endDate).valueOf(); i += 1000 * 60 * 60 * 24) {
+                    for (var i = moment(start).valueOf(); i < moment(endDate).add('day', 1).valueOf(); i += 1000 * 60 * 60 * 24) {
                         labels.push(moment(i).format(FoodParent.Setting.getDateHourFormat()));
                         var note = FoodParent.Model.getNotes().getLatestImageNoteOfDate(self._tree.getId(), i, FoodParent.NoteType.IMAGE);
                         if (note) {
