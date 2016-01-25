@@ -80,43 +80,36 @@ var TreeColumn = [
         label: "#",
         editable: false,
         cell: "string",
-    },
-    {
+    }, {
         name: "food",
         label: "Type of Food",
         editable: true,
-    },
-    {
+    }, {
         name: "lat",
         label: "Latitude",
         editable: true,
         cell: "number",
-    },
-    {
+    }, {
         name: "lng",
         label: "Longitude",
         editable: true,
         cell: "number",
-    },
-    {
+    }, {
         name: "address",
         label: "Address",
         editable: true,
         cell: "string",
-    },
-    {
+    }, {
         name: "updated",
         label: "Updated",
         editable: false,
         cell: Backgrid.Cell.extend({ editor: DatePickerCellEditor }),
-    },
-    {
+    }, {
         label: "Detail",
         sortable: false,
         editable: false,
         cell: TreeDetailCell,
-    },
-    {
+    }, {
         label: "Delete",
         sortable: false,
         editable: false,
@@ -168,50 +161,42 @@ var PersonColumn = [
         label: "#",
         editable: false,
         cell: "string",
-    },
-    {
+    }, {
         name: "auth",
         label: "Type",
         editable: true,
-    },
-    {
+    }, {
         name: "name",
         label: "Name",
         editable: true,
         cell: "string",
-    },
-    {
+    }, {
         name: "address",
         label: "Address",
         editable: true,
         cell: "string",
-    },
-    {
+    }, {
         name: "contact",
         label: "Contact",
         editable: true,
         cell: "string",
-    },
-    {
+    }, {
         name: "neighborhood",
         label: "Neighborhood",
         editable: true,
         cell: "string",
-    },
-    {
+    }, {
         name: "updated",
         label: "Updated",
         editable: false,
         cell: Backgrid.Cell.extend({ editor: DatePickerCellEditor }),
-    },
-    {
+    }, {
         name: "trees",
         label: "Adoption",
         sortable: false,
         editable: false,
         cell: AdoptTreesCell,
-    },
-    {
+    }, {
         label: "Delete",
         sortable: false,
         editable: false,
@@ -273,39 +258,33 @@ var PersonPopupColumn = [
         name: "auth",
         label: "Type",
         editable: false,
-    },
-    {
+    }, {
         name: "name",
         label: "Name",
         editable: false,
         cell: "string",
-    },
-    {
+    }, {
         name: "contact",
         label: "Contact",
         editable: false,
         cell: "string",
-    },
-    {
+    }, {
         name: "trees",
         label: "Adoption",
         sortable: false,
         editable: false,
         cell: AdoptTreesCell,
-    },
-    {
+    }, {
         label: "Add",
         sortable: false,
         editable: false,
         cell: AdoptAddCell,
-    },
-    {
+    }, {
         label: "Remove",
         sortable: false,
         editable: false,
         cell: AdoptRemoveCell,
-    },
-    {
+    }, {
         name: "updated",
         label: "Updated",
         editable: false,

@@ -1,8 +1,7 @@
-var __extends = this.__extends || function (d, b) {
+var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
-    __.prototype = b.prototype;
-    d.prototype = new __();
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
 var FoodParent;
 (function (FoodParent) {
@@ -91,14 +90,14 @@ var FoodParent;
         }
         SideInfoView.prototype.render = function () {
             var that = this;
-            if (FoodParent.View.getInstance().getViewType() == 1 /* TREES */) {
+            if (FoodParent.View.getInstance().getViewType() == FoodParent.MainViewType.TREES) {
                 var template = _.template(FoodParent.Template.getInstance().getTreesSideInfoViewTemplate());
                 var data = {
                     food: FoodParent.Model.getInstance().getFoods(),
                 };
                 that.$el.html(template(data));
             }
-            else if (FoodParent.View.getInstance().getViewType() == 3 /* PEOPLE */) {
+            else if (FoodParent.View.getInstance().getViewType() == FoodParent.MainViewType.PEOPLE) {
                 var template = _.template(FoodParent.Template.getInstance().getPeopleSideInfoViewTemplate());
                 var data2 = {};
                 that.$el.html(template(data2));
@@ -113,7 +112,7 @@ var FoodParent;
         };
         SideInfoView.prototype.render2 = function (bChecked) {
             var that = this;
-            if (FoodParent.View.getInstance().getViewType() == 1 /* TREES */) {
+            if (FoodParent.View.getInstance().getViewType() == FoodParent.MainViewType.TREES) {
                 var template = _.template(FoodParent.Template.getInstance().getTreesSideInfoViewTemplate());
                 var data = {
                     food: FoodParent.Model.getInstance().getFoods(),
@@ -136,7 +135,7 @@ var FoodParent;
                 size: 'small',
                 onstyle: 'default',
             });
-            if (FoodParent.View.getInstance().getViewType() == 1 /* TREES */) {
+            if (FoodParent.View.getInstance().getViewType() == FoodParent.MainViewType.TREES) {
                 if (bChecked != undefined) {
                     if (bChecked) {
                         that.$('#toggle-table').bootstrapToggle('on');
@@ -150,7 +149,7 @@ var FoodParent;
                     that.mapView.SetIsGraphicView($(this).prop('checked'));
                 });
             }
-            else if (FoodParent.View.getInstance().getViewType() == 3 /* PEOPLE */) {
+            else if (FoodParent.View.getInstance().getViewType() == FoodParent.MainViewType.PEOPLE) {
                 that.$('#toggle-table').bootstrapToggle('off');
                 that.$('#toggle-table').prop({ disabled: 'disabled' });
             }
@@ -193,27 +192,27 @@ var FoodParent;
                 var trees = new FoodParent.Trees();
                 var persons = new FoodParent.Persons();
                 if (that.$('.filter-checkbox').find('input[name="showall"]').prop('checked')) {
-                    if (FoodParent.View.getInstance().getViewType() == 1 /* TREES */) {
+                    if (FoodParent.View.getInstance().getViewType() == FoodParent.MainViewType.TREES) {
                         trees = FoodParent.Model.getInstance().getTrees();
                     }
-                    else if (FoodParent.View.getInstance().getViewType() == 3 /* PEOPLE */) {
+                    else if (FoodParent.View.getInstance().getViewType() == FoodParent.MainViewType.PEOPLE) {
                         persons = FoodParent.Model.getInstance().getPersons();
                     }
                 }
                 if (that.$('.filter-checkbox').find('input[name="assigned"]').prop('checked')) {
-                    if (FoodParent.View.getInstance().getViewType() == 1 /* TREES */) {
+                    if (FoodParent.View.getInstance().getViewType() == FoodParent.MainViewType.TREES) {
                         trees = FoodParent.Model.getInstance().getTrees().getAssigned(trees);
                         console.log(trees);
                     }
-                    else if (FoodParent.View.getInstance().getViewType() == 3 /* PEOPLE */) {
+                    else if (FoodParent.View.getInstance().getViewType() == FoodParent.MainViewType.PEOPLE) {
                         persons = FoodParent.Model.getInstance().getPersons().getAssigned(persons);
                     }
                 }
                 if (that.$('.filter-checkbox').find('input[name="unassigned"]').prop('checked')) {
-                    if (FoodParent.View.getInstance().getViewType() == 1 /* TREES */) {
+                    if (FoodParent.View.getInstance().getViewType() == FoodParent.MainViewType.TREES) {
                         trees = FoodParent.Model.getInstance().getTrees().getUnassigned(trees);
                     }
-                    else if (FoodParent.View.getInstance().getViewType() == 3 /* PEOPLE */) {
+                    else if (FoodParent.View.getInstance().getViewType() == FoodParent.MainViewType.PEOPLE) {
                         persons = FoodParent.Model.getInstance().getPersons().getUnassigned(persons);
                     }
                 }
@@ -224,10 +223,10 @@ var FoodParent;
                         }
                     }
                 });
-                if (FoodParent.View.getInstance().getViewType() == 1 /* TREES */) {
+                if (FoodParent.View.getInstance().getViewType() == FoodParent.MainViewType.TREES) {
                     that.mapView.customRender(trees);
                 }
-                else if (FoodParent.View.getInstance().getViewType() == 3 /* PEOPLE */) {
+                else if (FoodParent.View.getInstance().getViewType() == FoodParent.MainViewType.PEOPLE) {
                     that.personsView.renderGrid(persons);
                 }
             }, 1);
@@ -257,7 +256,7 @@ var FoodParent;
                     },
                 });
                 var note = new FoodParent.Note({
-                    type: 2 /* INFO */,
+                    type: FoodParent.NoteType.INFO,
                     tree: that.tree.getId(),
                     person: 0,
                     comment: "Flag is changed to '" + FoodParent.Model.getInstance().getFlags().findWhere({ id: parseInt($(event.target).attr('data-flag')) }).getName() + "'",
@@ -302,7 +301,7 @@ var FoodParent;
                     },
                 });
                 var note = new FoodParent.Note({
-                    type: 2 /* INFO */,
+                    type: FoodParent.NoteType.INFO,
                     tree: that.tree.getId(),
                     person: 0,
                     comment: "Ownership is changed to '" + FoodParent.Model.getInstance().getOwnerships().findWhere({ id: parseInt($(event.target).attr('data-ownership')) }).getName() + "'",

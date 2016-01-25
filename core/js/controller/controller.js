@@ -1,8 +1,7 @@
-var __extends = this.__extends || function (d, b) {
+var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
-    __.prototype = b.prototype;
-    d.prototype = new __();
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
 var FoodParent;
 (function (FoodParent) {
@@ -24,7 +23,7 @@ var FoodParent;
             var that = this;
             if (this.bDebug)
                 console.log("loadTreesPage()");
-            FoodParent.View.getInstance().SetViewType(1 /* TREES */);
+            FoodParent.View.getInstance().SetViewType(FoodParent.MainViewType.TREES);
             FoodParent.View.getInstance().render();
         };
         Controller.prototype.loadTreePage = function (id) {
@@ -32,13 +31,13 @@ var FoodParent;
             that.current = id;
             if (this.bDebug)
                 console.log("loadTreePage(" + id + ")");
-            FoodParent.View.getInstance().SetViewType(2 /* TREE */);
+            FoodParent.View.getInstance().SetViewType(FoodParent.MainViewType.TREE);
             FoodParent.View.getInstance().render();
         };
         Controller.prototype.loadPeoplePage = function () {
             if (this.bDebug)
                 console.log("loadNotePage()");
-            FoodParent.View.getInstance().SetViewType(3 /* PEOPLE */);
+            FoodParent.View.getInstance().SetViewType(FoodParent.MainViewType.PEOPLE);
             FoodParent.View.getInstance().render();
         };
         Controller.prototype.updateGeoLocation = function (callback) {

@@ -127,8 +127,8 @@
         }
 
         public updateTrees(): void {
-            var that: Persons = this;
-            $.each(that.models, function (index: number, model: Person) {
+            var self: Persons = this;
+            $.each(self.models, function (index: number, model: Person) {
                 model.attributes.trees = Model.getInstance().getAdopts().getTreeIds(model.id);
             });
         }

@@ -1,8 +1,7 @@
-var __extends = this.__extends || function (d, b) {
+var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
-    __.prototype = b.prototype;
-    d.prototype = new __();
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
 var FoodParent;
 (function (FoodParent) {
@@ -50,7 +49,7 @@ var FoodParent;
             this.renderTreeInfo = function (tree) {
                 var that = _this;
                 switch (that.viewType) {
-                    case 1 /* TREES */:
+                    case MainViewType.TREES:
                         var views = that.bodyView.getViews();
                         var validView;
                         $.each(views, function (index, view) {
@@ -65,7 +64,7 @@ var FoodParent;
                             validView.render();
                         }
                         break;
-                    case 2 /* TREE */:
+                    case MainViewType.TREE:
                         var views = that.bodyView.getViews();
                         var validView2;
                         var validView3;
@@ -85,9 +84,9 @@ var FoodParent;
                         validView3.customRender(tree);
                         validView4.customRender(tree);
                         break;
-                    case 3 /* PEOPLE */:
+                    case MainViewType.PEOPLE:
                         break;
-                    case 4 /* ABOUT */:
+                    case MainViewType.ABOUT:
                         break;
                 }
             };
@@ -136,16 +135,16 @@ var FoodParent;
             }
             that.mapView = undefined;
             switch (that.viewType) {
-                case 1 /* TREES */:
+                case MainViewType.TREES:
                     FoodParent.Model.getInstance().fetchAdopts(that.treesViewAfterFetchAdops);
                     break;
-                case 2 /* TREE */:
+                case MainViewType.TREE:
                     FoodParent.Model.getInstance().fetchAdopts(that.treeViewAfterFetchAdops);
                     break;
-                case 3 /* PEOPLE */:
+                case MainViewType.PEOPLE:
                     FoodParent.Model.getInstance().fetchAdopts(that.peopleViewAfterFetchAdops);
                     break;
-                case 4 /* ABOUT */:
+                case MainViewType.ABOUT:
                     break;
             }
             return that;
@@ -154,7 +153,7 @@ var FoodParent;
             var that = this;
             if (that.mapView != undefined) {
                 switch (that.viewType) {
-                    case 1 /* TREES */:
+                    case MainViewType.TREES:
                         var exist = new FoodParent.Trees();
                         var markers = that.mapView.getAllMarkers();
                         $.each(trees.models, function (i, model) {
@@ -187,7 +186,7 @@ var FoodParent;
                             }
                         });
                         break;
-                    case 2 /* TREE */:
+                    case MainViewType.TREE:
                         var exist = new FoodParent.Trees();
                         var markers = that.mapView.getAllMarkers();
                         $.each(trees.models, function (i, model) {
@@ -221,9 +220,9 @@ var FoodParent;
                             }
                         });
                         break;
-                    case 3 /* PEOPLE */:
+                    case MainViewType.PEOPLE:
                         break;
-                    case 4 /* ABOUT */:
+                    case MainViewType.ABOUT:
                         break;
                 }
             }
