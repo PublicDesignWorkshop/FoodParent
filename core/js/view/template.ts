@@ -750,5 +750,71 @@
 
             return template;
         }
+
+        public static getManageDonationsTableViewTemplate(): string {
+            var template = '';
+            template += '<div id="wrapper-mdonations">';
+            template += '<div id="wrapper-mdonations-table">';
+            template += '<div id="wrapper-tablemenu">';
+            template += '<div class="button-outer-frame2 button3"><div class="button-inner-frame2 switch-map">Switch to Map View</div></div>';
+            template += '<div class="button-outer-frame2 button3"><div class="button-inner-frame2 add-location">Add A New Location</div></div>';
+            template += '<div class="button-outer-frame2 button3"><div class="button-inner-frame2 collapsible-button" data-target="#filter-list">Filter List</div></div>';
+            template += '<div id="filter-list" class="collapsible-list">';
+            template += '</div>';
+            template += '</div>';
+
+            template += '<div id="content-location-table">';
+            template += '<div class="new-location hidden">';
+            template += '</div>';
+            template += '<div class="list-title">List of Locations</div>';
+            template += '<div class="list-location">';
+            template += '</div>';
+            template += '</div>';
+
+            template += '</div>';
+            template += '</div>';
+            return template;
+        }
+
+        public static getManageDonationViewTemplate(): string {
+            var template = '';
+            template += '<div id="wrapper-manage-donation">';
+            template += '<div class="outer-frame">';
+            template += '<div class="inner-frame">';
+
+
+            template += '<div id="wrapper-manage-donation-table">';
+            template += '<div id="wrapper-tablemenu">';
+            template += '<div class="button-outer-frame2 button3"><div class="button-inner-frame2 collapsible-button" data-target="#filter-list">Filter List</div></div>';
+            template += '<div id="filter-list" class="collapsible-list">';
+            template += '</div>';
+
+            template += '<div class="button-outer-frame2 button3"><div class="button-inner-frame2 collapsible-button" data-target="#forage-list">Foragable List</div></div>';
+            template += '<div id="forage-list" class="collapsible-list hidden">';
+            template += '</div>';
+            template += '</div>';
+
+            template += '<div id="content-manage-adoption-table">';
+            template += '<div class="view-title">Food Donation</div>';
+            template += '<div class="view-description">Click <i class="fa fa-plus-square fa-1x"></i> icon to donate food for <strong><i><%= placename %></i></strong>.</div>';
+            template += '<div class="new-donation"></div>';
+            template += '<div class="button-outer-frame button1"><div class="button-inner-frame button-submit-donation">Submit Donations</div></div>';
+            template += '<br/>';
+            template += '<div><strong>List of Trees</strong></div>';
+            template += '<div class="list-donation" data-target="<%= placeid %>">';
+            template += '</div>';
+            template += '</div>';
+            template += '</div>';
+
+            template += '<div class="top-right-button button-close">';
+            template += '<i class="fa fa-remove fa-2x"></i>';
+            template += '</div>';
+
+
+            template += '</div>';
+            template += '</div>';
+            template += '</div>';
+            return template;
+        }
     }
 }

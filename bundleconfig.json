@@ -49,6 +49,8 @@
       "core/js/view/gridformat/treegridformat.js",
       "core/js/view/gridformat/persongridformat.js",
       "core/js/view/gridformat/adoptiongridformat.js",
+      "core/js/view/gridformat/locationgridformat.js",
+      "core/js/view/gridformat/donationgridformat.js",
       // View
       "core/js/view/template.js",
       "core/js/view/baseview.js",
@@ -62,6 +64,7 @@
       "core/js/view/messageview.js",
       "core/js/view/mpeopleview.js",
       "core/js/view/postview.js",
+      "core/js/view/mdonationsview.js",
       // Model
       "core/js/model/model.js",
       "core/js/model/adopt.js",
@@ -71,7 +74,9 @@
       "core/js/model/tree.js",
       "core/js/model/flag.js",
       "core/js/model/note.js",
-      "core/js/model/person.js"
+      "core/js/model/person.js",
+      "core/js/model/place.js",
+      "core/js/model/donation.js"
     ]
   },
   {
@@ -110,6 +115,7 @@
       "core/css/leaflet.css",
       "core/css/input.css",
       "core/css/mpeople.css",
+      "core/css/mdonations.css",
 
       // Print (not working for safari)
       "core/css/print.css",

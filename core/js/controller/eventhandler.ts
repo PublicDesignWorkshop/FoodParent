@@ -10,7 +10,7 @@
         UPDATE_COMMENT, UPDATE_RATING, UPDATE_COVER, UPDATE_DATE, ADD_PICTURE
     }
     export enum VIEW_STATUS {
-        NONE, HOME, MANAGE_TREES, PARENT_TREES, GEO_ERROR, NETWORK_ERROR, CONFIRM, MANAGE_PEOPLE, MANAGE_ADOPTION, DETAIL_TREE, IMAGENOTE_TREE, POST_NOTE
+        NONE, HOME, MANAGE_TREES, PARENT_TREES, GEO_ERROR, NETWORK_ERROR, CONFIRM, MANAGE_PEOPLE, MANAGE_ADOPTION, DETAIL_TREE, IMAGENOTE_TREE, POST_NOTE, MANAGE_DONATIONS, MANAGE_DONATION
     }
     export enum VIEW_MODE {
         NONE, MAP, GRAPHIC, TABLE
@@ -62,6 +62,9 @@
             } else if (viewStatus == VIEW_STATUS.DETAIL_TREE) {
                 new MovePaceBarToUnderNav().execute();
                 new RenderDetailTreeViewCommand({ el: Setting.getMainWrapperElement(), viewMode: option.viewMode, id: option.id }).execute();
+            } else if (viewStatus == VIEW_STATUS.MANAGE_DONATIONS) {
+                new MovePaceBarToUnderNav().execute();
+                new RenderManageDonationsViewCommand({ el: Setting.getMainWrapperElement(), viewMode: option.viewMode, id: option.id }).execute();
             }
 
             View.getNavView().setActiveNavItem(viewStatus);
@@ -85,6 +88,8 @@
                     new NavigateCommand({ hash: 'mtrees', viewMode: VIEW_MODE.MAP, id: 0 }).execute();
                 } else if (el.hasClass('people')) {
                     new NavigateCommand({ hash: 'mpeople', viewMode: VIEW_MODE.TABLE, id: 0 }).execute();
+                } else if (el.hasClass('donations')) {
+                    new NavigateCommand({ hash: 'mdonations', viewMode: VIEW_MODE.TABLE, id: 0 }).execute();
                 }
             }
 
@@ -172,6 +177,18 @@
                         if (View.getDetailTreeView()) {
                             (<DetailTreeGraphicView>View.getDetailTreeView()).refreshTreeInfo();
                         }
+                    }
+                    break;
+                case VIEW_STATUS.MANAGE_DONATIONS:
+                    if (el.hasClass('manage-donation-item')) {
+                        new RenderManageDonationViewCommand({ el: Setting.getPopWrapperElement(), place: options.place }).execute();
+                    }
+                    break;
+                case VIEW_STATUS.MANAGE_DONATION:
+                    if (el.hasClass('button-submit-donation')) {
+                        
+                    } else if (el.hasClass('button-close')) {
+                        new RemoveAlertViewCommand({ delay: Setting.getRemovePopupDuration() }).execute();
                     }
                     break;
             }
@@ -313,6 +330,19 @@
                     self._lastCommand = new DeleteAdoption({ tree: tree, person: person }, success, error, undoSuccess);
                     break;
 
+            }
+            if (self._lastCommand != undefined) {
+                self._lastCommand.execute();
+            }
+        }
+
+        public static handleDonationData(donations: Donations, dataMode: DATA_MODE, args: any, success?: Function, error?: Function, undoSuccess?: Function): void {
+            var self: EventHandler = EventHandler._instance;
+            self._lastCommand = null;
+            switch (dataMode) {
+                case DATA_MODE.CREATE:
+                    self._lastCommand = new CreateAdoption({ tree: tree, person: person }, success, error, undoSuccess);
+                    break;
             }
             if (self._lastCommand != undefined) {
                 self._lastCommand.execute();

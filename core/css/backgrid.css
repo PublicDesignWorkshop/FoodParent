@@ -1,5 +1,5 @@
 ﻿@media all {
-    .list-tree td, .new-tree td, .list-people td, .list-people th, .new-person td, .list-adoption td {
+    .list-tree td, .new-tree td, .list-people td, .list-people th, .new-person td, .list-adoption td, .list-location td, .new-location td, .list-donation td, .new-donation td {
         color: #222222;
         font-size: small;
     }
@@ -119,5 +119,34 @@
 
     .list-adoption td {
         border-bottom: 1px solid rgba(94, 78, 81, 0.15);
+    }
+
+    .list-location .backgrid .name {
+        width: 15%;
+    }
+    .list-location .backgrid .description {
+        width: 25%;
+    }
+    .list-location .backgrid .address {
+        width: 25%;
+    }
+    .list-location .backgrid .lat {
+        width: 10%;
+    }
+    .list-location .backgrid .lng {
+        width: 10%;
+    }
+
+    .new-donation .backgrid .place {
+        width: 20%;
+    }
+    .new-donation .backgrid .tree {
+        width: 20%;
+    }
+    .new-donation .backgrid .quantity {
+        width: 30%;
+    }
+    .new-donation .backgrid .date {
+        width: 30%;
     }
 }

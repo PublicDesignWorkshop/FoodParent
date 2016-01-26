@@ -353,4 +353,43 @@ var FoodParent;
         return RenderMessageViewCommand;
     })();
     FoodParent.RenderMessageViewCommand = RenderMessageViewCommand;
+    var RenderManageDonationsViewCommand = (function () {
+        function RenderManageDonationsViewCommand(args) {
+            var self = this;
+            self._el = args.el;
+            self._viewMode = args.viewMode;
+            self._id = args.id;
+        }
+        RenderManageDonationsViewCommand.prototype.execute = function () {
+            var self = this;
+            if (FoodParent.View.getManageDonationsView()) {
+            }
+            else {
+                var view = FoodParent.ManageDonationsViewFractory.create(self._el, self._viewMode, self._id).render();
+                FoodParent.View.addChild(view);
+                FoodParent.View.setManageDonationsView(view);
+            }
+        };
+        RenderManageDonationsViewCommand.prototype.undo = function () {
+        };
+        return RenderManageDonationsViewCommand;
+    })();
+    FoodParent.RenderManageDonationsViewCommand = RenderManageDonationsViewCommand;
+    var RenderManageDonationViewCommand = (function () {
+        function RenderManageDonationViewCommand(args) {
+            var self = this;
+            self._el = args.el;
+            self._place = args.place;
+        }
+        RenderManageDonationViewCommand.prototype.execute = function () {
+            var self = this;
+            var view = FoodParent.DonationManageViewFactory.create(self._el, self._place).render();
+            FoodParent.View.setPopupView(view);
+            FoodParent.View.setViewStatus(FoodParent.VIEW_STATUS.MANAGE_DONATION);
+        };
+        RenderManageDonationViewCommand.prototype.undo = function () {
+        };
+        return RenderManageDonationViewCommand;
+    })();
+    FoodParent.RenderManageDonationViewCommand = RenderManageDonationViewCommand;
 })(FoodParent || (FoodParent = {}));

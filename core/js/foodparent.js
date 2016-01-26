@@ -43175,6 +43175,43 @@ var FoodParent;
             });
             Controller.pushXHR(xhr1);
         };
+        Controller.fetchAllLocations = function (success, error) {
+            var xhr1 = FoodParent.Model.fetchAllPlaces();
+            $.when(xhr1).then(function () {
+                Controller.removeXHR(xhr1);
+                if (success) {
+                    success();
+                }
+            }, function () {
+                Controller.removeXHR(xhr1);
+                if (error) {
+                    error(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+                }
+            });
+        };
+        Controller.fetchAllDonations = function (success, error) {
+            var xhr1 = FoodParent.Model.fetchAllDonations();
+            var xhr2 = FoodParent.Model.fetchAllTrees();
+            var xhr3 = FoodParent.Model.fetchAllPlaces();
+            var xhr4 = FoodParent.Model.fetchAllFoods();
+            $.when(xhr1, xhr2, xhr3, xhr4).then(function () {
+                Controller.removeXHR(xhr1);
+                Controller.removeXHR(xhr2);
+                Controller.removeXHR(xhr3);
+                Controller.removeXHR(xhr4);
+                if (success) {
+                    success();
+                }
+            }, function () {
+                Controller.removeXHR(xhr1);
+                Controller.removeXHR(xhr2);
+                Controller.removeXHR(xhr3);
+                Controller.removeXHR(xhr4);
+                if (error) {
+                    error(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+                }
+            });
+        };
         Controller._instance = new Controller();
         Controller.TAG = "Controller - ";
         return Controller;
@@ -43193,6 +43230,7 @@ var FoodParent;
                 "mtrees/:viewMode/:id": "manageTrees",
                 "mtree/:viewMode/:id": "manageTree",
                 "mpeople/:viewMode/:id": "managePeople",
+                "mdonations/:viewMode/:id": "manageDonations",
                 "ptrees": "parentTrees",
             };
             _super.call(this, options);
@@ -43201,20 +43239,19 @@ var FoodParent;
             return Router._instance;
         };
         Router.prototype.home = function () {
-            console.log(Router.TAG + "we have loaded the home page.");
             FoodParent.EventHandler.handleNavigate(FoodParent.VIEW_STATUS.HOME);
         };
         Router.prototype.manageTrees = function (viewMode, id) {
-            console.log(Router.TAG + "we have loaded the manage trees page.");
             FoodParent.EventHandler.handleNavigate(FoodParent.VIEW_STATUS.MANAGE_TREES, { viewMode: viewMode, id: id });
         };
         Router.prototype.manageTree = function (viewMode, id) {
-            console.log(Router.TAG + "we have loaded the manage tree page.");
             FoodParent.EventHandler.handleNavigate(FoodParent.VIEW_STATUS.DETAIL_TREE, { viewMode: viewMode, id: id });
         };
         Router.prototype.managePeople = function (viewMode, id) {
-            console.log(Router.TAG + "we have loaded the manage trees page.");
             FoodParent.EventHandler.handleNavigate(FoodParent.VIEW_STATUS.MANAGE_PEOPLE, { viewMode: viewMode, id: id });
+        };
+        Router.prototype.manageDonations = function (viewMode, id) {
+            FoodParent.EventHandler.handleNavigate(FoodParent.VIEW_STATUS.MANAGE_DONATIONS, { viewMode: viewMode, id: id });
         };
         Router._instance = new Router();
         Router.TAG = "Router - ";
@@ -43264,6 +43301,8 @@ var FoodParent;
         VIEW_STATUS[VIEW_STATUS["DETAIL_TREE"] = 9] = "DETAIL_TREE";
         VIEW_STATUS[VIEW_STATUS["IMAGENOTE_TREE"] = 10] = "IMAGENOTE_TREE";
         VIEW_STATUS[VIEW_STATUS["POST_NOTE"] = 11] = "POST_NOTE";
+        VIEW_STATUS[VIEW_STATUS["MANAGE_DONATIONS"] = 12] = "MANAGE_DONATIONS";
+        VIEW_STATUS[VIEW_STATUS["MANAGE_DONATION"] = 13] = "MANAGE_DONATION";
     })(FoodParent.VIEW_STATUS || (FoodParent.VIEW_STATUS = {}));
     var VIEW_STATUS = FoodParent.VIEW_STATUS;
     (function (VIEW_MODE) {
@@ -43321,6 +43360,10 @@ var FoodParent;
                 new FoodParent.MovePaceBarToUnderNav().execute();
                 new FoodParent.RenderDetailTreeViewCommand({ el: FoodParent.Setting.getMainWrapperElement(), viewMode: option.viewMode, id: option.id }).execute();
             }
+            else if (viewStatus == VIEW_STATUS.MANAGE_DONATIONS) {
+                new FoodParent.MovePaceBarToUnderNav().execute();
+                new FoodParent.RenderManageDonationsViewCommand({ el: FoodParent.Setting.getMainWrapperElement(), viewMode: option.viewMode, id: option.id }).execute();
+            }
             FoodParent.View.getNavView().setActiveNavItem(viewStatus);
             FoodParent.View.setViewStatus(viewStatus);
         };
@@ -43343,6 +43386,9 @@ var FoodParent;
                 }
                 else if (el.hasClass('people')) {
                     new FoodParent.NavigateCommand({ hash: 'mpeople', viewMode: VIEW_MODE.TABLE, id: 0 }).execute();
+                }
+                else if (el.hasClass('donations')) {
+                    new FoodParent.NavigateCommand({ hash: 'mdonations', viewMode: VIEW_MODE.TABLE, id: 0 }).execute();
                 }
             }
             // Handle specific event on each view status.
@@ -43441,6 +43487,18 @@ var FoodParent;
                         if (FoodParent.View.getDetailTreeView()) {
                             FoodParent.View.getDetailTreeView().refreshTreeInfo();
                         }
+                    }
+                    break;
+                case VIEW_STATUS.MANAGE_DONATIONS:
+                    if (el.hasClass('manage-donation-item')) {
+                        new FoodParent.RenderManageDonationViewCommand({ el: FoodParent.Setting.getPopWrapperElement(), place: options.place }).execute();
+                    }
+                    break;
+                case VIEW_STATUS.MANAGE_DONATION:
+                    if (el.hasClass('button-submit-donation')) {
+                    }
+                    else if (el.hasClass('button-close')) {
+                        new FoodParent.RemoveAlertViewCommand({ delay: FoodParent.Setting.getRemovePopupDuration() }).execute();
                     }
                     break;
             }
@@ -43985,6 +44043,45 @@ var FoodParent;
         return RenderMessageViewCommand;
     })();
     FoodParent.RenderMessageViewCommand = RenderMessageViewCommand;
+    var RenderManageDonationsViewCommand = (function () {
+        function RenderManageDonationsViewCommand(args) {
+            var self = this;
+            self._el = args.el;
+            self._viewMode = args.viewMode;
+            self._id = args.id;
+        }
+        RenderManageDonationsViewCommand.prototype.execute = function () {
+            var self = this;
+            if (FoodParent.View.getManageDonationsView()) {
+            }
+            else {
+                var view = FoodParent.ManageDonationsViewFractory.create(self._el, self._viewMode, self._id).render();
+                FoodParent.View.addChild(view);
+                FoodParent.View.setManageDonationsView(view);
+            }
+        };
+        RenderManageDonationsViewCommand.prototype.undo = function () {
+        };
+        return RenderManageDonationsViewCommand;
+    })();
+    FoodParent.RenderManageDonationsViewCommand = RenderManageDonationsViewCommand;
+    var RenderManageDonationViewCommand = (function () {
+        function RenderManageDonationViewCommand(args) {
+            var self = this;
+            self._el = args.el;
+            self._place = args.place;
+        }
+        RenderManageDonationViewCommand.prototype.execute = function () {
+            var self = this;
+            var view = FoodParent.DonationManageViewFactory.create(self._el, self._place).render();
+            FoodParent.View.setPopupView(view);
+            FoodParent.View.setViewStatus(FoodParent.VIEW_STATUS.MANAGE_DONATION);
+        };
+        RenderManageDonationViewCommand.prototype.undo = function () {
+        };
+        return RenderManageDonationViewCommand;
+    })();
+    FoodParent.RenderManageDonationViewCommand = RenderManageDonationViewCommand;
 })(FoodParent || (FoodParent = {}));
 
 var FoodParent;
@@ -46847,6 +46944,730 @@ var AdoptionColumn = [
     }
 ];
 
+var LocationNameCellEditor = Backgrid.Cell.extend({
+    tagName: "input",
+    attributes: {
+        type: "text"
+    },
+    events: {
+        "blur": "saveOrCancel",
+        "keydown": "saveOrCancel"
+    },
+    initialize: function (options) {
+        Backgrid.InputCellEditor.__super__.initialize.apply(this, arguments);
+        if (options.placeholder) {
+            this.$el.attr("placeholder", options.placeholder);
+        }
+    },
+    render: function () {
+        var model = this.model;
+        this.$el.val(this.formatter.fromRaw(model.get(this.column.get("name")), model));
+        return this;
+    },
+    saveOrCancel: function (e) {
+        var self = this;
+        var tree = this.model;
+        var formatter = this.formatter;
+        var model = this.model;
+        var column = this.column;
+        var command = new Backgrid.Command(e);
+        var blurred = e.type === "blur";
+        if (command.moveUp() || command.moveDown() || command.moveLeft() || command.moveRight() ||
+            command.save() || blurred) {
+            e.preventDefault();
+            e.stopPropagation();
+            var val = this.$el.val();
+            var newValue = formatter.toRaw(val, model);
+            if (_.isUndefined(newValue)) {
+                model.trigger("backgrid:error", model, column, val);
+            }
+            else {
+                if (tree.getId() == undefined) {
+                    model.set(column.get("name"), newValue);
+                    model.trigger("backgrid:edited", model, column, command);
+                }
+                else {
+                    if (newValue.trim() != tree.getDescription().trim()) {
+                    }
+                    else {
+                        model.trigger("backgrid:edited", model, column, command);
+                    }
+                }
+            }
+        }
+        else if (command.cancel()) {
+            // undo
+            e.stopPropagation();
+            model.trigger("backgrid:edited", model, column, command);
+        }
+    },
+    postRender: function (model, column) {
+        if (column == null || column.get("name") == this.column.get("name")) {
+            // move the cursor to the end on firefox if text is right aligned
+            if (this.$el.css("text-align") === "right") {
+                var val = this.$el.val();
+                this.$el.focus().val(null).val(val);
+            }
+            else
+                this.$el.focus();
+        }
+        return this;
+    }
+});
+var LocationDescriptionCellEditor = Backgrid.Cell.extend({
+    tagName: "input",
+    attributes: {
+        type: "text"
+    },
+    events: {
+        "blur": "saveOrCancel",
+        "keydown": "saveOrCancel"
+    },
+    initialize: function (options) {
+        Backgrid.InputCellEditor.__super__.initialize.apply(this, arguments);
+        if (options.placeholder) {
+            this.$el.attr("placeholder", options.placeholder);
+        }
+    },
+    render: function () {
+        var model = this.model;
+        this.$el.val(this.formatter.fromRaw(model.get(this.column.get("name")), model));
+        return this;
+    },
+    saveOrCancel: function (e) {
+        var self = this;
+        var tree = this.model;
+        var formatter = this.formatter;
+        var model = this.model;
+        var column = this.column;
+        var command = new Backgrid.Command(e);
+        var blurred = e.type === "blur";
+        if (command.moveUp() || command.moveDown() || command.moveLeft() || command.moveRight() ||
+            command.save() || blurred) {
+            e.preventDefault();
+            e.stopPropagation();
+            var val = this.$el.val();
+            var newValue = formatter.toRaw(val, model);
+            if (_.isUndefined(newValue)) {
+                model.trigger("backgrid:error", model, column, val);
+            }
+            else {
+                if (tree.getId() == undefined) {
+                    model.set(column.get("name"), newValue);
+                    model.trigger("backgrid:edited", model, column, command);
+                }
+                else {
+                    if (newValue.trim() != tree.getDescription().trim()) {
+                    }
+                    else {
+                        model.trigger("backgrid:edited", model, column, command);
+                    }
+                }
+            }
+        }
+        else if (command.cancel()) {
+            // undo
+            e.stopPropagation();
+            model.trigger("backgrid:edited", model, column, command);
+        }
+    },
+    postRender: function (model, column) {
+        if (column == null || column.get("name") == this.column.get("name")) {
+            // move the cursor to the end on firefox if text is right aligned
+            if (this.$el.css("text-align") === "right") {
+                var val = this.$el.val();
+                this.$el.focus().val(null).val(val);
+            }
+            else
+                this.$el.focus();
+        }
+        return this;
+    }
+});
+var LocationLatitudeCellEditor = Backgrid.Cell.extend({
+    tagName: "input",
+    attributes: {
+        type: "text"
+    },
+    events: {
+        "blur": "saveOrCancel",
+        "keydown": "saveOrCancel"
+    },
+    initialize: function (options) {
+        Backgrid.InputCellEditor.__super__.initialize.apply(this, arguments);
+        if (options.placeholder) {
+            this.$el.attr("placeholder", options.placeholder);
+        }
+    },
+    render: function () {
+        var model = this.model;
+        this.$el.val(this.formatter.fromRaw(model.get(this.column.get("name")), model));
+        return this;
+    },
+    saveOrCancel: function (e) {
+        var self = this;
+        var tree = this.model;
+        var formatter = this.formatter;
+        var model = this.model;
+        var column = this.column;
+        var command = new Backgrid.Command(e);
+        var blurred = e.type === "blur";
+        if (command.moveUp() || command.moveDown() || command.moveLeft() || command.moveRight() ||
+            command.save() || blurred) {
+            e.preventDefault();
+            e.stopPropagation();
+            var val = this.$el.val();
+            var newValue = formatter.toRaw(val, model);
+            if (_.isUndefined(newValue)) {
+                model.trigger("backgrid:error", model, column, val);
+            }
+            else {
+                if (tree.getId() == undefined) {
+                    model.set(column.get("name"), newValue);
+                    model.trigger("backgrid:edited", model, column, command);
+                }
+                else {
+                }
+            }
+        }
+        else if (command.cancel()) {
+            // undo
+            e.stopPropagation();
+            model.trigger("backgrid:edited", model, column, command);
+        }
+    },
+    postRender: function (model, column) {
+        if (column == null || column.get("name") == this.column.get("name")) {
+            // move the cursor to the end on firefox if text is right aligned
+            if (this.$el.css("text-align") === "right") {
+                var val = this.$el.val();
+                this.$el.focus().val(null).val(val);
+            }
+            else
+                this.$el.focus();
+        }
+        return this;
+    }
+});
+var LocationLongitudeCellEditor = Backgrid.Cell.extend({
+    tagName: "input",
+    attributes: {
+        type: "text"
+    },
+    events: {
+        "blur": "saveOrCancel",
+        "keydown": "saveOrCancel"
+    },
+    initialize: function (options) {
+        Backgrid.InputCellEditor.__super__.initialize.apply(this, arguments);
+        if (options.placeholder) {
+            this.$el.attr("placeholder", options.placeholder);
+        }
+    },
+    render: function () {
+        var model = this.model;
+        this.$el.val(this.formatter.fromRaw(model.get(this.column.get("name")), model));
+        return this;
+    },
+    saveOrCancel: function (e) {
+        var tree = this.model;
+        var formatter = this.formatter;
+        var model = this.model;
+        var column = this.column;
+        var command = new Backgrid.Command(e);
+        var blurred = e.type === "blur";
+        if (command.moveUp() || command.moveDown() || command.moveLeft() || command.moveRight() ||
+            command.save() || blurred) {
+            e.preventDefault();
+            e.stopPropagation();
+            var val = this.$el.val();
+            var newValue = formatter.toRaw(val, model);
+            if (_.isUndefined(newValue)) {
+                model.trigger("backgrid:error", model, column, val);
+            }
+            else {
+                if (tree.getId() == undefined) {
+                    model.set(column.get("name"), newValue);
+                    model.trigger("backgrid:edited", model, column, command);
+                }
+                else {
+                }
+            }
+        }
+        else if (command.cancel()) {
+            // undo
+            e.stopPropagation();
+            model.trigger("backgrid:edited", model, column, command);
+        }
+    },
+    postRender: function (model, column) {
+        if (column == null || column.get("name") == this.column.get("name")) {
+            // move the cursor to the end on firefox if text is right aligned
+            if (this.$el.css("text-align") === "right") {
+                var val = this.$el.val();
+                this.$el.focus().val(null).val(val);
+            }
+            else
+                this.$el.focus();
+        }
+        return this;
+    }
+});
+var LocationAddressCell = Backgrid.Cell.extend({
+    template: _.template('<div class="cell-group"><%= address %><div class="cell-button cell-refresh"><i class="fa fa-refresh fa-1x"></i></div></div>'),
+    events: {
+        "click .cell-refresh": "_refresh",
+    },
+    render: function () {
+        var self = this;
+        var element = $(self.el);
+        FoodParent.GeoLocation.reverseGeocoding(self.model.getLocation(), function (data) {
+            element.html(self.template({
+                address: "<div>" + data.road + ", " + data.county + ", " + data.state + ", " + data.postcode + "</div>",
+            }));
+        }, function () {
+            FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+        });
+        self.delegateEvents();
+        return this;
+    },
+    _refresh: function (e) {
+        var self = this;
+        var element = $(self.el);
+        FoodParent.GeoLocation.reverseGeocoding(self.model.getLocation(), function (data) {
+            element.html(self.template({
+                address: "<div>" + data.road + ", " + data.county + ", " + data.state + ", " + data.postcode + "</div>",
+            }));
+        }, function () {
+            FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+        });
+    },
+});
+var LocationMapViewCell = Backgrid.Cell.extend({
+    template: _.template('<div class="marker-control-item mapview-item" data-target="<%= treeid %>"><i class="fa fa-map-marker fa-2x"></i></div>'),
+    events: {
+        "click .mapview-item": "_showMapView"
+    },
+    _showMapView: function (event) {
+        var tree = parseInt($(event.target).attr('data-target'));
+        //console.log(tree);
+        /*
+        FoodParent.EventHandler.handleMouseClick($(event.currentTarget), this, { id: tree });
+        */
+        //FoodParent.Router.getInstance().navigate("tree/" + this.model.getId(), { trigger: true });
+    },
+    render: function () {
+        $(this.el).html(this.template({
+            treeid: this.model.getId(),
+        }));
+        this.delegateEvents();
+        return this;
+    }
+});
+var ManageDonationViewCell = Backgrid.Cell.extend({
+    template: _.template('<div class="marker-control-item manage-donation-item" data-target="<%= treeid %>"><i class="fa fa-ambulance fa-2x"></i></div>'),
+    events: {
+        "click .marker-control-item": "_manageDonation"
+    },
+    _manageDonation: function (event) {
+        var place = FoodParent.Model.getPlaces().findWhere({ id: parseInt($(event.target).attr('data-target')) });
+        if (place != undefined) {
+            FoodParent.EventHandler.handleMouseClick($(event.currentTarget), this, { place: place });
+        }
+        //var tree: number = parseInt($(event.target).attr('data-target'));
+        //
+    },
+    render: function () {
+        $(this.el).html(this.template({
+            treeid: this.model.getId(),
+        }));
+        this.delegateEvents();
+        return this;
+    }
+});
+var LocationDetailCell = Backgrid.Cell.extend({
+    template: _.template('<div class="marker-control-item tree-detail" data-target="<%= treeid %>"><i class="fa fa-arrow-circle-right fa-2x"></i></div>'),
+    events: {
+        "click .marker-control-item": "_showDetail"
+    },
+    _showDetail: function (event) {
+        //var tree: number = parseInt($(event.target).attr('data-target'));
+        //FoodParent.EventHandler.handleMouseClick($(event.currentTarget), this, { tree: tree });
+    },
+    render: function () {
+        $(this.el).html(this.template({
+            treeid: this.model.getId(),
+        }));
+        this.delegateEvents();
+        return this;
+    }
+});
+var LocationDeleteCell = Backgrid.Cell.extend({
+    template: _.template('<div class="marker-control-item"><i class="fa fa-remove fa-2x"></i></div>'),
+    events: {
+        "click": "_deleteRow"
+    },
+    _deleteRow: function (e) {
+        var tree = this.model;
+        /*
+        if (tree.getId() == undefined) {
+            $('#wrapper-mtrees .new-tree').addClass('hidden');
+        } else {
+            FoodParent.EventHandler.handleTreeData(tree, FoodParent.DATA_MODE.DELETE, {}, function () {
+                var food: FoodParent.Food = FoodParent.Model.getFoods().findWhere({ id: tree.getFoodId() });
+                FoodParent.EventHandler.handleDataChange("<strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has deleted successfully.", false);
+            }, function () {
+                FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+            });
+        }
+        */
+    },
+    render: function () {
+        $(this.el).html(this.template());
+        this.delegateEvents();
+        return this;
+    }
+});
+var LocationColumn = [
+    {
+        name: "name",
+        label: "Name",
+        editable: true,
+        formatter: Backgrid.StringFormatter,
+        cell: Backgrid.Cell.extend({ editor: LocationNameCellEditor }),
+    }, {
+        name: "description",
+        label: "Description",
+        editable: true,
+        formatter: Backgrid.StringFormatter,
+        cell: Backgrid.Cell.extend({ editor: LocationDescriptionCellEditor }),
+    }, {
+        name: "address",
+        label: "Address",
+        editable: false,
+        cell: LocationAddressCell,
+    }, {
+        name: "lat",
+        label: "Latitude",
+        editable: true,
+        formatter: Backgrid.NumberFormatter,
+        cell: Backgrid.Cell.extend({ editor: LocationLatitudeCellEditor }),
+    }, {
+        name: "lng",
+        label: "Longitude",
+        editable: true,
+        formatter: Backgrid.NumberFormatter,
+        cell: Backgrid.Cell.extend({ editor: LocationLongitudeCellEditor }),
+    }, {
+        label: "",
+        sortable: false,
+        editable: false,
+        cell: LocationMapViewCell,
+    }, {
+        label: "",
+        sortable: false,
+        editable: false,
+        cell: ManageDonationViewCell,
+    }, {
+        label: "",
+        sortable: false,
+        editable: false,
+        cell: LocationDetailCell,
+    }, {
+        label: "",
+        sortable: false,
+        editable: false,
+        cell: LocationDeleteCell,
+    }
+];
+
+var DonationAddCell = Backgrid.Cell.extend({
+    template: _.template('<div class="marker-control-item marker-add-adoption"><i class="fa fa-plus-square fa-2x"></i></div>'),
+    events: {
+        "click .marker-control-item": "_addDonation",
+    },
+    _addDonation: function (e) {
+        var place = FoodParent.Model.getPlaces().findWhere({ id: parseInt($('.list-donation').attr('data-target')) });
+        var tree = this.model;
+        FoodParent.View.getPopupView().addNewDonation(place, tree);
+        /*
+        var tree: FoodParent.Tree = FoodParent.Model.getTrees().findWhere({ id: parseInt($('.list-donation').attr('data-target')) });
+        var food: FoodParent.Food = FoodParent.Model.getFoods().findWhere({ id: tree.getFoodId() });
+        var person: FoodParent.Person = this.model;
+        FoodParent.EventHandler.handleAdoptionData(tree, person, FoodParent.DATA_MODE.CREATE, {}, function () {
+            FoodParent.EventHandler.handleDataChange("<strong><i>" + person.getName() + "</i></strong> has adopted <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> successfully.", false);
+            (<FoodParent.AdoptionManageView>FoodParent.View.getPopupView())._applyFilter();
+            (<FoodParent.ManageTreesView>FoodParent.View.getManageTreesView()).renderTreeInfo(tree);
+        }, function () {
+            FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+        }, function () {
+            FoodParent.EventHandler.handleDataChange("<strong><i>" + person.getName() + "</i></strong> has unadopted <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> successfully.", false);
+            (<FoodParent.AdoptionManageView>FoodParent.View.getPopupView())._applyFilter();
+            (<FoodParent.ManageTreesView>FoodParent.View.getManageTreesView()).renderTreeInfo(tree);
+        });
+        */
+    },
+    render: function () {
+        var self = this;
+        $(self.el).html(self.template());
+        /*
+        var person: FoodParent.Person = this.model;
+        var treeId: number = parseInt($('.list-adoption').attr('data-target'));
+        if (FoodParent.Model.getAdopts().checkAdoption(treeId, person.getId())) {
+            $(self.el).html('<div class="blank-marker-control-item"></div>');
+        } else {
+            $(self.el).html(self.template());
+        }
+        */
+        this.delegateEvents();
+        return this;
+    }
+});
+var DonationDeleteCell = Backgrid.Cell.extend({
+    template: _.template('<div class="marker-control-item marker-remove-adoption"><i class="fa fa-minus-square fa-2x"></i></div>'),
+    events: {
+        "click .marker-control-item": "_removeDonation",
+    },
+    _removeDonation: function (e) {
+        var donation = this.model;
+        FoodParent.View.getPopupView().removeNewDonation(donation);
+        /*
+        var tree: FoodParent.Tree = FoodParent.Model.getTrees().findWhere({ id: parseInt($('.list-adoption').attr('data-target')) });
+        var food: FoodParent.Food = FoodParent.Model.getFoods().findWhere({ id: tree.getFoodId() });
+        var person: FoodParent.Person = this.model;
+        FoodParent.EventHandler.handleAdoptionData(tree, person, FoodParent.DATA_MODE.DELETE, {}, function () {
+            FoodParent.EventHandler.handleDataChange("<strong><i>" + person.getName() + "</i></strong> has unadopted <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> successfully.", false);
+            (<FoodParent.AdoptionManageView>FoodParent.View.getPopupView())._applyFilter();
+            (<FoodParent.ManageTreesView>FoodParent.View.getManageTreesView()).renderTreeInfo(tree);
+        }, function () {
+            FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+        }, function () {
+            FoodParent.EventHandler.handleDataChange("<strong><i>" + person.getName() + "</i></strong> has adopted <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> successfully.", false);
+            (<FoodParent.AdoptionManageView>FoodParent.View.getPopupView())._applyFilter();
+            (<FoodParent.ManageTreesView>FoodParent.View.getManageTreesView()).renderTreeInfo(tree);
+        });
+        */
+    },
+    render: function () {
+        var self = this;
+        $(self.el).html(self.template());
+        /*
+        var person: FoodParent.Person = this.model;
+        var treeId: number = parseInt($('.list-adoption').attr('data-target'));
+        if (FoodParent.Model.getAdopts().checkAdoption(treeId, person.getId())) {
+            $(self.el).html(self.template());
+        } else {
+            $(self.el).html('<div class="blank-marker-control-item"></div>');
+        }
+        */
+        this.delegateEvents();
+        return this;
+    }
+});
+var DonationTreeCell = Backgrid.Cell.extend({
+    events: {},
+    render: function () {
+        var self = this;
+        var donation = this.model;
+        var treeId = donation.getTreeId();
+        var tree = FoodParent.Model.getTrees().findWhere({ id: treeId });
+        var food = FoodParent.Model.getFoods().findWhere({ id: tree.getFoodId() });
+        var element = $(self.el);
+        element.html(food.getName() + " " + tree.getName());
+        self.delegateEvents();
+        return this;
+    }
+});
+var DonationPlaceCell = Backgrid.Cell.extend({
+    events: {},
+    render: function () {
+        var self = this;
+        var donation = this.model;
+        var placeId = donation.getPlaceId();
+        var place = FoodParent.Model.getPlaces().findWhere({ id: placeId });
+        var element = $(self.el);
+        element.html(place.getName());
+        self.delegateEvents();
+        return this;
+    }
+});
+var DonationQuantityCellEditor = Backgrid.Cell.extend({
+    tagName: "input",
+    attributes: {
+        type: "text"
+    },
+    events: {
+        "blur": "saveOrCancel",
+        "keydown": "saveOrCancel"
+    },
+    initialize: function (options) {
+        Backgrid.InputCellEditor.__super__.initialize.apply(this, arguments);
+        if (options.placeholder) {
+            this.$el.attr("placeholder", options.placeholder);
+        }
+    },
+    render: function () {
+        var model = this.model;
+        this.$el.val(this.formatter.fromRaw(model.get(this.column.get("name")), model));
+        return this;
+    },
+    saveOrCancel: function (e) {
+        var self = this;
+        var donation = this.model;
+        var formatter = this.formatter;
+        var model = this.model;
+        var column = this.column;
+        var command = new Backgrid.Command(e);
+        var blurred = e.type === "blur";
+        if (command.moveUp() || command.moveDown() || command.moveLeft() || command.moveRight() ||
+            command.save() || blurred) {
+            e.preventDefault();
+            e.stopPropagation();
+            var val = this.$el.val();
+            var newValue = formatter.toRaw(val, model);
+            if (_.isUndefined(newValue)) {
+                model.trigger("backgrid:error", model, column, val);
+            }
+            else {
+                if (donation.getId() == undefined) {
+                    model.set(column.get("name"), newValue);
+                    model.trigger("backgrid:edited", model, column, command);
+                }
+            }
+        }
+        else if (command.cancel()) {
+            // undo
+            e.stopPropagation();
+            model.trigger("backgrid:edited", model, column, command);
+        }
+    },
+    postRender: function (model, column) {
+        if (column == null || column.get("name") == this.column.get("name")) {
+            // move the cursor to the end on firefox if text is right aligned
+            if (this.$el.css("text-align") === "right") {
+                var val = this.$el.val();
+                this.$el.focus().val(null).val(val);
+            }
+            else
+                this.$el.focus();
+        }
+        return this;
+    }
+});
+var DonationPickDateCellEditor = Backgrid.Cell.extend({
+    template: _.template('<div class="pickdate"><%= date %></div>'),
+    events: {},
+    _changeDate: function (e) {
+        /*
+        var tree: FoodParent.Tree = FoodParent.Model.getTrees().findWhere({ id: parseInt($('.list-adoption').attr('data-target')) });
+        var food: FoodParent.Food = FoodParent.Model.getFoods().findWhere({ id: tree.getFoodId() });
+        var person: FoodParent.Person = this.model;
+        FoodParent.EventHandler.handleAdoptionData(tree, person, FoodParent.DATA_MODE.DELETE, {}, function () {
+            FoodParent.EventHandler.handleDataChange("<strong><i>" + person.getName() + "</i></strong> has unadopted <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> successfully.", false);
+            (<FoodParent.AdoptionManageView>FoodParent.View.getPopupView())._applyFilter();
+            (<FoodParent.ManageTreesView>FoodParent.View.getManageTreesView()).renderTreeInfo(tree);
+        }, function () {
+            FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+        }, function () {
+            FoodParent.EventHandler.handleDataChange("<strong><i>" + person.getName() + "</i></strong> has adopted <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> successfully.", false);
+            (<FoodParent.AdoptionManageView>FoodParent.View.getPopupView())._applyFilter();
+            (<FoodParent.ManageTreesView>FoodParent.View.getManageTreesView()).renderTreeInfo(tree);
+        });
+        */
+    },
+    render: function () {
+        var self = this;
+        var donation = this.model;
+        var date = donation.getDateForDatePicker();
+        $(self.el).html(self.template({ date: donation.getFormattedDate() }));
+        $(self.el).find('.pickdate').attr({ 'data-value': moment(date).format(FoodParent.Setting.getDateFormat()) });
+        $(self.el).find('.pickdate').pickadate({
+            format: "dd mmm yyyy",
+            today: '',
+            max: new Date(moment(new Date()).valueOf()),
+            clear: '',
+            close: 'Close',
+            onClose: function () {
+                //self._startDate = moment(this.get()).startOf('day').format(FoodParent.Setting.getDateTimeFormat());
+                //self.renderTreeChart(self._tree, self._startDate, self._endDate);
+            }
+        });
+        /*
+        var person: FoodParent.Person = this.model;
+        var treeId: number = parseInt($('.list-adoption').attr('data-target'));
+        if (FoodParent.Model.getAdopts().checkAdoption(treeId, person.getId())) {
+            $(self.el).html(self.template());
+        } else {
+            $(self.el).html('<div class="blank-marker-control-item"></div>');
+        }
+        */
+        this.delegateEvents();
+        return this;
+    }
+});
+var DonationColumn = [
+    {
+        name: "food",
+        label: "Food Type",
+        editable: true,
+    }, {
+        name: "id",
+        label: "#",
+        editable: false,
+        cell: "string",
+    }, {
+        name: "description",
+        label: "Description",
+        editable: true,
+        formatter: Backgrid.StringFormatter,
+        cell: Backgrid.Cell.extend({ editor: TreeDescriptionCellEditor }),
+    }, {
+        name: "address",
+        label: "Address",
+        editable: false,
+        cell: TreeAddressCell,
+    }, {
+        name: "parents",
+        label: "Adoption",
+        editable: false,
+        cell: TreeAdoptionCell,
+    }, {
+        label: "",
+        sortable: false,
+        editable: false,
+        cell: DonationAddCell,
+    }
+];
+var NewDonationColumn = [
+    {
+        name: "place",
+        label: "Place",
+        editable: false,
+        cell: DonationPlaceCell,
+    }, {
+        name: "tree",
+        label: "Tree",
+        editable: false,
+        cell: DonationTreeCell,
+    }, {
+        name: "quantity",
+        label: "Quantity",
+        editable: true,
+        formatter: Backgrid.NumberFormatter,
+        cell: Backgrid.Cell.extend({ editor: DonationQuantityCellEditor }),
+    }, {
+        name: "date",
+        label: "Date",
+        editable: true,
+        cell: DonationPickDateCellEditor,
+    }, {
+        label: "",
+        sortable: false,
+        editable: false,
+        cell: DonationDeleteCell,
+    }
+];
+
 var FoodParent;
 (function (FoodParent) {
     var Template = (function () {
@@ -47472,6 +48293,61 @@ var FoodParent;
             template += '</div>'; // end of #wrapper-note
             return template;
         };
+        Template.getManageDonationsTableViewTemplate = function () {
+            var template = '';
+            template += '<div id="wrapper-mdonations">';
+            template += '<div id="wrapper-mdonations-table">';
+            template += '<div id="wrapper-tablemenu">';
+            template += '<div class="button-outer-frame2 button3"><div class="button-inner-frame2 switch-map">Switch to Map View</div></div>';
+            template += '<div class="button-outer-frame2 button3"><div class="button-inner-frame2 add-location">Add A New Location</div></div>';
+            template += '<div class="button-outer-frame2 button3"><div class="button-inner-frame2 collapsible-button" data-target="#filter-list">Filter List</div></div>';
+            template += '<div id="filter-list" class="collapsible-list">';
+            template += '</div>';
+            template += '</div>';
+            template += '<div id="content-location-table">';
+            template += '<div class="new-location hidden">';
+            template += '</div>';
+            template += '<div class="list-title">List of Locations</div>';
+            template += '<div class="list-location">';
+            template += '</div>';
+            template += '</div>';
+            template += '</div>';
+            template += '</div>';
+            return template;
+        };
+        Template.getManageDonationViewTemplate = function () {
+            var template = '';
+            template += '<div id="wrapper-manage-donation">';
+            template += '<div class="outer-frame">';
+            template += '<div class="inner-frame">';
+            template += '<div id="wrapper-manage-donation-table">';
+            template += '<div id="wrapper-tablemenu">';
+            template += '<div class="button-outer-frame2 button3"><div class="button-inner-frame2 collapsible-button" data-target="#filter-list">Filter List</div></div>';
+            template += '<div id="filter-list" class="collapsible-list">';
+            template += '</div>';
+            template += '<div class="button-outer-frame2 button3"><div class="button-inner-frame2 collapsible-button" data-target="#forage-list">Foragable List</div></div>';
+            template += '<div id="forage-list" class="collapsible-list hidden">';
+            template += '</div>';
+            template += '</div>';
+            template += '<div id="content-manage-adoption-table">';
+            template += '<div class="view-title">Food Donation</div>';
+            template += '<div class="view-description">Click <i class="fa fa-plus-square fa-1x"></i> icon to donate food for <strong><i><%= placename %></i></strong>.</div>';
+            template += '<div class="new-donation"></div>';
+            template += '<div class="button-outer-frame button1"><div class="button-inner-frame button-submit-donation">Submit Donations</div></div>';
+            template += '<br/>';
+            template += '<div><strong>List of Trees</strong></div>';
+            template += '<div class="list-donation" data-target="<%= placeid %>">';
+            template += '</div>';
+            template += '</div>';
+            template += '</div>';
+            template += '<div class="top-right-button button-close">';
+            template += '<i class="fa fa-remove fa-2x"></i>';
+            template += '</div>';
+            template += '</div>';
+            template += '</div>';
+            template += '</div>';
+            return template;
+        };
         Template._instance = new Template();
         return Template;
     })();
@@ -47668,6 +48544,7 @@ var FoodParent;
             View._instance._manageTreesView = null;
             View._instance._managePeopleView = null;
             View._instance._detailTreeView = null;
+            View._instance._manageDonationsView = null;
         };
         View.setMessageView = function (view) {
             View._instance._messageView = view;
@@ -47686,6 +48563,12 @@ var FoodParent;
         };
         View.getPopupView = function () {
             return View._instance._popupView;
+        };
+        View.setManageDonationsView = function (view) {
+            View._instance._manageDonationsView = view;
+        };
+        View.getManageDonationsView = function () {
+            return View._instance._manageDonationsView;
         };
         View.setManageTreesView = function (view) {
             View._instance._manageTreesView = view;
@@ -47856,7 +48739,7 @@ var FoodParent;
                 template = _.template(FoodParent.Template.getNavViewHomeTemplate());
                 data = {};
             }
-            else if (args.viewStatus == FoodParent.VIEW_STATUS.MANAGE_TREES || args.viewStatus == FoodParent.VIEW_STATUS.MANAGE_PEOPLE || args.viewStatus == FoodParent.VIEW_STATUS.DETAIL_TREE) {
+            else if (args.viewStatus == FoodParent.VIEW_STATUS.MANAGE_TREES || args.viewStatus == FoodParent.VIEW_STATUS.MANAGE_PEOPLE || args.viewStatus == FoodParent.VIEW_STATUS.DETAIL_TREE || args.viewStatus == FoodParent.VIEW_STATUS.MANAGE_DONATIONS) {
                 template = _.template(FoodParent.Template.getNavViewManageTemplate());
                 data = {};
             }
@@ -47866,7 +48749,7 @@ var FoodParent;
                 self.$('#background-nav-left').css({ left: '-76%' });
                 self.$('#background-nav-left').css({ transform: 'skew(-10deg, 0)' });
             }
-            else if (args.viewStatus == FoodParent.VIEW_STATUS.MANAGE_TREES || args.viewStatus == FoodParent.VIEW_STATUS.MANAGE_PEOPLE || args.viewStatus == FoodParent.VIEW_STATUS.DETAIL_TREE) {
+            else if (args.viewStatus == FoodParent.VIEW_STATUS.MANAGE_TREES || args.viewStatus == FoodParent.VIEW_STATUS.MANAGE_PEOPLE || args.viewStatus == FoodParent.VIEW_STATUS.DETAIL_TREE || args.viewStatus == FoodParent.VIEW_STATUS.MANAGE_DONATIONS) {
                 self.renderNavManageItems();
                 self.$('#background-nav-left').css({ left: '-30%' });
                 self.$('#background-nav-left').css({ transform: 'skew(-0deg, 0)' });
@@ -47888,7 +48771,7 @@ var FoodParent;
                 self.$('#background-nav-left').animate({ left: '-76%' }, FoodParent.Setting.getNavAnimDuration());
                 self.$('#background-nav-left').css({ transform: 'skew(-10deg, 0)' });
             }
-            else if (args.viewStatus == FoodParent.VIEW_STATUS.MANAGE_TREES || args.viewStatus == FoodParent.VIEW_STATUS.MANAGE_PEOPLE || args.viewStatus == FoodParent.VIEW_STATUS.DETAIL_TREE) {
+            else if (args.viewStatus == FoodParent.VIEW_STATUS.MANAGE_TREES || args.viewStatus == FoodParent.VIEW_STATUS.MANAGE_PEOPLE || args.viewStatus == FoodParent.VIEW_STATUS.DETAIL_TREE || args.viewStatus == FoodParent.VIEW_STATUS.MANAGE_DONATIONS) {
                 self.renderNavManageItems();
                 self.$('#background-nav-left').animate({ left: '-30%' }, FoodParent.Setting.getNavAnimDuration());
                 self.$('#background-nav-left').css({ transform: 'skew(-0deg, 0)' });
@@ -50506,6 +51389,344 @@ var FoodParent;
     FoodParent.PostNoteView = PostNoteView;
 })(FoodParent || (FoodParent = {}));
 
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var FoodParent;
+(function (FoodParent) {
+    var ManageDonationsViewFractory = (function () {
+        function ManageDonationsViewFractory(args) {
+            if (ManageDonationsViewFractory._instance) {
+                throw new Error("Error: Instantiation failed: Use ManageDonationsViewFractory.getInstance() instead of new.");
+            }
+            ManageDonationsViewFractory._instance = this;
+        }
+        ManageDonationsViewFractory.getInstance = function () {
+            return ManageDonationsViewFractory._instance;
+        };
+        ManageDonationsViewFractory.create = function (el, viewMode, id) {
+            var view;
+            if (viewMode == FoodParent.VIEW_MODE.MAP) {
+            }
+            else if (viewMode == FoodParent.VIEW_MODE.TABLE) {
+                view = new ManageDonationsTableView({ el: el });
+                view.setTreeId(id);
+            }
+            return view;
+        };
+        ManageDonationsViewFractory._instance = new ManageDonationsViewFractory();
+        return ManageDonationsViewFractory;
+    })();
+    FoodParent.ManageDonationsViewFractory = ManageDonationsViewFractory;
+    var ManageDonationsView = (function (_super) {
+        __extends(ManageDonationsView, _super);
+        function ManageDonationsView() {
+            _super.apply(this, arguments);
+            this.renderTreeInfo = function (tree) {
+            };
+        }
+        ManageDonationsView.prototype.setTreeId = function (id) {
+            this._id = id;
+        };
+        return ManageDonationsView;
+    })(FoodParent.BaseView);
+    FoodParent.ManageDonationsView = ManageDonationsView;
+    var ManageDonationsTableView = (function (_super) {
+        __extends(ManageDonationsTableView, _super);
+        function ManageDonationsTableView(options) {
+            var _this = this;
+            _super.call(this, options);
+            this.renderLocations = function () {
+                var self = _this;
+                FoodParent.Controller.fetchAllLocations(function () {
+                    // add grid instance for existing data
+                    self.renderLocationList(FoodParent.Model.getPlaces());
+                    //self.renderFilterList();
+                }, function () {
+                    FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+                });
+            };
+            this.renderLocationList = function (places) {
+                var self = _this;
+                var grid = new Backgrid.Grid({
+                    columns: LocationColumn,
+                    collection: places,
+                    emptyText: FoodParent.Setting.getNoDataText(),
+                });
+                grid.render();
+                grid.sort("name", "ascending");
+                self.$(".list-location").html(grid.el);
+            };
+            var self = this;
+            self.bDebug = true;
+            //$(window).resize(_.debounce(that.customResize, Setting.getInstance().getResizeTimeout()));
+            self.events = {
+                "click .switch-map": "_mouseClick",
+                "click .filter-checkbox": "_applyFilter",
+                "click .add-tree": "_addNewTree",
+            };
+            self.delegateEvents();
+        }
+        ManageDonationsTableView.prototype.render = function (args) {
+            if (this.bRendered) {
+                this.update(args);
+                return self;
+            }
+            this.bRendered = true;
+            var self = this;
+            if (self.bDebug)
+                console.log(ManageDonationsTableView.TAG + "render()");
+            var template = _.template(FoodParent.Template.getManageDonationsTableViewTemplate());
+            var data = {};
+            self.$el.html(template(data));
+            self.setElement(self.$('#wrapper-mdonations'));
+            self.renderLocations();
+            self.resize();
+            return self;
+        };
+        ManageDonationsTableView.prototype.resize = function () {
+            $('#content-donations-table').css({ width: FoodParent.View.getWidth() - $('#wrapper-tablemenu').outerWidth() });
+            $('#wrapper-main').css({ height: FoodParent.View.getHeight() - 60 });
+            $('#wrapper-mtrees').css({ height: FoodParent.View.getHeight() - 60 });
+            $('.collapsible-list').css({ height: FoodParent.View.getHeight() - 60 - 34 * 3 - 20 });
+        };
+        ManageDonationsTableView.TAG = "ManageDonationsTableView - ";
+        return ManageDonationsTableView;
+    })(ManageDonationsView);
+    FoodParent.ManageDonationsTableView = ManageDonationsTableView;
+    var DonationManageViewFactory = (function () {
+        function DonationManageViewFactory(args) {
+            if (DonationManageViewFactory._instance) {
+                throw new Error("Error: Instantiation failed: Use DonationManageViewFactory.getInstance() instead of new.");
+            }
+            DonationManageViewFactory._instance = this;
+        }
+        DonationManageViewFactory.getInstance = function () {
+            return DonationManageViewFactory._instance;
+        };
+        DonationManageViewFactory.create = function (el, place) {
+            var view = new DonationManageView({ el: el });
+            console.log(place);
+            view.setPlace(place);
+            return view;
+        };
+        DonationManageViewFactory._instance = new DonationManageViewFactory();
+        return DonationManageViewFactory;
+    })();
+    FoodParent.DonationManageViewFactory = DonationManageViewFactory;
+    var DonationManageView = (function (_super) {
+        __extends(DonationManageView, _super);
+        function DonationManageView(options) {
+            var _this = this;
+            _super.call(this, options);
+            this.renderNewDonation = function () {
+                var self = _this;
+                if (self._donations == undefined) {
+                    self._donations = new FoodParent.Donations();
+                }
+                var grid = new Backgrid.Grid({
+                    columns: NewDonationColumn,
+                    collection: self._donations,
+                    emptyText: FoodParent.Setting.getNoDataText(),
+                });
+                grid.render();
+                self.$(".new-donation").html(grid.el);
+                /*
+                var tree: Tree = new Tree({ lat: position.coords.latitude, lng: position.coords.longitude, food: 0, type: 0, flag: 0, owner: 0, ownership: 0, description: "" });
+                var trees: Trees = new Trees();
+                trees.add(tree);
+                var optionValues = new Array<{ name: string, values: any }>();
+                optionValues.push({ name: "Food", values: Model.getFoods().toArray() });
+                NewTreeColumn[0].cell = Backgrid.SelectCell.extend({
+                    editor: Backgrid.FoodSelectCellEditor,
+                    optionValues: optionValues,
+                });
+                var grid = new Backgrid.Grid({
+                    columns: NewTreeColumn,
+                    collection: trees,
+                    emptyText: Setting.getNoDataText(),
+                });
+                grid.render();
+                //grid.sort("name", "ascending");
+                //self.$(".new-donation").html('<div class="list-title">Add a New Tree</div>');
+                self.$(".new-donation").html(grid.el);
+                //self.$(".new-donation").removeClass('hidden');
+                */
+            };
+            this.renderTrees = function () {
+                var self = _this;
+                FoodParent.Controller.fetchAllTrees(function () {
+                    // add grid instance for existing data
+                    self.renderTreeList(FoodParent.Model.getTrees());
+                    self.renderFilterList();
+                }, function () {
+                    FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+                });
+            };
+            this.renderTreeList = function (trees) {
+                var self = _this;
+                var optionValues = new Array();
+                optionValues.push({ name: "Food", values: FoodParent.Model.getFoods().toArray() });
+                DonationColumn[0].cell = Backgrid.SelectCell.extend({
+                    editor: Backgrid.FoodSelectCellEditor,
+                    optionValues: optionValues,
+                });
+                var grid = new Backgrid.Grid({
+                    columns: DonationColumn,
+                    collection: trees,
+                    emptyText: FoodParent.Setting.getNoDataText(),
+                });
+                grid.render();
+                grid.sort("id", "ascending");
+                self.$(".list-donation").html(grid.el);
+            };
+            this.renderFilterList = function () {
+                var self = _this;
+                var template = _.template(FoodParent.Template.getTreeFilterListTemplate());
+                var data = {
+                    foods: FoodParent.Model.getFoods(),
+                };
+                self.$('#filter-list').html(template(data));
+            };
+            var self = this;
+            self.bDebug = true;
+            //$(window).resize(_.debounce(that.customResize, Setting.getInstance().getResizeTimeout()));
+            self.events = {
+                "click .confirm-confirm": "_executeCommand",
+                "click .confirm-cancel": "_mouseClick",
+                "click .button-close": "_mouseClick",
+                "click .filter-checkbox": "_applyFilter",
+                "click .button-submit-donation": "_mouseClick",
+            };
+            self.delegateEvents();
+        }
+        DonationManageView.prototype.setPlace = function (place) {
+            var self = this;
+            self._place = place;
+        };
+        DonationManageView.prototype.getPlace = function () {
+            var self = this;
+            return self._place;
+        };
+        DonationManageView.prototype.render = function (args) {
+            if (this.bRendered) {
+                this.update(args);
+                return;
+            }
+            this.bRendered = true;
+            /////
+            var self = this;
+            if (self.bDebug)
+                console.log(DonationManageView.TAG + "render()");
+            var template = _.template(FoodParent.Template.getManageDonationViewTemplate());
+            var data = {
+                placename: self._place.getName(),
+                placeid: self._place.getId(),
+            };
+            self.$el.html(template(data));
+            self.setElement(self.$('#wrapper-manage-donation'));
+            self.renderTrees();
+            self.renderNewDonation();
+            self.setVisible();
+            self.resize();
+            return self;
+        };
+        DonationManageView.prototype.addNewDonation = function (place, tree) {
+            var self = this;
+            self._donations.add(new FoodParent.Donation({ place: place.getId(), tree: tree.getId(), quantity: 0, date: moment(new Date()).format(FoodParent.Setting.getDateTimeFormat()) }));
+        };
+        DonationManageView.prototype.removeNewDonation = function (donation) {
+            var self = this;
+            self._donations.remove(donation);
+        };
+        DonationManageView.prototype.update = function (args) {
+            if (!this.bRendered) {
+                this.render(args);
+                return;
+            }
+            /////
+            var self = this;
+            if (self.bDebug)
+                console.log(DonationManageView.TAG + "update()");
+            return self;
+        };
+        DonationManageView.prototype.resize = function () {
+            var self = this;
+            $('#content-manage-adoption-table').css({ width: self.getWidth() - $('#wrapper-tablemenu').outerWidth() });
+            $('#wrapper-main').css({ height: FoodParent.View.getHeight() - 60 });
+            $('#wrapper-mtrees').css({ height: FoodParent.View.getHeight() - 60 });
+            $('.collapsible-list').css({ height: self.getHeight() - 34 * 2 - 30 });
+        };
+        DonationManageView.prototype.setVisible = function () {
+            var self = this;
+            FoodParent.Setting.getPopWrapperElement().removeClass('hidden');
+        };
+        DonationManageView.prototype.setInvisible = function () {
+            var self = this;
+            FoodParent.Setting.getPopWrapperElement().addClass('hidden');
+        };
+        DonationManageView.prototype._applyFilter = function (event) {
+            var self = this;
+            var trees = FoodParent.Model.getTrees();
+            setTimeout(function () {
+                // Filtering food type.
+                if (event != undefined) {
+                    if ($(event.target).find('input').prop('name') == 'foodsall') {
+                        if ($(event.target).find('input').prop('checked') == true) {
+                            $('.filter-food').addClass('active');
+                            $('.filter-food input').prop({ 'checked': 'checked' });
+                        }
+                        else {
+                            $('.filter-food').removeClass('active');
+                            $('.filter-food input').prop({ 'checked': '' });
+                        }
+                    }
+                }
+                // Apply food filtering
+                var foodIds = new Array();
+                $.each(self.$('.filter-food input'), function (index, item) {
+                    if ($(item).prop('checked') == true) {
+                        foodIds.push(Math.floor($(item).prop('name')));
+                    }
+                });
+                trees = trees.filterByFoodIds(foodIds);
+                // Filtering adoption status.
+                if (event != undefined) {
+                    if ($(event.target).find('input').prop('name') == 'adoptsall') {
+                        if ($(event.target).find('input').prop('checked') == true) {
+                            $('.filter-adopt').addClass('active');
+                            $('.filter-adopt input').prop({ 'checked': 'checked' });
+                        }
+                        else {
+                            $('.filter-adopt').removeClass('active');
+                            $('.filter-adopt input').prop({ 'checked': '' });
+                        }
+                    }
+                }
+                // Apply adopt filtering
+                var adoptIds = new Array();
+                $.each(self.$('.filter-adopt input'), function (index, item) {
+                    if ($(item).prop('checked') == true) {
+                        adoptIds.push(Math.floor($(item).prop('name')));
+                    }
+                });
+                trees = trees.filterByAdoptStatus(adoptIds);
+                // update markers
+                self.renderTreeList(trees);
+            }, 1);
+        };
+        DonationManageView.prototype._mouseClick = function (event) {
+            var self = this;
+            FoodParent.EventHandler.handleMouseClick($(event.currentTarget), self);
+        };
+        DonationManageView.TAG = "DonationManageView - ";
+        return DonationManageView;
+    })(FoodParent.PopupView);
+    FoodParent.DonationManageView = DonationManageView;
+})(FoodParent || (FoodParent = {}));
+
 var FoodParent;
 (function (FoodParent) {
     var Model = (function () {
@@ -50574,6 +51795,20 @@ var FoodParent;
                 self.persons = new FoodParent.Persons();
             }
             return self.persons;
+        };
+        Model.getPlaces = function () {
+            var self = Model._instance;
+            if (self.places == undefined) {
+                self.places = new FoodParent.Places();
+            }
+            return self.places;
+        };
+        Model.getDonations = function () {
+            var self = Model._instance;
+            if (self.donations == undefined) {
+                self.donations = new FoodParent.Donations();
+            }
+            return self.donations;
         };
         /*
         public static fetchFood(id: number): void {
@@ -50871,6 +52106,48 @@ var FoodParent;
                 });
             }
             return null;
+        };
+        Model.fetchAllPlaces = function () {
+            var self = Model._instance;
+            if (self.places == undefined) {
+                self.places = new FoodParent.Places();
+            }
+            return self.places.fetch({
+                remove: true,
+                processData: true,
+                data: {
+                    mode: 2,
+                    ids: 0,
+                    id: 0,
+                },
+                success: function (collection, response, options) {
+                    //console.log("success fetch with " + collection.models.length + " places");
+                },
+                error: function (collection, jqxhr, options) {
+                    //console.log("error while fetching item data from the server");
+                }
+            });
+        };
+        Model.fetchAllDonations = function () {
+            var self = Model._instance;
+            if (self.donations == undefined) {
+                self.donations = new FoodParent.Donations();
+            }
+            return self.donations.fetch({
+                remove: true,
+                processData: true,
+                data: {
+                    mode: 2,
+                    ids: 0,
+                    id: 0,
+                },
+                success: function (collection, response, options) {
+                    console.log("success fetch with " + collection.models.length + " places");
+                },
+                error: function (collection, jqxhr, options) {
+                    console.log("error while fetching item data from the server");
+                }
+            });
         };
         Model._instance = new Model();
         Model.TAG = "Model - ";
@@ -51867,4 +53144,227 @@ var FoodParent;
         return Persons;
     })(Backbone.Collection);
     FoodParent.Persons = Persons;
+})(FoodParent || (FoodParent = {}));
+
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var FoodParent;
+(function (FoodParent) {
+    var Place = (function (_super) {
+        __extends(Place, _super);
+        function Place(attributes, options) {
+            _super.call(this, attributes, options);
+            this.url = "place.php";
+            this.isSavable = true;
+            var self = this;
+            this.url = FoodParent.Setting.getPhpDir() + this.url;
+            this.defaults = {
+                "id": 0,
+                "lat": 0,
+                "lng": 0,
+                "name": "",
+                "address": "",
+                "description": "",
+                "updated": moment(new Date()).format(FoodParent.Setting.getDateTimeFormat()),
+            };
+            /*
+            self.off("change");
+            self.on("change", function (model: Tree, options) {
+                if (self.isSavable == false) return;
+                self.isSavable = false;
+                model.save(
+                    {},
+                    {
+                        wait: true,
+                        success: function (tree: Tree, response: any) {
+                            console.log(tree);
+                            self.isSavable = true;
+                            var food: Food = Model.getFoods().findWhere({ id: tree.getFoodId() });
+                            EventHandler.handleDataChange("<i>" + food.getName() + " " + tree.getName() + "</i> has been changed successfully", true);
+                        },
+                        error: function (error, response) {
+                            self.isSavable = true;
+                            EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
+                        },
+                    }
+                );
+            });
+            */
+        }
+        Place.prototype.parse = function (response, options) {
+            if (response.id != null) {
+                response.id = parseInt(response.id);
+            }
+            response.lat = parseFloat(response.lat);
+            response.lng = parseFloat(response.lng);
+            response.updated = moment(response.updated).format(FoodParent.Setting.getDateTimeFormat());
+            return _super.prototype.parse.call(this, response, options);
+        };
+        Place.prototype.toJSON = function (options) {
+            var clone = this.clone().attributes;
+            if (this.id != null) {
+                clone["id"] = this.id;
+            }
+            return clone;
+        };
+        Place.prototype.getFoodId = function () {
+            return this.get('food');
+        };
+        Place.prototype.getFlagId = function () {
+            return this.get('flag');
+        };
+        Place.prototype.getOwnershipId = function () {
+            return Math.floor(this.get('ownership'));
+        };
+        Place.prototype.getName = function () {
+            return this.get('name');
+        };
+        Place.prototype.getLocation = function () {
+            return new L.LatLng(this.getLat(), this.getLng());
+        };
+        Place.prototype.getLat = function () {
+            return parseFloat(this.get('lat'));
+        };
+        Place.prototype.getLng = function () {
+            return parseFloat(this.get('lng'));
+        };
+        Place.prototype.getId = function () {
+            if (this.id != undefined) {
+                return Math.floor(this.id);
+            }
+            return null;
+        };
+        Place.prototype.getDescription = function () {
+            if (this.get('description') == "") {
+                return "&nbsp;";
+            }
+            return this.get('description');
+        };
+        return Place;
+    })(Backbone.Model);
+    FoodParent.Place = Place;
+    var Places = (function (_super) {
+        __extends(Places, _super);
+        function Places(models, options) {
+            _super.call(this, models, options);
+            this.url = "places.php";
+            this.url = FoodParent.Setting.getPhpDir() + this.url;
+            this.model = Place;
+        }
+        Places.prototype.getIds = function () {
+            var self = this;
+            var result = Array();
+            $.each(self.models, function (index, model) {
+                if (result.indexOf(model.getId()) == -1) {
+                    result.push(model.getId());
+                }
+            });
+            return result;
+        };
+        Places.prototype.filterByIds = function (idArray) {
+            var self = this;
+            var places = new Places(self.models);
+            return places.reset(_.map(idArray, function (id) { return this.get(id); }, this));
+        };
+        return Places;
+    })(Backbone.Collection);
+    FoodParent.Places = Places;
+})(FoodParent || (FoodParent = {}));
+
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var FoodParent;
+(function (FoodParent) {
+    var Donation = (function (_super) {
+        __extends(Donation, _super);
+        function Donation(attributes, options) {
+            _super.call(this, attributes, options);
+            this.url = "donation.php";
+            this.isSavable = true;
+            var self = this;
+            this.url = FoodParent.Setting.getPhpDir() + this.url;
+            this.defaults = {
+                "id": 0,
+                "place": 0,
+                "tree": 0,
+                "quantity": 0,
+                "date": moment(new Date()).format(FoodParent.Setting.getDateTimeFormat()),
+            };
+        }
+        Donation.prototype.parse = function (response, options) {
+            if (response.id != null) {
+                response.id = parseInt(response.id);
+            }
+            response.updated = moment(response.updated).format(FoodParent.Setting.getDateTimeFormat());
+            return _super.prototype.parse.call(this, response, options);
+        };
+        Donation.prototype.toJSON = function (options) {
+            var clone = this.clone().attributes;
+            if (this.id != null) {
+                clone["id"] = this.id;
+            }
+            return clone;
+        };
+        Donation.prototype.getPlaceId = function () {
+            return parseFloat(this.get('place'));
+        };
+        Donation.prototype.getTreeId = function () {
+            return parseFloat(this.get('tree'));
+        };
+        Donation.prototype.getId = function () {
+            if (this.id != undefined) {
+                return Math.floor(this.id);
+            }
+            return null;
+        };
+        Donation.prototype.getDateForDatePicker = function () {
+            return moment(this.get('date')).format(FoodParent.Setting.getDateForDatePicker());
+        };
+        Donation.prototype.getFormattedDate = function () {
+            return moment(this.get('date')).format(FoodParent.Setting.getDateFormat());
+        };
+        Donation.prototype.getFormattedDateTime = function () {
+            return moment(this.get('date')).format(FoodParent.Setting.getDateTimeFormat());
+        };
+        Donation.prototype.getFormattedHourTime = function () {
+            return moment(this.get('date')).format(FoodParent.Setting.getDateHourFormat());
+        };
+        Donation.prototype.getDateValueOf = function () {
+            return moment(this.get('date')).valueOf();
+        };
+        return Donation;
+    })(Backbone.Model);
+    FoodParent.Donation = Donation;
+    var Donations = (function (_super) {
+        __extends(Donations, _super);
+        function Donations(models, options) {
+            _super.call(this, models, options);
+            this.url = "donations.php";
+            this.url = FoodParent.Setting.getPhpDir() + this.url;
+            this.model = Donation;
+        }
+        Donations.prototype.getIds = function () {
+            var self = this;
+            var result = Array();
+            $.each(self.models, function (index, model) {
+                if (result.indexOf(model.getId()) == -1) {
+                    result.push(model.getId());
+                }
+            });
+            return result;
+        };
+        Donations.prototype.filterByIds = function (idArray) {
+            var self = this;
+            var donations = new Donations(self.models);
+            return donations.reset(_.map(idArray, function (id) { return this.get(id); }, this));
+        };
+        return Donations;
+    })(Backbone.Collection);
+    FoodParent.Donations = Donations;
 })(FoodParent || (FoodParent = {}));

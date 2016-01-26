@@ -362,4 +362,48 @@
 
         }
     }
+
+    export class RenderManageDonationsViewCommand implements Command {
+        private _el: JQuery;
+        private _viewMode: VIEW_MODE;
+        private _id: number;
+        constructor(args?: any) {
+            var self: RenderManageDonationsViewCommand = this;
+            self._el = args.el;
+            self._viewMode = args.viewMode;
+            self._id = args.id;
+        }
+        public execute(): any {
+            var self: RenderManageDonationsViewCommand = this;
+            if (View.getManageDonationsView()) {
+
+            } else {
+                var view: ManageDonationsView = ManageDonationsViewFractory.create(self._el, self._viewMode, self._id).render();
+                View.addChild(view);
+                View.setManageDonationsView(view);
+            }
+        }
+        public undo(): any {
+
+        }
+    }
+
+    export class RenderManageDonationViewCommand implements Command {
+        private _el: JQuery;
+        private _place: Place;
+        constructor(args?: any) {
+            var self: RenderManageDonationViewCommand = this;
+            self._el = args.el;
+            self._place = args.place;
+        }
+        public execute(): any {
+            var self: RenderManageDonationViewCommand = this;
+            var view: AlertView = DonationManageViewFactory.create(self._el, self._place).render();
+            View.setPopupView(view);
+            View.setViewStatus(VIEW_STATUS.MANAGE_DONATION);
+        }
+        public undo(): any {
+
+        }
+    }
 }

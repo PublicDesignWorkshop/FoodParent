@@ -211,6 +211,49 @@
             });
             Controller.pushXHR(xhr1);
         }
+
+        public static fetchAllLocations(success?: any, error?: any) {
+            var xhr1: JQueryXHR = Model.fetchAllPlaces();
+            $.when(
+                xhr1
+            ).then(function () {
+                Controller.removeXHR(xhr1);
+                if (success) {
+                    success();
+                }
+            }, function () {
+                Controller.removeXHR(xhr1);
+                if (error) {
+                    error(ERROR_MODE.SEVER_CONNECTION_ERROR);
+                }
+            });
+        }
+
+        public static fetchAllDonations(success?: any, error?: any) {
+            var xhr1: JQueryXHR = Model.fetchAllDonations();
+            var xhr2: JQueryXHR = Model.fetchAllTrees();
+            var xhr3: JQueryXHR = Model.fetchAllPlaces();
+            var xhr4: JQueryXHR = Model.fetchAllFoods();
+            $.when(
+                xhr1, xhr2, xhr3, xhr4
+            ).then(function () {
+                Controller.removeXHR(xhr1);
+                Controller.removeXHR(xhr2);
+                Controller.removeXHR(xhr3);
+                Controller.removeXHR(xhr4);
+                if (success) {
+                    success();
+                }
+            }, function () {
+                Controller.removeXHR(xhr1);
+                Controller.removeXHR(xhr2);
+                Controller.removeXHR(xhr3);
+                Controller.removeXHR(xhr4);
+                if (error) {
+                    error(ERROR_MODE.SEVER_CONNECTION_ERROR);
+                }
+            });
+        }
     }
 
     export class Router extends Backbone.Router {
@@ -227,6 +270,7 @@
                 "mtrees/:viewMode/:id": "manageTrees",
                 "mtree/:viewMode/:id": "manageTree",
                 "mpeople/:viewMode/:id": "managePeople",
+                "mdonations/:viewMode/:id": "manageDonations",
                 "ptrees": "parentTrees",
             }
             super(options);
@@ -235,20 +279,19 @@
             return Router._instance;
         }
         home() {
-            console.log(Router.TAG + "we have loaded the home page.");
             EventHandler.handleNavigate(VIEW_STATUS.HOME);
         }
         manageTrees(viewMode: VIEW_MODE, id: number) {
-            console.log(Router.TAG + "we have loaded the manage trees page.");
             EventHandler.handleNavigate(VIEW_STATUS.MANAGE_TREES, { viewMode: viewMode, id: id });
         }
         manageTree(viewMode: VIEW_MODE, id: number) {
-            console.log(Router.TAG + "we have loaded the manage tree page.");
             EventHandler.handleNavigate(VIEW_STATUS.DETAIL_TREE, { viewMode: viewMode, id: id });
         }
         managePeople(viewMode: VIEW_MODE, id: number) {
-            console.log(Router.TAG + "we have loaded the manage trees page.");
             EventHandler.handleNavigate(VIEW_STATUS.MANAGE_PEOPLE, { viewMode: viewMode, id: id });
+        }
+        manageDonations(viewMode: VIEW_MODE, id: number) {
+            EventHandler.handleNavigate(VIEW_STATUS.MANAGE_DONATIONS, { viewMode: viewMode, id: id });
         }
     }
 } 

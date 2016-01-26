@@ -196,6 +196,43 @@ var FoodParent;
             });
             Controller.pushXHR(xhr1);
         };
+        Controller.fetchAllLocations = function (success, error) {
+            var xhr1 = FoodParent.Model.fetchAllPlaces();
+            $.when(xhr1).then(function () {
+                Controller.removeXHR(xhr1);
+                if (success) {
+                    success();
+                }
+            }, function () {
+                Controller.removeXHR(xhr1);
+                if (error) {
+                    error(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+                }
+            });
+        };
+        Controller.fetchAllDonations = function (success, error) {
+            var xhr1 = FoodParent.Model.fetchAllDonations();
+            var xhr2 = FoodParent.Model.fetchAllTrees();
+            var xhr3 = FoodParent.Model.fetchAllPlaces();
+            var xhr4 = FoodParent.Model.fetchAllFoods();
+            $.when(xhr1, xhr2, xhr3, xhr4).then(function () {
+                Controller.removeXHR(xhr1);
+                Controller.removeXHR(xhr2);
+                Controller.removeXHR(xhr3);
+                Controller.removeXHR(xhr4);
+                if (success) {
+                    success();
+                }
+            }, function () {
+                Controller.removeXHR(xhr1);
+                Controller.removeXHR(xhr2);
+                Controller.removeXHR(xhr3);
+                Controller.removeXHR(xhr4);
+                if (error) {
+                    error(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+                }
+            });
+        };
         Controller._instance = new Controller();
         Controller.TAG = "Controller - ";
         return Controller;
@@ -214,6 +251,7 @@ var FoodParent;
                 "mtrees/:viewMode/:id": "manageTrees",
                 "mtree/:viewMode/:id": "manageTree",
                 "mpeople/:viewMode/:id": "managePeople",
+                "mdonations/:viewMode/:id": "manageDonations",
                 "ptrees": "parentTrees",
             };
             _super.call(this, options);
@@ -222,20 +260,19 @@ var FoodParent;
             return Router._instance;
         };
         Router.prototype.home = function () {
-            console.log(Router.TAG + "we have loaded the home page.");
             FoodParent.EventHandler.handleNavigate(FoodParent.VIEW_STATUS.HOME);
         };
         Router.prototype.manageTrees = function (viewMode, id) {
-            console.log(Router.TAG + "we have loaded the manage trees page.");
             FoodParent.EventHandler.handleNavigate(FoodParent.VIEW_STATUS.MANAGE_TREES, { viewMode: viewMode, id: id });
         };
         Router.prototype.manageTree = function (viewMode, id) {
-            console.log(Router.TAG + "we have loaded the manage tree page.");
             FoodParent.EventHandler.handleNavigate(FoodParent.VIEW_STATUS.DETAIL_TREE, { viewMode: viewMode, id: id });
         };
         Router.prototype.managePeople = function (viewMode, id) {
-            console.log(Router.TAG + "we have loaded the manage trees page.");
             FoodParent.EventHandler.handleNavigate(FoodParent.VIEW_STATUS.MANAGE_PEOPLE, { viewMode: viewMode, id: id });
+        };
+        Router.prototype.manageDonations = function (viewMode, id) {
+            FoodParent.EventHandler.handleNavigate(FoodParent.VIEW_STATUS.MANAGE_DONATIONS, { viewMode: viewMode, id: id });
         };
         Router._instance = new Router();
         Router.TAG = "Router - ";

@@ -39,6 +39,8 @@ var FoodParent;
         VIEW_STATUS[VIEW_STATUS["DETAIL_TREE"] = 9] = "DETAIL_TREE";
         VIEW_STATUS[VIEW_STATUS["IMAGENOTE_TREE"] = 10] = "IMAGENOTE_TREE";
         VIEW_STATUS[VIEW_STATUS["POST_NOTE"] = 11] = "POST_NOTE";
+        VIEW_STATUS[VIEW_STATUS["MANAGE_DONATIONS"] = 12] = "MANAGE_DONATIONS";
+        VIEW_STATUS[VIEW_STATUS["MANAGE_DONATION"] = 13] = "MANAGE_DONATION";
     })(FoodParent.VIEW_STATUS || (FoodParent.VIEW_STATUS = {}));
     var VIEW_STATUS = FoodParent.VIEW_STATUS;
     (function (VIEW_MODE) {
@@ -96,6 +98,10 @@ var FoodParent;
                 new FoodParent.MovePaceBarToUnderNav().execute();
                 new FoodParent.RenderDetailTreeViewCommand({ el: FoodParent.Setting.getMainWrapperElement(), viewMode: option.viewMode, id: option.id }).execute();
             }
+            else if (viewStatus == VIEW_STATUS.MANAGE_DONATIONS) {
+                new FoodParent.MovePaceBarToUnderNav().execute();
+                new FoodParent.RenderManageDonationsViewCommand({ el: FoodParent.Setting.getMainWrapperElement(), viewMode: option.viewMode, id: option.id }).execute();
+            }
             FoodParent.View.getNavView().setActiveNavItem(viewStatus);
             FoodParent.View.setViewStatus(viewStatus);
         };
@@ -118,6 +124,9 @@ var FoodParent;
                 }
                 else if (el.hasClass('people')) {
                     new FoodParent.NavigateCommand({ hash: 'mpeople', viewMode: VIEW_MODE.TABLE, id: 0 }).execute();
+                }
+                else if (el.hasClass('donations')) {
+                    new FoodParent.NavigateCommand({ hash: 'mdonations', viewMode: VIEW_MODE.TABLE, id: 0 }).execute();
                 }
             }
             // Handle specific event on each view status.
@@ -216,6 +225,18 @@ var FoodParent;
                         if (FoodParent.View.getDetailTreeView()) {
                             FoodParent.View.getDetailTreeView().refreshTreeInfo();
                         }
+                    }
+                    break;
+                case VIEW_STATUS.MANAGE_DONATIONS:
+                    if (el.hasClass('manage-donation-item')) {
+                        new FoodParent.RenderManageDonationViewCommand({ el: FoodParent.Setting.getPopWrapperElement(), place: options.place }).execute();
+                    }
+                    break;
+                case VIEW_STATUS.MANAGE_DONATION:
+                    if (el.hasClass('button-submit-donation')) {
+                    }
+                    else if (el.hasClass('button-close')) {
+                        new FoodParent.RemoveAlertViewCommand({ delay: FoodParent.Setting.getRemovePopupDuration() }).execute();
                     }
                     break;
             }
@@ -350,6 +371,18 @@ var FoodParent;
                     break;
                 case DATA_MODE.DELETE:
                     self._lastCommand = new FoodParent.DeleteAdoption({ tree: tree, person: person }, success, error, undoSuccess);
+                    break;
+            }
+            if (self._lastCommand != undefined) {
+                self._lastCommand.execute();
+            }
+        };
+        EventHandler.handleDonationData = function (donations, dataMode, args, success, error, undoSuccess) {
+            var self = EventHandler._instance;
+            self._lastCommand = null;
+            switch (dataMode) {
+                case DATA_MODE.CREATE:
+                    self._lastCommand = new FoodParent.CreateAdoption({ tree: tree, person: person }, success, error, undoSuccess);
                     break;
             }
             if (self._lastCommand != undefined) {

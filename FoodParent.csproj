@@ -42,6 +42,7 @@
     <Content Include="core\css\device.css" />
     <Content Include="core\css\home.css" />
     <Content Include="core\css\input.css" />
+    <Content Include="core\css\mdonations.css" />
     <Content Include="core\css\message.css" />
     <Content Include="core\css\mtree.css" />
     <Content Include="core\css\mtrees.css" />
@@ -190,6 +191,10 @@
     <Content Include="core\php\auth.php" />
     <Content Include="core\php\auths.php" />
     <Content Include="core\php\upload.php" />
+    <Content Include="core\php\place.php" />
+    <Content Include="core\php\places.php" />
+    <Content Include="core\php\donation.php" />
+    <Content Include="core\php\donations.php" />
     <None Include="web.Debug.config">
       <DependentUpon>web.config</DependentUpon>
     </None>
@@ -204,6 +209,7 @@
     <TypeScriptCompile Include="core\js\app.ts" />
     <TypeScriptCompile Include="core\js\controller\command\adoptioncommand.ts" />
     <TypeScriptCompile Include="core\js\controller\command\command.ts" />
+    <TypeScriptCompile Include="core\js\controller\command\donationcommand.ts" />
     <TypeScriptCompile Include="core\js\controller\command\notecommand.ts" />
     <TypeScriptCompile Include="core\js\controller\command\personcommand.ts" />
     <TypeScriptCompile Include="core\js\controller\command\treecommand.ts" />
@@ -213,13 +219,18 @@
     <TypeScriptCompile Include="core\js\controller\setting.ts" />
     <TypeScriptCompile Include="core\js\model\adopt.ts" />
     <TypeScriptCompile Include="core\js\model\auth.ts" />
+    <TypeScriptCompile Include="core\js\model\donation.ts" />
     <TypeScriptCompile Include="core\js\model\flag.ts" />
     <TypeScriptCompile Include="core\js\model\food.ts" />
+    <TypeScriptCompile Include="core\js\model\place.ts" />
     <TypeScriptCompile Include="core\js\model\note.ts" />
     <TypeScriptCompile Include="core\js\model\ownership.ts" />
     <TypeScriptCompile Include="core\js\model\person.ts" />
     <TypeScriptCompile Include="core\js\model\tree.ts" />
     <TypeScriptCompile Include="core\js\view\alertview.ts" />
+    <TypeScriptCompile Include="core\js\view\gridformat\donationgridformat.ts" />
+    <TypeScriptCompile Include="core\js\view\gridformat\locationgridformat.ts" />
+    <TypeScriptCompile Include="core\js\view\mdonationsview.ts" />
     <TypeScriptCompile Include="core\js\view\gridformat\adoptiongridformat.ts" />
     <TypeScriptCompile Include="core\js\view\gridformat\gridformat.ts" />
     <TypeScriptCompile Include="core\js\view\gridformat\persongridformat.ts" />

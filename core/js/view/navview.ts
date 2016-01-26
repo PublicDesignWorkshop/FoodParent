@@ -45,7 +45,7 @@
                 data = {
 
                 }
-            } else if (args.viewStatus == VIEW_STATUS.MANAGE_TREES || args.viewStatus == VIEW_STATUS.MANAGE_PEOPLE || args.viewStatus == VIEW_STATUS.DETAIL_TREE) {
+            } else if (args.viewStatus == VIEW_STATUS.MANAGE_TREES || args.viewStatus == VIEW_STATUS.MANAGE_PEOPLE || args.viewStatus == VIEW_STATUS.DETAIL_TREE || args.viewStatus == VIEW_STATUS.MANAGE_DONATIONS) {
                 template = _.template(Template.getNavViewManageTemplate());
                 data = {
 
@@ -60,7 +60,7 @@
                 self.urenderNavItems();
                 self.$('#background-nav-left').css({ left: '-76%' });
                 self.$('#background-nav-left').css({ transform: 'skew(-10deg, 0)' });
-            } else if (args.viewStatus == VIEW_STATUS.MANAGE_TREES || args.viewStatus == VIEW_STATUS.MANAGE_PEOPLE || args.viewStatus == VIEW_STATUS.DETAIL_TREE) {
+            } else if (args.viewStatus == VIEW_STATUS.MANAGE_TREES || args.viewStatus == VIEW_STATUS.MANAGE_PEOPLE || args.viewStatus == VIEW_STATUS.DETAIL_TREE || args.viewStatus == VIEW_STATUS.MANAGE_DONATIONS) {
                 self.renderNavManageItems();
                 self.$('#background-nav-left').css({ left: '-30%' });
                 self.$('#background-nav-left').css({ transform: 'skew(-0deg, 0)' });
@@ -82,7 +82,7 @@
                 self.urenderNavItems();
                 self.$('#background-nav-left').animate({ left: '-76%' }, Setting.getNavAnimDuration());
                 self.$('#background-nav-left').css({ transform: 'skew(-10deg, 0)' });
-            } else if (args.viewStatus == VIEW_STATUS.MANAGE_TREES || args.viewStatus == VIEW_STATUS.MANAGE_PEOPLE || args.viewStatus == VIEW_STATUS.DETAIL_TREE) {
+            } else if (args.viewStatus == VIEW_STATUS.MANAGE_TREES || args.viewStatus == VIEW_STATUS.MANAGE_PEOPLE || args.viewStatus == VIEW_STATUS.DETAIL_TREE || args.viewStatus == VIEW_STATUS.MANAGE_DONATIONS) {
                 self.renderNavManageItems();
                 self.$('#background-nav-left').animate({ left: '-30%' }, Setting.getNavAnimDuration());
                 self.$('#background-nav-left').css({ transform: 'skew(-0deg, 0)' });

@@ -10,6 +10,7 @@
         private _manageTreesView: ManageTreesView;
         private _managePeopleView: ManagePeopleView;
         private _detailTreeView: DetailTreeView;
+        private _manageDonationsView: ManageDonationsView;
 
         constructor(options?: Backbone.ViewOptions<Backbone.Model>) {
             super(options);
@@ -79,6 +80,7 @@
             View._instance._manageTreesView = null;
             View._instance._managePeopleView = null;
             View._instance._detailTreeView = null;
+            View._instance._manageDonationsView = null;
         }
 
         public static setMessageView(view: MessageView): void {
@@ -98,6 +100,12 @@
         }
         public static getPopupView(): PopupView {
             return View._instance._popupView;
+        }
+        public static setManageDonationsView(view: ManageDonationsView): void {
+            View._instance._manageDonationsView = view;
+        }
+        public static getManageDonationsView(): ManageDonationsView {
+            return View._instance._manageDonationsView;
         }
         public static setManageTreesView(view: ManageTreesView): void {
             View._instance._manageTreesView = view;

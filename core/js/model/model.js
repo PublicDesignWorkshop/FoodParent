@@ -67,6 +67,20 @@ var FoodParent;
             }
             return self.persons;
         };
+        Model.getPlaces = function () {
+            var self = Model._instance;
+            if (self.places == undefined) {
+                self.places = new FoodParent.Places();
+            }
+            return self.places;
+        };
+        Model.getDonations = function () {
+            var self = Model._instance;
+            if (self.donations == undefined) {
+                self.donations = new FoodParent.Donations();
+            }
+            return self.donations;
+        };
         /*
         public static fetchFood(id: number): void {
             var self: Model = Model._instance;
@@ -363,6 +377,48 @@ var FoodParent;
                 });
             }
             return null;
+        };
+        Model.fetchAllPlaces = function () {
+            var self = Model._instance;
+            if (self.places == undefined) {
+                self.places = new FoodParent.Places();
+            }
+            return self.places.fetch({
+                remove: true,
+                processData: true,
+                data: {
+                    mode: 2,
+                    ids: 0,
+                    id: 0,
+                },
+                success: function (collection, response, options) {
+                    //console.log("success fetch with " + collection.models.length + " places");
+                },
+                error: function (collection, jqxhr, options) {
+                    //console.log("error while fetching item data from the server");
+                }
+            });
+        };
+        Model.fetchAllDonations = function () {
+            var self = Model._instance;
+            if (self.donations == undefined) {
+                self.donations = new FoodParent.Donations();
+            }
+            return self.donations.fetch({
+                remove: true,
+                processData: true,
+                data: {
+                    mode: 2,
+                    ids: 0,
+                    id: 0,
+                },
+                success: function (collection, response, options) {
+                    console.log("success fetch with " + collection.models.length + " places");
+                },
+                error: function (collection, jqxhr, options) {
+                    console.log("error while fetching item data from the server");
+                }
+            });
         };
         Model._instance = new Model();
         Model.TAG = "Model - ";
