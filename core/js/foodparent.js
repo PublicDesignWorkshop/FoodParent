@@ -43639,6 +43639,18 @@ var FoodParent;
                 self._lastCommand.execute();
             }
         };
+        EventHandler.handleDonationData = function (donations, dataMode, args, success, error, undoSuccess) {
+            var self = EventHandler._instance;
+            self._lastCommand = null;
+            switch (dataMode) {
+                case DATA_MODE.CREATE:
+                    self._lastCommand = new FoodParent.CreateAdoption({ tree: tree, person: person }, success, error, undoSuccess);
+                    break;
+            }
+            if (self._lastCommand != undefined) {
+                self._lastCommand.execute();
+            }
+        };
         EventHandler._instance = new EventHandler();
         EventHandler.TAG = "Controller - ";
         return EventHandler;
@@ -48650,7 +48662,7 @@ var FoodParent;
             _super.prototype.render.call(this);
             var self = this;
             if (self.bDebug)
-                console.log(HomeView.TAG + "render()");
+                console.log(HomeView.TAG + "render!!()");
             var template = _.template(FoodParent.Template.getHomeViewTemplate());
             var data = {};
             self.$el.html(template(data));
@@ -51598,7 +51610,7 @@ var FoodParent;
                 "click .confirm-cancel": "_mouseClick",
                 "click .button-close": "_mouseClick",
                 "click .filter-checkbox": "_applyFilter",
-                "click .button-submit-donation": "_mouseClick",
+                "click .button-submit-donation": "_submitDonations",
             };
             self.delegateEvents();
         }
@@ -51716,6 +51728,21 @@ var FoodParent;
                 // update markers
                 self.renderTreeList(trees);
             }, 1);
+        };
+        DonationManageView.prototype._submitDonations = function (event) {
+            var self = this;
+            if (self._donations.length == 0) {
+            }
+            else {
+                FoodParent.EventHandler.handleTreeData(tree, FoodParent.DATA_MODE.UPDATE_LOCATION, { marker: marker, location: marker.getLatLng() }, function () {
+                    var food = FoodParent.Model.getFoods().findWhere({ id: tree.getFoodId() });
+                    self.renderRecentActivities(tree);
+                    FoodParent.EventHandler.handleDataChange("Location of <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has changed successfully.", true);
+                    self.renderTreeInfo(tree);
+                }, function () {
+                    FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+                });
+            }
         };
         DonationManageView.prototype._mouseClick = function (event) {
             var self = this;
