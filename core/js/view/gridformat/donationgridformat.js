@@ -225,7 +225,7 @@ var DonationColumn = [
     {
         name: "food",
         label: "Food Type",
-        editable: true,
+        editable: false,
     }, {
         name: "id",
         label: "#",

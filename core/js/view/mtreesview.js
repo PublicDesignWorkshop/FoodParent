@@ -392,7 +392,7 @@ var FoodParent;
                 var accuracy = position.coords.accuracy;
                 self._location = new L.LatLng(position.coords.latitude, position.coords.longitude);
                 if (self._map == undefined) {
-                    self.$('#content-map').css({ height: FoodParent.View.getHeight() - 60 });
+                    self.$('#list-donation').css({ height: FoodParent.View.getHeight() - 60 });
                     self.setLocation(new L.LatLng(position.coords.latitude, position.coords.longitude));
                     self._map = L.map(self.$('#content-map')[0].id, {
                         zoomControl: false,

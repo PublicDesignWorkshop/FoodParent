@@ -129,10 +129,19 @@ module FoodParent {
         private static TAG: string = "DonationManageView - ";
         private _place: Place;
         private _donation: Donation;
+        private _bTableView: boolean;
+        private _map: L.Map;
+        private _location: L.LatLng;
+        private _zoom: number;
+        private _markers: Array<L.Marker>;
+        private _selectedMarker: L.Marker;
         constructor(options?: Backbone.ViewOptions<Backbone.Model>) {
             super(options);
             var self: DonationManageView = this;
             self.bDebug = true;
+            self._bTableView = true;
+            self._zoom = Setting.getDefaultMapZoomLevel();
+            self._markers = new Array<L.Marker>();
             //$(window).resize(_.debounce(that.customResize, Setting.getInstance().getResizeTimeout()));
             self.events = <any>{
                 "click .confirm-confirm": "_executeCommand",
@@ -140,7 +149,8 @@ module FoodParent {
                 "click .button-close": "_mouseClick",
                 "click .filter-checkbox": "_applyFilter",
                 "click .button-submit-donation": "_submitDonations",
-                "click .cell-tree-detail": "_removeNewDonationTree"
+                "click .cell-tree-detail": "_removeNewDonationTree",
+                "click .switch-map": "_switchView",
             };
             self.delegateEvents();
         }
@@ -305,7 +315,6 @@ module FoodParent {
         private renderTrees = () => {
             var self: DonationManageView = this;
             Controller.fetchAllTrees(function () {
-                // add grid instance for existing data
                 self.renderTreeList(Model.getTrees());
                 self.renderFilterList();
             }, function () {
@@ -315,21 +324,202 @@ module FoodParent {
 
         public renderTreeList = (trees: Trees) => {
             var self: DonationManageView = this;
-            var optionValues = new Array<{ name: string, values: any }>();
-            optionValues.push({ name: "Food", values: Model.getFoods().toArray() });
-            DonationColumn[0].cell = Backgrid.SelectCell.extend({
-                editor: Backgrid.FoodSelectCellEditor,
-                optionValues: optionValues,
+            if (self._bTableView) {
+                var optionValues = new Array<{ name: string, values: any }>();
+                optionValues.push({ name: "Food", values: Model.getFoods().toArray() });
+                DonationColumn[0].cell = Backgrid.SelectCell.extend({
+                    editor: Backgrid.FoodSelectCellEditor,
+                    optionValues: optionValues,
+                });
+
+                var grid = new Backgrid.Grid({
+                    columns: DonationColumn,
+                    collection: trees,
+                    emptyText: Setting.getNoDataText(),
+                });
+                grid.render();
+                grid.sort("id", "ascending");
+                self.$(".list-donation").html(grid.el);
+            } else {
+                Controller.updateGeoLocation(self.renderMap, self.renderMapError);
+            }
+        }
+
+        private renderMapError = (error: PositionError) => {
+            var self: DonationManageView = this;
+            switch (error.code) {
+                case error.PERMISSION_DENIED:
+                    EventHandler.handleError(ERROR_MODE.GEO_PERMISSION_ERROR);
+                    break;
+                case error.POSITION_UNAVAILABLE:
+                    EventHandler.handleError(ERROR_MODE.GEO_PERMISSION_ERROR);
+                    break;
+                case error.TIMEOUT:
+                    break;
+            }
+            self.renderMap({ coords: { accuracy: 4196, altitude: null, altitudeAccuracy: null, heading: null, latitude: 33.7946333, longitude: -84.448771, speed: null }, timestamp: new Date().valueOf() });
+        }
+
+        public renderMap = (position: Position) => {
+            var self: DonationManageView = this;
+            var accuracy = position.coords.accuracy;
+            self._location = new L.LatLng(position.coords.latitude, position.coords.longitude);
+            if (self._map == undefined) {
+                self.setLocation(new L.LatLng(position.coords.latitude, position.coords.longitude));
+                self._map = L.map(self.$('#list-donation')[0].id, {
+                    zoomControl: false,
+                    closePopupOnClick: true,
+                    doubleClickZoom: true,
+                    touchZoom: true,
+                    zoomAnimation: true,
+                    markerZoomAnimation: true,
+                }).setView(self._location, self._zoom);
+                L.tileLayer(Setting.getTileMapAddress(), {
+                    minZoom: Setting.getMapMinZoomLevel(),
+                    maxZoom: Setting.getMapMaxZoomLevel(),
+                }).addTo(self._map);
+                self._map.invalidateSize(false);
+                
+                // add event listener for finishing map creation.
+                self._map.whenReady(self.renderMarkers);
+                // add event listener for dragging map
+                self._map.on("moveend", self.afterMoveMap);
+
+                //Controller.fetchAllTrees();
+                self._map.on('popupopen', function (event: any) {
+                    var marker: L.Marker = event.popup._source;
+                    marker._bringToFront();
+                    $(marker.label._container).addClass('active');
+
+                    //$('.leaflet-popup-content .marker-control-item').off('click');
+                    //$('.leaflet-popup-content .marker-control-item').on('click', function (event) {
+                    //    //console.log($('.leaflet-popup-content .glyphicon').attr('data-id'));
+                    //    Router.getInstance().navigate("tree/" + $('.leaflet-popup-content .glyphicon').attr('data-id'), { trigger: true });
+                    //});
+                    var tree: Tree = Model.getTrees().findWhere({ id: marker.options.id });
+                    self._selectedMarker = marker;
+                    // Make MessageView invisible.
+                    if (View.getMessageView()) {
+                        View.getMessageView().setInvisible();
+                    }
+                });
+                self._map.on('popupclose', function (event: any) {
+                    var marker: L.Marker = event.popup._source;
+                    marker._resetZIndex();
+                    $(marker.label._container).removeClass('active');
+                    self.$('#wrapper-treeinfo').addClass('hidden');
+                    self._selectedMarker = null;
+                });
+            }
+        }
+
+        private renderMarkers = () => {
+            var self: DonationManageView = this;
+            console.log(DonationManageView.TAG + "renderMarkers()");
+            self._markers = new Array<L.Marker>();
+            $.each(Model.getTrees().models, function (index: number, tree: Tree) {
+                var bFound: boolean = false;
+                for (var j = 0; j < self._markers.length && !bFound; j++) {
+                    if (tree.getId() == self._markers[j].options.id) {
+                        bFound = true;
+                    }
+                }
+                if (!bFound) {
+                    self.addMarker(tree);
+                }
             });
 
-            var grid = new Backgrid.Grid({
-                columns: DonationColumn,
-                collection: trees,
-                emptyText: Setting.getNoDataText(),
+            /*
+            if (self._id != undefined && self._id != 0) {
+                for (var j = 0; j < self._markers.length; j++) {
+                    if (self._markers[j].options.id == self._id) {
+                        self._markers[j].openPopup();
+                        self._map.setView(self._markers[j].getLatLng());
+                        break;
+                    }
+                }
+            }
+            */
+            var trees: Trees = Model.getTrees();
+            // Apply food filtering
+            var foodIds = new Array<number>();
+            $.each(self.$('.filter-food input'), function (index: number, item: JQuery) {
+                if ($(item).prop('checked') == true) {
+                    foodIds.push(Math.floor($(item).prop('name')));
+                }
             });
-            grid.render();
-            grid.sort("id", "ascending");
-            self.$(".list-donation").html(grid.el);
+
+            trees = trees.filterByFoodIds(foodIds);
+            // Apply adopt filtering
+            var adoptIds = new Array<number>();
+            $.each(self.$('.filter-adopt input'), function (index: number, item: JQuery) {
+                if ($(item).prop('checked') == true) {
+                    adoptIds.push(Math.floor($(item).prop('name')));
+                }
+            });
+
+            trees = trees.filterByAdoptStatus(adoptIds);
+            self.updateMarkers(trees);
+        }
+
+        private updateMarkers = (trees: Trees) => {
+            var self: DonationManageView = this;
+            console.log(DonationManageView.TAG + "updateMarkers()");
+            // Add new markers
+            $.each(trees.models, function (index: number, tree: Tree) {
+                var bFound: boolean = false;
+                for (var j = 0; j < self._markers.length && !bFound; j++) {
+                    if (tree.getId() == self._markers[j].options.id) {
+                        bFound = true;
+                    }
+                }
+                if (!bFound) {
+                    self.addMarker(tree);
+                }
+            });
+            // Remove unnecessary markers
+            for (var j = 0; j < self._markers.length;) {
+                var bFound: boolean = false;
+                $.each(trees.models, function (index: number, tree: Tree) {
+                    if (tree.getId() == self._markers[j].options.id) {
+                        bFound = true;
+                    }
+                });
+                if (!bFound) {
+                    // close popup if the marker is selected
+                    if (self._markers[j] == self._selectedMarker) {
+                        self._selectedMarker.closePopup();
+                    }
+                    self.removeMarker(self._markers[j]);
+                    self._markers = _.without(self._markers, self._markers[j]);
+                    j--;
+                }
+                j++;
+            }
+        }
+
+        private removeMarker(marker: L.Marker): void {
+            var self: DonationManageView = this;
+            self._map.removeLayer(marker);
+        }
+
+        private addMarker(tree: Tree): void {
+            var self: DonationManageView = this;
+            var marker: L.Marker = MarkerFractory.create(tree, true);
+            self._markers.push(marker);
+            marker.addTo(self._map);
+        }
+
+        public setLocation(location: L.LatLng): void {
+            var self: DonationManageView = this;
+            self._location = location;
+        }
+
+        private afterMoveMap = () => {
+            var self: DonationManageView = this;
+            if (self._selectedMarker) {
+                self._selectedMarker._bringToFront();
+            }
         }
 
         public renderFilterList = () => {
@@ -357,7 +547,7 @@ module FoodParent {
             $('#content-manage-adoption-table').css({ width: self.getWidth() - $('#wrapper-tablemenu').outerWidth() });
             $('#wrapper-main').css({ height: View.getHeight() - 60 });
             $('#wrapper-mtrees').css({ height: View.getHeight() - 60 });
-            $('.collapsible-list').css({ height: self.getHeight() - 34 * 2 - 30 });
+            $('.collapsible-list').css({ height: self.getHeight() - 34 * 3 - 30 });
         }
 
         public setVisible(): void {
@@ -419,9 +609,13 @@ module FoodParent {
                 });
 
                 trees = trees.filterByAdoptStatus(adoptIds);
-
-                // update markers
-                self.renderTreeList(trees);
+                if (self._bTableView) {
+                    // update markers
+                    self.renderTreeList(trees);
+                } else {
+                    // update markers
+                    self.updateMarkers(trees);
+                }
             }, 1);
         }
 
@@ -454,6 +648,48 @@ module FoodParent {
             self.$('.new-donation-trees').html(template({
                 trees: Model.getTrees().filterByIds(self._donation.getTreeIds()),
             }));
+        }
+
+        private _switchView(event: Event): void {
+            var self: DonationManageView = this;
+            if (self._bTableView) {
+                self._bTableView = false;
+                $(event.target).html("Switch to Table View");
+            } else {
+                self._bTableView = true;
+                $(event.target).html("Switch to Map View");
+                self._map.remove();
+                self._map = null;
+            }
+            self.$('#list-donation').html("");
+            self.renderTreeList(Model.getTrees());
+
+            var trees: Trees = Model.getTrees();
+            // Apply food filtering
+            var foodIds = new Array<number>();
+            $.each(self.$('.filter-food input'), function (index: number, item: JQuery) {
+                if ($(item).prop('checked') == true) {
+                    foodIds.push(Math.floor($(item).prop('name')));
+                }
+            });
+
+            trees = trees.filterByFoodIds(foodIds);
+            // Apply adopt filtering
+            var adoptIds = new Array<number>();
+            $.each(self.$('.filter-adopt input'), function (index: number, item: JQuery) {
+                if ($(item).prop('checked') == true) {
+                    adoptIds.push(Math.floor($(item).prop('name')));
+                }
+            });
+
+            trees = trees.filterByAdoptStatus(adoptIds);
+            if (self._bTableView) {
+                // update markers
+                self.renderTreeList(trees);
+            } else {
+                // update markers
+                //self.updateMarkers(trees);
+            }
         }
     }
 }

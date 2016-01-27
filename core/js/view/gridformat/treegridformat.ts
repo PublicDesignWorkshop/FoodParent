@@ -252,6 +252,7 @@ var TreeAddressCell = Backgrid.Cell.extend({
     },
     render: function () {
         var self: any = this;
+        /*
         var element: JQuery = $(self.el);
         FoodParent.GeoLocation.reverseGeocoding(self.model.getLocation(), function (data: FoodParent.ReverseGeoLocation) {
             element.html(self.template({
@@ -260,6 +261,7 @@ var TreeAddressCell = Backgrid.Cell.extend({
         }, function () {
             FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
         });
+        */
         self.delegateEvents();
         return this;
     },
