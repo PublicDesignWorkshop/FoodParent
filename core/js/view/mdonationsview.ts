@@ -430,16 +430,14 @@ module FoodParent {
             if (self._donation.getTreeIds().length == 0) {
                 
             } else {
-                /*
-                EventHandler.handleTreeData(tree, DATA_MODE.UPDATE_LOCATION, { marker: marker, location: marker.getLatLng() }, function () {
-                    var food: Food = Model.getFoods().findWhere({ id: tree.getFoodId() });
-                    self.renderRecentActivities(tree);
-                    EventHandler.handleDataChange("Location of <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has changed successfully.", true);
-                    self.renderTreeInfo(tree);
+                EventHandler.handleDonationData(self._donation, DATA_MODE.CREATE, {}, function () {
+                    EventHandler.handleDataChange("Donation for <strong><i>" + self._place.getName() + "</i></strong> has been added successfully.", true);
+                    self._donation = null;
+                    self.renderNewDonation();
                 }, function () {
                     EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
                 });
-                */
+                
             }
         }
 

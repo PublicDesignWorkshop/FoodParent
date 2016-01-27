@@ -43639,12 +43639,12 @@ var FoodParent;
                 self._lastCommand.execute();
             }
         };
-        EventHandler.handleDonationData = function (donations, dataMode, args, success, error, undoSuccess) {
+        EventHandler.handleDonationData = function (donation, dataMode, args, success, error, undoSuccess) {
             var self = EventHandler._instance;
             self._lastCommand = null;
             switch (dataMode) {
                 case DATA_MODE.CREATE:
-                    self._lastCommand = new FoodParent.CreateAdoption({ tree: tree, person: person }, success, error, undoSuccess);
+                    self._lastCommand = new FoodParent.CreateDonation({ donation: donation }, success, error, undoSuccess);
                     break;
             }
             if (self._lastCommand != undefined) {
@@ -45567,6 +45567,63 @@ var FoodParent;
         return DeleteNote;
     })();
     FoodParent.DeleteNote = DeleteNote;
+})(FoodParent || (FoodParent = {}));
+
+var FoodParent;
+(function (FoodParent) {
+    var CreateDonation = (function () {
+        function CreateDonation(args, success, error, undoSuccess) {
+            var self = this;
+            if (args != undefined && args.donation != undefined) {
+                self._donation = args.donation;
+            }
+            if (success) {
+                self._success = success;
+            }
+            if (error) {
+                self._error = error;
+            }
+            if (undoSuccess) {
+                self._undoSuccess = undoSuccess;
+            }
+        }
+        CreateDonation.prototype.execute = function () {
+            var self = this;
+            self._donation.save({}, {
+                wait: true,
+                success: function (tree, response) {
+                    FoodParent.Model.getDonations().add(self._donation);
+                    if (self._success) {
+                        self._success();
+                    }
+                },
+                error: function (error, response) {
+                    if (self._error) {
+                        self._error();
+                    }
+                },
+            });
+        };
+        CreateDonation.prototype.undo = function () {
+            var self = this;
+            FoodParent.Model.getDonations().remove(self._donation);
+            self._donation.destroy({
+                wait: true,
+                success: function (note, response) {
+                    if (self._undoSuccess) {
+                        self._undoSuccess();
+                    }
+                },
+                error: function (error) {
+                    if (self._error) {
+                        self._error();
+                    }
+                },
+            });
+        };
+        return CreateDonation;
+    })();
+    FoodParent.CreateDonation = CreateDonation;
 })(FoodParent || (FoodParent = {}));
 
 var DatePickerCellEditor = Backgrid.InputCellEditor.extend({
@@ -48667,7 +48724,7 @@ var FoodParent;
             _super.prototype.render.call(this);
             var self = this;
             if (self.bDebug)
-                console.log(HomeView.TAG + "render()");
+                console.log(HomeView.TAG + "render!!()");
             var template = _.template(FoodParent.Template.getHomeViewTemplate());
             var data = {};
             self.$el.html(template(data));
@@ -51812,6 +51869,13 @@ var FoodParent;
             if (self._donation.getTreeIds().length == 0) {
             }
             else {
+                FoodParent.EventHandler.handleDonationData(self._donation, FoodParent.DATA_MODE.CREATE, {}, function () {
+                    FoodParent.EventHandler.handleDataChange("Donation for <strong><i>" + self._place.getName() + "</i></strong> has been added successfully.", true);
+                    self._donation = null;
+                    self.renderNewDonation();
+                }, function () {
+                    FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+                });
             }
         };
         DonationManageView.prototype._mouseClick = function (event) {
@@ -53416,7 +53480,9 @@ var FoodParent;
             if (this.id != null) {
                 clone["id"] = this.id;
             }
+            console.log(clone["trees"]);
             clone["tree"] = clone["trees"].toString();
+            console.log(clone["tree"]);
             delete clone["trees"];
             return clone;
         };

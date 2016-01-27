@@ -336,12 +336,12 @@
             }
         }
 
-        public static handleDonationData(donations: Donations, dataMode: DATA_MODE, args: any, success?: Function, error?: Function, undoSuccess?: Function): void {
+        public static handleDonationData(donation: Donation, dataMode: DATA_MODE, args: any, success?: Function, error?: Function, undoSuccess?: Function): void {
             var self: EventHandler = EventHandler._instance;
             self._lastCommand = null;
             switch (dataMode) {
                 case DATA_MODE.CREATE:
-                    self._lastCommand = new CreateAdoption({ tree: tree, person: person }, success, error, undoSuccess);
+                    self._lastCommand = new CreateDonation({ donation: donation }, success, error, undoSuccess);
                     break;
             }
             if (self._lastCommand != undefined) {

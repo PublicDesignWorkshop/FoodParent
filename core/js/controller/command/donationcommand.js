@@ -3,9 +3,8 @@ var FoodParent;
     var CreateDonation = (function () {
         function CreateDonation(args, success, error, undoSuccess) {
             var self = this;
-            if (args != undefined && args.tree != undefined && args.person != undefined) {
-                self._tree = args.tree;
-                self._person = args.person;
+            if (args != undefined && args.donation != undefined) {
+                self._donation = args.donation;
             }
             if (success) {
                 self._success = success;
@@ -19,36 +18,13 @@ var FoodParent;
         }
         CreateDonation.prototype.execute = function () {
             var self = this;
-            self._adopt = new FoodParent.Adopt({ tree: self._tree.getId(), parent: self._person.getId() });
-            self._adopt.save({}, {
+            self._donation.save({}, {
                 wait: true,
                 success: function (tree, response) {
-                    FoodParent.Model.getAdopts().add(self._adopt);
-                    self._tree.updateParents();
-                    self._person.updateTrees();
-                    self._note = new FoodParent.Note({
-                        type: FoodParent.NoteType.INFO,
-                        tree: self._tree.getId(),
-                        person: self._person.getId(),
-                        comment: self._person.getName() + " has adopted this tree.",
-                        picture: "",
-                        rate: -1,
-                        date: moment(new Date()).format(FoodParent.Setting.getDateTimeFormat()),
-                    });
-                    self._note.save({}, {
-                        wait: true,
-                        success: function (note, response) {
-                            FoodParent.Model.getNotes().add(note);
-                            if (self._success) {
-                                self._success();
-                            }
-                        },
-                        error: function (error) {
-                            if (self._error) {
-                                self._error();
-                            }
-                        },
-                    });
+                    FoodParent.Model.getDonations().add(self._donation);
+                    if (self._success) {
+                        self._success();
+                    }
                 },
                 error: function (error, response) {
                     if (self._error) {
@@ -59,26 +35,13 @@ var FoodParent;
         };
         CreateDonation.prototype.undo = function () {
             var self = this;
-            FoodParent.Model.getAdopts().remove(self._adopt);
-            self._tree.updateParents();
-            self._person.updateTrees();
-            self._adopt.destroy({
+            FoodParent.Model.getDonations().remove(self._donation);
+            self._donation.destroy({
                 wait: true,
                 success: function (note, response) {
-                    FoodParent.Model.getNotes().remove(self._note);
-                    self._note.destroy({
-                        wait: true,
-                        success: function (note, response) {
-                            if (self._undoSuccess) {
-                                self._undoSuccess();
-                            }
-                        },
-                        error: function (error) {
-                            if (self._error) {
-                                self._error();
-                            }
-                        },
-                    });
+                    if (self._undoSuccess) {
+                        self._undoSuccess();
+                    }
                 },
                 error: function (error) {
                     if (self._error) {

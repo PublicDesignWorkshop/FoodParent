@@ -44,6 +44,7 @@
       "core/js/controller/command/personcommand.js",
       "core/js/controller/command/adoptioncommand.js",
       "core/js/controller/command/notecommand.js",
+      "core/js/controller/command/donationcommand.js",
       // View - GridFormat
       "core/js/view/gridformat/gridformat.js",
       "core/js/view/gridformat/treegridformat.js",

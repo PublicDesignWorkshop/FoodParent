@@ -28,7 +28,9 @@
             if (this.id != null) {
                 clone["id"] = this.id;
             }
+            console.log(clone["trees"]);
             clone["tree"] = clone["trees"].toString();
+            console.log(clone["tree"]);
             delete clone["trees"];
             return clone;
         }

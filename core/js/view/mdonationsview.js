@@ -404,6 +404,13 @@ var FoodParent;
             if (self._donation.getTreeIds().length == 0) {
             }
             else {
+                FoodParent.EventHandler.handleDonationData(self._donation, FoodParent.DATA_MODE.CREATE, {}, function () {
+                    FoodParent.EventHandler.handleDataChange("Donation for <strong><i>" + self._place.getName() + "</i></strong> has been added successfully.", true);
+                    self._donation = null;
+                    self.renderNewDonation();
+                }, function () {
+                    FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+                });
             }
         };
         DonationManageView.prototype._mouseClick = function (event) {

@@ -377,12 +377,12 @@ var FoodParent;
                 self._lastCommand.execute();
             }
         };
-        EventHandler.handleDonationData = function (donations, dataMode, args, success, error, undoSuccess) {
+        EventHandler.handleDonationData = function (donation, dataMode, args, success, error, undoSuccess) {
             var self = EventHandler._instance;
             self._lastCommand = null;
             switch (dataMode) {
                 case DATA_MODE.CREATE:
-                    self._lastCommand = new FoodParent.CreateAdoption({ tree: tree, person: person }, success, error, undoSuccess);
+                    self._lastCommand = new FoodParent.CreateDonation({ donation: donation }, success, error, undoSuccess);
                     break;
             }
             if (self._lastCommand != undefined) {
