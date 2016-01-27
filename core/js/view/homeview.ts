@@ -35,7 +35,7 @@
         public render(args?: any): any {
             super.render();
             var self: HomeView = this;
-            if (self.bDebug) console.log(HomeView.TAG + "render()");
+            if (self.bDebug) console.log(HomeView.TAG + "render!!()");
 
             var template = _.template(Template.getHomeViewTemplate());
             var data = {

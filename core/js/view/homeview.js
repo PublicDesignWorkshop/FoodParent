@@ -42,7 +42,7 @@ var FoodParent;
             _super.prototype.render.call(this);
             var self = this;
             if (self.bDebug)
-                console.log(HomeView.TAG + "render()");
+                console.log(HomeView.TAG + "render!!()");
             var template = _.template(FoodParent.Template.getHomeViewTemplate());
             var data = {};
             self.$el.html(template(data));
