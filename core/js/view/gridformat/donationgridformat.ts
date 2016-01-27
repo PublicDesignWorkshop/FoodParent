@@ -4,9 +4,8 @@
         "click .marker-control-item": "_addDonation",
     },
     _addDonation: function (e) {
-        var place: FoodParent.Place = FoodParent.Model.getPlaces().findWhere({ id: parseInt($('.list-donation').attr('data-target')) });
         var tree: FoodParent.Tree = this.model;
-        (<FoodParent.DonationManageView>FoodParent.View.getPopupView()).addNewDonation(place, tree);
+        (<FoodParent.DonationManageView>FoodParent.View.getPopupView()).addNewDonation(tree);
         /*
         var tree: FoodParent.Tree = FoodParent.Model.getTrees().findWhere({ id: parseInt($('.list-donation').attr('data-target')) });
         var food: FoodParent.Food = FoodParent.Model.getFoods().findWhere({ id: tree.getFoodId() });

@@ -25,6 +25,7 @@ var FoodParent;
             if (response.id != null) {
                 response.id = parseInt(response.id);
             }
+            response.trees = response.tree.split(',');
             response.updated = moment(response.updated).format(FoodParent.Setting.getDateTimeFormat());
             return _super.prototype.parse.call(this, response, options);
         };
@@ -33,19 +34,40 @@ var FoodParent;
             if (this.id != null) {
                 clone["id"] = this.id;
             }
+            clone["tree"] = clone["trees"].toString();
+            delete clone["trees"];
             return clone;
         };
         Donation.prototype.getPlaceId = function () {
             return parseFloat(this.get('place'));
         };
-        Donation.prototype.getTreeId = function () {
-            return parseFloat(this.get('tree'));
+        Donation.prototype.getTreeIds = function () {
+            return this.get("trees");
+        };
+        Donation.prototype.addTreeId = function (id) {
+            if (this.get("trees") == undefined) {
+                this.set("trees", new Array());
+            }
+            this.get("trees").push(id);
+        };
+        Donation.prototype.removeTreeId = function (id) {
+            var temp = _.reject(this.get("trees"), function (obj) { return parseInt(obj) == id; });
+            this.set("trees", temp);
         };
         Donation.prototype.getId = function () {
             if (this.id != undefined) {
                 return Math.floor(this.id);
             }
             return null;
+        };
+        Donation.prototype.getQuantity = function () {
+            return parseFloat(this.get('quantity'));
+        };
+        Donation.prototype.setQuantity = function (quantity) {
+            this.set('quantity', quantity);
+        };
+        Donation.prototype.setDate = function (date) {
+            this.set('date', date);
         };
         Donation.prototype.getDateForDatePicker = function () {
             return moment(this.get('date')).format(FoodParent.Setting.getDateForDatePicker());

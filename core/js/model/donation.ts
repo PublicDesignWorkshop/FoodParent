@@ -19,6 +19,7 @@
             if (response.id != null) {
                 response.id = parseInt(response.id);
             }
+            response.trees = response.tree.split(',');
             response.updated = moment(response.updated).format(Setting.getDateTimeFormat());
             return super.parse(response, options);
         }
@@ -27,19 +28,40 @@
             if (this.id != null) {
                 clone["id"] = this.id;
             }
+            clone["tree"] = clone["trees"].toString();
+            delete clone["trees"];
             return clone;
         }
         public getPlaceId(): number {
             return parseFloat(this.get('place'));
         }
-        public getTreeId(): number {
-            return parseFloat(this.get('tree'));
+        public getTreeIds(): Array<number> {
+            return this.get("trees");
+        }
+        public addTreeId(id: number): void {
+            if (this.get("trees") == undefined) {
+                this.set("trees", new Array<number>());
+            }
+            this.get("trees").push(id);
+        }
+        public removeTreeId(id: number): void {
+            var temp = _.reject(this.get("trees"), function (obj: any) { return parseInt(obj) == id; });
+            this.set("trees", temp);
         }
         public getId(): number {
             if (this.id != undefined) {
                 return Math.floor(this.id);
             }
             return null;
+        }
+        public getQuantity(): number {
+            return parseFloat(this.get('quantity'));
+        }
+        public setQuantity(quantity: number): void {
+            this.set('quantity', quantity);
+        }
+        public setDate(date: string): void {
+            this.set('date', date);
         }
         public getDateForDatePicker(): string {
             return moment(this.get('date')).format(Setting.getDateForDatePicker());

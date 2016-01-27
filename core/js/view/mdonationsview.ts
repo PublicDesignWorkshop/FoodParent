@@ -128,7 +128,7 @@ module FoodParent {
     export class DonationManageView extends PopupView {
         private static TAG: string = "DonationManageView - ";
         private _place: Place;
-        private _donations: Donations;
+        private _donation: Donation;
         constructor(options?: Backbone.ViewOptions<Backbone.Model>) {
             super(options);
             var self: DonationManageView = this;
@@ -140,6 +140,7 @@ module FoodParent {
                 "click .button-close": "_mouseClick",
                 "click .filter-checkbox": "_applyFilter",
                 "click .button-submit-donation": "_submitDonations",
+                "click .cell-tree-detail": "_removeNewDonationTree"
             };
             self.delegateEvents();
         }
@@ -178,22 +179,98 @@ module FoodParent {
             return self;
         }
 
-        public addNewDonation(place: Place, tree: Tree) {
+        public addNewDonation(tree: Tree) {
             var self: DonationManageView = this;
-            self._donations.add(new Donation({ place: place.getId(), tree: tree.getId(), quantity: 0, date: moment(new Date()).format(Setting.getDateTimeFormat()) }));
+            self._donation.addTreeId(tree.getId());
+            var template = _.template(Template.getAddNewDonationTreeTemplate());
+            self.$('.new-donation-trees').html(template({
+                trees: Model.getTrees().filterByIds(self._donation.getTreeIds()),
+            }));
         }
 
         public removeNewDonation(donation: Donation) {
             var self: DonationManageView = this;
-            self._donations.remove(donation);
+            //self._donations.remove(donation);
         }
 
         public renderNewDonation = () => {
             var self: DonationManageView = this;
-            if (self._donations == undefined) {
-                self._donations = new Donations();
+            if (self._donation == undefined) {
+                self._donation = new Donation({ place: self._place.getId(), quantity: 0, date: moment(new Date()).format(Setting.getDateTimeFormat()) });
             }
 
+            var tag = '';
+            tag += '<div class="label-group">';
+            tag += '<div class="label-group-label">Trees</div>';
+            tag += '<div class="label-group-content new-donation-trees"></div>';
+            tag += '</div>';
+
+            tag += '<div class="label-group">';
+            tag += '<div class="label-group-label">Amount</div>';
+            tag += '<div class="label-group-content new-donation-amount"><%= amount %> lbs.</div>';
+            tag += '</div>';
+
+            tag += '<div class="label-group">';
+            tag += '<div class="label-group-label">Donation Date</div>';
+            tag += '<div class="label-group-content new-donation-date"></div>';
+            tag += '</div>';
+            var template = _.template(tag);
+            var data = {
+                amount: self._donation.getQuantity(),
+            }
+            self.$('.new-donation').html(template(data));
+
+            self.$('.new-donation-date').html(self._donation.getFormattedDate());
+            self.$('.new-donation-date').attr({ 'data-value': moment(self._donation.getDateForDatePicker()).format(FoodParent.Setting.getDateFormat()) });
+            self.$('.new-donation-date').pickadate({
+                format: "dd mmm yyyy",
+                today: '',
+                max: new Date(moment(new Date()).valueOf()),
+                clear: '',
+                close: 'Close',
+                onClose: function () {
+                    self._donation.setDate(moment(this.get()).startOf('day').format(FoodParent.Setting.getDateTimeFormat()));
+                    self.renderNewDonation();
+                    //self._startDate = ;
+                    //self.renderTreeChart(self._tree, self._startDate, self._endDate);
+                }
+            });
+
+            self.$('.new-donation-amount').on('click', function (event) {
+                $(this).replaceWith("<input class='new-donation-amount form-control' value='" + parseFloat($(this).html()) + "' />");
+                //self.$('.input-lat').css({ width: width });
+                self.$('.new-donation-amount').focus();
+                self.$('.new-donation-amount').on('focusout', function (event) {
+                    self._donation.setQuantity(parseFloat(self.$('.new-donation-amount').val()));
+                    self.renderNewDonation();
+                    /*
+                    var location: L.LatLng = new L.LatLng(parseFloat(self.$('.input-lat').val()), self._selectedMarker.getLatLng().lng);
+                    if (location.lat != self._selectedMarker.getLatLng().lat) {
+                        if (self._selectedMarker != undefined && self._selectedMarker.options.id != undefined) {
+                            EventHandler.handleTreeData(tree, DATA_MODE.UPDATE_LOCATION, { marker: self._selectedMarker, location: location }, function () {
+                                var food: Food = Model.getFoods().findWhere({ id: tree.getFoodId() });
+                                self.renderRecentActivities(tree);
+                                EventHandler.handleDataChange("Location of <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has changed successfully.", true);
+                                // Move marker to desired location & update info panel
+                                self._selectedMarker.setLatLng(tree.getLocation());
+                                self._map.setView(tree.getLocation());
+                                self.renderTreeInfo(tree);
+                            }, function () {
+                                EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
+                            });
+                        }
+                    */
+                    //} else {
+                    //    
+                    //}
+                });
+            });
+
+            var template = _.template(Template.getAddNewDonationTreeTemplate());
+            self.$('.new-donation-trees').html(template({
+                trees: Model.getTrees().filterByIds(self._donation.getTreeIds()),
+            }));
+            /*
             var grid = new Backgrid.Grid({
                 columns: NewDonationColumn,
                 collection: self._donations,
@@ -201,7 +278,7 @@ module FoodParent {
             });
             grid.render();
             self.$(".new-donation").html(grid.el);
-
+            */
             /*
             var tree: Tree = new Tree({ lat: position.coords.latitude, lng: position.coords.longitude, food: 0, type: 0, flag: 0, owner: 0, ownership: 0, description: "" });
             var trees: Trees = new Trees();
@@ -350,9 +427,10 @@ module FoodParent {
 
         public _submitDonations(event: Event): void {
             var self: DonationManageView = this;
-            if (self._donations.length == 0) {
+            if (self._donation.getTreeIds().length == 0) {
                 
             } else {
+                /*
                 EventHandler.handleTreeData(tree, DATA_MODE.UPDATE_LOCATION, { marker: marker, location: marker.getLatLng() }, function () {
                     var food: Food = Model.getFoods().findWhere({ id: tree.getFoodId() });
                     self.renderRecentActivities(tree);
@@ -361,12 +439,23 @@ module FoodParent {
                 }, function () {
                     EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
                 });
+                */
             }
         }
 
         private _mouseClick(event: Event): void {
             var self: DonationManageView = this;
             EventHandler.handleMouseClick($(event.currentTarget), self);
+        }
+
+        private _removeNewDonationTree(event: Event): void {
+            var self: DonationManageView = this;
+            var treeId: number = parseInt($(event.target).attr('data-target'));
+            self._donation.removeTreeId(treeId);
+            var template = _.template(Template.getAddNewDonationTreeTemplate());
+            self.$('.new-donation-trees').html(template({
+                trees: Model.getTrees().filterByIds(self._donation.getTreeIds()),
+            }));
         }
     }
 }

@@ -83,4 +83,33 @@
         font-weight: 700;
         padding: 8px 4px;
     }
+
+    .list-donation {
+        height: 60%;
+        overflow-y: auto;
+        margin: 0 0 8px 0;
+    }
+
+    .label-group {
+        display: flex;
+        font-size: medium;
+    }
+
+    .label-group-label {
+        width: 148px;
+        text-align: left;
+        font-weight:700;
+        padding: 4px;
+    }
+    .label-group-content {
+        flex-grow: 1;
+        padding: 4px;
+        text-align: left;
+    }
+    .new-donation-trees {
+        display: flex;
+        -ms-flex-wrap: wrap;
+        -webkit-flex-wrap: wrap;
+        flex-wrap: wrap;
+    }
 }

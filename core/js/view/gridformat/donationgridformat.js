@@ -4,9 +4,8 @@ var DonationAddCell = Backgrid.Cell.extend({
         "click .marker-control-item": "_addDonation",
     },
     _addDonation: function (e) {
-        var place = FoodParent.Model.getPlaces().findWhere({ id: parseInt($('.list-donation').attr('data-target')) });
         var tree = this.model;
-        FoodParent.View.getPopupView().addNewDonation(place, tree);
+        FoodParent.View.getPopupView().addNewDonation(tree);
         /*
         var tree: FoodParent.Tree = FoodParent.Model.getTrees().findWhere({ id: parseInt($('.list-donation').attr('data-target')) });
         var food: FoodParent.Food = FoodParent.Model.getFoods().findWhere({ id: tree.getFoodId() });

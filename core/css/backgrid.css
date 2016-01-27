@@ -1,5 +1,5 @@
 ﻿@media all {
-    .list-tree td, .new-tree td, .list-people td, .list-people th, .new-person td, .list-adoption td, .list-location td, .new-location td, .list-donation td, .new-donation td {
+    .list-tree td, .new-tree td, .list-people td, .list-people th, .new-person td, .list-adoption td, .list-location td, .list-location th, .new-location td, .new-location th, .list-donation td, .list-donation th, .new-donation td {
         color: #222222;
         font-size: small;
     }
