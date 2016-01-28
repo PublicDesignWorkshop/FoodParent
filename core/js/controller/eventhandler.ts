@@ -8,7 +8,7 @@
         NONE, CREATE, DELETE, UPDATE_LOCATION, UPDATE_FLAG, UPDATE_OWNERSHIP, UPDATE_FOODTYPE, UPDATE_DESCRIPTION, 
         UPDATE_NAME, UPDATE_ADDRESS, UPDATE_CONTACT, UPDATE_NEIGHBORHOOD, UPDATE_AUTH,
         UPDATE_COMMENT, UPDATE_RATING, UPDATE_COVER, UPDATE_DATE, ADD_PICTURE,
-        ADD_DONATION_TREE, REMOVE_DONATION_TREE, UPDATE_DONATION_AMOUNT
+        ADD_DONATION_TREE, REMOVE_DONATION_TREE, UPDATE_DONATION_AMOUNT,
     }
     export enum VIEW_STATUS {
         NONE, HOME, MANAGE_TREES, PARENT_TREES, GEO_ERROR, NETWORK_ERROR, CONFIRM, MANAGE_PEOPLE, MANAGE_ADOPTION, DETAIL_TREE, IMAGENOTE_TREE, POST_NOTE, MANAGE_DONATIONS, ADD_DONATION, DETAIL_DONATION, EDIT_DONATION
@@ -341,6 +341,9 @@
                 case DATA_MODE.UPDATE_DESCRIPTION:
                     self._lastCommand = new UpdateTreeDescription({ tree: tree, description: args.description }, success, error);
                     break;
+                case DATA_MODE.UPDATE_ADDRESS:
+                    self._lastCommand = new UpdateTreeAddress({ tree: tree, address: args.address }, success, error);
+                    break;
                 case DATA_MODE.CREATE:
                     self._lastCommand = new AddNewTree({ tree: tree }, success, error, undoSuccess);
                     break;
@@ -400,7 +403,36 @@
                 case DATA_MODE.DELETE:
                     View.popViewStatus();
                     var command: Command = new DeleteDonation({ donation: donation }, success, error);
-                    new RenderConfirmViewCommand({ el: Setting.getPopWrapperElement(), message: "Are you sure to delete this note?", command: command }).execute();
+                    new RenderConfirmViewCommand({ el: Setting.getPopWrapperElement(), message: "Are you sure to delete this donation?", command: command }).execute();
+                    break;
+            }
+            if (self._lastCommand != undefined) {
+                self._lastCommand.execute();
+            }
+        }
+
+        public static handlePlaceData(place: Place, dataMode: DATA_MODE, args: any, success?: Function, error?: Function, undoSuccess?: Function): void {
+            var self: EventHandler = EventHandler._instance;
+            self._lastCommand = null;
+            switch (dataMode) {
+                case DATA_MODE.CREATE:
+                    self._lastCommand = new CreateLocation({ place: place }, success, error, undoSuccess);
+                    break;
+                case DATA_MODE.UPDATE_NAME:
+                    self._lastCommand = new UpdateLocationName({ place: place, name: args.name }, success, error, undoSuccess);
+                    break;
+                case DATA_MODE.UPDATE_DESCRIPTION:
+                    self._lastCommand = new UpdateLocationDescription({ place: place, description: args.description }, success, error, undoSuccess);
+                    break;
+                case DATA_MODE.UPDATE_LOCATION:
+                    self._lastCommand = new UpdateLocationLocation({ place: place, marker: args.marker, location: args.location }, success, error);
+                    break;
+                case DATA_MODE.UPDATE_ADDRESS:
+                    self._lastCommand = new UpdateLocationAddress({ place: place, address: args.address }, success, error);
+                    break;
+                case DATA_MODE.DELETE:
+                    var command: Command = new DeleteLocation({ place: place }, success, error);
+                    new RenderConfirmViewCommand({ el: Setting.getPopWrapperElement(), message: "Are you sure to delete this location?", command: command }).execute();
                     break;
             }
             if (self._lastCommand != undefined) {

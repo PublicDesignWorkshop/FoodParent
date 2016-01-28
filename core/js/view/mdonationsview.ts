@@ -1,4 +1,5 @@
 ﻿declare var LocationColumn;
+declare var NewLocationColumn;
 declare var DonationColumn;
 declare var NewDonationColumn;
 
@@ -48,7 +49,7 @@ module FoodParent {
             self.events = <any>{
                 "click .switch-map": "_mouseClick",
                 "click .filter-checkbox": "_applyFilter",
-                "click .add-tree": "_addNewTree",
+                "click .add-location": "_addNewPlace",
             };
             self.delegateEvents();
         }
@@ -78,6 +79,46 @@ module FoodParent {
             $('#wrapper-main').css({ height: View.getHeight() - 60 });
             $('#wrapper-mtrees').css({ height: View.getHeight() - 60 });
             $('.collapsible-list').css({ height: View.getHeight() - 60 - 34 * 3 - 20 });
+        }
+
+        private _addNewPlace = () => {
+            var self: ManageDonationsTableView = this;
+            if (self.$(".new-location").hasClass('hidden')) {
+                Controller.updateGeoLocation(self.renderNewPlace, self.renderGeoLocationError);
+            } else {
+                self.$(".new-location").addClass('hidden');
+            }
+        }
+
+        private renderGeoLocationError = (error: PositionError) => {
+            var self: ManageDonationsTableView = this;
+            switch (error.code) {
+                case error.PERMISSION_DENIED:
+                    EventHandler.handleError(ERROR_MODE.GEO_PERMISSION_ERROR);
+                    break;
+                case error.POSITION_UNAVAILABLE:
+                    EventHandler.handleError(ERROR_MODE.GEO_PERMISSION_ERROR);
+                    break;
+                case error.TIMEOUT:
+                    break;
+            }
+        }
+
+        public renderNewPlace = (position: Position) => {
+            var self: ManageDonationsTableView = this;
+            var place: Place = new Place({ name: "", description: "", lat: position.coords.latitude, lng: position.coords.longitude });
+            var places: Places = new Places();
+            places.add(place);
+            var grid = new Backgrid.Grid({
+                columns: NewLocationColumn,
+                collection: places,
+                emptyText: Setting.getNoDataText(),
+            });
+            grid.render();
+            //grid.sort("name", "ascending");
+            self.$(".new-location").html('<div class="list-title">Add a New Location</div>');
+            self.$(".new-location").append(grid.el);
+            self.$(".new-location").removeClass('hidden');
         }
 
         private renderLocations = () => {
@@ -476,11 +517,16 @@ module FoodParent {
             self.$('#wrapper-treeinfo').html(template(data));
             self.$('#wrapper-treeinfo').removeClass('hidden');
 
-            GeoLocation.reverseGeocoding(tree.getLocation(), function (data: ReverseGeoLocation) {
-                self.$(".tree-info-address").html("<div>" + data.road + ", " + data.county + "</div><div>" + data.state + ", " + data.country + ", " + data.postcode + "</div>");
-            }, function () {
-                EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
-            });
+            if (tree.getAddress().trim() == '') {
+                GeoLocation.reverseGeocoding(tree.getLocation(), function (data: ReverseGeoLocation) {
+                    self.$(".input-address").html(data.road + ", " + data.county + ", " + data.state + ", " + data.country + ", " + data.postcode);
+                }, function () {
+                    EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
+                });
+            } else {
+                self.$(".input-address").html(tree.getAddress());
+            }
+
             self.renderRecentActivities(tree);
             
         }

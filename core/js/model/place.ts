@@ -73,6 +73,9 @@
         public getLocation(): L.LatLng {
             return new L.LatLng(this.getLat(), this.getLng());
         }
+        public getAddress(): string {
+            return this.get('address');
+        }
         public getLat(): number {
             return parseFloat(this.get('lat'));
         }

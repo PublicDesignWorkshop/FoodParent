@@ -138,6 +138,11 @@
         font-weight: 400;
         display: flex;
         font-size: small;
+        justify-content: flex-start;
+    }
+
+    .content-tree-recentactivities .item-activity div{
+        text-align: left;
     }
 
     .content-tree-recentactivities #list-activities {

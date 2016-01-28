@@ -53,6 +53,7 @@
                 "click .date-preset": "_datePreset",
                 "dblclick .content-chart": "_mouseClick",
                 "click .button-new-donation": "_mouseClick",
+                "click .button-delete-location": "_deleteLocation",
             };
             self.delegateEvents();
         }
@@ -298,6 +299,16 @@
         private _mouseClick(event: Event): void {
             var self: DetailDonationGraphicView = this;
             EventHandler.handleMouseClick($(event.currentTarget), self, { donation: self._donation, place: self._place });
+        }
+
+        private _deleteLocation(event: Event): void {
+            var self: DetailDonationGraphicView = this;
+            FoodParent.EventHandler.handlePlaceData(self._place, FoodParent.DATA_MODE.DELETE, {}, function () {
+                Backbone.history.history.back();
+                FoodParent.EventHandler.handleDataChange("<strong><i>" + self._place.getName() + "</i></strong> has deleted successfully.", false);
+            }, function () {
+                FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+            });
         }
     }
 

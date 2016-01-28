@@ -47,6 +47,44 @@ var FoodParent;
         function ManageDonationsTableView(options) {
             var _this = this;
             _super.call(this, options);
+            this._addNewPlace = function () {
+                var self = _this;
+                if (self.$(".new-location").hasClass('hidden')) {
+                    FoodParent.Controller.updateGeoLocation(self.renderNewPlace, self.renderGeoLocationError);
+                }
+                else {
+                    self.$(".new-location").addClass('hidden');
+                }
+            };
+            this.renderGeoLocationError = function (error) {
+                var self = _this;
+                switch (error.code) {
+                    case error.PERMISSION_DENIED:
+                        FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.GEO_PERMISSION_ERROR);
+                        break;
+                    case error.POSITION_UNAVAILABLE:
+                        FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.GEO_PERMISSION_ERROR);
+                        break;
+                    case error.TIMEOUT:
+                        break;
+                }
+            };
+            this.renderNewPlace = function (position) {
+                var self = _this;
+                var place = new FoodParent.Place({ name: "", description: "", lat: position.coords.latitude, lng: position.coords.longitude });
+                var places = new FoodParent.Places();
+                places.add(place);
+                var grid = new Backgrid.Grid({
+                    columns: NewLocationColumn,
+                    collection: places,
+                    emptyText: FoodParent.Setting.getNoDataText(),
+                });
+                grid.render();
+                //grid.sort("name", "ascending");
+                self.$(".new-location").html('<div class="list-title">Add a New Location</div>');
+                self.$(".new-location").append(grid.el);
+                self.$(".new-location").removeClass('hidden');
+            };
             this.renderLocations = function () {
                 var self = _this;
                 FoodParent.Controller.fetchAllLocations(function () {
@@ -74,7 +112,7 @@ var FoodParent;
             self.events = {
                 "click .switch-map": "_mouseClick",
                 "click .filter-checkbox": "_applyFilter",
-                "click .add-tree": "_addNewTree",
+                "click .add-location": "_addNewPlace",
             };
             self.delegateEvents();
         }
@@ -536,11 +574,16 @@ var FoodParent;
             };
             self.$('#wrapper-treeinfo').html(template(data));
             self.$('#wrapper-treeinfo').removeClass('hidden');
-            FoodParent.GeoLocation.reverseGeocoding(tree.getLocation(), function (data) {
-                self.$(".tree-info-address").html("<div>" + data.road + ", " + data.county + "</div><div>" + data.state + ", " + data.country + ", " + data.postcode + "</div>");
-            }, function () {
-                FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
-            });
+            if (tree.getAddress().trim() == '') {
+                FoodParent.GeoLocation.reverseGeocoding(tree.getLocation(), function (data) {
+                    self.$(".input-address").html(data.road + ", " + data.county + ", " + data.state + ", " + data.country + ", " + data.postcode);
+                }, function () {
+                    FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+                });
+            }
+            else {
+                self.$(".input-address").html(tree.getAddress());
+            }
             self.renderRecentActivities(tree);
         };
         AddDonationView.prototype.renderRecentActivities = function (tree) {

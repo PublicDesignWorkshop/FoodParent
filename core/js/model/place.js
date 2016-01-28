@@ -77,6 +77,9 @@ var FoodParent;
         Place.prototype.getLocation = function () {
             return new L.LatLng(this.getLat(), this.getLng());
         };
+        Place.prototype.getAddress = function () {
+            return this.get('address');
+        };
         Place.prototype.getLat = function () {
             return parseFloat(this.get('lat'));
         };

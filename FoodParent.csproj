@@ -211,6 +211,7 @@
     <TypeScriptCompile Include="core\js\controller\command\adoptioncommand.ts" />
     <TypeScriptCompile Include="core\js\controller\command\command.ts" />
     <TypeScriptCompile Include="core\js\controller\command\donationcommand.ts" />
+    <TypeScriptCompile Include="core\js\controller\command\locationcommand.ts" />
     <TypeScriptCompile Include="core\js\controller\command\notecommand.ts" />
     <TypeScriptCompile Include="core\js\controller\command\personcommand.ts" />
     <TypeScriptCompile Include="core\js\controller\command\treecommand.ts" />

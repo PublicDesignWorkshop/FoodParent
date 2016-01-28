@@ -105,6 +105,9 @@ var FoodParent;
             });
             return persons;
         };
+        Tree.prototype.getAddress = function () {
+            return this.get('address');
+        };
         Tree.prototype.getLocation = function () {
             return new L.LatLng(this.getLat(), this.getLng());
         };

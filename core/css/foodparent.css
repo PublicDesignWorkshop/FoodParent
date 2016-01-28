@@ -13079,6 +13079,7 @@ button.close {
     }
     .list-tree .backgrid .address {
         width: 25%;
+        text-align: center;
     }
     .list-tree .backgrid .parents {
         width: 15%;
@@ -13098,6 +13099,7 @@ button.close {
     }
     .new-tree .backgrid .address {
         width: 35%;
+        text-align: center;
     }
     .new-tree .backgrid .lat {
         width: 72px;
@@ -13114,6 +13116,7 @@ button.close {
     }
     .list-people .backgrid .address {
         width: 20%;
+        text-align: center;
     }
     .list-people .backgrid .contact {
         width: 20%;
@@ -13133,6 +13136,7 @@ button.close {
     }
     .new-person .backgrid .address {
         width: 25%;
+        text-align: center;
     }
     .new-person .backgrid .contact {
         width: 25%;
@@ -13188,12 +13192,30 @@ button.close {
     }
     .list-location .backgrid .address {
         width: 25%;
+        text-align: center;
     }
     .list-location .backgrid .lat {
-        width: 10%;
+        width: 72px;
     }
     .list-location .backgrid .lng {
-        width: 10%;
+        width: 72px;
+    }
+
+    .new-location .backgrid .name {
+        width: 20%;
+    }
+    .new-location .backgrid .description {
+        width: 25%;
+    }
+    .new-location .backgrid .address {
+        width: 25%;
+        text-align: center;
+    }
+    .new-location .backgrid .lat {
+        width: 72px;
+    }
+    .new-location .backgrid .lng {
+        width: 72px;
     }
 
     .new-donation .backgrid .place {
@@ -13208,6 +13230,21 @@ button.close {
     .new-donation .backgrid .date {
         width: 30%;
     }
+
+    .list-donation .backgrid .food {
+        width: 20%;
+    }
+    .list-donation .backgrid .description {
+        width: 35%;
+    }
+    .list-donation .backgrid .address {
+        width: 30%;
+        text-align: center;
+    }
+    .list-donation .backgrid .parents {
+        width: 15%;
+    }
+
 }
 @media all {
     #wrapper-pop .outer-frame {
@@ -13402,7 +13439,7 @@ button.close {
         border-left: 2px solid;
         border-right: 2px solid;
         background-color: rgba(132, 167, 87, 0.85);
-        font-weight: 700;
+        font-weight: 400;
         font-size: small;
         text-align: left;
         padding: 4px 24px;
@@ -13474,7 +13511,16 @@ button.close {
     #wrapper-treeinfo div.input-description {
         cursor: pointer;
         margin: 0 0 0 8px;
+        font-weight: 400;
     }
+
+    #wrapper-treeinfo div.input-address {
+        cursor: pointer;
+        margin: 0 0 0 8px;
+        font-weight: 400;
+        text-align: center;
+    }
+
 
     .list-title {
         color: #222222;
@@ -13623,6 +13669,11 @@ button.close {
         font-weight: 400;
         display: flex;
         font-size: small;
+        justify-content: flex-start;
+    }
+
+    .content-tree-recentactivities .item-activity div{
+        text-align: left;
     }
 
     .content-tree-recentactivities #list-activities {
@@ -14427,7 +14478,7 @@ button.close {
 
     #wrapper-manage-donation-table .info-header {
         font-weight: 700;
-        font-size: large;
+        font-size: small;
         text-align: left;
         padding: 4px 16px 0 16px;
     }

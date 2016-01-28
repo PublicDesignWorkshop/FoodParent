@@ -273,17 +273,58 @@
                     persons: tree.getParents(),
                 }
                 self.$('.content-tree-info').html(template(data));
-                GeoLocation.reverseGeocoding(tree.getLocation(), function (data: ReverseGeoLocation) {
-                    self.$(".tree-info-address").html("<div>&nbsp;<i class='fa fa-map-marker'></i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + data.road + ", " + data.county + ", " + data.state + ", " + data.country + ", " + data.postcode + "</div>");
-                }, function () {
-                    EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
+
+                self.$('.input-address').replaceWith('<div class="input-address"></div>');
+                if (tree.getAddress().trim() == '') {
+                    GeoLocation.reverseGeocoding(tree.getLocation(), function (data: ReverseGeoLocation) {
+                        self.$(".input-address").html("<i class='fa fa-map-marker'></i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + data.road + ", " + data.county + ", " + data.state + ", " + data.country + ", " + data.postcode);
+                    }, function () {
+                        EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
+                    });
+                } else {
+                    self.$(".input-address").html("<i class='fa fa-map-marker'></i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + tree.getAddress());
+                }
+                self.$('.input-address').on('click', function (event) {
+                    $(this).replaceWith("<input type='text' class='input-address form-control' value='" + htmlEncode($(this).text()).trim() + "' />");
+                    self.$('.input-address').focus();
+                    self.$('.input-address').on('focusout', function (event) {
+                        var address: string = self.$('.input-address').val();
+                        if (address.trim() == '') {
+                            FoodParent.GeoLocation.reverseGeocoding(tree.getLocation(), function (data: FoodParent.ReverseGeoLocation) {
+                                if ((data.road + ", " + data.county + ", " + data.state + ", " + data.postcode) != tree.getAddress()) {
+                                    FoodParent.EventHandler.handleTreeData(tree, FoodParent.DATA_MODE.UPDATE_ADDRESS, { address: data.road + ", " + data.county + ", " + data.state + ", " + data.postcode }, function () {
+                                        var food: FoodParent.Food = FoodParent.Model.getFoods().findWhere({ id: tree.getFoodId() });
+                                        FoodParent.EventHandler.handleDataChange("Address of <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has been changed successfully.", true);
+                                        self.renderTreeInfo(tree);
+                                    }, function () {
+                                        FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+                                    });
+                                } else {
+                                    self.renderTreeInfo(tree);
+                                }
+                                
+                            }, function () {
+                                FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+                            });
+                        } else if (tree.getAddress().trim() != address.trim()) {
+                            FoodParent.EventHandler.handleTreeData(tree, FoodParent.DATA_MODE.UPDATE_ADDRESS, { address: address.trim() }, function () {
+                                var food: FoodParent.Food = FoodParent.Model.getFoods().findWhere({ id: tree.getFoodId() });
+                                FoodParent.EventHandler.handleDataChange("Address of <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has been changed successfully.", true);
+                                self.renderTreeInfo(tree);
+                            }, function () {
+                                FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+                            });
+                        } else {
+                            self.renderTreeInfo(tree);
+                        }
+                    });
                 });
                 self.renderFlagInfo(flag);
                 self.renderOwnershipInfo(ownership);
                 self.renderRecentActivities(tree);
 
                 self.$('.input-description').on('click', function (event) {
-                    $(this).replaceWith("<input type='text' class='input-description form-control' value='" + htmlEncode($(this).text()) + "' />");
+                    $(this).replaceWith("<input type='text' class='input-description form-control' value='" + htmlEncode($(this).text()).trim() + "' />");
                     self.$('.input-description').focus();
                     self.$('.input-description').on('focusout', function (event) {
                         var description: string = self.$('.input-description').val();

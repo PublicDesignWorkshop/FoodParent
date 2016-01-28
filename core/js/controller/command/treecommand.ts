@@ -645,4 +645,103 @@
         }
     }
 
+    export class UpdateTreeAddress implements Command {
+        private _tree: Tree;
+        private _address: string;
+        private _previousAddress: string;
+        private _success: Function;
+        private _error: Function;
+        private _note: Note;
+        constructor(args?: any, success?: Function, error?: Function) {
+            var self: UpdateTreeAddress = this;
+            if (args != undefined && args.tree != undefined && args.address != undefined) {
+                self._tree = args.tree;
+                self._address = args.address;
+            }
+            if (success) {
+                self._success = success;
+            }
+            if (error) {
+                self._error = error;
+            }
+        }
+        public execute(): any {
+            var self: UpdateTreeAddress = this;
+            self._previousAddress = self._tree.getAddress();
+            self._tree.save(
+                {
+                    'address': self._address,
+                },
+                {
+                    wait: true,
+                    success: function (tree: Tree, response: any) {
+                        self._note = new Note({
+                            type: NoteType.INFO,
+                            tree: self._tree.getId(),
+                            person: 0,
+                            comment: "Address has changed as '" + self._address + "'",
+                            picture: "",
+                            rate: -1,
+                            date: moment(new Date()).format(Setting.getDateTimeFormat()),
+                        });
+                        self._note.save(
+                            {},
+                            {
+                                wait: true,
+                                success: function (note: Note, response: any) {
+                                    Model.getNotes().add(note);
+                                    if (self._success) {
+                                        self._success();
+                                    }
+                                },
+                                error: function (error) {
+                                    if (self._error) {
+                                        self._error();
+                                    }
+                                },
+                            }
+                        );
+                    },
+                    error: function (error, response) {
+                        if (self._error) {
+                            self._error();
+                        }
+                    },
+                }
+            );
+        }
+        public undo(): any {
+            var self: UpdateTreeAddress = this;
+            self._tree.save(
+                {
+                    'address': self._previousAddress,
+                },
+                {
+                    wait: true,
+                    success: function (tree: Tree, response: any) {
+                        Model.getNotes().remove(self._note);
+                        self._note.destroy({
+                            wait: true,
+                            success: function (note: Note, response: any) {
+                                if (self._success) {
+                                    self._success();
+                                }
+                            },
+                            error: function (error) {
+                                if (self._error) {
+                                    self._error();
+                                }
+                            },
+                        });
+                    },
+                    error: function (error, response) {
+                        if (self._error) {
+                            self._error();
+                        }
+                    },
+                }
+            );
+        }
+    }
+
 }

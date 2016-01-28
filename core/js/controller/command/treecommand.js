@@ -561,4 +561,89 @@ var FoodParent;
         return DeleteTree;
     })();
     FoodParent.DeleteTree = DeleteTree;
+    var UpdateTreeAddress = (function () {
+        function UpdateTreeAddress(args, success, error) {
+            var self = this;
+            if (args != undefined && args.tree != undefined && args.address != undefined) {
+                self._tree = args.tree;
+                self._address = args.address;
+            }
+            if (success) {
+                self._success = success;
+            }
+            if (error) {
+                self._error = error;
+            }
+        }
+        UpdateTreeAddress.prototype.execute = function () {
+            var self = this;
+            self._previousAddress = self._tree.getAddress();
+            self._tree.save({
+                'address': self._address,
+            }, {
+                wait: true,
+                success: function (tree, response) {
+                    self._note = new FoodParent.Note({
+                        type: FoodParent.NoteType.INFO,
+                        tree: self._tree.getId(),
+                        person: 0,
+                        comment: "Address has changed as '" + self._address + "'",
+                        picture: "",
+                        rate: -1,
+                        date: moment(new Date()).format(FoodParent.Setting.getDateTimeFormat()),
+                    });
+                    self._note.save({}, {
+                        wait: true,
+                        success: function (note, response) {
+                            FoodParent.Model.getNotes().add(note);
+                            if (self._success) {
+                                self._success();
+                            }
+                        },
+                        error: function (error) {
+                            if (self._error) {
+                                self._error();
+                            }
+                        },
+                    });
+                },
+                error: function (error, response) {
+                    if (self._error) {
+                        self._error();
+                    }
+                },
+            });
+        };
+        UpdateTreeAddress.prototype.undo = function () {
+            var self = this;
+            self._tree.save({
+                'address': self._previousAddress,
+            }, {
+                wait: true,
+                success: function (tree, response) {
+                    FoodParent.Model.getNotes().remove(self._note);
+                    self._note.destroy({
+                        wait: true,
+                        success: function (note, response) {
+                            if (self._success) {
+                                self._success();
+                            }
+                        },
+                        error: function (error) {
+                            if (self._error) {
+                                self._error();
+                            }
+                        },
+                    });
+                },
+                error: function (error, response) {
+                    if (self._error) {
+                        self._error();
+                    }
+                },
+            });
+        };
+        return UpdateTreeAddress;
+    })();
+    FoodParent.UpdateTreeAddress = UpdateTreeAddress;
 })(FoodParent || (FoodParent = {}));

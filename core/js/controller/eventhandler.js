@@ -389,6 +389,9 @@ var FoodParent;
                 case DATA_MODE.UPDATE_DESCRIPTION:
                     self._lastCommand = new FoodParent.UpdateTreeDescription({ tree: tree, description: args.description }, success, error);
                     break;
+                case DATA_MODE.UPDATE_ADDRESS:
+                    self._lastCommand = new FoodParent.UpdateTreeAddress({ tree: tree, address: args.address }, success, error);
+                    break;
                 case DATA_MODE.CREATE:
                     self._lastCommand = new FoodParent.AddNewTree({ tree: tree }, success, error, undoSuccess);
                     break;
@@ -445,7 +448,35 @@ var FoodParent;
                 case DATA_MODE.DELETE:
                     FoodParent.View.popViewStatus();
                     var command = new FoodParent.DeleteDonation({ donation: donation }, success, error);
-                    new FoodParent.RenderConfirmViewCommand({ el: FoodParent.Setting.getPopWrapperElement(), message: "Are you sure to delete this note?", command: command }).execute();
+                    new FoodParent.RenderConfirmViewCommand({ el: FoodParent.Setting.getPopWrapperElement(), message: "Are you sure to delete this donation?", command: command }).execute();
+                    break;
+            }
+            if (self._lastCommand != undefined) {
+                self._lastCommand.execute();
+            }
+        };
+        EventHandler.handlePlaceData = function (place, dataMode, args, success, error, undoSuccess) {
+            var self = EventHandler._instance;
+            self._lastCommand = null;
+            switch (dataMode) {
+                case DATA_MODE.CREATE:
+                    self._lastCommand = new FoodParent.CreateLocation({ place: place }, success, error, undoSuccess);
+                    break;
+                case DATA_MODE.UPDATE_NAME:
+                    self._lastCommand = new FoodParent.UpdateLocationName({ place: place, name: args.name }, success, error, undoSuccess);
+                    break;
+                case DATA_MODE.UPDATE_DESCRIPTION:
+                    self._lastCommand = new FoodParent.UpdateLocationDescription({ place: place, description: args.description }, success, error, undoSuccess);
+                    break;
+                case DATA_MODE.UPDATE_LOCATION:
+                    self._lastCommand = new FoodParent.UpdateLocationLocation({ place: place, marker: args.marker, location: args.location }, success, error);
+                    break;
+                case DATA_MODE.UPDATE_ADDRESS:
+                    self._lastCommand = new FoodParent.UpdateLocationAddress({ place: place, address: args.address }, success, error);
+                    break;
+                case DATA_MODE.DELETE:
+                    var command = new FoodParent.DeleteLocation({ place: place }, success, error);
+                    new FoodParent.RenderConfirmViewCommand({ el: FoodParent.Setting.getPopWrapperElement(), message: "Are you sure to delete this location?", command: command }).execute();
                     break;
             }
             if (self._lastCommand != undefined) {

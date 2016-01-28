@@ -245,37 +245,101 @@ var TreeLongitudeCellEditor = Backgrid.Cell.extend({
     }
 });
 
-var TreeAddressCell = Backgrid.Cell.extend({
-    template: _.template('<div class="cell-group"><%= address %><div class="cell-button cell-refresh"><i class="fa fa-refresh fa-1x"></i></div></div>'),
+var TreeAddressCellEditor = Backgrid.Cell.extend({
+    tagName: "input",
+    attributes: {
+        type: "text"
+    },
     events: {
-        "click .cell-refresh": "_refresh",
+        "blur": "saveOrCancel",
+        "keydown": "saveOrCancel"
+    },
+    initialize: function (options) {
+        Backgrid.InputCellEditor.__super__.initialize.apply(this, arguments);
+
+        if (options.placeholder) {
+            this.$el.attr("placeholder", options.placeholder);
+        }
     },
     render: function () {
-        var self: any = this;
-        /*
-        var element: JQuery = $(self.el);
-        FoodParent.GeoLocation.reverseGeocoding(self.model.getLocation(), function (data: FoodParent.ReverseGeoLocation) {
-            element.html(self.template({
-                address: "<div>" + data.road + ", " + data.county + ", " + data.state + ", " + data.postcode + "</div>",
-            }));
-        }, function () {
-            FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
-        });
-        */
-        self.delegateEvents();
+        var model = this.model;
+        this.$el.val(this.formatter.fromRaw(model.get(this.column.get("name")), model));
         return this;
     },
-    _refresh: function (e) {
+    saveOrCancel: function (e) {
         var self: any = this;
-        var element: JQuery = $(self.el);
-        FoodParent.GeoLocation.reverseGeocoding(self.model.getLocation(), function (data: FoodParent.ReverseGeoLocation) {
-            element.html(self.template({
-                address: "<div>" + data.road + ", " + data.county + ", " + data.state + ", " + data.postcode + "</div>",
-            }));
-        }, function () {
-            FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
-        });
+        var tree: FoodParent.Tree = this.model;
+        var formatter = this.formatter;
+        var model = this.model;
+        var column = this.column;
+
+        var command = new Backgrid.Command(e);
+        var blurred = e.type === "blur";
+
+        if (command.moveUp() || command.moveDown() || command.moveLeft() || command.moveRight() ||
+            command.save() || blurred) {
+
+            e.preventDefault();
+            e.stopPropagation();
+
+            var val = this.$el.val();
+            var newValue = formatter.toRaw(val, model);
+            if (_.isUndefined(newValue)) {
+                model.trigger("backgrid:error", model, column, val);
+            }
+            else {
+                if (tree.getId() == undefined) {
+                    model.set(column.get("name"), newValue);
+                    model.trigger("backgrid:edited", model, column, command);
+                } else {
+                    console.log(newValue);
+                    if (newValue.trim() == "") {
+                        var tree: FoodParent.Tree = this.model;
+                        FoodParent.GeoLocation.reverseGeocoding(self.model.getLocation(), function (data: FoodParent.ReverseGeoLocation) {
+                            FoodParent.EventHandler.handleTreeData(tree, FoodParent.DATA_MODE.UPDATE_ADDRESS, { address: data.road + ", " + data.county + ", " + data.state + ", " + data.postcode }, function () {
+                                var food: FoodParent.Food = FoodParent.Model.getFoods().findWhere({ id: tree.getFoodId() });
+                                FoodParent.EventHandler.handleDataChange("Address of <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has been changed successfully.", true);
+                                model.set(column.get("name"), data.road + ", " + data.county + ", " + data.state + ", " + data.postcode);
+                                model.trigger("backgrid:edited", model, column, command);
+                            }, function () {
+                                FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+                            });
+                        }, function () {
+                            FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+                        });
+                    } else if (newValue.trim() != tree.getAddress().trim()) {
+                        var address: string = newValue;
+                        FoodParent.EventHandler.handleTreeData(tree, FoodParent.DATA_MODE.UPDATE_ADDRESS, { address: address }, function () {
+                            var food: FoodParent.Food = FoodParent.Model.getFoods().findWhere({ id: tree.getFoodId() });
+                            model.trigger("backgrid:edited", model, column, command);
+                            FoodParent.EventHandler.handleDataChange("Address of <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has changed successfully.", true);
+                        }, function () {
+                            FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+                        });
+                    } else {
+                        model.trigger("backgrid:edited", model, column, command);
+                    }
+                }
+            }
+        }
+        // esc
+        else if (command.cancel()) {
+            // undo
+            e.stopPropagation();
+            model.trigger("backgrid:edited", model, column, command);
+        }
     },
+    postRender: function (model, column) {
+        if (column == null || column.get("name") == this.column.get("name")) {
+            // move the cursor to the end on firefox if text is right aligned
+            if (this.$el.css("text-align") === "right") {
+                var val = this.$el.val();
+                this.$el.focus().val(null).val(val);
+            }
+            else this.$el.focus();
+        }
+        return this;
+    }
 });
 
 var TreeMapViewCell = Backgrid.Cell.extend({
@@ -578,8 +642,9 @@ var TreeColumn: any = [
     }, {
         name: "address",
         label: "Address",
-        editable: false,
-        cell: TreeAddressCell,
+        editable: true,
+        formatter: Backgrid.StringFormatter,
+        cell: Backgrid.Cell.extend({ editor: TreeAddressCellEditor }),
     }, {
         name: "lat",
         label: "Latitude",
@@ -642,8 +707,9 @@ var NewTreeColumn: any = [
     }, {
         name: "address",
         label: "Address",
-        editable: false,
-        cell: TreeAddressCell,
+        editable: true,
+        formatter: Backgrid.StringFormatter,
+        cell: Backgrid.Cell.extend({ editor: TreeAddressCellEditor }),
     }, {
         name: "lat",
         label: "Latitude",

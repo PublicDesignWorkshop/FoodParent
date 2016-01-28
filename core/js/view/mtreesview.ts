@@ -103,7 +103,6 @@ module FoodParent {
             grid.sort("id", "ascending");
             self.$(".list-tree").html(grid.el);
         }
-
         
 
         private _addNewTree = () => {
@@ -113,12 +112,11 @@ module FoodParent {
             } else {
                 self.$(".new-tree").addClass('hidden');
             }
-            
         }
 
         public renderNewTree = (position: Position) => {
             var self: ManageTreesTableView = this;
-            var tree: Tree = new Tree({ lat: position.coords.latitude, lng: position.coords.longitude, food: 0, type: 0, flag: 0, owner: 0, ownership: 0, description: "" });
+            var tree: Tree = new Tree({ lat: position.coords.latitude, lng: position.coords.longitude, food: 0, type: 0, flag: 0, owner: 0, ownership: 0, description: "", address: "" });
             var trees: Trees = new Trees();
             trees.add(tree);
             var optionValues = new Array<{ name: string, values: any }>();
@@ -338,11 +336,53 @@ module FoodParent {
                 self.renderFlagInfo(flag);
                 self.renderOwnershipInfo(ownership);
                 self.renderRecentActivities(tree);
-                GeoLocation.reverseGeocoding(tree.getLocation(), function (data: ReverseGeoLocation) {
-                    self.$(".tree-info-address").html("<div>" + data.road + ", " + data.county + "</div><div>" + data.state + ", " + data.country + ", " + data.postcode + "</div>");
-                }, function () {
-                    EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
+
+
+                self.$('.input-address').replaceWith('<div class="input-address"></div>');
+                if (tree.getAddress().trim() == '') {
+                    GeoLocation.reverseGeocoding(tree.getLocation(), function (data: ReverseGeoLocation) {
+                        self.$(".input-address").html(data.road + ", " + data.county + ", " + data.state + ", " + data.country + ", " + data.postcode);
+                    }, function () {
+                        EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
+                    });
+                } else {
+                    self.$(".input-address").html(tree.getAddress());
+                }
+                self.$('.input-address').on('click', function (event) {
+                    $(this).replaceWith("<input type='text' class='input-address form-control' value='" + htmlEncode($(this).text()) + "' />");
+                    self.$('.input-address').focus();
+                    self.$('.input-address').on('focusout', function (event) {
+                        var address: string = self.$('.input-address').val();
+                        if (address.trim() == '') {
+                            FoodParent.GeoLocation.reverseGeocoding(tree.getLocation(), function (data: FoodParent.ReverseGeoLocation) {
+                                if ((data.road + ", " + data.county + ", " + data.state + ", " + data.postcode) != tree.getAddress()) {
+                                    FoodParent.EventHandler.handleTreeData(tree, FoodParent.DATA_MODE.UPDATE_ADDRESS, { address: data.road + ", " + data.county + ", " + data.state + ", " + data.postcode }, function () {
+                                        var food: FoodParent.Food = FoodParent.Model.getFoods().findWhere({ id: tree.getFoodId() });
+                                        FoodParent.EventHandler.handleDataChange("Address of <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has been changed successfully.", true);
+                                        self.renderTreeInfo(tree);
+                                    }, function () {
+                                        FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+                                    });
+                                } else {
+                                    self.renderTreeInfo(tree);
+                                }
+                            }, function () {
+                                FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+                            });
+                        } else if (tree.getAddress().trim() != address.trim()) {
+                            FoodParent.EventHandler.handleTreeData(tree, FoodParent.DATA_MODE.UPDATE_ADDRESS, { address: address.trim() }, function () {
+                                var food: FoodParent.Food = FoodParent.Model.getFoods().findWhere({ id: tree.getFoodId() });
+                                FoodParent.EventHandler.handleDataChange("Address of <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has been changed successfully.", true);
+                                self.renderTreeInfo(tree);
+                            }, function () {
+                                FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+                            });
+                        } else {
+                            self.renderTreeInfo(tree);
+                        }
+                    });
                 });
+
                 self.$('.input-description').on('click', function (event) {
                     $(this).replaceWith("<input type='text' class='input-description form-control' value='" + htmlEncode($(this).text()) + "' />");
                     //self.$('.input-lat').css({ width: width });
@@ -817,7 +857,7 @@ module FoodParent {
 
         private _addNewTree(event: Event): void {
             var self: ManageTreesMapView = this;
-            var tree: Tree = new Tree({ lat: self._map.getCenter().lat, lng: self._map.getCenter().lng, food: 0, type: 0, flag: 0, owner: 0, ownership: 0, description: "" });
+            var tree: Tree = new Tree({ lat: self._map.getCenter().lat, lng: self._map.getCenter().lng, food: 0, type: 0, flag: 0, owner: 0, ownership: 0, description: "", address: "" });
             EventHandler.handleTreeData(tree, DATA_MODE.CREATE, {}, function () {
                 var food: Food = Model.getFoods().findWhere({ id: tree.getFoodId() });
                 self.updateMarkers(Model.getTrees());

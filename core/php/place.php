@@ -66,10 +66,11 @@
                 "lng" => $data->{'lng'},
                 "name" => $data->{'name'},
                 "description" => $data->{'description'},
+                "address" => $data->{'address'},
                 "updated" => date("Y-m-d H:i:s"),
             );
         }
-        $sql = "UPDATE `place` SET `lat` = :lat, `lng` = :lng, `name` = :name, `description` = :description, `updated` = :updated WHERE (`id` = :id)";
+        $sql = "UPDATE `place` SET `lat` = :lat, `lng` = :lng, `name` = :name, `description` = :description, `address` = :address, `updated` = :updated WHERE (`id` = :id)";
         
         try {
             $pdo = getConnection();
@@ -103,9 +104,10 @@
             "lng" => $data->{'lng'},
             "name" => $data->{'name'},
             "description" => $data->{'description'},
+            "address" => $data->{'address'},
             "updated" => date("Y-m-d H:i:s"),
         );
-        $sql = "INSERT INTO `place` VALUES ( NULL, :name, :description, :lat, :lng, :updated )";
+        $sql = "INSERT INTO `place` VALUES ( NULL, :name, :description, :address, :lat, :lng, :updated )";
         
         try {
             $pdo = getConnection();

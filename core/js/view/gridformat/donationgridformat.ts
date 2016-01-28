@@ -261,7 +261,8 @@ var DonationColumn: any = [
         name: "address",
         label: "Address",
         editable: false,
-        cell: TreeAddressCell,
+        formatter: Backgrid.StringFormatter,
+        cell: Backgrid.Cell.extend({ editor: TreeAddressCellEditor }),
     }, {
         name: "parents",
         label: "Adoption",

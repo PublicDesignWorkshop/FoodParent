@@ -114,7 +114,7 @@
         border-left: 2px solid;
         border-right: 2px solid;
         background-color: rgba(132, 167, 87, 0.85);
-        font-weight: 700;
+        font-weight: 400;
         font-size: small;
         text-align: left;
         padding: 4px 24px;
@@ -186,7 +186,16 @@
     #wrapper-treeinfo div.input-description {
         cursor: pointer;
         margin: 0 0 0 8px;
+        font-weight: 400;
     }
+
+    #wrapper-treeinfo div.input-address {
+        cursor: pointer;
+        margin: 0 0 0 8px;
+        font-weight: 400;
+        text-align: center;
+    }
+
 
     .list-title {
         color: #222222;

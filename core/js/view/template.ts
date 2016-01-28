@@ -245,7 +245,10 @@
             var template = '';
             template += '<div class="tree-info-name"><div class="input-food"><%= foodname %></div>&nbsp;<%= treename %></div>';
             template += '<div class="tree-info-coordinate"><div>@&nbsp;</div><div class="input-lat"><%= lat %></div>,&nbsp;<div class="input-lng"><%= lng %></div></div>';
-            template += '<div class="tree-info-address"><div>&nbsp;</div><div>&nbsp;</div></div>';
+            
+            template += '<div class="info-group">';
+            template += '<div class="input-address">&nbsp;</div>';
+            template += '</div>';
 
             template += '<div class="hr"><hr /></div>';
             template += '<div class="info-header"><i class="fa fa-sticky-note fa-1x"></i> Description</div>';
@@ -309,12 +312,15 @@
             template +=     '<div class="tree-info-coordinate">@&nbsp;<div class="input-lat"><%= lat %></div>,&nbsp;<div class="input-lng"><%= lng %></div></div>';
             template += '</div>';
 
-            template += '<div class="tree-info-address"><div>&nbsp;</div></div>';
-            template += '<div class="info-group info-group-flex">';
-            template +=     '<i class="fa fa-sticky-note fa-1x"></i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<div class="input-description"><%= description %></div>';
+            template += '<div class="info-group">';
+            template +=     '<div class="input-address">&nbsp;</div>';
             template += '</div>';
 
-            template += '<div class="info-group info-group-flex"><i class="fa fa-user fa-1x"></i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+            template += '<div class="info-group info-group-flex">';
+            template +=     '<i class="fa fa-sticky-note fa-1x"></i>&nbsp;&nbsp;&nbsp;&nbsp;<div class="input-description"><%= description %></div>';
+            template += '</div>';
+
+            template += '<div class="info-group info-group-flex"><i class="fa fa-user fa-1x"></i>&nbsp;&nbsp;&nbsp;&nbsp;';
             template += '<% _.each(persons.models, function (person, index) { %>';
             template += '<% if (index < persons.models.length - 1) { %>';
             template += '<div><%= person.getName() %>,&nbsp;</div>';
@@ -355,7 +361,10 @@
             var template = '';
             template += '<div class="tree-info-name"><div class="input-food"><%= foodname %></div>&nbsp;<%= treename %></div>';
             template += '<div class="tree-info-coordinate"><div>@&nbsp;</div><div class="input-lat"><%= lat %></div>,&nbsp;<div class="input-lng"><%= lng %></div></div>';
-            template += '<div class="tree-info-address"><div>&nbsp;</div><div>&nbsp;</div></div>';
+            
+            template += '<div class="info-group">';
+            template += '<div class="input-address">&nbsp;</div>';
+            template += '</div>';
 
             template += '<div class="hr"><hr /></div>';
             template += '<div class="info-header"><i class="fa fa-sticky-note fa-1x"></i> Description</div>';
@@ -960,7 +969,7 @@
 
             template += '<div class="content-donation-control">';
             template += '<div class="button-outer-frame2 button4"><div class="button-inner-frame2 button-new-donation">Post New Donation</div></div>';
-            template += '<div class="button-outer-frame2 button4"><div class="button-inner-frame2 button-delete-donation">Delete Place*</div></div>';
+            template += '<div class="button-outer-frame2 button4"><div class="button-inner-frame2 button-delete-location">Delete Place*</div></div>';
             template += '<div class="button-description">* marked operation cannot be undone.</div>';
             template += '</div>';   // end of .donation-control
             

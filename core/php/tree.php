@@ -69,11 +69,12 @@
                 "flag" => $data->{'flag'},
                 "owner" => $data->{'owner'},
                 "description" => $data->{'description'},
+                "address" => $data->{'address'},
                 "ownership" => $data->{'ownership'},
                 "updated" => date("Y-m-d H:i:s"),
             );
         }
-        $sql = "UPDATE `tree` SET `lat` = :lat, `lng` = :lng, `food` = :food, `type` = :type, `flag` = :flag, `owner` = :owner, `ownership` = :ownership, `description` = :description, `updated` = :updated WHERE (`id` = :id)";
+        $sql = "UPDATE `tree` SET `lat` = :lat, `lng` = :lng, `food` = :food, `type` = :type, `flag` = :flag, `owner` = :owner, `ownership` = :ownership, `description` = :description, `address` = :address, `updated` = :updated WHERE (`id` = :id)";
         
         try {
             $pdo = getConnection();
@@ -110,10 +111,11 @@
             "flag" => $data->{'flag'},
             "owner" => $data->{'owner'},
             "description" => $data->{'description'},
+            "address" => $data->{'address'},
             "ownership" => $data->{'ownership'},
             "updated" => date("Y-m-d H:i:s"),
         );
-        $sql = "INSERT INTO `tree` VALUES ( NULL, :lat, :lng, :food, :type, :flag, :owner, :description, :ownership, :updated )";
+        $sql = "INSERT INTO `tree` VALUES ( NULL, :lat, :lng, :food, :type, :flag, :owner, :description, :address, :ownership, :updated )";
         
         try {
             $pdo = getConnection();

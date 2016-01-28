@@ -102,7 +102,9 @@
             });
             return persons;
         }
-
+        public getAddress(): string {
+            return this.get('address');
+        }
         public getLocation(): L.LatLng {
             return new L.LatLng(this.getLat(), this.getLng());
         }
