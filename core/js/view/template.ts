@@ -630,11 +630,11 @@
 
             template +=     '<div id="wrapper-date-select">';
             template +=         '<div class="wrapper-date-preset">';
-            template +=             '<div class="button-outer-frame2 button3 date-preset 4years"><div class="button-inner-frame2">4 Year</div></div>';
             template +=             '<div class="button-outer-frame2 button3 date-preset 2years"><div class="button-inner-frame2">2 Year</div></div>';
-            template +=             '<div class="button-outer-frame2 button3 date-preset 1year"><div class="button-inner-frame2">1 Year</div></div>';
+            template +=             '<div class="button-outer-frame2 button3 date-preset 1years"><div class="button-inner-frame2">1 Year</div></div>';
             template +=             '<div class="button-outer-frame2 button3 date-preset 6months"><div class="button-inner-frame2">6 months</div></div>';
-            template +=             '<div class="button-outer-frame2 button3 date-preset 1month"><div class="button-inner-frame2">3 month</div></div>';
+            template +=             '<div class="button-outer-frame2 button3 date-preset 3months"><div class="button-inner-frame2">3 months</div></div>';
+            template +=             '<div class="button-outer-frame2 button3 date-preset 1month"><div class="button-inner-frame2">1 month</div></div>';
             template +=         '</div>';
             template +=         '<div class="wrapper-date-select-item"><input type="text" class="form-control tree-graph-start" /></div>';
             template +=         '<div class="wrapper-date-select-item"><span class="date-select-label">~</span><input type="text" class="form-control tree-graph-end" /></div>';
@@ -932,11 +932,11 @@
 
             template += '<div id="wrapper-date-select">';
             template += '<div class="wrapper-date-preset">';
-            template += '<div class="button-outer-frame2 button3 date-preset 4years"><div class="button-inner-frame2">4 Year</div></div>';
             template += '<div class="button-outer-frame2 button3 date-preset 2years"><div class="button-inner-frame2">2 Year</div></div>';
-            template += '<div class="button-outer-frame2 button3 date-preset 1year"><div class="button-inner-frame2">1 Year</div></div>';
+            template += '<div class="button-outer-frame2 button3 date-preset 1years"><div class="button-inner-frame2">1 Year</div></div>';
             template += '<div class="button-outer-frame2 button3 date-preset 6months"><div class="button-inner-frame2">6 months</div></div>';
-            template += '<div class="button-outer-frame2 button3 date-preset 1month"><div class="button-inner-frame2">3 month</div></div>';
+            template += '<div class="button-outer-frame2 button3 date-preset 3months"><div class="button-inner-frame2">3 months</div></div>';
+            template += '<div class="button-outer-frame2 button3 date-preset 1month"><div class="button-inner-frame2">1 month</div></div>';
             template += '</div>';
             template += '<div class="wrapper-date-select-item"><input type="text" class="form-control donation-graph-start" /></div>';
             template += '<div class="wrapper-date-select-item"><span class="date-select-label">~</span><input type="text" class="form-control donation-graph-end" /></div>';
