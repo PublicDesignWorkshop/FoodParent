@@ -399,26 +399,61 @@ var FoodParent;
                 }
             });
         };
-        Model.fetchAllDonations = function () {
+        Model.fetchDonationsOfPlaces = function (ids, size, offset) {
             var self = Model._instance;
             if (self.donations == undefined) {
                 self.donations = new FoodParent.Donations();
             }
-            return self.donations.fetch({
-                remove: true,
-                processData: true,
-                data: {
-                    mode: 2,
-                    ids: 0,
-                    id: 0,
-                },
-                success: function (collection, response, options) {
-                    console.log("success fetch with " + collection.models.length + " places");
-                },
-                error: function (collection, jqxhr, options) {
-                    console.log("error while fetching item data from the server");
-                }
-            });
+            if (ids.length != 0) {
+                return self.donations.fetch({
+                    remove: false,
+                    processData: true,
+                    data: {
+                        mode: 0,
+                        places: ids.toString(),
+                        start: "",
+                        end: "",
+                        size: size,
+                        offset: offset,
+                    },
+                    success: function (collection, response, options) {
+                        //console.log("success fetch with " + collection.models.length + " notes");
+                        //Controller.getInstance().renderTreesOnMap();
+                    },
+                    error: function (collection, jqxhr, options) {
+                        console.log("error while fetching item data from the server");
+                    }
+                });
+            }
+            return null;
+        };
+        Model.fetchDonationsOfPlacesDuringPeriod = function (ids, start, end, size, offset) {
+            var self = Model._instance;
+            if (self.donations == undefined) {
+                self.donations = new FoodParent.Donations();
+            }
+            if (ids.length != 0) {
+                return self.donations.fetch({
+                    remove: false,
+                    processData: true,
+                    data: {
+                        mode: 1,
+                        places: ids.toString(),
+                        start: start,
+                        end: end,
+                        size: size,
+                        offset: offset,
+                    },
+                    success: function (collection, response, options) {
+                        //console.log("success fetch with " + collection.models.length + " notes");
+                        //Controller.getInstance().renderTreesOnMap();
+                    },
+                    error: function (collection, jqxhr, options) {
+                        console.log("error while fetching item data from the server");
+                    }
+                });
+            }
+            return null;
         };
         Model._instance = new Model();
         Model.TAG = "Model - ";

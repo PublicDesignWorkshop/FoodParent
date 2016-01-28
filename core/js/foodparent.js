@@ -27683,6 +27683,27 @@ var skipLabels;
 				            highlightFill: dataset.pointHighlightFill || dataset.pointColor,
 				            highlightStroke: dataset.pointHighlightStroke || dataset.pointStrokeColor
 				        }));
+				    } else if (dataPoint instanceof FoodParent.Donation) {
+				        //Add a new point for each piece of data, passing any required data to draw.
+				        var bFirst = false;
+				        if (index == 0) {
+				            bFirst = true;
+				        } else {
+				            if (dataset.data[index].getId() != dataset.data[index - 1].getId() && dataset.data[index].getQuantity() != 0) {
+				                bFirst = true;
+				            }
+				        }
+				        datasetObject.points.push(new this.PointClass({
+				            id: dataPoint.getId(),
+				            value: dataPoint.getCumulativeQuantity(),
+				            label: data.labels[index],
+				            first: bFirst,
+				            datasetLabel: dataset.label,
+				            strokeColor: dataset.pointStrokeColor,
+				            fillColor: dataset.pointColor,
+				            highlightFill: dataset.pointHighlightFill || dataset.pointColor,
+				            highlightStroke: dataset.pointHighlightStroke || dataset.pointStrokeColor
+				        }));
 				    }
 					
 				},this);
@@ -42843,6 +42864,16 @@ var htmlEncode = function (str) {
     str = str.replace(/'/g, "&#039;");
     return str;
 };
+var fileNameEncode = function (str) {
+    str = str.replace(/ /g, '');
+    str = str.replace(/#/g, '');
+    str = str.replace(/&/g, "");
+    str = str.replace(/>/g, "");
+    str = str.replace(/</g, "");
+    str = str.replace(/"/g, "");
+    str = str.replace(/'/g, "");
+    return str;
+};
 var htmlDecode = function (str) {
     str = str.replace(/\n/g, "<br />");
     return str;
@@ -43177,6 +43208,31 @@ var FoodParent;
         };
         Controller.fetchAllLocations = function (success, error) {
             var xhr1 = FoodParent.Model.fetchAllPlaces();
+            var xhr2 = FoodParent.Model.fetchAllTrees();
+            var xhr3 = FoodParent.Model.fetchAllFoods();
+            $.when(xhr1, xhr2, xhr3).then(function () {
+                Controller.removeXHR(xhr1);
+                Controller.removeXHR(xhr2);
+                Controller.removeXHR(xhr3);
+                if (success) {
+                    success();
+                }
+            }, function () {
+                Controller.removeXHR(xhr1);
+                Controller.removeXHR(xhr2);
+                Controller.removeXHR(xhr3);
+                if (error) {
+                    error(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+                }
+            });
+        };
+        Controller.fetchDonationsOfPlaces = function (places, size, offset, success, error) {
+            var ids = new Array();
+            $.each(places, function (index, place) {
+                ids.push(place.getId());
+            });
+            var xhr1 = FoodParent.Model.fetchDonationsOfPlaces(ids, size, offset);
+            Controller.pushXHR(xhr1);
             $.when(xhr1).then(function () {
                 Controller.removeXHR(xhr1);
                 if (success) {
@@ -43189,24 +43245,20 @@ var FoodParent;
                 }
             });
         };
-        Controller.fetchAllDonations = function (success, error) {
-            var xhr1 = FoodParent.Model.fetchAllDonations();
-            var xhr2 = FoodParent.Model.fetchAllTrees();
-            var xhr3 = FoodParent.Model.fetchAllPlaces();
-            var xhr4 = FoodParent.Model.fetchAllFoods();
-            $.when(xhr1, xhr2, xhr3, xhr4).then(function () {
+        Controller.fetchDonationsOfPlacesDuringPeriod = function (places, startDate, endDate, size, offset, success, error) {
+            var ids = new Array();
+            $.each(places, function (index, place) {
+                ids.push(place.getId());
+            });
+            var xhr1 = FoodParent.Model.fetchDonationsOfPlacesDuringPeriod(ids, startDate, endDate, size, offset);
+            Controller.pushXHR(xhr1);
+            $.when(xhr1).then(function () {
                 Controller.removeXHR(xhr1);
-                Controller.removeXHR(xhr2);
-                Controller.removeXHR(xhr3);
-                Controller.removeXHR(xhr4);
                 if (success) {
                     success();
                 }
             }, function () {
                 Controller.removeXHR(xhr1);
-                Controller.removeXHR(xhr2);
-                Controller.removeXHR(xhr3);
-                Controller.removeXHR(xhr4);
                 if (error) {
                     error(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
                 }
@@ -43231,6 +43283,7 @@ var FoodParent;
                 "mtree/:viewMode/:id": "manageTree",
                 "mpeople/:viewMode/:id": "managePeople",
                 "mdonations/:viewMode/:id": "manageDonations",
+                "mdonation/:viewMode/:id": "manageDonation",
                 "ptrees": "parentTrees",
             };
             _super.call(this, options);
@@ -43252,6 +43305,9 @@ var FoodParent;
         };
         Router.prototype.manageDonations = function (viewMode, id) {
             FoodParent.EventHandler.handleNavigate(FoodParent.VIEW_STATUS.MANAGE_DONATIONS, { viewMode: viewMode, id: id });
+        };
+        Router.prototype.manageDonation = function (viewMode, id) {
+            FoodParent.EventHandler.handleNavigate(FoodParent.VIEW_STATUS.DETAIL_DONATION, { viewMode: viewMode, id: id });
         };
         Router._instance = new Router();
         Router.TAG = "Router - ";
@@ -43286,6 +43342,9 @@ var FoodParent;
         DATA_MODE[DATA_MODE["UPDATE_COVER"] = 15] = "UPDATE_COVER";
         DATA_MODE[DATA_MODE["UPDATE_DATE"] = 16] = "UPDATE_DATE";
         DATA_MODE[DATA_MODE["ADD_PICTURE"] = 17] = "ADD_PICTURE";
+        DATA_MODE[DATA_MODE["ADD_DONATION_TREE"] = 18] = "ADD_DONATION_TREE";
+        DATA_MODE[DATA_MODE["REMOVE_DONATION_TREE"] = 19] = "REMOVE_DONATION_TREE";
+        DATA_MODE[DATA_MODE["UPDATE_DONATION_AMOUNT"] = 20] = "UPDATE_DONATION_AMOUNT";
     })(FoodParent.DATA_MODE || (FoodParent.DATA_MODE = {}));
     var DATA_MODE = FoodParent.DATA_MODE;
     (function (VIEW_STATUS) {
@@ -43302,7 +43361,9 @@ var FoodParent;
         VIEW_STATUS[VIEW_STATUS["IMAGENOTE_TREE"] = 10] = "IMAGENOTE_TREE";
         VIEW_STATUS[VIEW_STATUS["POST_NOTE"] = 11] = "POST_NOTE";
         VIEW_STATUS[VIEW_STATUS["MANAGE_DONATIONS"] = 12] = "MANAGE_DONATIONS";
-        VIEW_STATUS[VIEW_STATUS["MANAGE_DONATION"] = 13] = "MANAGE_DONATION";
+        VIEW_STATUS[VIEW_STATUS["ADD_DONATION"] = 13] = "ADD_DONATION";
+        VIEW_STATUS[VIEW_STATUS["DETAIL_DONATION"] = 14] = "DETAIL_DONATION";
+        VIEW_STATUS[VIEW_STATUS["EDIT_DONATION"] = 15] = "EDIT_DONATION";
     })(FoodParent.VIEW_STATUS || (FoodParent.VIEW_STATUS = {}));
     var VIEW_STATUS = FoodParent.VIEW_STATUS;
     (function (VIEW_MODE) {
@@ -43363,6 +43424,10 @@ var FoodParent;
             else if (viewStatus == VIEW_STATUS.MANAGE_DONATIONS) {
                 new FoodParent.MovePaceBarToUnderNav().execute();
                 new FoodParent.RenderManageDonationsViewCommand({ el: FoodParent.Setting.getMainWrapperElement(), viewMode: option.viewMode, id: option.id }).execute();
+            }
+            else if (viewStatus == VIEW_STATUS.DETAIL_DONATION) {
+                new FoodParent.MovePaceBarToUnderNav().execute();
+                new FoodParent.RenderDetailDonationViewCommand({ el: FoodParent.Setting.getMainWrapperElement(), viewMode: option.viewMode, id: option.id }).execute();
             }
             FoodParent.View.getNavView().setActiveNavItem(viewStatus);
             FoodParent.View.setViewStatus(viewStatus);
@@ -43491,14 +43556,45 @@ var FoodParent;
                     break;
                 case VIEW_STATUS.MANAGE_DONATIONS:
                     if (el.hasClass('manage-donation-item')) {
-                        new FoodParent.RenderManageDonationViewCommand({ el: FoodParent.Setting.getPopWrapperElement(), place: options.place }).execute();
+                        if (options.place != undefined) {
+                            new FoodParent.RenderAddDonationViewCommand({ el: FoodParent.Setting.getPopWrapperElement(), place: options.place }).execute();
+                        }
+                    }
+                    else if (el.hasClass('location-detail')) {
+                        new FoodParent.NavigateCommand({ hash: 'mdonation', viewMode: VIEW_MODE.GRAPHIC, id: options.place.getId() }).execute();
                     }
                     break;
-                case VIEW_STATUS.MANAGE_DONATION:
+                case VIEW_STATUS.ADD_DONATION:
                     if (el.hasClass('button-submit-donation')) {
                     }
                     else if (el.hasClass('button-close')) {
                         new FoodParent.RemoveAlertViewCommand({ delay: FoodParent.Setting.getRemovePopupDuration() }).execute();
+                        if (FoodParent.View.getDetailDonationView()) {
+                            FoodParent.View.getDetailDonationView().refreshDonationInfo();
+                        }
+                    }
+                    break;
+                case VIEW_STATUS.DETAIL_DONATION:
+                    if (el.hasClass('content-chart')) {
+                        if (options.donation) {
+                            new FoodParent.RenderEditDonationViewCommand({ el: FoodParent.Setting.getPopWrapperElement(), donation: options.donation }).execute();
+                        }
+                    }
+                    else if (el.hasClass('button-new-donation')) {
+                        console.log(options.place);
+                        if (options.place) {
+                            new FoodParent.RenderAddDonationViewCommand({ el: FoodParent.Setting.getPopWrapperElement(), place: options.place }).execute();
+                        }
+                    }
+                    break;
+                case VIEW_STATUS.EDIT_DONATION:
+                    if (el.hasClass('button-close')) {
+                        new FoodParent.RemoveAlertViewCommand({ delay: FoodParent.Setting.getRemovePopupDuration() }).execute();
+                        if (FoodParent.View.getDetailDonationView()) {
+                            FoodParent.View.getDetailDonationView().refreshDonationInfo();
+                        }
+                    }
+                    else if (el.hasClass('delete-donation')) {
                     }
                     break;
             }
@@ -43645,6 +43741,29 @@ var FoodParent;
             switch (dataMode) {
                 case DATA_MODE.CREATE:
                     self._lastCommand = new FoodParent.CreateDonation({ donation: donation }, success, error, undoSuccess);
+                    break;
+                case DATA_MODE.ADD_PICTURE:
+                    self._lastCommand = new FoodParent.AddDonationPicture({ donation: donation, filename: args.filename }, success, error, undoSuccess);
+                    break;
+                case DATA_MODE.UPDATE_COVER:
+                    self._lastCommand = new FoodParent.UpdateDonationCover({ donation: donation, cover: args.cover }, success, error);
+                    break;
+                case DATA_MODE.UPDATE_DATE:
+                    self._lastCommand = new FoodParent.UpdateDonationDate({ donation: donation, date: args.date }, success, error);
+                    break;
+                case DATA_MODE.ADD_DONATION_TREE:
+                    self._lastCommand = new FoodParent.AddDonationTree({ donation: donation, tree: args.tree }, success, error, undoSuccess);
+                    break;
+                case DATA_MODE.REMOVE_DONATION_TREE:
+                    self._lastCommand = new FoodParent.RemoveDonationTree({ donation: donation, tree: args.tree }, success, error, undoSuccess);
+                    break;
+                case DATA_MODE.UPDATE_DONATION_AMOUNT:
+                    self._lastCommand = new FoodParent.UpdateDonationAmount({ donation: donation, amount: args.amount }, success, error, undoSuccess);
+                    break;
+                case DATA_MODE.DELETE:
+                    FoodParent.View.popViewStatus();
+                    var command = new FoodParent.DeleteDonation({ donation: donation }, success, error);
+                    new FoodParent.RenderConfirmViewCommand({ el: FoodParent.Setting.getPopWrapperElement(), message: "Are you sure to delete this note?", command: command }).execute();
                     break;
             }
             if (self._lastCommand != undefined) {
@@ -44077,23 +44196,61 @@ var FoodParent;
         return RenderManageDonationsViewCommand;
     })();
     FoodParent.RenderManageDonationsViewCommand = RenderManageDonationsViewCommand;
-    var RenderManageDonationViewCommand = (function () {
-        function RenderManageDonationViewCommand(args) {
+    var RenderAddDonationViewCommand = (function () {
+        function RenderAddDonationViewCommand(args) {
             var self = this;
             self._el = args.el;
             self._place = args.place;
         }
-        RenderManageDonationViewCommand.prototype.execute = function () {
+        RenderAddDonationViewCommand.prototype.execute = function () {
             var self = this;
-            var view = FoodParent.DonationManageViewFactory.create(self._el, self._place).render();
+            var view = FoodParent.AddDonationViewFactory.create(self._el, self._place).render();
             FoodParent.View.setPopupView(view);
-            FoodParent.View.setViewStatus(FoodParent.VIEW_STATUS.MANAGE_DONATION);
+            FoodParent.View.setViewStatus(FoodParent.VIEW_STATUS.ADD_DONATION);
         };
-        RenderManageDonationViewCommand.prototype.undo = function () {
+        RenderAddDonationViewCommand.prototype.undo = function () {
         };
-        return RenderManageDonationViewCommand;
+        return RenderAddDonationViewCommand;
     })();
-    FoodParent.RenderManageDonationViewCommand = RenderManageDonationViewCommand;
+    FoodParent.RenderAddDonationViewCommand = RenderAddDonationViewCommand;
+    var RenderDetailDonationViewCommand = (function () {
+        function RenderDetailDonationViewCommand(args) {
+            var self = this;
+            self._el = args.el;
+            self._viewMode = args.viewMode;
+            self._id = args.id;
+        }
+        RenderDetailDonationViewCommand.prototype.execute = function () {
+            var self = this;
+            if (FoodParent.View.getDetailDonationView()) {
+            }
+            else {
+                var view = FoodParent.DetailDonationViewFractory.create(self._el, self._viewMode, self._id).render();
+                FoodParent.View.addChild(view);
+                FoodParent.View.setDetailDonationView(view);
+            }
+        };
+        RenderDetailDonationViewCommand.prototype.undo = function () {
+        };
+        return RenderDetailDonationViewCommand;
+    })();
+    FoodParent.RenderDetailDonationViewCommand = RenderDetailDonationViewCommand;
+    var RenderEditDonationViewCommand = (function () {
+        function RenderEditDonationViewCommand(args) {
+            var self = this;
+            self._donation = args.donation;
+        }
+        RenderEditDonationViewCommand.prototype.execute = function () {
+            var self = this;
+            var view = FoodParent.EditDonationViewFactory.create(self._el, self._donation).render();
+            FoodParent.View.setPopupView(view);
+            FoodParent.View.setViewStatus(FoodParent.VIEW_STATUS.EDIT_DONATION);
+        };
+        RenderEditDonationViewCommand.prototype.undo = function () {
+        };
+        return RenderEditDonationViewCommand;
+    })();
+    FoodParent.RenderEditDonationViewCommand = RenderEditDonationViewCommand;
 })(FoodParent || (FoodParent = {}));
 
 var FoodParent;
@@ -45591,7 +45748,7 @@ var FoodParent;
             var self = this;
             self._donation.save({}, {
                 wait: true,
-                success: function (tree, response) {
+                success: function (donation, response) {
                     FoodParent.Model.getDonations().add(self._donation);
                     if (self._success) {
                         self._success();
@@ -45609,7 +45766,7 @@ var FoodParent;
             FoodParent.Model.getDonations().remove(self._donation);
             self._donation.destroy({
                 wait: true,
-                success: function (note, response) {
+                success: function (donation, response) {
                     if (self._undoSuccess) {
                         self._undoSuccess();
                     }
@@ -45624,6 +45781,365 @@ var FoodParent;
         return CreateDonation;
     })();
     FoodParent.CreateDonation = CreateDonation;
+    var AddDonationPicture = (function () {
+        function AddDonationPicture(args, success, error, undoSuccess) {
+            var self = this;
+            console.log(args.note);
+            console.log(args.filename);
+            if (args != undefined && args.donation != undefined && args.filename != undefined) {
+                self._donation = args.donation;
+                self._filename = args.filename;
+            }
+            if (success) {
+                self._success = success;
+            }
+            if (error) {
+                self._error = error;
+            }
+            if (undoSuccess) {
+                self._undoSuccess = undoSuccess;
+            }
+        }
+        AddDonationPicture.prototype.execute = function () {
+            var self = this;
+            self._donation.addPicture(self._filename);
+            self._donation.save({}, {
+                wait: true,
+                success: function (donation, response) {
+                    if (self._success) {
+                        self._success();
+                    }
+                },
+                error: function (error, response) {
+                    if (self._error) {
+                        self._error();
+                    }
+                },
+            });
+        };
+        AddDonationPicture.prototype.undo = function () {
+            var self = this;
+            self._donation.removePicture(self._filename);
+            self._donation.save({}, {
+                wait: true,
+                success: function (donation, response) {
+                    if (self._undoSuccess) {
+                        self._undoSuccess();
+                    }
+                },
+                error: function (error, response) {
+                    if (self._error) {
+                        self._error();
+                    }
+                },
+            });
+        };
+        return AddDonationPicture;
+    })();
+    FoodParent.AddDonationPicture = AddDonationPicture;
+    var UpdateDonationCover = (function () {
+        function UpdateDonationCover(args, success, error) {
+            var self = this;
+            if (args != undefined && args.donation != undefined && args.cover != undefined) {
+                self._donation = args.donation;
+                self._picture = self._donation.getPicture(args.cover);
+            }
+            if (success) {
+                self._success = success;
+            }
+            if (error) {
+                self._error = error;
+            }
+        }
+        UpdateDonationCover.prototype.execute = function () {
+            var self = this;
+            self._previousPicture = self._donation.getPicture(0);
+            self._donation.setCoverPicture(self._picture);
+            self._donation.save({}, {
+                wait: true,
+                success: function (note, response) {
+                    if (self._success) {
+                        self._success();
+                    }
+                },
+                error: function (error, response) {
+                    if (self._error) {
+                        self._error();
+                    }
+                },
+            });
+        };
+        UpdateDonationCover.prototype.undo = function () {
+            var self = this;
+            self._donation.setCoverPicture(self._previousPicture);
+            self._donation.save({}, {
+                wait: true,
+                success: function (tree, response) {
+                    if (self._success) {
+                        self._success();
+                    }
+                },
+                error: function (error, response) {
+                    if (self._error) {
+                        self._error();
+                    }
+                },
+            });
+        };
+        return UpdateDonationCover;
+    })();
+    FoodParent.UpdateDonationCover = UpdateDonationCover;
+    var UpdateDonationDate = (function () {
+        function UpdateDonationDate(args, success, error) {
+            var self = this;
+            if (args != undefined && args.donation != undefined && args.date != undefined) {
+                self._donation = args.donation;
+                self._date = args.date;
+            }
+            if (success) {
+                self._success = success;
+            }
+            if (error) {
+                self._error = error;
+            }
+        }
+        UpdateDonationDate.prototype.execute = function () {
+            var self = this;
+            self._previousDate = self._donation.getFormattedDateTime();
+            self._donation.save({
+                'date': self._date,
+            }, {
+                wait: true,
+                success: function (note, response) {
+                    if (self._success) {
+                        self._success();
+                    }
+                },
+                error: function (error, response) {
+                    if (self._error) {
+                        self._error();
+                    }
+                },
+            });
+        };
+        UpdateDonationDate.prototype.undo = function () {
+            var self = this;
+            self._donation.save({
+                'date': self._previousDate,
+            }, {
+                wait: true,
+                success: function (tree, response) {
+                    if (self._success) {
+                        self._success();
+                    }
+                },
+                error: function (error, response) {
+                    if (self._error) {
+                        self._error();
+                    }
+                },
+            });
+        };
+        return UpdateDonationDate;
+    })();
+    FoodParent.UpdateDonationDate = UpdateDonationDate;
+    var AddDonationTree = (function () {
+        function AddDonationTree(args, success, error, undoSuccess) {
+            var self = this;
+            if (args != undefined && args.donation != undefined && args.tree != undefined) {
+                self._donation = args.donation;
+                self._tree = args.tree;
+            }
+            if (success) {
+                self._success = success;
+            }
+            if (error) {
+                self._error = error;
+            }
+            if (undoSuccess) {
+                self._undoSuccess = undoSuccess;
+            }
+        }
+        AddDonationTree.prototype.execute = function () {
+            var self = this;
+            self._donation.addTreeId(self._tree.getId());
+            self._donation.save({}, {
+                wait: true,
+                success: function (note, response) {
+                    if (self._success) {
+                        self._success();
+                    }
+                },
+                error: function (error, response) {
+                    if (self._error) {
+                        self._error();
+                    }
+                },
+            });
+        };
+        AddDonationTree.prototype.undo = function () {
+            var self = this;
+            self._donation.removeTreeId(self._tree.getId());
+            self._donation.save({}, {
+                wait: true,
+                success: function (tree, response) {
+                    if (self._undoSuccess) {
+                        self._undoSuccess();
+                    }
+                },
+                error: function (error, response) {
+                    if (self._error) {
+                        self._error();
+                    }
+                },
+            });
+        };
+        return AddDonationTree;
+    })();
+    FoodParent.AddDonationTree = AddDonationTree;
+    var RemoveDonationTree = (function () {
+        function RemoveDonationTree(args, success, error, undoSuccess) {
+            var self = this;
+            if (args != undefined && args.donation != undefined && args.tree != undefined) {
+                self._donation = args.donation;
+                self._tree = args.tree;
+            }
+            if (success) {
+                self._success = success;
+            }
+            if (error) {
+                self._error = error;
+            }
+            if (undoSuccess) {
+                self._undoSuccess = undoSuccess;
+            }
+        }
+        RemoveDonationTree.prototype.execute = function () {
+            var self = this;
+            self._donation.removeTreeId(self._tree.getId());
+            self._donation.save({}, {
+                wait: true,
+                success: function (note, response) {
+                    if (self._success) {
+                        self._success();
+                    }
+                },
+                error: function (error, response) {
+                    if (self._error) {
+                        self._error();
+                    }
+                },
+            });
+        };
+        RemoveDonationTree.prototype.undo = function () {
+            var self = this;
+            self._donation.addTreeId(self._tree.getId());
+            self._donation.save({}, {
+                wait: true,
+                success: function (tree, response) {
+                    if (self._undoSuccess) {
+                        self._undoSuccess();
+                    }
+                },
+                error: function (error, response) {
+                    if (self._error) {
+                        self._error();
+                    }
+                },
+            });
+        };
+        return RemoveDonationTree;
+    })();
+    FoodParent.RemoveDonationTree = RemoveDonationTree;
+    var UpdateDonationAmount = (function () {
+        function UpdateDonationAmount(args, success, error, undoSuccess) {
+            var self = this;
+            if (args != undefined && args.donation != undefined && args.amount != undefined) {
+                self._donation = args.donation;
+                self._amount = args.amount;
+            }
+            if (success) {
+                self._success = success;
+            }
+            if (error) {
+                self._error = error;
+            }
+            if (undoSuccess) {
+                self._undoSuccess = undoSuccess;
+            }
+        }
+        UpdateDonationAmount.prototype.execute = function () {
+            var self = this;
+            self._prevAmount = self._donation.getQuantity();
+            self._donation.setQuantity(self._amount);
+            self._donation.save({}, {
+                wait: true,
+                success: function (note, response) {
+                    if (self._success) {
+                        self._success();
+                    }
+                },
+                error: function (error, response) {
+                    if (self._error) {
+                        self._error();
+                    }
+                },
+            });
+        };
+        UpdateDonationAmount.prototype.undo = function () {
+            var self = this;
+            self._donation.setQuantity(self._prevAmount);
+            self._donation.save({}, {
+                wait: true,
+                success: function (tree, response) {
+                    if (self._success) {
+                        self._success();
+                    }
+                },
+                error: function (error, response) {
+                    if (self._error) {
+                        self._error();
+                    }
+                },
+            });
+        };
+        return UpdateDonationAmount;
+    })();
+    FoodParent.UpdateDonationAmount = UpdateDonationAmount;
+    var DeleteDonation = (function () {
+        function DeleteDonation(args, success, error) {
+            var self = this;
+            if (args != undefined && args.donation != undefined) {
+                self._donation = args.donation;
+            }
+            if (success) {
+                self._success = success;
+            }
+            if (error) {
+                self._error = error;
+            }
+        }
+        DeleteDonation.prototype.execute = function () {
+            var self = this;
+            self._donation.destroy({
+                wait: true,
+                success: function (note, response) {
+                    if (self._success) {
+                        self._success();
+                    }
+                },
+                error: function (error, response) {
+                    if (self._error) {
+                        self._error();
+                    }
+                },
+            });
+        };
+        DeleteDonation.prototype.undo = function () {
+        };
+        return DeleteDonation;
+    })();
+    FoodParent.DeleteDonation = DeleteDonation;
 })(FoodParent || (FoodParent = {}));
 
 var DatePickerCellEditor = Backgrid.InputCellEditor.extend({
@@ -45687,7 +46203,7 @@ var TreeDescriptionCellEditor = Backgrid.Cell.extend({
                     model.trigger("backgrid:edited", model, column, command);
                 }
                 else {
-                    if (newValue.trim() != tree.getDescription().trim()) {
+                    if (newValue.trim() != tree.getDescription().trim() && newValue.trim() != "") {
                         var description = newValue;
                         if (tree.getDescription().trim() != description.trim()) {
                             FoodParent.EventHandler.handleTreeData(tree, FoodParent.DATA_MODE.UPDATE_DESCRIPTION, { description: description }, function () {
@@ -47357,11 +47873,15 @@ var ManageDonationViewCell = Backgrid.Cell.extend({
     }
 });
 var LocationDetailCell = Backgrid.Cell.extend({
-    template: _.template('<div class="marker-control-item tree-detail" data-target="<%= treeid %>"><i class="fa fa-arrow-circle-right fa-2x"></i></div>'),
+    template: _.template('<div class="marker-control-item location-detail" data-target="<%= treeid %>"><i class="fa fa-arrow-circle-right fa-2x"></i></div>'),
     events: {
         "click .marker-control-item": "_showDetail"
     },
     _showDetail: function (event) {
+        var place = FoodParent.Model.getPlaces().findWhere({ id: parseInt($(event.target).attr('data-target')) });
+        if (place != undefined) {
+            FoodParent.EventHandler.handleMouseClick($(event.currentTarget), this, { place: place });
+        }
         //var tree: number = parseInt($(event.target).attr('data-target'));
         //FoodParent.EventHandler.handleMouseClick($(event.currentTarget), this, { tree: tree });
     },
@@ -47534,20 +48054,6 @@ var DonationDeleteCell = Backgrid.Cell.extend({
         return this;
     }
 });
-var DonationTreeCell = Backgrid.Cell.extend({
-    events: {},
-    render: function () {
-        var self = this;
-        var donation = this.model;
-        var treeId = donation.getTreeId();
-        var tree = FoodParent.Model.getTrees().findWhere({ id: treeId });
-        var food = FoodParent.Model.getFoods().findWhere({ id: tree.getFoodId() });
-        var element = $(self.el);
-        element.html(food.getName() + " " + tree.getName());
-        self.delegateEvents();
-        return this;
-    }
-});
 var DonationPlaceCell = Backgrid.Cell.extend({
     events: {},
     render: function () {
@@ -47706,35 +48212,6 @@ var DonationColumn = [
         sortable: false,
         editable: false,
         cell: DonationAddCell,
-    }
-];
-var NewDonationColumn = [
-    {
-        name: "place",
-        label: "Place",
-        editable: false,
-        cell: DonationPlaceCell,
-    }, {
-        name: "tree",
-        label: "Tree",
-        editable: false,
-        cell: DonationTreeCell,
-    }, {
-        name: "quantity",
-        label: "Quantity",
-        editable: true,
-        formatter: Backgrid.NumberFormatter,
-        cell: Backgrid.Cell.extend({ editor: DonationQuantityCellEditor }),
-    }, {
-        name: "date",
-        label: "Date",
-        editable: true,
-        cell: DonationPickDateCellEditor,
-    }, {
-        label: "",
-        sortable: false,
-        editable: false,
-        cell: DonationDeleteCell,
     }
 ];
 
@@ -47921,12 +48398,34 @@ var FoodParent;
             template += '</div>';
             return template;
         };
+        Template.getManageTreesPopupTemplate2 = function () {
+            var template = '';
+            template += '<div class="marker-control-wrapper">';
+            template += '<div class="marker-control-item marker-control-plus">';
+            template += '<i class="fa fa-plus fa-2x"></i>';
+            template += '</div>';
+            template += '</div>';
+            return template;
+        };
         Template.FoodSelectTemplate = function () {
             var template = '';
             template += '<select class="input-food selectpicker">';
             template += '<optgroup label="Food">';
             template += '<% _.each(foods.models, function (food) { %>';
             template += '<option value="<%= food.getId() %>"><%= food.getName() %></option>';
+            template += '<% }); %>';
+            template += '</optgroup>';
+            template += '</select>';
+            return template;
+        };
+        Template.TreeSelectTemplate = function () {
+            var template = '';
+            template += '<select class="input-tree selectpicker" data-size="10">';
+            template += '<option value="0" disabled>Add a Tree</option>';
+            template += '<optgroup label="Tree">';
+            template += '<% _.each(trees.models, function (tree) { %>';
+            template += '<% var food = FoodParent.Model.getFoods().findWhere({ id: tree.getFoodId() }); %>';
+            template += '<option value="<%= tree.getId() %>"><%= food.getName() + " " + tree.getName() %></option>';
             template += '<% }); %>';
             template += '</optgroup>';
             template += '</select>';
@@ -48025,6 +48524,34 @@ var FoodParent;
             template += ' <%= ownership.getName() %></label>';
             template += '<% }); %>';
             template += '</div>';
+            template += '</div>';
+            return template;
+        };
+        Template.getTreeInfoTemplate3 = function () {
+            var template = '';
+            template += '<div class="tree-info-name"><div class="input-food"><%= foodname %></div>&nbsp;<%= treename %></div>';
+            template += '<div class="tree-info-coordinate"><div>@&nbsp;</div><div class="input-lat"><%= lat %></div>,&nbsp;<div class="input-lng"><%= lng %></div></div>';
+            template += '<div class="tree-info-address"><div>&nbsp;</div><div>&nbsp;</div></div>';
+            template += '<div class="hr"><hr /></div>';
+            template += '<div class="info-header"><i class="fa fa-sticky-note fa-1x"></i> Description</div>';
+            template += '<div class="info-group">';
+            template += '<div class="input-description"><%= description %></div>';
+            template += '</div>';
+            template += '<div class="hr"><hr /></div>';
+            template += '<div class="info-header"><i class="fa fa-user fa-1x"></i> Parents</div>';
+            template += '<div class="info-group info-group-flex">';
+            template += '<% _.each(persons.models, function (person, index) { %>';
+            template += '<% if (index < persons.models.length - 1) { %>';
+            template += '<div><%= person.getName() %>,&nbsp;</div>';
+            template += '<% } else { %>';
+            template += '<div><%= person.getName() %></div>';
+            template += '<% } %>';
+            template += '<% }); %>';
+            template += '</div>';
+            template += '<div class="hr"><hr /></div>';
+            template += '<div class="info-header"><i class="fa fa-leaf fa-1x"></i> Recent Activities</div>';
+            template += '<div id="list-activities" class="info-group">';
+            template += '<div>&nbsp;</div>';
             template += '</div>';
             return template;
         };
@@ -48262,6 +48789,14 @@ var FoodParent;
             template += '<div class="date"><%= date %></div>';
             return template;
         };
+        Template.getToolTipTemplate2 = function () {
+            var template = '';
+            template += '<div class="rate"><%= value %> libs. <span class="startdate">from <%= startdate %></span></div>';
+            template += '<img src="<%= image %>" />';
+            template += '<div class="comment"><i class="fa fa-ambulance"></i> <%= comment %></div>';
+            template += '<div class="date"><%= date %></div>';
+            return template;
+        };
         Template.getImageNoteViewTemplate = function () {
             var template = '';
             template += '<div id="wrapper-note">';
@@ -48330,7 +48865,7 @@ var FoodParent;
             template += '</div>';
             template += '<div class="info-header"><i class="fa fa-image"></i> Select Cover Picture</div>';
             template += '<div class="image-group"></div>';
-            template += '</div>';
+            template += '</div>'; // end of .image-wrapper
             template += '<div class="wrapper-note-info">';
             template += '<div class="name"><%= name %></div>';
             template += '<div class="hr"><hr /></div>';
@@ -48406,6 +48941,16 @@ var FoodParent;
             template += '<div id="list-donation" class="list-donation" data-target="<%= placeid %>"></div>';
             template += '<hr>';
             template += '<div class="new-donation" data-target="<%= placeid %>"></div>';
+            template += '<div class="wrapper-input-upload-picture">';
+            template += '<input class="input-upload-picture fileupload" type="file" accept="image/*" capture="camera" />';
+            template += '</div>';
+            template += '<div class="wrapper-uploading-picture hidden">';
+            template += '<div class="uploading-picture">Uploading...</div>';
+            template += '</div>';
+            template += '<div class="info-header"><i class="fa fa-image"></i> Select Cover Picture</div>';
+            template += '<div class="image-group"></div>'; // end of .image-wrapper
+            //template += '</div>';   // end of .image-wrapper
+            template += '<hr>';
             template += '<div class="button-outer-frame2 button3"><div class="button-inner-frame2 button-submit-donation">Submit Donations</div></div>';
             template += '</div>';
             template += '</div>';
@@ -48423,6 +48968,127 @@ var FoodParent;
             template += '<% var food = FoodParent.Model.getFoods().findWhere({ id: tree.getFoodId() }); %>';
             template += '<div class="cell-link cell-tree-detail" data-target="<%= tree.getId() %>"><%= food.getName() + " " + tree.getName() %><i class="fa fa-remove fa-1x"></i></div>';
             template += '<% }); %>';
+            return template;
+        };
+        Template.getDetailDonationGraphicViewTemplate = function () {
+            var template = '';
+            template += '<div id="wrapper-mdonation">';
+            template += '<div id="wrapper-graph">';
+            template += '<div id="wrapper-chart"></div>';
+            template += '<div id="wrapper-tooltip" class="hidden"></div>';
+            template += '<div id="wrapper-mapmenu">';
+            template += '<div class="button-outer-frame2 button3"><div class="button-inner-frame2">Switch To Map View</div></div>';
+            template += '</div>';
+            template += '<div id="wrapper-date-select">';
+            template += '<div class="wrapper-date-preset">';
+            template += '<div class="button-outer-frame2 button3 date-preset 4years"><div class="button-inner-frame2">4 Year</div></div>';
+            template += '<div class="button-outer-frame2 button3 date-preset 2years"><div class="button-inner-frame2">2 Year</div></div>';
+            template += '<div class="button-outer-frame2 button3 date-preset 1year"><div class="button-inner-frame2">1 Year</div></div>';
+            template += '<div class="button-outer-frame2 button3 date-preset 6months"><div class="button-inner-frame2">6 months</div></div>';
+            template += '<div class="button-outer-frame2 button3 date-preset 1month"><div class="button-inner-frame2">3 month</div></div>';
+            template += '</div>';
+            template += '<div class="wrapper-date-select-item"><input type="text" class="form-control donation-graph-start" /></div>';
+            template += '<div class="wrapper-date-select-item"><span class="date-select-label">~</span><input type="text" class="form-control donation-graph-end" /></div>';
+            template += '</div>';
+            template += '</div>'; // end of #wrapper-graph
+            template += '<div id="wrapper-donation-detail">';
+            template += '<div class="content-donation-info">';
+            template += '</div>'; // end of .content-donation-info
+            template += '<div class="content-donation-recentdonations">';
+            template += '<div class="info-header"><i class="fa fa-leaf fa-1x"></i> Recent Donations</div>';
+            template += '<div id="list-donations" class="info-group">';
+            template += '</div>';
+            template += '</div>'; // end of .content-donation-recentactivities
+            template += '<div class="content-donation-control">';
+            template += '<div class="button-outer-frame2 button4"><div class="button-inner-frame2 button-new-donation">Post New Donation</div></div>';
+            template += '<div class="button-outer-frame2 button4"><div class="button-inner-frame2 button-delete-donation">Delete Place*</div></div>';
+            template += '<div class="button-description">* marked operation cannot be undone.</div>';
+            template += '</div>'; // end of .donation-control
+            template += '</div>'; // end of #wrapper-donation-detail
+            template += '</div>'; // end of #wrapper-mtree
+            return template;
+        };
+        Template.getPlaceInfoTemplate2 = function () {
+            var template = '';
+            template += '<div class="donation-info-name"><div class="info-group-flex"><div class="input-food"><%= placename %></div></div>';
+            template += '<div class="donation-info-coordinate">@&nbsp;<div class="input-lat"><%= lat %></div>,&nbsp;<div class="input-lng"><%= lng %></div></div>';
+            template += '</div>';
+            template += '<div class="donation-info-address"><div>&nbsp;</div></div>';
+            template += '<div class="info-group info-group-flex">';
+            template += '<i class="fa fa-sticky-note fa-1x"></i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<div class="input-description"><%= description %></div>';
+            template += '</div>';
+            return template;
+        };
+        Template.getRecentDonationsTemplate = function () {
+            var template = '';
+            template += '<% _.each(donations.models, function (donation, index) { %>';
+            template += '<% if (index < size) { %>';
+            template += '<div class="item-activity"><i class="fa fa-caret-right fa-1x"></i> <div><%= donation.getCommentWithDate() %></div></div>';
+            template += '<% } %>';
+            template += '<% }); %>';
+            return template;
+        };
+        Template.getEditDonationViewTemplate = function () {
+            var template = '';
+            template += '<div id="wrapper-donation">';
+            template += '<div class="outer-frame">';
+            template += '<div class="inner-frame">';
+            template += '<div class="wrapper-note-content">';
+            template += '<div class="image-wrapper">';
+            template += '<div class="wrapper-input-upload-picture">';
+            template += '<input class="input-upload-picture fileupload" type="file" accept="image/*" capture="camera" />';
+            template += '</div>';
+            template += '<div class="wrapper-uploading-picture hidden">';
+            template += '<div class="uploading-picture">Uploading...</div>';
+            template += '</div>';
+            template += '<div class="info-header"><i class="fa fa-image"></i> Select Cover Picture</div>';
+            template += '<div class="image-group"></div>';
+            template += '</div>'; // end of .image-wrapper
+            template += '<div class="wrapper-note-info">';
+            template += '<div class="name"><%= name %></div>';
+            template += '<div class="hr"><hr /></div>';
+            template += '<div class="info-button-group">';
+            template += '<div class="button-outer-frame2 button3"><div class="button-inner-frame2 prev-note"><i class="fa fa-caret-left"></i></div></div>';
+            template += '<div class="button-outer-frame2 button3"><div class="button-inner-frame2 next-note"><i class="fa fa-caret-right"></i></div></div>';
+            template += '</div>';
+            /*
+            template += '<div class="hr"><hr /></div>';
+            template += '<div class="info-header"><i class="fa fa-star-half-o"></i> Rating</div>';
+            template += '<div class="info-group">';
+            template += '<div class="input-rating"><%= value %></div>';
+            template += '<div class="input-rating-slider"></div>';
+            template += '</div>';
+
+            
+            */
+            template += '<div class="hr"><hr /></div>';
+            template += '<div class="info-header"><i class="fa fa-ambulance"></i> Amount</div>';
+            template += '<div class="info-group">';
+            template += '<div class="input-amount"><%= amount %> lbs.</div>';
+            template += '</div>';
+            template += '<div class="hr"><hr /></div>';
+            template += '<div class="info-header"><i class="fa fa-ambulance"></i> Trees</div>';
+            template += '<div class="info-group">';
+            template += '<div class="new-donation-trees"></div>';
+            template += '<div class="add-donation-tree"></div>';
+            template += '</div>';
+            template += '<div class="hr"><hr /></div>';
+            template += '<div class="info-header"><i class="fa fa-calendar-o"></i> Posted</div>';
+            template += '<div class="info-group">';
+            template += '<input type="text" class="form-control input-date" />';
+            template += '</div>';
+            template += '<div class="hr"><hr /></div>';
+            template += '<div class="info-button-group">';
+            template += '<div class="button-outer-frame2 button3"><div class="button-inner-frame2 delete-donation"><i class="fa fa-remove"></i> Delete</div></div>';
+            template += '</div>';
+            template += '</div>';
+            template += '</div>'; // end of .wrapper-note-content
+            template += '</div>'; // end of .inner-frame
+            template += '<div class="top-right-button button-close">';
+            template += '<i class="fa fa-remove fa-2x"></i>';
+            template += '</div>'; // end of top-right-button button-close
+            template += '</div>'; // end of .outer-frame
+            template += '</div>'; // end of #wrapper-note
             return template;
         };
         Template._instance = new Template();
@@ -48622,6 +49288,7 @@ var FoodParent;
             View._instance._managePeopleView = null;
             View._instance._detailTreeView = null;
             View._instance._manageDonationsView = null;
+            View._instance._detailDonationView = null;
         };
         View.setMessageView = function (view) {
             View._instance._messageView = view;
@@ -48646,6 +49313,12 @@ var FoodParent;
         };
         View.getManageDonationsView = function () {
             return View._instance._manageDonationsView;
+        };
+        View.setDetailDonationView = function (view) {
+            View._instance._detailDonationView = view;
+        };
+        View.getDetailDonationView = function () {
+            return View._instance._detailDonationView;
         };
         View.setManageTreesView = function (view) {
             View._instance._manageTreesView = view;
@@ -48816,7 +49489,7 @@ var FoodParent;
                 template = _.template(FoodParent.Template.getNavViewHomeTemplate());
                 data = {};
             }
-            else if (args.viewStatus == FoodParent.VIEW_STATUS.MANAGE_TREES || args.viewStatus == FoodParent.VIEW_STATUS.MANAGE_PEOPLE || args.viewStatus == FoodParent.VIEW_STATUS.DETAIL_TREE || args.viewStatus == FoodParent.VIEW_STATUS.MANAGE_DONATIONS) {
+            else if (args.viewStatus == FoodParent.VIEW_STATUS.MANAGE_TREES || args.viewStatus == FoodParent.VIEW_STATUS.MANAGE_PEOPLE || args.viewStatus == FoodParent.VIEW_STATUS.DETAIL_TREE || args.viewStatus == FoodParent.VIEW_STATUS.MANAGE_DONATIONS || args.viewStatus == FoodParent.VIEW_STATUS.DETAIL_DONATION) {
                 template = _.template(FoodParent.Template.getNavViewManageTemplate());
                 data = {};
             }
@@ -48826,7 +49499,7 @@ var FoodParent;
                 self.$('#background-nav-left').css({ left: '-76%' });
                 self.$('#background-nav-left').css({ transform: 'skew(-10deg, 0)' });
             }
-            else if (args.viewStatus == FoodParent.VIEW_STATUS.MANAGE_TREES || args.viewStatus == FoodParent.VIEW_STATUS.MANAGE_PEOPLE || args.viewStatus == FoodParent.VIEW_STATUS.DETAIL_TREE || args.viewStatus == FoodParent.VIEW_STATUS.MANAGE_DONATIONS) {
+            else if (args.viewStatus == FoodParent.VIEW_STATUS.MANAGE_TREES || args.viewStatus == FoodParent.VIEW_STATUS.MANAGE_PEOPLE || args.viewStatus == FoodParent.VIEW_STATUS.DETAIL_TREE || args.viewStatus == FoodParent.VIEW_STATUS.MANAGE_DONATIONS || args.viewStatus == FoodParent.VIEW_STATUS.DETAIL_DONATION) {
                 self.renderNavManageItems();
                 self.$('#background-nav-left').css({ left: '-30%' });
                 self.$('#background-nav-left').css({ transform: 'skew(-0deg, 0)' });
@@ -49258,13 +49931,6 @@ var FoodParent;
                     FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
                 });
             }
-            /*
-            $.each(self.$('.image-group img'), function (index: number, element: JQuery) {
-                $(element).removeClass('selected');
-            });
-            $(event.target).addClass('selected');
-            self._note.setCover();
-            */
         };
         ImageNoteView.prototype._deleteNote = function (event) {
             var self = this;
@@ -49887,7 +50553,6 @@ var FoodParent;
                         FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
                     });
                     self.$('.input-description').on('click', function (event) {
-                        console.log($(this).text());
                         $(this).replaceWith("<input type='text' class='input-description form-control' value='" + htmlEncode($(this).text()) + "' />");
                         //self.$('.input-lat').css({ width: width });
                         self.$('.input-description').focus();
@@ -50461,7 +51126,7 @@ var FoodParent;
             _super.call(this, options);
             this.renderTreeChart = function (tree, startDate, endDate) {
                 var self = _this;
-                FoodParent.Controller.fetchImageNotesOfTreesDuringPeriod([self._tree], startDate, endDate, 250, 0, function () {
+                FoodParent.Controller.fetchImageNotesOfTreesDuringPeriod([self._tree], startDate, endDate, 10000, 0, function () {
                     self.$('#wrapper-chart').html('<canvas id="content-chart" class="content-chart" />');
                     var canvas = self.$('#content-chart')[0];
                     self.$('#content-chart').attr({ 'width': self.$('#content-chart').innerWidth(), 'height': self.$('#content-chart').innerHeight() });
@@ -50714,8 +51379,8 @@ var FoodParent;
                 // add grid instance for existing data
                 self.renderTreeInfo(self._tree);
                 // render datepicker
-                var notes = new FoodParent.Notes(FoodParent.Model.getNotes().where({ tree: self._tree.getId() }));
-                notes.sortByAscendingDate();
+                //var notes: Notes = new Notes(Model.getNotes().where({ tree: self._tree.getId() }));
+                //notes.sortByAscendingDate();
                 //if (notes.models.length > 0) {
                 //    self.$('.tree-graph-start').attr({ 'data-value': notes.models[0].getFormattedDate() });
                 //    self._startDate = moment(notes.models[0].getFormattedDate()).format(Setting.getDateTimeFormat());
@@ -50762,6 +51427,8 @@ var FoodParent;
         };
         DetailTreeGraphicView.prototype.refreshTreeInfo = function () {
             var self = this;
+            if (self.bDebug)
+                console.log(DetailTreeGraphicView.TAG + "refreshTreeInfo()");
             self.renderTreeInfo(self._tree);
             self.renderTreeChart(self._tree, self._startDate, self._endDate);
         };
@@ -50924,6 +51591,41 @@ var FoodParent;
                 popupAnchor: new L.Point(0, 48),
             });
             var template = _.template(FoodParent.Template.getManageTreesPopupTemplate());
+            var data = {
+                id: tree.getId()
+            };
+            var marker = new L.Marker(tree.getLocation(), {
+                id: tree.getId(),
+                icon: icon,
+                draggable: false,
+                riseOnHover: true,
+            })
+                .bindPopup(template(data), {
+                closeButton: false,
+                closeOnClick: bCloseOnClick,
+            })
+                .bindLabel(food.getName() + " " + tree.getName(), {
+                clickable: true,
+                noHide: true,
+                direction: 'right'
+            });
+            marker.on('dragend', function (e) {
+                this.openPopup();
+            });
+            L.DomEvent.addListener(marker.label, 'click', function (e) { this.togglePopup(); }, marker);
+            return marker;
+        };
+        MarkerFractory.create2 = function (tree, bCloseOnClick) {
+            var food = FoodParent.Model.getFoods().findWhere({ id: tree.getFoodId() });
+            var icon = new L.Icon({
+                iconUrl: food.getIconPath(),
+                shadowUrl: FoodParent.Setting.getMarkerShadowPath(),
+                iconSize: new L.Point(40, 40),
+                iconAnchor: new L.Point(20, 40),
+                shadowAnchor: new L.Point(9, 38),
+                popupAnchor: new L.Point(0, 48),
+            });
+            var template = _.template(FoodParent.Template.getManageTreesPopupTemplate2());
             var data = {
                 id: tree.getId()
             };
@@ -51422,6 +52124,7 @@ var FoodParent;
             });
             $(event.target).addClass('selected');
             self._note.setCover(parseInt($(event.target).attr('data-target')));
+            self.renderNoteImages();
         };
         PostNoteView.prototype._createNote = function (event) {
             var self = this;
@@ -51573,35 +52276,34 @@ var FoodParent;
         return ManageDonationsTableView;
     })(ManageDonationsView);
     FoodParent.ManageDonationsTableView = ManageDonationsTableView;
-    var DonationManageViewFactory = (function () {
-        function DonationManageViewFactory(args) {
-            if (DonationManageViewFactory._instance) {
-                throw new Error("Error: Instantiation failed: Use DonationManageViewFactory.getInstance() instead of new.");
+    var AddDonationViewFactory = (function () {
+        function AddDonationViewFactory(args) {
+            if (AddDonationViewFactory._instance) {
+                throw new Error("Error: Instantiation failed: Use AddDonationViewFactory.getInstance() instead of new.");
             }
-            DonationManageViewFactory._instance = this;
+            AddDonationViewFactory._instance = this;
         }
-        DonationManageViewFactory.getInstance = function () {
-            return DonationManageViewFactory._instance;
+        AddDonationViewFactory.getInstance = function () {
+            return AddDonationViewFactory._instance;
         };
-        DonationManageViewFactory.create = function (el, place) {
-            var view = new DonationManageView({ el: el });
-            console.log(place);
+        AddDonationViewFactory.create = function (el, place) {
+            var view = new AddDonationView({ el: el });
             view.setPlace(place);
             return view;
         };
-        DonationManageViewFactory._instance = new DonationManageViewFactory();
-        return DonationManageViewFactory;
+        AddDonationViewFactory._instance = new AddDonationViewFactory();
+        return AddDonationViewFactory;
     })();
-    FoodParent.DonationManageViewFactory = DonationManageViewFactory;
-    var DonationManageView = (function (_super) {
-        __extends(DonationManageView, _super);
-        function DonationManageView(options) {
+    FoodParent.AddDonationViewFactory = AddDonationViewFactory;
+    var AddDonationView = (function (_super) {
+        __extends(AddDonationView, _super);
+        function AddDonationView(options) {
             var _this = this;
             _super.call(this, options);
             this.renderNewDonation = function () {
                 var self = _this;
                 if (self._donation == undefined) {
-                    self._donation = new FoodParent.Donation({ place: self._place.getId(), quantity: 0, date: moment(new Date()).format(FoodParent.Setting.getDateTimeFormat()) });
+                    self._donation = new FoodParent.Donation({ type: 0, place: self._place.getId(), quantity: 0, picture: '', date: moment(new Date()).format(FoodParent.Setting.getDateTimeFormat()) });
                 }
                 var tag = '';
                 tag += '<div class="label-group">';
@@ -51665,40 +52367,32 @@ var FoodParent;
                         //}
                     });
                 });
+                // Event listener for uploading a file.
+                self.$('input[type=file]').off('change');
+                self.$('input[type=file]').on('change', function (event) {
+                    self.$('.wrapper-input-upload-picture').addClass('hidden');
+                    self.$('.wrapper-uploading-picture').removeClass('hidden');
+                    var files = event.target.files;
+                    if (files.length > 0) {
+                        FoodParent.Controller.uploadNotePictureFile(files[0], fileNameEncode(self._place.getName()), function (fileName) {
+                            self._donation.addPicture(fileName);
+                            // Success
+                            self.$('input[type=file]').val("");
+                            self.$('.wrapper-uploading-picture').addClass('hidden');
+                            self.$('.wrapper-input-upload-picture').removeClass('hidden');
+                            self.renderDonationImages();
+                        }, function () {
+                            // Error
+                            self.$('.wrapper-uploading-picture').addClass('hidden');
+                            self.$('.wrapper-input-upload-picture').removeClass('hidden');
+                        });
+                    }
+                });
                 var template = _.template(FoodParent.Template.getAddNewDonationTreeTemplate());
                 self.$('.new-donation-trees').html(template({
                     trees: FoodParent.Model.getTrees().filterByIds(self._donation.getTreeIds()),
                 }));
-                /*
-                var grid = new Backgrid.Grid({
-                    columns: NewDonationColumn,
-                    collection: self._donations,
-                    emptyText: Setting.getNoDataText(),
-                });
-                grid.render();
-                self.$(".new-donation").html(grid.el);
-                */
-                /*
-                var tree: Tree = new Tree({ lat: position.coords.latitude, lng: position.coords.longitude, food: 0, type: 0, flag: 0, owner: 0, ownership: 0, description: "" });
-                var trees: Trees = new Trees();
-                trees.add(tree);
-                var optionValues = new Array<{ name: string, values: any }>();
-                optionValues.push({ name: "Food", values: Model.getFoods().toArray() });
-                NewTreeColumn[0].cell = Backgrid.SelectCell.extend({
-                    editor: Backgrid.FoodSelectCellEditor,
-                    optionValues: optionValues,
-                });
-                var grid = new Backgrid.Grid({
-                    columns: NewTreeColumn,
-                    collection: trees,
-                    emptyText: Setting.getNoDataText(),
-                });
-                grid.render();
-                //grid.sort("name", "ascending");
-                //self.$(".new-donation").html('<div class="list-title">Add a New Tree</div>');
-                self.$(".new-donation").html(grid.el);
-                //self.$(".new-donation").removeClass('hidden');
-                */
+                self.$('.content-manage-adoption-table').scrollTop();
             };
             this.renderTrees = function () {
                 var self = _this;
@@ -51780,6 +52474,7 @@ var FoodParent;
                         //});
                         var tree = FoodParent.Model.getTrees().findWhere({ id: marker.options.id });
                         self._selectedMarker = marker;
+                        self.renderTreeInfo(tree);
                         // Make MessageView invisible.
                         if (FoodParent.View.getMessageView()) {
                             FoodParent.View.getMessageView().setInvisible();
@@ -51796,7 +52491,7 @@ var FoodParent;
             };
             this.renderMarkers = function () {
                 var self = _this;
-                console.log(DonationManageView.TAG + "renderMarkers()");
+                console.log(AddDonationView.TAG + "renderMarkers()");
                 self._markers = new Array();
                 $.each(FoodParent.Model.getTrees().models, function (index, tree) {
                     var bFound = false;
@@ -51838,10 +52533,12 @@ var FoodParent;
                 });
                 trees = trees.filterByAdoptStatus(adoptIds);
                 self.updateMarkers(trees);
+                // render tree info
+                self.$('.leaflet-top.leaflet-right').html('<div id="wrapper-treeinfo"></div>');
             };
             this.updateMarkers = function (trees) {
                 var self = _this;
-                console.log(DonationManageView.TAG + "updateMarkers()");
+                console.log(AddDonationView.TAG + "updateMarkers()");
                 // Add new markers
                 $.each(trees.models, function (index, tree) {
                     var bFound = false;
@@ -51902,18 +52599,20 @@ var FoodParent;
                 "click .button-submit-donation": "_submitDonations",
                 "click .cell-tree-detail": "_removeNewDonationTree",
                 "click .switch-map": "_switchView",
+                "click .marker-control-plus": "_addNewDonation",
+                "click .image-group img": "_selectCoverImage",
             };
             self.delegateEvents();
         }
-        DonationManageView.prototype.setPlace = function (place) {
+        AddDonationView.prototype.setPlace = function (place) {
             var self = this;
             self._place = place;
         };
-        DonationManageView.prototype.getPlace = function () {
+        AddDonationView.prototype.getPlace = function () {
             var self = this;
             return self._place;
         };
-        DonationManageView.prototype.render = function (args) {
+        AddDonationView.prototype.render = function (args) {
             if (this.bRendered) {
                 this.update(args);
                 return;
@@ -51922,7 +52621,7 @@ var FoodParent;
             /////
             var self = this;
             if (self.bDebug)
-                console.log(DonationManageView.TAG + "render()");
+                console.log(AddDonationView.TAG + "render()");
             var template = _.template(FoodParent.Template.getManageDonationViewTemplate());
             var data = {
                 placename: self._place.getName(),
@@ -51936,33 +52635,120 @@ var FoodParent;
             self.resize();
             return self;
         };
-        DonationManageView.prototype.addNewDonation = function (tree) {
+        AddDonationView.prototype.addNewDonation = function (tree) {
             var self = this;
-            self._donation.addTreeId(tree.getId());
+            if (self._donation.getTreeIds().length == 0) {
+                self._donation.addTreeId(tree.getId());
+            }
+            else {
+                var firstTreeId = Math.floor(self._donation.getTreeIds()[0]);
+                var firstTree = FoodParent.Model.getTrees().findWhere({ id: firstTreeId });
+                var firstFood = FoodParent.Model.getFoods().findWhere({ id: firstTree.getFoodId() });
+                var currentFood = FoodParent.Model.getFoods().findWhere({ id: tree.getFoodId() });
+                if (firstFood.getId() == currentFood.getId()) {
+                    self._donation.addTreeId(tree.getId());
+                }
+                else {
+                    new FoodParent.RenderMessageViewCommand({ el: FoodParent.Setting.getMessageWrapperElement(), message: "Please select <strong>same type</strong> of food.", undoable: false }).execute();
+                }
+            }
             var template = _.template(FoodParent.Template.getAddNewDonationTreeTemplate());
             self.$('.new-donation-trees').html(template({
                 trees: FoodParent.Model.getTrees().filterByIds(self._donation.getTreeIds()),
             }));
         };
-        DonationManageView.prototype.removeNewDonation = function (donation) {
+        AddDonationView.prototype._addNewDonation = function (event) {
+            var self = this;
+            self.addNewDonation(FoodParent.Model.getTrees().findWhere({ id: self._selectedMarker.options.id }));
+        };
+        AddDonationView.prototype.removeNewDonation = function (donation) {
             var self = this;
             //self._donations.remove(donation);
         };
-        DonationManageView.prototype.removeMarker = function (marker) {
+        AddDonationView.prototype.renderDonationImages = function () {
+            var self = this;
+            var tag = '';
+            $.each(self._donation.getPictures(), function (index, filename) {
+                if (index == 0) {
+                    tag += '<img src="' + FoodParent.Setting.getBlankImagePath() + '" data-target="' + index + '" class="selected" />';
+                }
+                else {
+                    tag += '<img src="' + FoodParent.Setting.getBlankImagePath() + '" data-target="' + index + '" />';
+                }
+            });
+            self.$('.image-group').html(tag);
+            $.each(self.$('.image-group img'), function (index, element) {
+                $(element).attr('src', FoodParent.Setting.getContentPictureDir() + self._donation.getPictures()[index]).load(function () {
+                }).error(function () {
+                    $(element).attr('src', FoodParent.Setting.getBlankImagePath());
+                });
+            });
+        };
+        AddDonationView.prototype._selectCoverImage = function (event) {
+            var self = this;
+            $.each(self.$('.image-group img'), function (index, element) {
+                $(element).removeClass('selected');
+            });
+            $(event.target).addClass('selected');
+            self._donation.setCover(parseInt($(event.target).attr('data-target')));
+            self.renderDonationImages();
+        };
+        AddDonationView.prototype.renderTreeInfo = function (tree) {
+            var self = this;
+            var food = FoodParent.Model.getFoods().findWhere({ id: tree.getFoodId() });
+            var template = _.template(FoodParent.Template.getTreeInfoTemplate3());
+            var data = {
+                foodname: food.getName(),
+                treename: tree.getName(),
+                lat: tree.getLat().toFixed(4),
+                lng: tree.getLng().toFixed(4),
+                description: tree.getDescription(),
+                persons: tree.getParents(),
+            };
+            self.$('#wrapper-treeinfo').html(template(data));
+            self.$('#wrapper-treeinfo').removeClass('hidden');
+            FoodParent.GeoLocation.reverseGeocoding(tree.getLocation(), function (data) {
+                self.$(".tree-info-address").html("<div>" + data.road + ", " + data.county + "</div><div>" + data.state + ", " + data.country + ", " + data.postcode + "</div>");
+            }, function () {
+                FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+            });
+            self.renderRecentActivities(tree);
+        };
+        AddDonationView.prototype.renderRecentActivities = function (tree) {
+            var self = this;
+            var trees = new Array();
+            trees.push(tree);
+            FoodParent.Controller.fetchNotesOfTrees(trees, FoodParent.Setting.getNumRecentActivitiesShown(), 0, function () {
+                var notes = new FoodParent.Notes(FoodParent.Model.getNotes().where({ tree: tree.getId() }));
+                notes.sortByDescendingDate();
+                var template = _.template(FoodParent.Template.getRecentActivitiesTemplate());
+                var data = {
+                    notes: notes,
+                    size: FoodParent.Setting.getNumRecentActivitiesShown(),
+                    coordinate: '@ ' + tree.getLat().toFixed(4) + ", " + tree.getLng().toFixed(4),
+                    flags: FoodParent.Model.getFlags(),
+                    ownerships: FoodParent.Model.getOwnerships(),
+                };
+                self.$('#list-activities').html(template(data));
+            }, function () {
+                FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+            });
+        };
+        AddDonationView.prototype.removeMarker = function (marker) {
             var self = this;
             self._map.removeLayer(marker);
         };
-        DonationManageView.prototype.addMarker = function (tree) {
+        AddDonationView.prototype.addMarker = function (tree) {
             var self = this;
-            var marker = FoodParent.MarkerFractory.create(tree, true);
+            var marker = FoodParent.MarkerFractory.create2(tree, true);
             self._markers.push(marker);
             marker.addTo(self._map);
         };
-        DonationManageView.prototype.setLocation = function (location) {
+        AddDonationView.prototype.setLocation = function (location) {
             var self = this;
             self._location = location;
         };
-        DonationManageView.prototype.update = function (args) {
+        AddDonationView.prototype.update = function (args) {
             if (!this.bRendered) {
                 this.render(args);
                 return;
@@ -51970,25 +52756,26 @@ var FoodParent;
             /////
             var self = this;
             if (self.bDebug)
-                console.log(DonationManageView.TAG + "update()");
+                console.log(AddDonationView.TAG + "update()");
             return self;
         };
-        DonationManageView.prototype.resize = function () {
+        AddDonationView.prototype.resize = function () {
             var self = this;
             $('#content-manage-adoption-table').css({ width: self.getWidth() - $('#wrapper-tablemenu').outerWidth() });
             $('#wrapper-main').css({ height: FoodParent.View.getHeight() - 60 });
             $('#wrapper-mtrees').css({ height: FoodParent.View.getHeight() - 60 });
             $('.collapsible-list').css({ height: self.getHeight() - 34 * 3 - 30 });
+            //$('.image-group').css({ height: self.$('.image-wrapper').innerHeight() - 60 });
         };
-        DonationManageView.prototype.setVisible = function () {
+        AddDonationView.prototype.setVisible = function () {
             var self = this;
             FoodParent.Setting.getPopWrapperElement().removeClass('hidden');
         };
-        DonationManageView.prototype.setInvisible = function () {
+        AddDonationView.prototype.setInvisible = function () {
             var self = this;
             FoodParent.Setting.getPopWrapperElement().addClass('hidden');
         };
-        DonationManageView.prototype._applyFilter = function (event) {
+        AddDonationView.prototype._applyFilter = function (event) {
             var self = this;
             var trees = FoodParent.Model.getTrees();
             setTimeout(function () {
@@ -52044,25 +52831,30 @@ var FoodParent;
                 }
             }, 1);
         };
-        DonationManageView.prototype._submitDonations = function (event) {
+        AddDonationView.prototype._submitDonations = function (event) {
             var self = this;
-            if (self._donation.getTreeIds().length == 0) {
+            if (self._donation.getTreeIds().length == 0 || self._donation.getQuantity() == 0) {
+                new FoodParent.RenderMessageViewCommand({ el: FoodParent.Setting.getMessageWrapperElement(), message: "Please select at least <strong>one tree</strong> with proper <strong>amount</strong> for donation.", undoable: false }).execute();
             }
             else {
+                var treeIds = self._donation.getTreeIds();
+                var tree = FoodParent.Model.getTrees().findWhere({ id: treeIds[0] });
+                self._donation.setType(tree.getFoodId());
                 FoodParent.EventHandler.handleDonationData(self._donation, FoodParent.DATA_MODE.CREATE, {}, function () {
                     FoodParent.EventHandler.handleDataChange("Donation for <strong><i>" + self._place.getName() + "</i></strong> has been added successfully.", true);
                     self._donation = null;
                     self.renderNewDonation();
+                    self.$('.image-group').html("");
                 }, function () {
                     FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
                 });
             }
         };
-        DonationManageView.prototype._mouseClick = function (event) {
+        AddDonationView.prototype._mouseClick = function (event) {
             var self = this;
             FoodParent.EventHandler.handleMouseClick($(event.currentTarget), self);
         };
-        DonationManageView.prototype._removeNewDonationTree = function (event) {
+        AddDonationView.prototype._removeNewDonationTree = function (event) {
             var self = this;
             var treeId = parseInt($(event.target).attr('data-target'));
             self._donation.removeTreeId(treeId);
@@ -52071,7 +52863,7 @@ var FoodParent;
                 trees: FoodParent.Model.getTrees().filterByIds(self._donation.getTreeIds()),
             }));
         };
-        DonationManageView.prototype._switchView = function (event) {
+        AddDonationView.prototype._switchView = function (event) {
             var self = this;
             if (self._bTableView) {
                 self._bTableView = false;
@@ -52109,10 +52901,611 @@ var FoodParent;
             else {
             }
         };
-        DonationManageView.TAG = "DonationManageView - ";
-        return DonationManageView;
+        AddDonationView.TAG = "AddDonationView - ";
+        return AddDonationView;
     })(FoodParent.PopupView);
-    FoodParent.DonationManageView = DonationManageView;
+    FoodParent.AddDonationView = AddDonationView;
+})(FoodParent || (FoodParent = {}));
+
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var FoodParent;
+(function (FoodParent) {
+    var DetailDonationViewFractory = (function () {
+        function DetailDonationViewFractory(args) {
+            if (DetailDonationViewFractory._instance) {
+                throw new Error("Error: Instantiation failed: Use DetailDonationViewFractory.getInstance() instead of new.");
+            }
+            DetailDonationViewFractory._instance = this;
+        }
+        DetailDonationViewFractory.getInstance = function () {
+            return DetailDonationViewFractory._instance;
+        };
+        DetailDonationViewFractory.create = function (el, viewMode, id) {
+            var view;
+            if (viewMode == FoodParent.VIEW_MODE.GRAPHIC) {
+                view = new DetailDonationGraphicView({ el: el });
+                view.setPlaceId(id);
+            }
+            else if (viewMode == FoodParent.VIEW_MODE.TABLE) {
+            }
+            return view;
+        };
+        DetailDonationViewFractory._instance = new DetailDonationViewFractory();
+        return DetailDonationViewFractory;
+    })();
+    FoodParent.DetailDonationViewFractory = DetailDonationViewFractory;
+    var DetailDonationView = (function (_super) {
+        __extends(DetailDonationView, _super);
+        function DetailDonationView() {
+            _super.apply(this, arguments);
+        }
+        DetailDonationView.prototype.setPlaceId = function (id) {
+            this._id = Math.floor(id);
+        };
+        DetailDonationView.prototype.refreshDonationInfo = function () {
+        };
+        return DetailDonationView;
+    })(FoodParent.BaseView);
+    FoodParent.DetailDonationView = DetailDonationView;
+    var DetailDonationGraphicView = (function (_super) {
+        __extends(DetailDonationGraphicView, _super);
+        function DetailDonationGraphicView(options) {
+            var _this = this;
+            _super.call(this, options);
+            this.renderPlaceInfo = function (place) {
+                var self = _this;
+                var template = _.template(FoodParent.Template.getPlaceInfoTemplate2());
+                var data = {
+                    placename: place.getName(),
+                    lat: place.getLat().toFixed(4),
+                    lng: place.getLng().toFixed(4),
+                    description: place.getDescription(),
+                };
+                self.$('.content-donation-info').html(template(data));
+                FoodParent.GeoLocation.reverseGeocoding(place.getLocation(), function (data) {
+                    self.$(".donation-info-address").html("<div>&nbsp;<i class='fa fa-map-marker'></i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + data.road + ", " + data.county + ", " + data.state + ", " + data.country + ", " + data.postcode + "</div>");
+                }, function () {
+                    FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+                });
+                self.renderRecentDonations(place);
+            };
+            this.renderDonationChart = function (place, startDate, endDate) {
+                var self = _this;
+                FoodParent.Controller.fetchDonationsOfPlacesDuringPeriod([self._place], startDate, endDate, 10000, 0, function () {
+                    self.$('#wrapper-chart').html('<canvas id="content-chart" class="content-chart" />');
+                    var canvas = self.$('#content-chart')[0];
+                    self.$('#content-chart').attr({ 'width': self.$('#content-chart').innerWidth(), 'height': self.$('#content-chart').innerHeight() });
+                    var ctx = canvas.getContext("2d");
+                    self.$('#wrapper-graph').on('mousemove', function (event) {
+                        if (event.clientX - 24 - $('#wrapper-tooltip').outerWidth() < 0) {
+                            self.$('#wrapper-tooltip').css({ top: event.clientY - 60, left: event.clientX + 24 });
+                        }
+                        else {
+                            self.$('#wrapper-tooltip').css({ top: event.clientY - 60, left: event.clientX - 24 - self.$('#wrapper-tooltip').outerWidth() });
+                        }
+                    });
+                    self.$('#wrapper-graph').on('mouseleave', function (event) {
+                        self.$('#wrapper-tooltip').addClass('hidden');
+                    });
+                    var labels = new Array();
+                    var donations = new Array();
+                    var start = moment(startDate).set('hour', 13).set('minute', 0).set('seconds', 0).set('milliseconds', 0);
+                    var prevDonation = null;
+                    for (var i = moment(start).valueOf(); i < moment(endDate).add('day', 1).valueOf(); i += 1000 * 60 * 60 * 24) {
+                        labels.push(moment(i).format(FoodParent.Setting.getDateHourFormat()));
+                        var donation = FoodParent.Model.getDonations().getLatestDonationOfDate(self._place.getId(), i);
+                        if (donation) {
+                            donations.push(donation);
+                            prevDonation = donation;
+                        }
+                        else {
+                            donations.push(new FoodParent.Donation({ place: self._place.getId(), tree: '', quantity: 0, date: moment(i).format(FoodParent.Setting.getDateTimeFormat()) }));
+                        }
+                    }
+                    console.log("Graph Points Length: " + donations.length);
+                    var labelSkip = Math.floor(labels.length / (self.$('#content-chart').innerWidth() / 150));
+                    if (self._chart) {
+                        self._chart.destroy();
+                    }
+                    self._chart = new Chart(ctx).Line({
+                        labels: labels,
+                        datasets: [
+                            {
+                                label: "My First dataset",
+                                fillColor: "rgba(132,167,87,0.4)",
+                                strokeColor: "rgba(132,167,87,1)",
+                                pointColor: "rgba(132,167,87,1)",
+                                pointStrokeColor: "rgba(132,167,87,1)",
+                                pointHighlightFill: "rgba(220,220,220,1)",
+                                pointHighlightStroke: "rgba(132,167,87,1)",
+                                data: donations,
+                            },
+                        ]
+                    }, {
+                        scaleOverride: false,
+                        scaleSteps: 1,
+                        scaleStepWidth: 10,
+                        scaleStartValue: 0,
+                        pointDotRadius: 3,
+                        pointDotStrokeWidth: 2,
+                        bezierCurve: false,
+                        pointHitDetectionRadius: self.$('#content-chart').innerWidth() / donations.length * 0.5,
+                        pointDot: false,
+                        labelskip: labelSkip,
+                        customTooltips: function (tooltip) {
+                            // tooltip will be false if tooltip is not visible or should be hidden
+                            if (!tooltip || !tooltip.id) {
+                                self.$('#wrapper-tooltip').addClass('hidden');
+                                self._donation = null;
+                                return;
+                            }
+                            self._donation = FoodParent.Model.getDonations().findWhere({ id: tooltip.id });
+                            if (self._donation) {
+                                var template = _.template(FoodParent.Template.getToolTipTemplate2());
+                                var data = {
+                                    image: FoodParent.Setting.getBlankImagePath(),
+                                    value: self._donation.getCumulativeQuantity(),
+                                    comment: htmlDecode(self._donation.getComment()),
+                                    startdate: FoodParent.Model.getDonations().models[0].getFormattedDate(),
+                                    date: self._donation.getFormattedHourTime(),
+                                };
+                                self.$('#wrapper-tooltip').html(template(data));
+                                if (self._donation.getPictures().length > 0) {
+                                    self.$('#wrapper-tooltip img').attr('src', FoodParent.Setting.getContentPictureDir() + self._donation.getPictures()[0]).load(function () {
+                                        $(this).removeClass('hidden');
+                                    }).error(function () {
+                                        $(this).attr('src', FoodParent.Setting.getBlankImagePath());
+                                        $(this).addClass('hidden');
+                                    });
+                                }
+                                else {
+                                    self.$('#wrapper-tooltip img').addClass('hidden');
+                                }
+                            }
+                            self.$('#wrapper-tooltip').removeClass('hidden');
+                        },
+                    });
+                }, function () {
+                    FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+                });
+            };
+            var self = this;
+            self.bDebug = true;
+            //$(window).resize(_.debounce(that.customResize, Setting.getInstance().getResizeTimeout()));
+            self.events = {
+                "click .switch-map": "_mouseClick",
+                "click .date-preset": "_datePreset",
+                "dblclick .content-chart": "_mouseClick",
+                "click .button-new-donation": "_mouseClick",
+            };
+            self.delegateEvents();
+        }
+        DetailDonationGraphicView.prototype.render = function (args) {
+            if (this.bRendered) {
+                this.update(args);
+                return self;
+            }
+            this.bRendered = true;
+            var self = this;
+            if (self.bDebug)
+                console.log(DetailDonationGraphicView.TAG + "render()");
+            var template = _.template(FoodParent.Template.getDetailDonationGraphicViewTemplate());
+            var data = {};
+            self.$el.html(template(data));
+            self.setElement(self.$('#wrapper-mdonation'));
+            self.resize();
+            FoodParent.Controller.fetchAllLocations(function () {
+                self._place = FoodParent.Model.getPlaces().findWhere({ id: self._id });
+                self.renderPlaceInfo(self._place);
+                self.$('.donation-graph-start').attr({ 'data-value': moment(new Date()).subtract(1, 'month').format(FoodParent.Setting.getDateFormat()) });
+                self._startDate = moment(moment(new Date()).subtract(3, 'month').format(FoodParent.Setting.getDateFormat())).format(FoodParent.Setting.getDateTimeFormat());
+                self.$('.donation-graph-start').pickadate({
+                    format: "dd mmm yyyy",
+                    today: '',
+                    max: new Date(moment(new Date()).subtract('day', 2).valueOf()),
+                    clear: '',
+                    close: 'Close',
+                    onClose: function () {
+                        self._startDate = moment(this.get()).startOf('day').format(FoodParent.Setting.getDateTimeFormat());
+                        self.renderDonationChart(self._place, self._startDate, self._endDate);
+                    }
+                });
+                var today = new Date();
+                self._endDate = moment(today).endOf('day').format(FoodParent.Setting.getDateTimeFormat());
+                self.$('.donation-graph-end').attr({ 'data-value': moment(new Date()).format(FoodParent.Setting.getDateFormat()) });
+                self.$('.donation-graph-end').pickadate({
+                    format: "dd mmm yyyy",
+                    today: 'Today',
+                    max: today,
+                    clear: '',
+                    close: 'Close',
+                    onClose: function () {
+                        self._endDate = moment(this.get()).endOf('day').format(FoodParent.Setting.getDateTimeFormat());
+                        self.renderDonationChart(self._place, self._startDate, self._endDate);
+                    }
+                });
+                self.renderDonationChart(self._place, self._startDate, self._endDate);
+            }, function () {
+                FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+            });
+            return self;
+        };
+        DetailDonationGraphicView.prototype.resize = function () {
+            var self = this;
+            $('#wrapper-main').css({ height: FoodParent.View.getHeight() - 60 });
+            $('#wrapper-mdonation').css({ height: FoodParent.View.getHeight() - 60 });
+            self.$('.image-group').css({ height: self.$('.image-wrapper').innerHeight() - 60 });
+        };
+        DetailDonationGraphicView.prototype.refreshDonationInfo = function () {
+            var self = this;
+            self.renderPlaceInfo(self._place);
+            self.renderDonationChart(self._place, self._startDate, self._endDate);
+        };
+        DetailDonationGraphicView.prototype.renderRecentDonations = function (place) {
+            var self = this;
+            var places = new Array();
+            places.push(place);
+            FoodParent.Controller.fetchDonationsOfPlaces(places, FoodParent.Setting.getLargeNumRecentActivitiesShown(), 0, function () {
+                var donations = new FoodParent.Donations(FoodParent.Model.getDonations().where({ place: place.getId() }));
+                donations.sortByDescendingDate();
+                var template = _.template(FoodParent.Template.getRecentDonationsTemplate());
+                var data = {
+                    donations: donations,
+                    size: FoodParent.Setting.getLargeNumRecentActivitiesShown(),
+                };
+                self.$('#list-donations').html(template(data));
+            }, function () {
+                FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+            });
+        };
+        DetailDonationGraphicView.prototype._datePreset = function (event) {
+            var self = this;
+            if ($(event.currentTarget).hasClass('4years')) {
+                self._startDate = moment(self._endDate).subtract(4, 'years').startOf('day').format(FoodParent.Setting.getDateTimeFormat());
+            }
+            else if ($(event.currentTarget).hasClass('2years')) {
+                self._startDate = moment(self._endDate).subtract(2, 'years').startOf('day').format(FoodParent.Setting.getDateTimeFormat());
+            }
+            else if ($(event.currentTarget).hasClass('1year')) {
+                self._startDate = moment(self._endDate).subtract(1, 'years').startOf('day').format(FoodParent.Setting.getDateTimeFormat());
+            }
+            else if ($(event.currentTarget).hasClass('6months')) {
+                self._startDate = moment(self._endDate).subtract(6, 'months').startOf('day').format(FoodParent.Setting.getDateTimeFormat());
+            }
+            else if ($(event.currentTarget).hasClass('3month')) {
+                self._startDate = moment(self._endDate).subtract(3, 'months').startOf('day').format(FoodParent.Setting.getDateTimeFormat());
+            }
+            //self.$('.tree-graph-start').attr({ 'data-value': moment(self._startDate).format(Setting.getDateFormat()) });
+            self.$('.donation-graph-start').pickadate('picker').set('select', moment(self._startDate).format(FoodParent.Setting.getDateFormat()), { format: 'dd mmm yyyy' });
+            self.renderDonationChart(self._place, self._startDate, self._endDate);
+        };
+        DetailDonationGraphicView.prototype._mouseClick = function (event) {
+            var self = this;
+            FoodParent.EventHandler.handleMouseClick($(event.currentTarget), self, { donation: self._donation, place: self._place });
+        };
+        DetailDonationGraphicView.TAG = "DetailDonationGraphicView - ";
+        return DetailDonationGraphicView;
+    })(DetailDonationView);
+    FoodParent.DetailDonationGraphicView = DetailDonationGraphicView;
+    var EditDonationViewFactory = (function () {
+        function EditDonationViewFactory(args) {
+            if (EditDonationViewFactory._instance) {
+                throw new Error("Error: Instantiation failed: Use EditDonationViewFactory.getInstance() instead of new.");
+            }
+            EditDonationViewFactory._instance = this;
+        }
+        EditDonationViewFactory.getInstance = function () {
+            return EditDonationViewFactory._instance;
+        };
+        EditDonationViewFactory.create = function (el, donation) {
+            var view = new EditDonationView({ el: el });
+            view.setDonation(donation);
+            return view;
+        };
+        EditDonationViewFactory._instance = new EditDonationViewFactory();
+        return EditDonationViewFactory;
+    })();
+    FoodParent.EditDonationViewFactory = EditDonationViewFactory;
+    var EditDonationView = (function (_super) {
+        __extends(EditDonationView, _super);
+        function EditDonationView(options) {
+            _super.call(this, options);
+            var self = this;
+            self.bDebug = true;
+            //$(window).resize(_.debounce(that.customResize, Setting.getInstance().getResizeTimeout()));
+            self.events = {
+                "click .alert-confirm": "_mouseClick",
+                "click .top-right-button": "_mouseClick",
+                "click .delete-donation": "_deleteDonation",
+                "click .prev-note": "_prevNote",
+                "click .next-note": "_nextNote",
+                "click .image-group img": "_changeCoverImage",
+                "click .delete-note": "_deleteNote",
+                "click .cell-tree-detail": "_removeNewDonationTree",
+            };
+            self.delegateEvents();
+        }
+        EditDonationView.prototype.setDonation = function (donation) {
+            var self = this;
+            self._donation = donation;
+        };
+        EditDonationView.prototype.render = function (args) {
+            if (this.bRendered) {
+                this.update(args);
+                return;
+            }
+            this.bRendered = true;
+            /////
+            var self = this;
+            if (self.bDebug)
+                console.log(EditDonationView.TAG + "render()");
+            var place = FoodParent.Model.getPlaces().findWhere({ id: self._donation.getPlaceId() });
+            var template = _.template(FoodParent.Template.getEditDonationViewTemplate());
+            var data = {
+                name: place.getName(),
+                image: FoodParent.Setting.getBlankImagePath(),
+                //value: self._note.getRate(),
+                amount: self._donation.getQuantity(),
+                date: self._donation.getFormattedHourTime(),
+            };
+            $('#wrapper-pop').html(template(data));
+            self.setElement($('#wrapper-donation'));
+            self.renderDonationInfo();
+            self.setVisible();
+            self.resize();
+            return self;
+        };
+        EditDonationView.prototype.renderDonationInfo = function () {
+            var self = this;
+            var today = new Date();
+            self.$('.input-date').attr({ 'data-value': self._donation.getFormattedDate() });
+            self.$('.input-date').pickadate({
+                format: "dd mmm yyyy",
+                today: 'Today',
+                max: today,
+                clear: '',
+                close: 'Close',
+                onClose: function () {
+                    FoodParent.EventHandler.handleDonationData(self._donation, FoodParent.DATA_MODE.UPDATE_DATE, { date: moment(this.get()).startOf('day').format(FoodParent.Setting.getDateTimeFormat()) }, function () {
+                        FoodParent.EventHandler.handleDataChange("Date of this <strong><i>Donation</i></strong> has changed successfully.", true);
+                        self.renderDonationInfo();
+                    }, function () {
+                        FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+                    });
+                }
+            });
+            self.$('.input-date').pickadate('picker').set('select', self._donation.getFormattedDate(), { format: 'dd mmm yyyy' });
+            var template = _.template(FoodParent.Template.getAddNewDonationTreeTemplate());
+            self.$('.new-donation-trees').html(template({
+                trees: FoodParent.Model.getTrees().filterByIds(self._donation.getTreeIds()),
+            }));
+            //self.$('.input-comment').html(self._donation.getComment());
+            self.renderDonationImages();
+            // Event listener for uploading a file.
+            self.$('input[type=file]').off('change');
+            self.$('input[type=file]').on('change', function (event) {
+                self.$('.wrapper-input-upload-picture').addClass('hidden');
+                self.$('.wrapper-uploading-picture').removeClass('hidden');
+                var files = event.target.files;
+                var place = FoodParent.Model.getPlaces().findWhere({ id: self._donation.getPlaceId() });
+                if (files.length > 0) {
+                    FoodParent.Controller.uploadNotePictureFile(files[0], fileNameEncode(place.getName()), function (fileName) {
+                        FoodParent.EventHandler.handleDonationData(self._donation, FoodParent.DATA_MODE.ADD_PICTURE, { filename: fileName }, function () {
+                            FoodParent.EventHandler.handleDataChange("<strong><i>" + fileName + "</i></strong> has been added successfully.", true);
+                            // Success
+                            self.$('input[type=file]').val("");
+                            self.$('.wrapper-uploading-picture').addClass('hidden');
+                            self.$('.wrapper-input-upload-picture').removeClass('hidden');
+                            self.renderDonationImages();
+                        }, function () {
+                            FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+                        }, function () {
+                            FoodParent.EventHandler.handleDataChange("<strong><i>" + fileName + "</i></strong> has been removed successfully.", true);
+                            // Success
+                            self.$('input[type=file]').val("");
+                            self.$('.wrapper-uploading-picture').addClass('hidden');
+                            self.$('.wrapper-input-upload-picture').removeClass('hidden');
+                            self.renderDonationImages();
+                        });
+                        //self._note.addPicture(fileName);
+                    }, function () {
+                        // Error
+                        self.$('.wrapper-uploading-picture').addClass('hidden');
+                        self.$('.wrapper-input-upload-picture').removeClass('hidden');
+                    });
+                }
+            });
+            var template = _.template(FoodParent.Template.TreeSelectTemplate());
+            var data = {
+                trees: FoodParent.Model.getTrees(),
+            };
+            self.$('.add-donation-tree').html(template(data));
+            self.$('.input-tree').selectpicker();
+            self.$('.input-tree').selectpicker("val", 0);
+            self.$('.input-tree').on('hide.bs.dropdown', function (event) {
+                var selected = parseInt($(this).find("option:selected").val());
+                var tree = FoodParent.Model.getTrees().findWhere({ id: selected });
+                if (tree != undefined) {
+                    var food = FoodParent.Model.getFoods().findWhere({ id: tree.getFoodId() });
+                    if (self._donation.getTreeIds().length == 0) {
+                        FoodParent.EventHandler.handleDonationData(self._donation, FoodParent.DATA_MODE.ADD_DONATION_TREE, { tree: tree }, function () {
+                            FoodParent.EventHandler.handleDataChange("<strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has been added successfully.", true);
+                            self.renderDonationInfo();
+                        }, function () {
+                            FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+                        }, function () {
+                            FoodParent.EventHandler.handleDataChange("<strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has been removed successfully.", true);
+                            self.renderDonationInfo();
+                        });
+                    }
+                    else {
+                        var firstTreeId = Math.floor(self._donation.getTreeIds()[0]);
+                        var firstTree = FoodParent.Model.getTrees().findWhere({ id: firstTreeId });
+                        var firstFood = FoodParent.Model.getFoods().findWhere({ id: firstTree.getFoodId() });
+                        var currentFood = FoodParent.Model.getFoods().findWhere({ id: tree.getFoodId() });
+                        if (firstFood.getId() == currentFood.getId()) {
+                            if (self._donation.hasTreeId(tree.getId())) {
+                                new FoodParent.RenderMessageViewCommand({ el: FoodParent.Setting.getMessageWrapperElement(), message: "<strong><i>" + firstFood.getName() + " " + tree.getName() + "</i></strong> already exist.", undoable: false }).execute();
+                                self.$('.input-tree').selectpicker("val", 0);
+                            }
+                            else {
+                                FoodParent.EventHandler.handleDonationData(self._donation, FoodParent.DATA_MODE.ADD_DONATION_TREE, { tree: tree }, function () {
+                                    FoodParent.EventHandler.handleDataChange("<strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has been added successfully.", true);
+                                    self.renderDonationInfo();
+                                }, function () {
+                                    FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+                                }, function () {
+                                    FoodParent.EventHandler.handleDataChange("<strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has been removed successfully.", true);
+                                    self.renderDonationInfo();
+                                });
+                            }
+                        }
+                        else {
+                            new FoodParent.RenderMessageViewCommand({ el: FoodParent.Setting.getMessageWrapperElement(), message: "Please select <strong>same type</strong> of food.", undoable: false }).execute();
+                            self.$('.input-tree').selectpicker("val", 0);
+                        }
+                    }
+                }
+            });
+            self.$('.input-amount').replaceWith('<div class="input-amount">' + self._donation.getQuantity() + ' lbs.</div>');
+            self.$('.input-amount').on('click', function (event) {
+                $(this).replaceWith("<input type='text' class='input-amount form-control' value='" + parseFloat(htmlEncode($(this).text())) + "' />");
+                //self.$('.input-lat').css({ width: width });
+                self.$('.input-amount').focus();
+                self.$('.input-amount').on('focusout', function (event) {
+                    var amount = parseFloat(self.$('.input-amount').val());
+                    if (amount != self._donation.getQuantity()) {
+                        FoodParent.EventHandler.handleDonationData(self._donation, FoodParent.DATA_MODE.UPDATE_DONATION_AMOUNT, { amount: amount }, function () {
+                            FoodParent.EventHandler.handleDataChange("<strong><i>Amount of donation</i></strong> has been changed successfully.", true);
+                            self.renderDonationInfo();
+                        }, function () {
+                            FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+                        });
+                    }
+                    else {
+                        self.renderDonationInfo();
+                    }
+                });
+            });
+        };
+        EditDonationView.prototype.renderDonationImages = function () {
+            var self = this;
+            var tag = '';
+            $.each(self._donation.getPictures(), function (index, filename) {
+                if (index == 0) {
+                    tag += '<img src="' + FoodParent.Setting.getBlankImagePath() + '" data-target="' + index + '" class="selected" />';
+                }
+                else {
+                    tag += '<img src="' + FoodParent.Setting.getBlankImagePath() + '" data-target="' + index + '" />';
+                }
+            });
+            self.$('.image-group').html(tag);
+            $.each(self.$('.image-group img'), function (index, element) {
+                $(element).attr('src', FoodParent.Setting.getContentPictureDir() + self._donation.getPictures()[index]).load(function () {
+                }).error(function () {
+                    $(element).attr('src', FoodParent.Setting.getBlankImagePath());
+                });
+            });
+        };
+        EditDonationView.prototype.setVisible = function () {
+            var self = this;
+            FoodParent.Setting.getPopWrapperElement().removeClass('hidden');
+        };
+        EditDonationView.prototype.setInvisible = function () {
+            var self = this;
+            FoodParent.Setting.getPopWrapperElement().addClass('hidden');
+        };
+        EditDonationView.prototype._mouseClick = function (event) {
+            var self = this;
+            FoodParent.EventHandler.handleMouseClick($(event.currentTarget), self);
+        };
+        EditDonationView.prototype._changeCoverImage = function (event) {
+            var self = this;
+            var cover = parseInt($(event.target).attr('data-target'));
+            var place = FoodParent.Model.getPlaces().findWhere({ id: self._donation.getPlaceId() });
+            if (cover != 0) {
+                FoodParent.EventHandler.handleDonationData(self._donation, FoodParent.DATA_MODE.UPDATE_COVER, { cover: cover }, function () {
+                    FoodParent.EventHandler.handleDataChange("Cover picture of <strong><i>" + place.getName() + "</i></strong> has changed successfully.", true);
+                    self.renderDonationImages();
+                }, function () {
+                    FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+                });
+            }
+        };
+        EditDonationView.prototype._prevNote = function (event) {
+            var self = this;
+            var donations = new FoodParent.Donations(FoodParent.Model.getDonations().where({ place: self._donation.getPlaceId() }));
+            donations.sortByAscendingDate();
+            var bFound = false;
+            $.each(donations.models, function (index, donation) {
+                if (self._donation.getId() == donation.getId() && !bFound) {
+                    bFound = true;
+                    if (index == 0) {
+                        self._donation = donations.models[donations.models.length - 1];
+                    }
+                    else {
+                        self._donation = donations.models[index - 1];
+                    }
+                    self.renderDonationInfo();
+                    return;
+                }
+            });
+        };
+        EditDonationView.prototype._nextNote = function (event) {
+            var self = this;
+            var donations = new FoodParent.Donations(FoodParent.Model.getDonations().where({ place: self._donation.getPlaceId() }));
+            donations.sortByAscendingDate();
+            var bFound = false;
+            $.each(donations.models, function (index, donation) {
+                if (self._donation.getId() == donation.getId() && !bFound) {
+                    bFound = true;
+                    if (index == donations.models.length - 1) {
+                        self._donation = donations.models[0];
+                    }
+                    else {
+                        self._donation = donations.models[index + 1];
+                    }
+                    self.renderDonationInfo();
+                    return;
+                }
+            });
+        };
+        EditDonationView.prototype._removeNewDonationTree = function (event) {
+            var self = this;
+            var treeId = parseInt($(event.target).attr('data-target'));
+            var tree = FoodParent.Model.getTrees().findWhere({ id: treeId });
+            var food = FoodParent.Model.getFoods().findWhere({ id: tree.getFoodId() });
+            //self._donation.removeTreeId(treeId);
+            FoodParent.EventHandler.handleDonationData(self._donation, FoodParent.DATA_MODE.REMOVE_DONATION_TREE, { tree: tree }, function () {
+                FoodParent.EventHandler.handleDataChange("<strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has been removed successfully.", true);
+                self.renderDonationInfo();
+            }, function () {
+                FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+            }, function () {
+                FoodParent.EventHandler.handleDataChange("<strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has been added successfully.", true);
+                self.renderDonationInfo();
+            });
+        };
+        EditDonationView.prototype._deleteDonation = function (event) {
+            var self = this;
+            var date = self._donation.getFormattedDate();
+            FoodParent.EventHandler.handleDonationData(self._donation, FoodParent.DATA_MODE.DELETE, {}, function () {
+                if (FoodParent.View.getDetailDonationView()) {
+                    FoodParent.View.getDetailDonationView().refreshDonationInfo();
+                }
+                FoodParent.EventHandler.handleDataChange("Donation of <strong><i>" + date + "</i></strong> has been removed successfully.", true);
+            }, function () {
+                FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+            });
+        };
+        EditDonationView.TAG = "EditDonationView - ";
+        return EditDonationView;
+    })(FoodParent.PopupView);
+    FoodParent.EditDonationView = EditDonationView;
 })(FoodParent || (FoodParent = {}));
 
 var FoodParent;
@@ -52516,26 +53909,61 @@ var FoodParent;
                 }
             });
         };
-        Model.fetchAllDonations = function () {
+        Model.fetchDonationsOfPlaces = function (ids, size, offset) {
             var self = Model._instance;
             if (self.donations == undefined) {
                 self.donations = new FoodParent.Donations();
             }
-            return self.donations.fetch({
-                remove: true,
-                processData: true,
-                data: {
-                    mode: 2,
-                    ids: 0,
-                    id: 0,
-                },
-                success: function (collection, response, options) {
-                    console.log("success fetch with " + collection.models.length + " places");
-                },
-                error: function (collection, jqxhr, options) {
-                    console.log("error while fetching item data from the server");
-                }
-            });
+            if (ids.length != 0) {
+                return self.donations.fetch({
+                    remove: false,
+                    processData: true,
+                    data: {
+                        mode: 0,
+                        places: ids.toString(),
+                        start: "",
+                        end: "",
+                        size: size,
+                        offset: offset,
+                    },
+                    success: function (collection, response, options) {
+                        //console.log("success fetch with " + collection.models.length + " notes");
+                        //Controller.getInstance().renderTreesOnMap();
+                    },
+                    error: function (collection, jqxhr, options) {
+                        console.log("error while fetching item data from the server");
+                    }
+                });
+            }
+            return null;
+        };
+        Model.fetchDonationsOfPlacesDuringPeriod = function (ids, start, end, size, offset) {
+            var self = Model._instance;
+            if (self.donations == undefined) {
+                self.donations = new FoodParent.Donations();
+            }
+            if (ids.length != 0) {
+                return self.donations.fetch({
+                    remove: false,
+                    processData: true,
+                    data: {
+                        mode: 1,
+                        places: ids.toString(),
+                        start: start,
+                        end: end,
+                        size: size,
+                        offset: offset,
+                    },
+                    success: function (collection, response, options) {
+                        //console.log("success fetch with " + collection.models.length + " notes");
+                        //Controller.getInstance().renderTreesOnMap();
+                    },
+                    error: function (collection, jqxhr, options) {
+                        console.log("error while fetching item data from the server");
+                    }
+                });
+            }
+            return null;
         };
         Model._instance = new Model();
         Model.TAG = "Model - ";
@@ -53679,9 +55107,11 @@ var FoodParent;
             this.url = FoodParent.Setting.getPhpDir() + this.url;
             this.defaults = {
                 "id": 0,
+                "type": 0,
                 "place": 0,
                 "tree": 0,
                 "quantity": 0,
+                "picture": '',
                 "date": moment(new Date()).format(FoodParent.Setting.getDateTimeFormat()),
             };
         }
@@ -53689,7 +55119,16 @@ var FoodParent;
             if (response.id != null) {
                 response.id = parseInt(response.id);
             }
-            response.trees = response.tree.split(',');
+            response.type = parseInt(response.type);
+            response.place = parseInt(response.place);
+            response.quantity = parseFloat(response.quantity);
+            response.trees = response.tree.split(',').map(function (item) {
+                return parseInt(item);
+            });
+            response.pictures = Array();
+            if (response.picture != "") {
+                response.pictures = response.picture.split(",");
+            }
             response.updated = moment(response.updated).format(FoodParent.Setting.getDateTimeFormat());
             return _super.prototype.parse.call(this, response, options);
         };
@@ -53698,23 +55137,95 @@ var FoodParent;
             if (this.id != null) {
                 clone["id"] = this.id;
             }
-            console.log(clone["trees"]);
+            clone["trees"] = _.sortBy(clone["trees"], function (obj) { return parseInt(obj); });
             clone["tree"] = clone["trees"].toString();
-            console.log(clone["tree"]);
             delete clone["trees"];
+            if (clone["pictures"]) {
+                clone["picture"] = clone["pictures"].toString();
+            }
+            delete clone["pictures"];
             return clone;
         };
         Donation.prototype.getPlaceId = function () {
             return parseFloat(this.get('place'));
         };
         Donation.prototype.getTreeIds = function () {
+            if (this.get("trees") == undefined) {
+                this.set("trees", new Array());
+            }
             return this.get("trees");
+        };
+        Donation.prototype.getType = function () {
+            return Math.floor(this.get("type"));
+        };
+        Donation.prototype.setType = function (type) {
+            this.set('type', type);
+        };
+        Donation.prototype.getComment = function () {
+            var self = this;
+            var comment = "<strong>" + self.getQuantity() + " lbs.</strong> of ";
+            var treeIds = self.getTreeIds();
+            $.each(treeIds, function (index, treeId) {
+                var tree = FoodParent.Model.getTrees().findWhere({ id: Math.floor(treeId) });
+                var food = FoodParent.Model.getFoods().findWhere({ id: tree.getFoodId() });
+                if (index == 0) {
+                    if (treeIds.length == 1) {
+                        comment += "<strong><i>" + food.getName() + "</i></strong> has been donated from tree ";
+                    }
+                    else {
+                        comment += "<strong><i>" + food.getName() + "</i></strong> has been donated from trees ";
+                    }
+                }
+                if (index < treeIds.length - 1) {
+                    comment += "<strong>" + tree.getName() + "</strong>, ";
+                }
+                else {
+                    comment += "<strong>" + tree.getName() + "</strong>.";
+                }
+            });
+            return comment;
+        };
+        Donation.prototype.getCommentWithDate = function () {
+            var self = this;
+            var comment = "<strong>" + self.getQuantity() + " lbs.</strong> of ";
+            var treeIds = self.getTreeIds();
+            $.each(treeIds, function (index, treeId) {
+                var tree = FoodParent.Model.getTrees().findWhere({ id: Math.floor(treeId) });
+                var food = FoodParent.Model.getFoods().findWhere({ id: tree.getFoodId() });
+                if (index == 0) {
+                    if (treeIds.length == 1) {
+                        comment += "<strong><i>" + food.getName() + "</i></strong> has been donated from tree ";
+                    }
+                    else {
+                        comment += "<strong><i>" + food.getName() + "</i></strong> has been donated from trees ";
+                    }
+                }
+                if (index < treeIds.length - 1) {
+                    comment += "<strong>" + tree.getName() + "</strong>, ";
+                }
+                else {
+                    comment += "<strong>" + tree.getName() + "</strong> ";
+                }
+            });
+            comment += "(" + self.getFormattedDate() + ")";
+            return comment;
         };
         Donation.prototype.addTreeId = function (id) {
             if (this.get("trees") == undefined) {
                 this.set("trees", new Array());
             }
-            this.get("trees").push(id);
+            if (this.get("trees").indexOf(id) < 0) {
+                this.get("trees").push(id);
+            }
+        };
+        Donation.prototype.hasTreeId = function (id) {
+            if (this.get("trees") == undefined) {
+                this.set("trees", new Array());
+            }
+            if (this.get("trees").indexOf(id) < 0) {
+                return false;
+            }
+            return true;
         };
         Donation.prototype.removeTreeId = function (id) {
             var temp = _.reject(this.get("trees"), function (obj) { return parseInt(obj) == id; });
@@ -53731,6 +55242,21 @@ var FoodParent;
         };
         Donation.prototype.setQuantity = function (quantity) {
             this.set('quantity', quantity);
+        };
+        Donation.prototype.getCumulativeQuantity = function () {
+            var self = this;
+            var donations = new Donations(FoodParent.Model.getDonations().where({ place: self.getPlaceId() }));
+            donations.sortByAscendingDate();
+            var total = 0;
+            $.each(donations.models, function (index, donation) {
+                if (self.getEndOfDateValueOf() >= donation.getStartOfDateValueOf()) {
+                    total += donation.getQuantity();
+                }
+                else {
+                    return total;
+                }
+            });
+            return total;
         };
         Donation.prototype.setDate = function (date) {
             this.set('date', date);
@@ -53750,6 +55276,42 @@ var FoodParent;
         Donation.prototype.getDateValueOf = function () {
             return moment(this.get('date')).valueOf();
         };
+        Donation.prototype.getStartOfDateValueOf = function () {
+            return moment(this.get('date')).startOf('day').valueOf();
+        };
+        Donation.prototype.getEndOfDateValueOf = function () {
+            return moment(this.get('date')).endOf('day').valueOf();
+        };
+        Donation.prototype.addPicture = function (filename) {
+            if (this.get('pictures') == undefined) {
+                this.set('pictures', new Array());
+            }
+            this.get('pictures').push(filename);
+        };
+        Donation.prototype.getPictures = function () {
+            if (this.get('pictures') == undefined) {
+                this.set('pictures', new Array());
+            }
+            return this.get('pictures');
+        };
+        Donation.prototype.getPicture = function (index) {
+            return this.get('pictures')[index];
+        };
+        Donation.prototype.removePicture = function (filename) {
+            var self = this;
+            self.set('pictures', _.without(self.getPictures(), filename));
+        };
+        Donation.prototype.setCover = function (index) {
+            var self = this;
+            var picture = self.getPictures()[index];
+            self.set('pictures', _.without(self.getPictures(), picture));
+            self.getPictures().unshift(picture);
+        };
+        Donation.prototype.setCoverPicture = function (picture) {
+            var self = this;
+            self.set('pictures', _.without(self.getPictures(), picture));
+            self.getPictures().unshift(picture);
+        };
         return Donation;
     })(Backbone.Model);
     FoodParent.Donation = Donation;
@@ -53758,6 +55320,7 @@ var FoodParent;
         function Donations(models, options) {
             _super.call(this, models, options);
             this.url = "donations.php";
+            this.sortType = FoodParent.SortType.NONE;
             this.url = FoodParent.Setting.getPhpDir() + this.url;
             this.model = Donation;
         }
@@ -53775,6 +55338,47 @@ var FoodParent;
             var self = this;
             var donations = new Donations(self.models);
             return donations.reset(_.map(idArray, function (id) { return this.get(id); }, this));
+        };
+        Donations.prototype.comparator = function (model) {
+            var self = this;
+            switch (self.sortType) {
+                case FoodParent.SortType.NONE:
+                    return 0;
+                    break;
+                case FoodParent.SortType.ASCENDING:
+                    return model.getDateValueOf();
+                    break;
+                case FoodParent.SortType.DESCENDING:
+                    return -model.getDateValueOf();
+                    break;
+            }
+        };
+        Donations.prototype.sortByDescendingDate = function () {
+            var self = this;
+            self.sortType = FoodParent.SortType.DESCENDING;
+            self.sort();
+        };
+        Donations.prototype.sortByAscendingDate = function () {
+            var self = this;
+            self.sortType = FoodParent.SortType.ASCENDING;
+            self.sort();
+        };
+        Donations.prototype.getLatestDonationOfDate = function (placeId, date) {
+            var self = this;
+            if (self.models.length == 0) {
+                return null;
+            }
+            self.sortByAscendingDate();
+            var result = null;
+            $.each(self.models, function (index, donation) {
+                if (date > donation.getDateValueOf() && donation.getPlaceId() == placeId) {
+                    result = donation;
+                }
+                else {
+                    return result;
+                }
+            });
+            return result;
         };
         return Donations;
     })(Backbone.Collection);

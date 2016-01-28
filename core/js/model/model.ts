@@ -364,7 +364,7 @@
                     remove: false,	// if remove == false, it only adds new items, not removing old items.
                     processData: true,
                     data: {
-                        mode: 0,    // 0: fetch only the number of the size from offset, 1: fetch all
+                        mode: 0,    // 0: fetch only the number of the size from offset, 1: fetch image notes between start and end
                         trees: ids.toString(),
                         start: "",
                         end: "",
@@ -434,26 +434,62 @@
             });
         }
 
-        public static fetchAllDonations(): JQueryXHR {
+        public static fetchDonationsOfPlaces(ids: Array<number>, size: number, offset: number): JQueryXHR {
             var self: Model = Model._instance;
             if (self.donations == undefined) {
                 self.donations = new Donations();
             }
-            return self.donations.fetch({
-                remove: true,	// if remove == false, it only adds new items, not removing old items.
-                processData: true,
-                data: {
-                    mode: 2,    // 0: fetch only 1, 1: fetch all ids, 2: fetch all
-                    ids: 0,
-                    id: 0,
-                },
-                success(collection?: any, response?: any, options?: any): void {
-                    console.log("success fetch with " + collection.models.length + " places");
-                },
-                error(collection?: any, jqxhr?: JQueryXHR, options?: any): void {
-                    console.log("error while fetching item data from the server");
-                }
-            });
+            if (ids.length != 0) {
+                return self.donations.fetch({
+                    remove: false,	// if remove == false, it only adds new items, not removing old items.
+                    processData: true,
+                    data: {
+                        mode: 0,    // 0: fetch only the number of the size from offset, 1: fetch between start and end
+                        places: ids.toString(),
+                        start: "",
+                        end: "",
+                        size: size,
+                        offset: offset,
+                    },
+                    success(collection?: any, response?: any, options?: any): void {
+                        //console.log("success fetch with " + collection.models.length + " notes");
+                        //Controller.getInstance().renderTreesOnMap();
+                    },
+                    error(collection?: any, jqxhr?: JQueryXHR, options?: any): void {
+                        console.log("error while fetching item data from the server");
+                    }
+                });
+            }
+            return null;
+        }
+
+        public static fetchDonationsOfPlacesDuringPeriod(ids: Array<number>, start: string, end: string, size: number, offset: number): JQueryXHR {
+            var self: Model = Model._instance;
+            if (self.donations == undefined) {
+                self.donations = new Donations();
+            }
+            if (ids.length != 0) {
+                return self.donations.fetch({
+                    remove: false,	// if remove == false, it only adds new items, not removing old items.
+                    processData: true,
+                    data: {
+                        mode: 1,    // 0: fetch only the number of the size from offset, 1: fetch image notes between start and end
+                        places: ids.toString(),
+                        start: start,
+                        end: end,
+                        size: size,
+                        offset: offset,
+                    },
+                    success(collection?: any, response?: any, options?: any): void {
+                        //console.log("success fetch with " + collection.models.length + " notes");
+                        //Controller.getInstance().renderTreesOnMap();
+                    },
+                    error(collection?: any, jqxhr?: JQueryXHR, options?: any): void {
+                        console.log("error while fetching item data from the server");
+                    }
+                });
+            }
+            return null;
         }
     }
 }

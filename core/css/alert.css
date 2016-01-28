@@ -21,14 +21,14 @@
         height: 100%;
         overflow: hidden;
     }
-    #wrapper-manage-adoption .outer-frame, #wrapper-note .outer-frame {
+    #wrapper-manage-adoption .outer-frame, #wrapper-note .outer-frame, #wrapper-donation .outer-frame {
         width: 100%;
         height: 100%;
         padding: 4px;
         overflow: hidden;
     }
 
-    #wrapper-manage-adoption .inner-frame, #wrapper-note .inner-frame {
+    #wrapper-manage-adoption .inner-frame, #wrapper-note .inner-frame, #wrapper-donation .inner-frame {
         width: 100%;
         height: 100%;
         padding: 4px;

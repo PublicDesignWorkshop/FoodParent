@@ -119,4 +119,9 @@
 	    background: rgba(187,168,164,0.1); 
     }
 
+    hr {
+        margin: 8px 0;
+            border-top: 1px solid #ffffff;
+    }
+
 }

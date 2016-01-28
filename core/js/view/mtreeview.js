@@ -48,7 +48,7 @@ var FoodParent;
             _super.call(this, options);
             this.renderTreeChart = function (tree, startDate, endDate) {
                 var self = _this;
-                FoodParent.Controller.fetchImageNotesOfTreesDuringPeriod([self._tree], startDate, endDate, 250, 0, function () {
+                FoodParent.Controller.fetchImageNotesOfTreesDuringPeriod([self._tree], startDate, endDate, 10000, 0, function () {
                     self.$('#wrapper-chart').html('<canvas id="content-chart" class="content-chart" />');
                     var canvas = self.$('#content-chart')[0];
                     self.$('#content-chart').attr({ 'width': self.$('#content-chart').innerWidth(), 'height': self.$('#content-chart').innerHeight() });
@@ -301,8 +301,8 @@ var FoodParent;
                 // add grid instance for existing data
                 self.renderTreeInfo(self._tree);
                 // render datepicker
-                var notes = new FoodParent.Notes(FoodParent.Model.getNotes().where({ tree: self._tree.getId() }));
-                notes.sortByAscendingDate();
+                //var notes: Notes = new Notes(Model.getNotes().where({ tree: self._tree.getId() }));
+                //notes.sortByAscendingDate();
                 //if (notes.models.length > 0) {
                 //    self.$('.tree-graph-start').attr({ 'data-value': notes.models[0].getFormattedDate() });
                 //    self._startDate = moment(notes.models[0].getFormattedDate()).format(Setting.getDateTimeFormat());
@@ -349,6 +349,8 @@ var FoodParent;
         };
         DetailTreeGraphicView.prototype.refreshTreeInfo = function () {
             var self = this;
+            if (self.bDebug)
+                console.log(DetailTreeGraphicView.TAG + "refreshTreeInfo()");
             self.renderTreeInfo(self._tree);
             self.renderTreeChart(self._tree, self._startDate, self._endDate);
         };

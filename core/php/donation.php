@@ -62,13 +62,15 @@
         if ($data != null) {
             $params = array(
                 "id" => $data->{'id'},
+                "type" => $data->{'type'},
                 "place" => $data->{'place'},
                 "tree" => $data->{'tree'},
                 "quantity" => $data->{'quantity'},
+                "picture" => $data->{'picture'},
                 "date" => $data->{'date'},
             );
         }
-        $sql = "UPDATE `donation` SET `place` = :place, `tree` = :tree, `quantity` = :quantity, `date` = :date WHERE (`id` = :id)";
+        $sql = "UPDATE `donation` SET `type` = :type, `place` = :place, `tree` = :tree, `quantity` = :quantity, `picture` =:picture, `date` = :date WHERE (`id` = :id)";
         
         try {
             $pdo = getConnection();
@@ -98,12 +100,14 @@
     function create() {
         $data = json_decode(file_get_contents('php://input'));
         $params = array(
+            "type" => $data->{'type'},
             "place" => $data->{'place'},
             "tree" => $data->{'tree'},
             "quantity" => $data->{'quantity'},
+            "picture" => $data->{'picture'},
             "date" => $data->{'date'},
         );
-        $sql = "INSERT INTO `donation` VALUES ( NULL, :place, :tree, :quantity, :date )";
+        $sql = "INSERT INTO `donation` VALUES ( NULL, :type, :place, :tree, :quantity, :picture, :date )";
         
         try {
             $pdo = getConnection();

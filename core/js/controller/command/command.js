@@ -375,21 +375,59 @@ var FoodParent;
         return RenderManageDonationsViewCommand;
     })();
     FoodParent.RenderManageDonationsViewCommand = RenderManageDonationsViewCommand;
-    var RenderManageDonationViewCommand = (function () {
-        function RenderManageDonationViewCommand(args) {
+    var RenderAddDonationViewCommand = (function () {
+        function RenderAddDonationViewCommand(args) {
             var self = this;
             self._el = args.el;
             self._place = args.place;
         }
-        RenderManageDonationViewCommand.prototype.execute = function () {
+        RenderAddDonationViewCommand.prototype.execute = function () {
             var self = this;
-            var view = FoodParent.DonationManageViewFactory.create(self._el, self._place).render();
+            var view = FoodParent.AddDonationViewFactory.create(self._el, self._place).render();
             FoodParent.View.setPopupView(view);
-            FoodParent.View.setViewStatus(FoodParent.VIEW_STATUS.MANAGE_DONATION);
+            FoodParent.View.setViewStatus(FoodParent.VIEW_STATUS.ADD_DONATION);
         };
-        RenderManageDonationViewCommand.prototype.undo = function () {
+        RenderAddDonationViewCommand.prototype.undo = function () {
         };
-        return RenderManageDonationViewCommand;
+        return RenderAddDonationViewCommand;
     })();
-    FoodParent.RenderManageDonationViewCommand = RenderManageDonationViewCommand;
+    FoodParent.RenderAddDonationViewCommand = RenderAddDonationViewCommand;
+    var RenderDetailDonationViewCommand = (function () {
+        function RenderDetailDonationViewCommand(args) {
+            var self = this;
+            self._el = args.el;
+            self._viewMode = args.viewMode;
+            self._id = args.id;
+        }
+        RenderDetailDonationViewCommand.prototype.execute = function () {
+            var self = this;
+            if (FoodParent.View.getDetailDonationView()) {
+            }
+            else {
+                var view = FoodParent.DetailDonationViewFractory.create(self._el, self._viewMode, self._id).render();
+                FoodParent.View.addChild(view);
+                FoodParent.View.setDetailDonationView(view);
+            }
+        };
+        RenderDetailDonationViewCommand.prototype.undo = function () {
+        };
+        return RenderDetailDonationViewCommand;
+    })();
+    FoodParent.RenderDetailDonationViewCommand = RenderDetailDonationViewCommand;
+    var RenderEditDonationViewCommand = (function () {
+        function RenderEditDonationViewCommand(args) {
+            var self = this;
+            self._donation = args.donation;
+        }
+        RenderEditDonationViewCommand.prototype.execute = function () {
+            var self = this;
+            var view = FoodParent.EditDonationViewFactory.create(self._el, self._donation).render();
+            FoodParent.View.setPopupView(view);
+            FoodParent.View.setViewStatus(FoodParent.VIEW_STATUS.EDIT_DONATION);
+        };
+        RenderEditDonationViewCommand.prototype.undo = function () {
+        };
+        return RenderEditDonationViewCommand;
+    })();
+    FoodParent.RenderEditDonationViewCommand = RenderEditDonationViewCommand;
 })(FoodParent || (FoodParent = {}));

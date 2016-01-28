@@ -7,10 +7,11 @@
     export enum DATA_MODE {
         NONE, CREATE, DELETE, UPDATE_LOCATION, UPDATE_FLAG, UPDATE_OWNERSHIP, UPDATE_FOODTYPE, UPDATE_DESCRIPTION, 
         UPDATE_NAME, UPDATE_ADDRESS, UPDATE_CONTACT, UPDATE_NEIGHBORHOOD, UPDATE_AUTH,
-        UPDATE_COMMENT, UPDATE_RATING, UPDATE_COVER, UPDATE_DATE, ADD_PICTURE
+        UPDATE_COMMENT, UPDATE_RATING, UPDATE_COVER, UPDATE_DATE, ADD_PICTURE,
+        ADD_DONATION_TREE, REMOVE_DONATION_TREE, UPDATE_DONATION_AMOUNT
     }
     export enum VIEW_STATUS {
-        NONE, HOME, MANAGE_TREES, PARENT_TREES, GEO_ERROR, NETWORK_ERROR, CONFIRM, MANAGE_PEOPLE, MANAGE_ADOPTION, DETAIL_TREE, IMAGENOTE_TREE, POST_NOTE, MANAGE_DONATIONS, MANAGE_DONATION
+        NONE, HOME, MANAGE_TREES, PARENT_TREES, GEO_ERROR, NETWORK_ERROR, CONFIRM, MANAGE_PEOPLE, MANAGE_ADOPTION, DETAIL_TREE, IMAGENOTE_TREE, POST_NOTE, MANAGE_DONATIONS, ADD_DONATION, DETAIL_DONATION, EDIT_DONATION
     }
     export enum VIEW_MODE {
         NONE, MAP, GRAPHIC, TABLE
@@ -65,6 +66,9 @@
             } else if (viewStatus == VIEW_STATUS.MANAGE_DONATIONS) {
                 new MovePaceBarToUnderNav().execute();
                 new RenderManageDonationsViewCommand({ el: Setting.getMainWrapperElement(), viewMode: option.viewMode, id: option.id }).execute();
+            } else if (viewStatus == VIEW_STATUS.DETAIL_DONATION) {
+                new MovePaceBarToUnderNav().execute();
+                new RenderDetailDonationViewCommand({ el: Setting.getMainWrapperElement(), viewMode: option.viewMode, id: option.id }).execute();
             }
 
             View.getNavView().setActiveNavItem(viewStatus);
@@ -181,16 +185,48 @@
                     break;
                 case VIEW_STATUS.MANAGE_DONATIONS:
                     if (el.hasClass('manage-donation-item')) {
-                        new RenderManageDonationViewCommand({ el: Setting.getPopWrapperElement(), place: options.place }).execute();
+                        if (options.place != undefined) {
+                            new RenderAddDonationViewCommand({ el: Setting.getPopWrapperElement(), place: options.place }).execute();
+                        }
+                    } else if (el.hasClass('location-detail')) {
+                        new NavigateCommand({ hash: 'mdonation', viewMode: VIEW_MODE.GRAPHIC, id: options.place.getId() }).execute();
+                        //new NavigateCommand({ hash: 'mtree', viewMode: VIEW_MODE.GRAPHIC, id: options.tree }).execute();
                     }
                     break;
-                case VIEW_STATUS.MANAGE_DONATION:
+                case VIEW_STATUS.ADD_DONATION:
                     if (el.hasClass('button-submit-donation')) {
                         
                     } else if (el.hasClass('button-close')) {
                         new RemoveAlertViewCommand({ delay: Setting.getRemovePopupDuration() }).execute();
+                        if (View.getDetailDonationView()) {
+                            (<DetailDonationView>View.getDetailDonationView()).refreshDonationInfo();
+                        }
                     }
                     break;
+                case VIEW_STATUS.DETAIL_DONATION:
+                    if (el.hasClass('content-chart')) {
+                        if (options.donation) {
+                            new RenderEditDonationViewCommand({ el: Setting.getPopWrapperElement(), donation: options.donation }).execute();
+                        }
+                    } else if (el.hasClass('button-new-donation')) {
+                        console.log(options.place);
+                        if (options.place) {
+                            new RenderAddDonationViewCommand({ el: Setting.getPopWrapperElement(), place: options.place }).execute();
+                        }
+                        //new NavigateCommand({ hash: 'mtree', viewMode: VIEW_MODE.GRAPHIC, id: options.tree }).execute();
+                    }
+                    break;
+                case VIEW_STATUS.EDIT_DONATION:
+                    if (el.hasClass('button-close')) {
+                        new RemoveAlertViewCommand({ delay: Setting.getRemovePopupDuration() }).execute();
+                        if (View.getDetailDonationView()) {
+                            (<DetailDonationView>View.getDetailDonationView()).refreshDonationInfo();
+                        }
+                    } else if (el.hasClass('delete-donation')) {
+
+                    }
+                    break;
+
             }
         }
 
@@ -342,6 +378,29 @@
             switch (dataMode) {
                 case DATA_MODE.CREATE:
                     self._lastCommand = new CreateDonation({ donation: donation }, success, error, undoSuccess);
+                    break;
+                case DATA_MODE.ADD_PICTURE:
+                    self._lastCommand = new AddDonationPicture({ donation: donation, filename: args.filename }, success, error, undoSuccess);
+                    break;
+                case DATA_MODE.UPDATE_COVER:
+                    self._lastCommand = new UpdateDonationCover({ donation: donation, cover: args.cover }, success, error);
+                    break;
+                case DATA_MODE.UPDATE_DATE:
+                    self._lastCommand = new UpdateDonationDate({ donation: donation, date: args.date }, success, error);
+                    break;
+                case DATA_MODE.ADD_DONATION_TREE:
+                    self._lastCommand = new AddDonationTree({ donation: donation, tree: args.tree }, success, error, undoSuccess);
+                    break;
+                case DATA_MODE.REMOVE_DONATION_TREE:
+                    self._lastCommand = new RemoveDonationTree({ donation: donation, tree: args.tree }, success, error, undoSuccess);
+                    break;
+                case DATA_MODE.UPDATE_DONATION_AMOUNT:
+                    self._lastCommand = new UpdateDonationAmount({ donation: donation, amount: args.amount }, success, error, undoSuccess);
+                    break;
+                case DATA_MODE.DELETE:
+                    View.popViewStatus();
+                    var command: Command = new DeleteDonation({ donation: donation }, success, error);
+                    new RenderConfirmViewCommand({ el: Setting.getPopWrapperElement(), message: "Are you sure to delete this note?", command: command }).execute();
                     break;
             }
             if (self._lastCommand != undefined) {

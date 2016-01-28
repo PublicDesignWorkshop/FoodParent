@@ -76,6 +76,7 @@ var FoodParent;
             View._instance._managePeopleView = null;
             View._instance._detailTreeView = null;
             View._instance._manageDonationsView = null;
+            View._instance._detailDonationView = null;
         };
         View.setMessageView = function (view) {
             View._instance._messageView = view;
@@ -100,6 +101,12 @@ var FoodParent;
         };
         View.getManageDonationsView = function () {
             return View._instance._manageDonationsView;
+        };
+        View.setDetailDonationView = function (view) {
+            View._instance._detailDonationView = view;
+        };
+        View.getDetailDonationView = function () {
+            return View._instance._detailDonationView;
         };
         View.setManageTreesView = function (view) {
             View._instance._manageTreesView = view;

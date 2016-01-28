@@ -201,6 +201,16 @@
             return template;
         }
 
+        public static getManageTreesPopupTemplate2(): string {
+            var template = '';
+            template += '<div class="marker-control-wrapper">';
+            template += '<div class="marker-control-item marker-control-plus">';
+            template += '<i class="fa fa-plus fa-2x"></i>';
+            template += '</div>';
+            template += '</div>';
+            return template;
+        }
+
         public static FoodSelectTemplate(): string {
             var template = '';
 
@@ -210,6 +220,22 @@
             template +=         '<option value="<%= food.getId() %>"><%= food.getName() %></option>';
             template +=     '<% }); %>';
             template +=     '</optgroup>';
+            template += '</select>';
+
+            return template;
+        }
+
+        public static TreeSelectTemplate(): string {
+            var template = '';
+
+            template += '<select class="input-tree selectpicker" data-size="10">';
+            template += '<option value="0" disabled>Add a Tree</option>';
+            template += '<optgroup label="Tree">';
+            template += '<% _.each(trees.models, function (tree) { %>';
+            template += '<% var food = FoodParent.Model.getFoods().findWhere({ id: tree.getFoodId() }); %>';
+            template += '<option value="<%= tree.getId() %>"><%= food.getName() + " " + tree.getName() %></option>';
+            template += '<% }); %>';
+            template += '</optgroup>';
             template += '</select>';
 
             return template;
@@ -321,6 +347,40 @@
             template += '<% }); %>';
             template += '</div>';
             template += '</div>';
+
+            return template;
+        }
+
+        public static getTreeInfoTemplate3(): string {
+            var template = '';
+            template += '<div class="tree-info-name"><div class="input-food"><%= foodname %></div>&nbsp;<%= treename %></div>';
+            template += '<div class="tree-info-coordinate"><div>@&nbsp;</div><div class="input-lat"><%= lat %></div>,&nbsp;<div class="input-lng"><%= lng %></div></div>';
+            template += '<div class="tree-info-address"><div>&nbsp;</div><div>&nbsp;</div></div>';
+
+            template += '<div class="hr"><hr /></div>';
+            template += '<div class="info-header"><i class="fa fa-sticky-note fa-1x"></i> Description</div>';
+            template += '<div class="info-group">';
+            template += '<div class="input-description"><%= description %></div>';
+            template += '</div>';
+
+            template += '<div class="hr"><hr /></div>';
+            template += '<div class="info-header"><i class="fa fa-user fa-1x"></i> Parents</div>';
+            template += '<div class="info-group info-group-flex">';
+            template += '<% _.each(persons.models, function (person, index) { %>';
+            template += '<% if (index < persons.models.length - 1) { %>';
+            template += '<div><%= person.getName() %>,&nbsp;</div>';
+            template += '<% } else { %>';
+            template += '<div><%= person.getName() %></div>';
+            template += '<% } %>';
+            template += '<% }); %>';
+            template += '</div>';
+
+            template += '<div class="hr"><hr /></div>';
+            template += '<div class="info-header"><i class="fa fa-leaf fa-1x"></i> Recent Activities</div>';
+            template += '<div id="list-activities" class="info-group">';
+            template += '<div>&nbsp;</div>';
+            template += '</div>';
+
 
             return template;
         }
@@ -619,6 +679,15 @@
             return template;
         }
 
+        public static getToolTipTemplate2(): string {
+            var template = '';
+            template += '<div class="rate"><%= value %> libs. <span class="startdate">from <%= startdate %></span></div>';
+            template += '<img src="<%= image %>" />';
+            template += '<div class="comment"><i class="fa fa-ambulance"></i> <%= comment %></div>';
+            template += '<div class="date"><%= date %></div>';
+            return template;
+        }
+
         public static getImageNoteViewTemplate(): string {
             var template = '';
             template += '<div id="wrapper-note">';
@@ -708,7 +777,9 @@
             template +=                     '<div class="info-header"><i class="fa fa-image"></i> Select Cover Picture</div>';
             template +=                     '<div class="image-group"></div>';
 
-            template +=                 '</div>';
+            template +=                 '</div>';   // end of .image-wrapper
+
+
             template +=                 '<div class="wrapper-note-info">';
 
             template += '<div class="name"><%= name %></div>';
@@ -805,6 +876,20 @@
             template += '<hr>';
 
             template += '<div class="new-donation" data-target="<%= placeid %>"></div>';
+            
+
+
+            template += '<div class="wrapper-input-upload-picture">';
+            template += '<input class="input-upload-picture fileupload" type="file" accept="image/*" capture="camera" />';
+            template += '</div>';
+            template += '<div class="wrapper-uploading-picture hidden">';
+            template += '<div class="uploading-picture">Uploading...</div>';
+            template += '</div>';
+            template += '<div class="info-header"><i class="fa fa-image"></i> Select Cover Picture</div>';
+            template += '<div class="image-group"></div>';   // end of .image-wrapper
+
+            //template += '</div>';   // end of .image-wrapper
+            template += '<hr>';
             template += '<div class="button-outer-frame2 button3"><div class="button-inner-frame2 button-submit-donation">Submit Donations</div></div>';
 
             template += '</div>';
@@ -827,6 +912,167 @@
             template += '<% var food = FoodParent.Model.getFoods().findWhere({ id: tree.getFoodId() }); %>';
             template += '<div class="cell-link cell-tree-detail" data-target="<%= tree.getId() %>"><%= food.getName() + " " + tree.getName() %><i class="fa fa-remove fa-1x"></i></div>';
             template += '<% }); %>';
+            return template;
+        }
+
+
+        public static getDetailDonationGraphicViewTemplate(): string {
+            var template = '';
+            template += '<div id="wrapper-mdonation">';
+
+            template += '<div id="wrapper-graph">';
+
+            template += '<div id="wrapper-chart"></div>';
+
+            template += '<div id="wrapper-tooltip" class="hidden"></div>';
+
+            template += '<div id="wrapper-mapmenu">';
+            template += '<div class="button-outer-frame2 button3"><div class="button-inner-frame2">Switch To Map View</div></div>';
+            template += '</div>';
+
+            template += '<div id="wrapper-date-select">';
+            template += '<div class="wrapper-date-preset">';
+            template += '<div class="button-outer-frame2 button3 date-preset 4years"><div class="button-inner-frame2">4 Year</div></div>';
+            template += '<div class="button-outer-frame2 button3 date-preset 2years"><div class="button-inner-frame2">2 Year</div></div>';
+            template += '<div class="button-outer-frame2 button3 date-preset 1year"><div class="button-inner-frame2">1 Year</div></div>';
+            template += '<div class="button-outer-frame2 button3 date-preset 6months"><div class="button-inner-frame2">6 months</div></div>';
+            template += '<div class="button-outer-frame2 button3 date-preset 1month"><div class="button-inner-frame2">3 month</div></div>';
+            template += '</div>';
+            template += '<div class="wrapper-date-select-item"><input type="text" class="form-control donation-graph-start" /></div>';
+            template += '<div class="wrapper-date-select-item"><span class="date-select-label">~</span><input type="text" class="form-control donation-graph-end" /></div>';
+            template += '</div>';
+
+
+            template += '</div>';   // end of #wrapper-graph
+
+
+
+            template += '<div id="wrapper-donation-detail">';
+
+            template += '<div class="content-donation-info">';
+            template += '</div>';   // end of .content-donation-info
+
+            template += '<div class="content-donation-recentdonations">';
+            template += '<div class="info-header"><i class="fa fa-leaf fa-1x"></i> Recent Donations</div>';
+            template += '<div id="list-donations" class="info-group">';
+            template += '</div>';
+            template += '</div>';   // end of .content-donation-recentactivities
+
+            template += '<div class="content-donation-control">';
+            template += '<div class="button-outer-frame2 button4"><div class="button-inner-frame2 button-new-donation">Post New Donation</div></div>';
+            template += '<div class="button-outer-frame2 button4"><div class="button-inner-frame2 button-delete-donation">Delete Place*</div></div>';
+            template += '<div class="button-description">* marked operation cannot be undone.</div>';
+            template += '</div>';   // end of .donation-control
+            
+            template += '</div>';   // end of #wrapper-donation-detail
+
+            
+            template += '</div>';   // end of #wrapper-mtree
+            return template;
+        }
+
+        public static getPlaceInfoTemplate2(): string {
+            var template = '';
+            template += '<div class="donation-info-name"><div class="info-group-flex"><div class="input-food"><%= placename %></div></div>';
+            template += '<div class="donation-info-coordinate">@&nbsp;<div class="input-lat"><%= lat %></div>,&nbsp;<div class="input-lng"><%= lng %></div></div>';
+            template += '</div>';
+
+            template += '<div class="donation-info-address"><div>&nbsp;</div></div>';
+            template += '<div class="info-group info-group-flex">';
+            template += '<i class="fa fa-sticky-note fa-1x"></i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<div class="input-description"><%= description %></div>';
+            template += '</div>';
+
+            return template;
+        }
+
+        public static getRecentDonationsTemplate(): string {
+            var template = '';
+            template += '<% _.each(donations.models, function (donation, index) { %>';
+            template += '<% if (index < size) { %>';
+            template += '<div class="item-activity"><i class="fa fa-caret-right fa-1x"></i> <div><%= donation.getCommentWithDate() %></div></div>';
+            template += '<% } %>';
+            template += '<% }); %>';
+            return template;
+        }
+
+        public static getEditDonationViewTemplate(): string {
+            var template = '';
+            template += '<div id="wrapper-donation">';
+            template += '<div class="outer-frame">';
+            template += '<div class="inner-frame">';
+            template += '<div class="wrapper-note-content">';
+            template += '<div class="image-wrapper">';
+
+            template += '<div class="wrapper-input-upload-picture">';
+            template += '<input class="input-upload-picture fileupload" type="file" accept="image/*" capture="camera" />';
+            template += '</div>';
+            template += '<div class="wrapper-uploading-picture hidden">';
+            template += '<div class="uploading-picture">Uploading...</div>';
+            template += '</div>';
+            template += '<div class="info-header"><i class="fa fa-image"></i> Select Cover Picture</div>';
+
+            template += '<div class="image-group"></div>';
+            template += '</div>';   // end of .image-wrapper
+
+            template += '<div class="wrapper-note-info">';
+
+
+
+
+
+            template += '<div class="name"><%= name %></div>';
+
+            template += '<div class="hr"><hr /></div>';
+            template += '<div class="info-button-group">';
+            template += '<div class="button-outer-frame2 button3"><div class="button-inner-frame2 prev-note"><i class="fa fa-caret-left"></i></div></div>';
+            template += '<div class="button-outer-frame2 button3"><div class="button-inner-frame2 next-note"><i class="fa fa-caret-right"></i></div></div>';
+            template += '</div>';
+
+            /*
+            template += '<div class="hr"><hr /></div>';
+            template += '<div class="info-header"><i class="fa fa-star-half-o"></i> Rating</div>';
+            template += '<div class="info-group">';
+            template += '<div class="input-rating"><%= value %></div>';
+            template += '<div class="input-rating-slider"></div>';
+            template += '</div>';
+
+            
+            */
+
+            template += '<div class="hr"><hr /></div>';
+            template += '<div class="info-header"><i class="fa fa-ambulance"></i> Amount</div>';
+            template += '<div class="info-group">';
+            template += '<div class="input-amount"><%= amount %> lbs.</div>';
+            template += '</div>';
+
+            template += '<div class="hr"><hr /></div>';
+            template += '<div class="info-header"><i class="fa fa-ambulance"></i> Trees</div>';
+            template += '<div class="info-group">';
+            template += '<div class="new-donation-trees"></div>';
+            template += '<div class="add-donation-tree"></div>';
+            template += '</div>';
+
+            template += '<div class="hr"><hr /></div>';
+            template += '<div class="info-header"><i class="fa fa-calendar-o"></i> Posted</div>';
+            template += '<div class="info-group">';
+            template += '<input type="text" class="form-control input-date" />';
+            template += '</div>';
+
+            template += '<div class="hr"><hr /></div>';
+            template += '<div class="info-button-group">';
+            template += '<div class="button-outer-frame2 button3"><div class="button-inner-frame2 delete-donation"><i class="fa fa-remove"></i> Delete</div></div>';
+            template += '</div>';
+
+
+            template += '</div>';
+
+            template += '</div>';   // end of .wrapper-note-content
+            template += '</div>';   // end of .inner-frame
+            template += '<div class="top-right-button button-close">';
+            template += '<i class="fa fa-remove fa-2x"></i>';
+            template += '</div>';   // end of top-right-button button-close
+            template += '</div>';   // end of .outer-frame
+            template += '</div>';   // end of #wrapper-note
             return template;
         }
     }

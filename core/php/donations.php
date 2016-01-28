@@ -33,26 +33,34 @@
     
     function read() {
         $data = json_decode(file_get_contents('php://input'));
+        $params = null;
         if ($data != null) {
             $params = array(
-                "mode" => $data->{'mode'},
-                "id" => $data->{'id'},
+                "mode" => $data->{'mode'},        // 0: fetch only the number of the size from offset, 1: fetch image notes between start and end
+                "places" => $data->{'places'},
+                "start" => $data->{'start'},
+                "end" => $data->{'end'},
+                "size" => $data->{'size'},
+                "offset" => $data->{'offset'},
             );
         } else {
             $params = array(
-                "mode" => $_GET['mode'],
-                "id" => $_GET['id'],
+                "mode" => $_GET['mode'],        // 0: fetch only the number of the size from offset, 1: fetch image notes between start and end
+                "places" => $_GET['places'],
+                "start" => $_GET['start'],
+                "end" => $_GET['end'],
+                "size" => $_GET['size'],
+                "offset" => $_GET['offset'],
             );
-        }        
-        /*
-        if ($params["id"] != -1) {
-            $sql = "SELECT * FROM `donations` WHERE (`id` = '".$params["id"]."')";
-        } else {
-            $sql = "SELECT * FROM `donations` WHERE (`lat` BETWEEN ".$params["south"]." AND ".$params["north"].") AND (`lng` BETWEEN ".$params["west"]." AND ".$params["east"].")";
         }
-        */
-        $sql = "SELECT * FROM `donations`";
         
+        if ($params["mode"] == 0 || $params["mode"] == "0") {
+            $sql = "SELECT * FROM `donation` WHERE (`place` IN (".$params["places"].")) ORDER BY `date` DESC LIMIT ".$params["size"]." OFFSET ".$params["offset"]."";
+        } else if ($params["mode"] == 1 || $params["mode"] == "1") {
+            $sql = "SELECT * FROM `donation` WHERE `place` IN (".$params["places"].") AND (`date` <= '".$params["end"]."') ORDER BY `date` ASC LIMIT ".$params["size"]." OFFSET ".$params["offset"]."";
+            //$sql = "SELECT * FROM `donation` WHERE `place` IN (".$params["places"].") AND (`date` BETWEEN '".$params["start"]."' AND '".$params["end"]."') ORDER BY `date` ASC LIMIT ".$params["size"]." OFFSET ".$params["offset"]."";
+            //$sql = "SELECT * FROM `donation` WHERE `place` IN (".$params["places"].") AND (`date` BETWEEN '".$params["start"]."' AND '".$params["end"]."') ORDER BY `date` ASC";
+        }
         
         try {
             $pdo = getConnection();

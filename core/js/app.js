@@ -6,6 +6,16 @@ var htmlEncode = function (str) {
     str = str.replace(/'/g, "&#039;");
     return str;
 };
+var fileNameEncode = function (str) {
+    str = str.replace(/ /g, '');
+    str = str.replace(/#/g, '');
+    str = str.replace(/&/g, "");
+    str = str.replace(/>/g, "");
+    str = str.replace(/</g, "");
+    str = str.replace(/"/g, "");
+    str = str.replace(/'/g, "");
+    return str;
+};
 var htmlDecode = function (str) {
     str = str.replace(/\n/g, "<br />");
     return str;

@@ -42,6 +42,7 @@
     <Content Include="core\css\device.css" />
     <Content Include="core\css\home.css" />
     <Content Include="core\css\input.css" />
+    <Content Include="core\css\mdonation.css" />
     <Content Include="core\css\mdonations.css" />
     <Content Include="core\css\message.css" />
     <Content Include="core\css\mtree.css" />
@@ -230,6 +231,7 @@
     <TypeScriptCompile Include="core\js\view\alertview.ts" />
     <TypeScriptCompile Include="core\js\view\gridformat\donationgridformat.ts" />
     <TypeScriptCompile Include="core\js\view\gridformat\locationgridformat.ts" />
+    <TypeScriptCompile Include="core\js\view\mdonationview.ts" />
     <TypeScriptCompile Include="core\js\view\mdonationsview.ts" />
     <TypeScriptCompile Include="core\js\view\gridformat\adoptiongridformat.ts" />
     <TypeScriptCompile Include="core\js\view\gridformat\gridformat.ts" />

@@ -379,7 +379,7 @@
 
     .image-wrapper .info-header {
         font-weight: 700;
-        font-size: x-large;
+        font-size: large;
         text-align: left;
         padding: 4px 16px 0 16px;
     }
@@ -409,11 +409,10 @@
         -webkit-flex-wrap: wrap;
         flex-wrap: wrap;
         overflow-y: auto;
-        height: 100%;
     }
 
     .image-group img {
-        width: 48%;
+        width: 98%;
         margin: 4px;
         border: 8px solid #ffffff;
         cursor: pointer;

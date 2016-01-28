@@ -214,6 +214,34 @@
 
         public static fetchAllLocations(success?: any, error?: any) {
             var xhr1: JQueryXHR = Model.fetchAllPlaces();
+            var xhr2: JQueryXHR = Model.fetchAllTrees();
+            var xhr3: JQueryXHR = Model.fetchAllFoods();
+            $.when(
+                xhr1, xhr2, xhr3
+            ).then(function () {
+                Controller.removeXHR(xhr1);
+                Controller.removeXHR(xhr2);
+                Controller.removeXHR(xhr3);
+                if (success) {
+                    success();
+                }
+            }, function () {
+                Controller.removeXHR(xhr1);
+                Controller.removeXHR(xhr2);
+                Controller.removeXHR(xhr3);
+                if (error) {
+                    error(ERROR_MODE.SEVER_CONNECTION_ERROR);
+                }
+            });
+        }
+
+        public static fetchDonationsOfPlaces(places: Array<Place>, size: number, offset: number, success?: any, error?: any) {
+            var ids: Array<number> = new Array<number>();
+            $.each(places, function (index: number, place: Place) {
+                ids.push(place.getId());
+            });
+            var xhr1: JQueryXHR = Model.fetchDonationsOfPlaces(ids, size, offset);
+            Controller.pushXHR(xhr1);
             $.when(
                 xhr1
             ).then(function () {
@@ -229,26 +257,22 @@
             });
         }
 
-        public static fetchAllDonations(success?: any, error?: any) {
-            var xhr1: JQueryXHR = Model.fetchAllDonations();
-            var xhr2: JQueryXHR = Model.fetchAllTrees();
-            var xhr3: JQueryXHR = Model.fetchAllPlaces();
-            var xhr4: JQueryXHR = Model.fetchAllFoods();
+        public static fetchDonationsOfPlacesDuringPeriod(places: Array<Place>, startDate: string, endDate: string, size: number, offset: number, success?: any, error?: any) {
+            var ids: Array<number> = new Array<number>();
+            $.each(places, function (index: number, place: Place) {
+                ids.push(place.getId());
+            });
+            var xhr1: JQueryXHR = Model.fetchDonationsOfPlacesDuringPeriod(ids, startDate, endDate, size, offset);
+            Controller.pushXHR(xhr1);
             $.when(
-                xhr1, xhr2, xhr3, xhr4
+                xhr1
             ).then(function () {
                 Controller.removeXHR(xhr1);
-                Controller.removeXHR(xhr2);
-                Controller.removeXHR(xhr3);
-                Controller.removeXHR(xhr4);
                 if (success) {
                     success();
                 }
             }, function () {
                 Controller.removeXHR(xhr1);
-                Controller.removeXHR(xhr2);
-                Controller.removeXHR(xhr3);
-                Controller.removeXHR(xhr4);
                 if (error) {
                     error(ERROR_MODE.SEVER_CONNECTION_ERROR);
                 }
@@ -271,6 +295,7 @@
                 "mtree/:viewMode/:id": "manageTree",
                 "mpeople/:viewMode/:id": "managePeople",
                 "mdonations/:viewMode/:id": "manageDonations",
+                "mdonation/:viewMode/:id": "manageDonation",
                 "ptrees": "parentTrees",
             }
             super(options);
@@ -292,6 +317,9 @@
         }
         manageDonations(viewMode: VIEW_MODE, id: number) {
             EventHandler.handleNavigate(VIEW_STATUS.MANAGE_DONATIONS, { viewMode: viewMode, id: id });
+        }
+        manageDonation(viewMode: VIEW_MODE, id: number) {
+            EventHandler.handleNavigate(VIEW_STATUS.DETAIL_DONATION, { viewMode: viewMode, id: id });
         }
     }
 } 

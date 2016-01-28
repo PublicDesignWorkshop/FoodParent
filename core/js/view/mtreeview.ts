@@ -86,8 +86,8 @@
                 self.renderTreeInfo(self._tree);
 
                 // render datepicker
-                var notes: Notes = new Notes(Model.getNotes().where({ tree: self._tree.getId() }));
-                notes.sortByAscendingDate();
+                //var notes: Notes = new Notes(Model.getNotes().where({ tree: self._tree.getId() }));
+                //notes.sortByAscendingDate();
                 //if (notes.models.length > 0) {
                 //    self.$('.tree-graph-start').attr({ 'data-value': notes.models[0].getFormattedDate() });
                 //    self._startDate = moment(notes.models[0].getFormattedDate()).format(Setting.getDateTimeFormat());
@@ -141,7 +141,7 @@
         public renderTreeChart = (tree: Tree, startDate: string, endDate: string) => {
             var self: DetailTreeGraphicView = this;
 
-            Controller.fetchImageNotesOfTreesDuringPeriod([self._tree], startDate, endDate, 250, 0, function () {
+            Controller.fetchImageNotesOfTreesDuringPeriod([self._tree], startDate, endDate, 10000, 0, function () {
 
                 self.$('#wrapper-chart').html('<canvas id="content-chart" class="content-chart" />');
                 var canvas: any = self.$('#content-chart')[0];
@@ -248,6 +248,7 @@
 
         public refreshTreeInfo() {
             var self: DetailTreeGraphicView = this;
+            if (self.bDebug) console.log(DetailTreeGraphicView.TAG + "refreshTreeInfo()");
             self.renderTreeInfo(self._tree);
             self.renderTreeChart(self._tree, self._startDate, self._endDate);
         }

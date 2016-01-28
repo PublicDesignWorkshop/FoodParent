@@ -340,11 +340,15 @@ var ManageDonationViewCell = Backgrid.Cell.extend({
     }
 });
 var LocationDetailCell = Backgrid.Cell.extend({
-    template: _.template('<div class="marker-control-item tree-detail" data-target="<%= treeid %>"><i class="fa fa-arrow-circle-right fa-2x"></i></div>'),
+    template: _.template('<div class="marker-control-item location-detail" data-target="<%= treeid %>"><i class="fa fa-arrow-circle-right fa-2x"></i></div>'),
     events: {
         "click .marker-control-item": "_showDetail"
     },
     _showDetail: function (event) {
+        var place = FoodParent.Model.getPlaces().findWhere({ id: parseInt($(event.target).attr('data-target')) });
+        if (place != undefined) {
+            FoodParent.EventHandler.handleMouseClick($(event.currentTarget), this, { place: place });
+        }
         //var tree: number = parseInt($(event.target).attr('data-target'));
         //FoodParent.EventHandler.handleMouseClick($(event.currentTarget), this, { tree: tree });
     },

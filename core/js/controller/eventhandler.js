@@ -24,6 +24,9 @@ var FoodParent;
         DATA_MODE[DATA_MODE["UPDATE_COVER"] = 15] = "UPDATE_COVER";
         DATA_MODE[DATA_MODE["UPDATE_DATE"] = 16] = "UPDATE_DATE";
         DATA_MODE[DATA_MODE["ADD_PICTURE"] = 17] = "ADD_PICTURE";
+        DATA_MODE[DATA_MODE["ADD_DONATION_TREE"] = 18] = "ADD_DONATION_TREE";
+        DATA_MODE[DATA_MODE["REMOVE_DONATION_TREE"] = 19] = "REMOVE_DONATION_TREE";
+        DATA_MODE[DATA_MODE["UPDATE_DONATION_AMOUNT"] = 20] = "UPDATE_DONATION_AMOUNT";
     })(FoodParent.DATA_MODE || (FoodParent.DATA_MODE = {}));
     var DATA_MODE = FoodParent.DATA_MODE;
     (function (VIEW_STATUS) {
@@ -40,7 +43,9 @@ var FoodParent;
         VIEW_STATUS[VIEW_STATUS["IMAGENOTE_TREE"] = 10] = "IMAGENOTE_TREE";
         VIEW_STATUS[VIEW_STATUS["POST_NOTE"] = 11] = "POST_NOTE";
         VIEW_STATUS[VIEW_STATUS["MANAGE_DONATIONS"] = 12] = "MANAGE_DONATIONS";
-        VIEW_STATUS[VIEW_STATUS["MANAGE_DONATION"] = 13] = "MANAGE_DONATION";
+        VIEW_STATUS[VIEW_STATUS["ADD_DONATION"] = 13] = "ADD_DONATION";
+        VIEW_STATUS[VIEW_STATUS["DETAIL_DONATION"] = 14] = "DETAIL_DONATION";
+        VIEW_STATUS[VIEW_STATUS["EDIT_DONATION"] = 15] = "EDIT_DONATION";
     })(FoodParent.VIEW_STATUS || (FoodParent.VIEW_STATUS = {}));
     var VIEW_STATUS = FoodParent.VIEW_STATUS;
     (function (VIEW_MODE) {
@@ -101,6 +106,10 @@ var FoodParent;
             else if (viewStatus == VIEW_STATUS.MANAGE_DONATIONS) {
                 new FoodParent.MovePaceBarToUnderNav().execute();
                 new FoodParent.RenderManageDonationsViewCommand({ el: FoodParent.Setting.getMainWrapperElement(), viewMode: option.viewMode, id: option.id }).execute();
+            }
+            else if (viewStatus == VIEW_STATUS.DETAIL_DONATION) {
+                new FoodParent.MovePaceBarToUnderNav().execute();
+                new FoodParent.RenderDetailDonationViewCommand({ el: FoodParent.Setting.getMainWrapperElement(), viewMode: option.viewMode, id: option.id }).execute();
             }
             FoodParent.View.getNavView().setActiveNavItem(viewStatus);
             FoodParent.View.setViewStatus(viewStatus);
@@ -229,14 +238,45 @@ var FoodParent;
                     break;
                 case VIEW_STATUS.MANAGE_DONATIONS:
                     if (el.hasClass('manage-donation-item')) {
-                        new FoodParent.RenderManageDonationViewCommand({ el: FoodParent.Setting.getPopWrapperElement(), place: options.place }).execute();
+                        if (options.place != undefined) {
+                            new FoodParent.RenderAddDonationViewCommand({ el: FoodParent.Setting.getPopWrapperElement(), place: options.place }).execute();
+                        }
+                    }
+                    else if (el.hasClass('location-detail')) {
+                        new FoodParent.NavigateCommand({ hash: 'mdonation', viewMode: VIEW_MODE.GRAPHIC, id: options.place.getId() }).execute();
                     }
                     break;
-                case VIEW_STATUS.MANAGE_DONATION:
+                case VIEW_STATUS.ADD_DONATION:
                     if (el.hasClass('button-submit-donation')) {
                     }
                     else if (el.hasClass('button-close')) {
                         new FoodParent.RemoveAlertViewCommand({ delay: FoodParent.Setting.getRemovePopupDuration() }).execute();
+                        if (FoodParent.View.getDetailDonationView()) {
+                            FoodParent.View.getDetailDonationView().refreshDonationInfo();
+                        }
+                    }
+                    break;
+                case VIEW_STATUS.DETAIL_DONATION:
+                    if (el.hasClass('content-chart')) {
+                        if (options.donation) {
+                            new FoodParent.RenderEditDonationViewCommand({ el: FoodParent.Setting.getPopWrapperElement(), donation: options.donation }).execute();
+                        }
+                    }
+                    else if (el.hasClass('button-new-donation')) {
+                        console.log(options.place);
+                        if (options.place) {
+                            new FoodParent.RenderAddDonationViewCommand({ el: FoodParent.Setting.getPopWrapperElement(), place: options.place }).execute();
+                        }
+                    }
+                    break;
+                case VIEW_STATUS.EDIT_DONATION:
+                    if (el.hasClass('button-close')) {
+                        new FoodParent.RemoveAlertViewCommand({ delay: FoodParent.Setting.getRemovePopupDuration() }).execute();
+                        if (FoodParent.View.getDetailDonationView()) {
+                            FoodParent.View.getDetailDonationView().refreshDonationInfo();
+                        }
+                    }
+                    else if (el.hasClass('delete-donation')) {
                     }
                     break;
             }
@@ -383,6 +423,29 @@ var FoodParent;
             switch (dataMode) {
                 case DATA_MODE.CREATE:
                     self._lastCommand = new FoodParent.CreateDonation({ donation: donation }, success, error, undoSuccess);
+                    break;
+                case DATA_MODE.ADD_PICTURE:
+                    self._lastCommand = new FoodParent.AddDonationPicture({ donation: donation, filename: args.filename }, success, error, undoSuccess);
+                    break;
+                case DATA_MODE.UPDATE_COVER:
+                    self._lastCommand = new FoodParent.UpdateDonationCover({ donation: donation, cover: args.cover }, success, error);
+                    break;
+                case DATA_MODE.UPDATE_DATE:
+                    self._lastCommand = new FoodParent.UpdateDonationDate({ donation: donation, date: args.date }, success, error);
+                    break;
+                case DATA_MODE.ADD_DONATION_TREE:
+                    self._lastCommand = new FoodParent.AddDonationTree({ donation: donation, tree: args.tree }, success, error, undoSuccess);
+                    break;
+                case DATA_MODE.REMOVE_DONATION_TREE:
+                    self._lastCommand = new FoodParent.RemoveDonationTree({ donation: donation, tree: args.tree }, success, error, undoSuccess);
+                    break;
+                case DATA_MODE.UPDATE_DONATION_AMOUNT:
+                    self._lastCommand = new FoodParent.UpdateDonationAmount({ donation: donation, amount: args.amount }, success, error, undoSuccess);
+                    break;
+                case DATA_MODE.DELETE:
+                    FoodParent.View.popViewStatus();
+                    var command = new FoodParent.DeleteDonation({ donation: donation }, success, error);
+                    new FoodParent.RenderConfirmViewCommand({ el: FoodParent.Setting.getPopWrapperElement(), message: "Are you sure to delete this note?", command: command }).execute();
                     break;
             }
             if (self._lastCommand != undefined) {

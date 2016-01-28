@@ -2492,6 +2492,27 @@ var skipLabels;
 				            highlightFill: dataset.pointHighlightFill || dataset.pointColor,
 				            highlightStroke: dataset.pointHighlightStroke || dataset.pointStrokeColor
 				        }));
+				    } else if (dataPoint instanceof FoodParent.Donation) {
+				        //Add a new point for each piece of data, passing any required data to draw.
+				        var bFirst = false;
+				        if (index == 0) {
+				            bFirst = true;
+				        } else {
+				            if (dataset.data[index].getId() != dataset.data[index - 1].getId() && dataset.data[index].getQuantity() != 0) {
+				                bFirst = true;
+				            }
+				        }
+				        datasetObject.points.push(new this.PointClass({
+				            id: dataPoint.getId(),
+				            value: dataPoint.getCumulativeQuantity(),
+				            label: data.labels[index],
+				            first: bFirst,
+				            datasetLabel: dataset.label,
+				            strokeColor: dataset.pointStrokeColor,
+				            fillColor: dataset.pointColor,
+				            highlightFill: dataset.pointHighlightFill || dataset.pointColor,
+				            highlightStroke: dataset.pointHighlightStroke || dataset.pointStrokeColor
+				        }));
 				    }
 					
 				},this);

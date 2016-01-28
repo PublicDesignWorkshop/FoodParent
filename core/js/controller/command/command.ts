@@ -388,19 +388,62 @@
         }
     }
 
-    export class RenderManageDonationViewCommand implements Command {
+    export class RenderAddDonationViewCommand implements Command {
         private _el: JQuery;
         private _place: Place;
         constructor(args?: any) {
-            var self: RenderManageDonationViewCommand = this;
+            var self: RenderAddDonationViewCommand = this;
             self._el = args.el;
             self._place = args.place;
         }
         public execute(): any {
-            var self: RenderManageDonationViewCommand = this;
-            var view: AlertView = DonationManageViewFactory.create(self._el, self._place).render();
+            var self: RenderAddDonationViewCommand = this;
+            var view: AlertView = AddDonationViewFactory.create(self._el, self._place).render();
             View.setPopupView(view);
-            View.setViewStatus(VIEW_STATUS.MANAGE_DONATION);
+            View.setViewStatus(VIEW_STATUS.ADD_DONATION);
+        }
+        public undo(): any {
+
+        }
+    }
+
+    export class RenderDetailDonationViewCommand implements Command {
+        private _el: JQuery;
+        private _viewMode: VIEW_MODE;
+        private _id: number;
+        constructor(args?: any) {
+            var self: RenderDetailDonationViewCommand = this;
+            self._el = args.el;
+            self._viewMode = args.viewMode;
+            self._id = args.id;
+        }
+        public execute(): any {
+            var self: RenderDetailDonationViewCommand = this;
+            if (View.getDetailDonationView()) {
+
+            } else {
+                var view: DetailDonationView = DetailDonationViewFractory.create(self._el, self._viewMode, self._id).render();
+                View.addChild(view);
+                View.setDetailDonationView(view);
+            }
+        }
+        public undo(): any {
+
+        }
+    }
+
+    export class RenderEditDonationViewCommand implements Command {
+        private _el: JQuery;
+        private _donation: Donation;
+        constructor(args?: any) {
+            var self: RenderEditDonationViewCommand = this;
+            self._donation = args.donation;
+        }
+        public execute(): any {
+            var self: RenderEditDonationViewCommand = this;
+            var view: AlertView = EditDonationViewFactory.create(self._el, self._donation).render();
+            View.setPopupView(view);
+            View.setViewStatus(VIEW_STATUS.EDIT_DONATION);
         }
         public undo(): any {
 

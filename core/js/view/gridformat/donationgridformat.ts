@@ -5,7 +5,7 @@
     },
     _addDonation: function (e) {
         var tree: FoodParent.Tree = this.model;
-        (<FoodParent.DonationManageView>FoodParent.View.getPopupView()).addNewDonation(tree);
+        (<FoodParent.AddDonationView>FoodParent.View.getPopupView()).addNewDonation(tree);
         /*
         var tree: FoodParent.Tree = FoodParent.Model.getTrees().findWhere({ id: parseInt($('.list-donation').attr('data-target')) });
         var food: FoodParent.Food = FoodParent.Model.getFoods().findWhere({ id: tree.getFoodId() });
@@ -47,7 +47,7 @@ var DonationDeleteCell = Backgrid.Cell.extend({
     },
     _removeDonation: function (e) {
         var donation: FoodParent.Donation = this.model;
-        (<FoodParent.DonationManageView>FoodParent.View.getPopupView()).removeNewDonation(donation);
+        (<FoodParent.AddDonationView>FoodParent.View.getPopupView()).removeNewDonation(donation);
         /*
         var tree: FoodParent.Tree = FoodParent.Model.getTrees().findWhere({ id: parseInt($('.list-adoption').attr('data-target')) });
         var food: FoodParent.Food = FoodParent.Model.getFoods().findWhere({ id: tree.getFoodId() });
@@ -82,21 +82,6 @@ var DonationDeleteCell = Backgrid.Cell.extend({
     }
 });
 
-
-var DonationTreeCell = Backgrid.Cell.extend({
-    events: { },
-    render: function () {
-        var self: any = this;
-        var donation: FoodParent.Donation = this.model;
-        var treeId: number = donation.getTreeId();
-        var tree: FoodParent.Tree = FoodParent.Model.getTrees().findWhere({ id: treeId });
-        var food: FoodParent.Food = FoodParent.Model.getFoods().findWhere({ id: tree.getFoodId() });
-        var element: JQuery = $(self.el);
-        element.html(food.getName() + " " + tree.getName());
-        self.delegateEvents();
-        return this;
-    }
-});
 
 var DonationPlaceCell = Backgrid.Cell.extend({
     events: {},
@@ -297,44 +282,4 @@ var DonationColumn: any = [
     },
     */
 ];
-
-
-var NewDonationColumn: any = [
-    {
-        name: "place",
-        label: "Place",
-        editable: false,
-        cell: DonationPlaceCell,
-    }, {
-        name: "tree",
-        label: "Tree",
-        editable: false,
-        cell: DonationTreeCell,
-    }, {
-        name: "quantity",
-        label: "Quantity",
-        editable: true,
-        formatter: Backgrid.NumberFormatter,
-        cell: Backgrid.Cell.extend({ editor: DonationQuantityCellEditor }),
-    }, {
-        name: "date",
-        label: "Date",
-        editable: true,
-        cell: DonationPickDateCellEditor,
-    }, {
-        label: "",
-        sortable: false,
-        editable: false,
-        cell: DonationDeleteCell,
-    }
-    /*
-     {
-        name: "updated",
-        label: "Last Updated",
-        editable: false,
-        cell: Backgrid.Cell.extend({ editor: DatePickerCellEditor }),
-    },
-    */
-];
-
 

@@ -85,7 +85,7 @@
     }
 
     .list-donation {
-        height: 60%;
+        height: 50%;
         overflow-y: auto;
         margin: 0 0 8px 0;
     }
@@ -99,7 +99,7 @@
         width: 148px;
         text-align: left;
         font-weight:700;
-        padding: 4px;
+        padding: 8px;
     }
     .label-group-content {
         flex-grow: 1;
@@ -111,5 +111,15 @@
         -ms-flex-wrap: wrap;
         -webkit-flex-wrap: wrap;
         flex-wrap: wrap;
+    }
+
+    #list-donation .leaflet-top.leaflet-right {
+        width: 33%;
+        height: 100%;
+        pointer-events: none;
+    }
+
+    #content-manage-adoption-table .button-inner-frame2 {
+        font-size: medium;
     }
 }

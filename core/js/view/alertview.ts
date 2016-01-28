@@ -360,13 +360,6 @@ module FoodParent {
                     EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
                 });
             }
-            /*
-            $.each(self.$('.image-group img'), function (index: number, element: JQuery) {
-                $(element).removeClass('selected');
-            });
-            $(event.target).addClass('selected');
-            self._note.setCover();
-            */
         }
 
         private _deleteNote(event: Event) {

@@ -41,7 +41,7 @@ var TreeDescriptionCellEditor = Backgrid.Cell.extend({
                     model.trigger("backgrid:edited", model, column, command);
                 }
                 else {
-                    if (newValue.trim() != tree.getDescription().trim()) {
+                    if (newValue.trim() != tree.getDescription().trim() && newValue.trim() != "") {
                         var description = newValue;
                         if (tree.getDescription().trim() != description.trim()) {
                             FoodParent.EventHandler.handleTreeData(tree, FoodParent.DATA_MODE.UPDATE_DESCRIPTION, { description: description }, function () {

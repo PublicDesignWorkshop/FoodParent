@@ -38,7 +38,7 @@
   text-overflow: ellipsis;
   /*white-space: nowrap;*/
   vertical-align: middle;
-  border-bottom: 1px solid #DDD;
+  border-bottom: 1px solid #cccccc;
 }
 
 .backgrid td:first-child {
@@ -9612,12 +9612,14 @@ button.close {
 	background: #ddd;
 	outline: 0;
 	}
+/*
 .leaflet-container a {
 	color: #0078A8;
 	}
 .leaflet-container a.leaflet-active {
 	outline: 2px solid orange;
 	}
+*/
 .leaflet-zoom-box {
 	border: 2px dotted #38f;
 	background: rgba(255,255,255,0.5);
@@ -12632,6 +12634,11 @@ button.close {
 	    background: rgba(187,168,164,0.1); 
     }
 
+    hr {
+        margin: 8px 0;
+            border-top: 1px solid #ffffff;
+    }
+
 }
 
 @media all {
@@ -13225,14 +13232,14 @@ button.close {
         height: 100%;
         overflow: hidden;
     }
-    #wrapper-manage-adoption .outer-frame, #wrapper-note .outer-frame {
+    #wrapper-manage-adoption .outer-frame, #wrapper-note .outer-frame, #wrapper-donation .outer-frame {
         width: 100%;
         height: 100%;
         padding: 4px;
         overflow: hidden;
     }
 
-    #wrapper-manage-adoption .inner-frame, #wrapper-note .inner-frame {
+    #wrapper-manage-adoption .inner-frame, #wrapper-note .inner-frame, #wrapper-donation .inner-frame {
         width: 100%;
         height: 100%;
         padding: 4px;
@@ -13857,7 +13864,7 @@ button.close {
 
     .image-wrapper .info-header {
         font-weight: 700;
-        font-size: x-large;
+        font-size: large;
         text-align: left;
         padding: 4px 16px 0 16px;
     }
@@ -13887,11 +13894,10 @@ button.close {
         -webkit-flex-wrap: wrap;
         flex-wrap: wrap;
         overflow-y: auto;
-        height: 100%;
     }
 
     .image-group img {
-        width: 48%;
+        width: 98%;
         margin: 4px;
         border: 8px solid #ffffff;
         cursor: pointer;
@@ -14238,7 +14244,7 @@ button.close {
     }
 
     .list-donation {
-        height: 60%;
+        height: 50%;
         overflow-y: auto;
         margin: 0 0 8px 0;
     }
@@ -14252,7 +14258,7 @@ button.close {
         width: 148px;
         text-align: left;
         font-weight:700;
-        padding: 4px;
+        padding: 8px;
     }
     .label-group-content {
         flex-grow: 1;
@@ -14264,6 +14270,166 @@ button.close {
         -ms-flex-wrap: wrap;
         -webkit-flex-wrap: wrap;
         flex-wrap: wrap;
+    }
+
+    #list-donation .leaflet-top.leaflet-right {
+        width: 33%;
+        height: 100%;
+        pointer-events: none;
+    }
+
+    #content-manage-adoption-table .button-inner-frame2 {
+        font-size: medium;
+    }
+}
+
+@media all {
+    #wrapper-mdonation {
+        width: 100%;
+        height: 100%;
+        background-color: #eeeeee;
+        border-top: 4px solid #5e4e51;
+        overflow: hidden;
+    }
+
+    #wrapper-donation-detail {
+        width: 100%;
+        height: 40%;
+        background-color: #5e4e51;
+        overflow-y: auto;
+        display: flex;
+        justify-content: flex-start;
+        align-items: flex-start;
+    }
+
+    #wrapper-donation-detail .content-donation-info {
+        flex-grow: 2;
+        height: 100%;
+        overflow-y: auto;
+        padding: 8px;
+        max-width: 520px;
+        
+    }
+
+    #wrapper-donation-detail .content-donation-recentdonations {
+        flex-grow: 2;
+        height: 100%;
+        overflow-y: auto;
+        padding: 24px 8px 8px 8px;
+    }
+
+    #wrapper-donation-detail .content-donation-control {
+        flex-grow: 1;
+        height: 100%;
+        padding: 24px 8px 8px 8px;
+        overflow-y: auto;
+        min-width: 280px;
+    }
+
+    .content-donation-info .donation-info-name {
+        font-size: xx-large;
+        font-weight: 700;
+        padding: 2px 0;
+        margin: 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+    }
+    
+
+    .content-donation-info .donation-info-coordinate {
+        font-size: small;
+        padding: 0;
+        font-weight: 400;
+        margin: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        vertical-align: bottom;
+    }
+
+    .content-donation-info .donation-info-coordinate div {
+        padding: 16px 2px;
+    }
+
+    .content-donation-info .donation-info-address {
+        font-size: small;
+        padding: 4px;
+        margin: 0;
+        text-align: left;
+    }
+
+    #wrapper-donationinfo .info-header {
+        border-color: rgba(255, 255, 255, 0.75);
+        border-left: 2px solid;
+        border-right: 2px solid;
+        background-color: rgba(132, 167, 87, 0.85);
+        font-weight: 700;
+        font-size: small;
+        text-align: left;
+        padding: 4px 16px 0 16px;
+    }
+    .content-donation-info .info-group {
+        font-weight: 400;
+        font-size: small;
+        text-align: left;
+        padding: 4px 4px;
+    }
+
+    .info-group-flex {
+        display: flex;
+        justify-content: flex-start;
+        align-items: flex-start;
+    }
+
+    .content-donation-info .button-group-tag {
+        padding: 4px 0 0 0;
+    }
+
+    .content-donation-info .btn {
+        padding: 2px 8px;
+    }
+
+    .content-donation-recentdonations .item-activity i {
+        padding: 2px 2px 0 0;
+    }
+
+    .content-donation-recentdonations .item-activity {
+        padding: 2px;
+        font-weight: 400;
+        display: flex;
+        font-size: small;
+        justify-content: flex-start;
+    }
+
+    .content-donation-recentdonations #list-donations {
+        padding: 8px 0 0 0;
+    }
+
+    .startdate {
+        font-size: small;
+        font-style: italic;
+        font-weight: 400;
+    }
+
+    #wrapper-donation .name {
+        font-size: xx-large;
+        font-weight: 700;
+        text-align: center;
+        padding: 0 16px;
+    }
+
+    #wrapper-donation {
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+    }
+
+    #wrapper-manage-donation-table .info-header {
+        font-weight: 700;
+        font-size: large;
+        text-align: left;
+        padding: 4px 16px 0 16px;
     }
 }
 

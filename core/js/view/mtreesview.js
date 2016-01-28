@@ -267,7 +267,6 @@ var FoodParent;
                         FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
                     });
                     self.$('.input-description').on('click', function (event) {
-                        console.log($(this).text());
                         $(this).replaceWith("<input type='text' class='input-description form-control' value='" + htmlEncode($(this).text()) + "' />");
                         //self.$('.input-lat').css({ width: width });
                         self.$('.input-description').focus();

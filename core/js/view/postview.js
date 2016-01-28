@@ -136,6 +136,7 @@ var FoodParent;
             });
             $(event.target).addClass('selected');
             self._note.setCover(parseInt($(event.target).attr('data-target')));
+            self.renderNoteImages();
         };
         PostNoteView.prototype._createNote = function (event) {
             var self = this;

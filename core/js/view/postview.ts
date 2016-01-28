@@ -143,6 +143,7 @@
             });
             $(event.target).addClass('selected');
             self._note.setCover(parseInt($(event.target).attr('data-target')));
+            self.renderNoteImages();
         }
 
         private _createNote(event: Event) {

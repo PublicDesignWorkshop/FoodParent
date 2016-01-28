@@ -66,6 +66,7 @@
       "core/js/view/mpeopleview.js",
       "core/js/view/postview.js",
       "core/js/view/mdonationsview.js",
+      "core/js/view/mdonationview.js",
       // Model
       "core/js/model/model.js",
       "core/js/model/adopt.js",
@@ -117,6 +118,7 @@
       "core/css/input.css",
       "core/css/mpeople.css",
       "core/css/mdonations.css",
+      "core/css/mdonation.css",
 
       // Print (not working for safari)
       "core/css/print.css",

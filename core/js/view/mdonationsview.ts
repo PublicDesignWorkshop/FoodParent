@@ -105,28 +105,27 @@ module FoodParent {
         }
     }
 
-    export class DonationManageViewFactory {
-        private static _instance: DonationManageViewFactory = new DonationManageViewFactory();
+    export class AddDonationViewFactory {
+        private static _instance: AddDonationViewFactory = new AddDonationViewFactory();
         private baseUrl: string;
         constructor(args?: any) {
-            if (DonationManageViewFactory._instance) {
-                throw new Error("Error: Instantiation failed: Use DonationManageViewFactory.getInstance() instead of new.");
+            if (AddDonationViewFactory._instance) {
+                throw new Error("Error: Instantiation failed: Use AddDonationViewFactory.getInstance() instead of new.");
             }
-            DonationManageViewFactory._instance = this;
+            AddDonationViewFactory._instance = this;
         }
-        public static getInstance(): DonationManageViewFactory {
-            return DonationManageViewFactory._instance;
+        public static getInstance(): AddDonationViewFactory {
+            return AddDonationViewFactory._instance;
         }
-        public static create(el: JQuery, place: Place): DonationManageView {
-            var view: DonationManageView = new DonationManageView({ el: el });
-            console.log(place);
+        public static create(el: JQuery, place: Place): AddDonationView {
+            var view: AddDonationView = new AddDonationView({ el: el });
             view.setPlace(place);
             return view;
         }
     }
 
-    export class DonationManageView extends PopupView {
-        private static TAG: string = "DonationManageView - ";
+    export class AddDonationView extends PopupView {
+        private static TAG: string = "AddDonationView - ";
         private _place: Place;
         private _donation: Donation;
         private _bTableView: boolean;
@@ -137,7 +136,7 @@ module FoodParent {
         private _selectedMarker: L.Marker;
         constructor(options?: Backbone.ViewOptions<Backbone.Model>) {
             super(options);
-            var self: DonationManageView = this;
+            var self: AddDonationView = this;
             self.bDebug = true;
             self._bTableView = true;
             self._zoom = Setting.getDefaultMapZoomLevel();
@@ -151,16 +150,18 @@ module FoodParent {
                 "click .button-submit-donation": "_submitDonations",
                 "click .cell-tree-detail": "_removeNewDonationTree",
                 "click .switch-map": "_switchView",
+                "click .marker-control-plus": "_addNewDonation",
+                "click .image-group img": "_selectCoverImage",
             };
             self.delegateEvents();
         }
         public setPlace(place: Place): void {
-            var self: DonationManageView = this;
+            var self: AddDonationView = this;
             self._place = place;
         }
 
         public getPlace(): Place {
-            var self: DonationManageView = this;
+            var self: AddDonationView = this;
             return self._place;
         }
 
@@ -171,8 +172,8 @@ module FoodParent {
             }
             this.bRendered = true;
             /////
-            var self: DonationManageView = this;
-            if (self.bDebug) console.log(DonationManageView.TAG + "render()");
+            var self: AddDonationView = this;
+            if (self.bDebug) console.log(AddDonationView.TAG + "render()");
 
             var template = _.template(Template.getManageDonationViewTemplate());
             var data = {
@@ -189,24 +190,44 @@ module FoodParent {
             return self;
         }
 
+        
+
         public addNewDonation(tree: Tree) {
-            var self: DonationManageView = this;
-            self._donation.addTreeId(tree.getId());
+            var self: AddDonationView = this;
+            if (self._donation.getTreeIds().length == 0) {
+                self._donation.addTreeId(tree.getId());
+            } else {
+                var firstTreeId = Math.floor(self._donation.getTreeIds()[0]);
+                var firstTree: Tree = Model.getTrees().findWhere({ id: firstTreeId });
+                var firstFood: Food = Model.getFoods().findWhere({ id: firstTree.getFoodId() });
+                var currentFood: Food = Model.getFoods().findWhere({ id: tree.getFoodId() });
+                if (firstFood.getId() == currentFood.getId()) {
+                    self._donation.addTreeId(tree.getId());
+                } else {
+                    new RenderMessageViewCommand({ el: Setting.getMessageWrapperElement(), message: "Please select <strong>same type</strong> of food.", undoable: false }).execute();
+                }
+            }
+            
             var template = _.template(Template.getAddNewDonationTreeTemplate());
             self.$('.new-donation-trees').html(template({
                 trees: Model.getTrees().filterByIds(self._donation.getTreeIds()),
             }));
         }
 
+        private _addNewDonation(event: Event) {
+            var self: AddDonationView = this;
+            self.addNewDonation(Model.getTrees().findWhere({ id: self._selectedMarker.options.id }));
+        }
+
         public removeNewDonation(donation: Donation) {
-            var self: DonationManageView = this;
+            var self: AddDonationView = this;
             //self._donations.remove(donation);
         }
 
         public renderNewDonation = () => {
-            var self: DonationManageView = this;
+            var self: AddDonationView = this;
             if (self._donation == undefined) {
-                self._donation = new Donation({ place: self._place.getId(), quantity: 0, date: moment(new Date()).format(Setting.getDateTimeFormat()) });
+                self._donation = new Donation({ type: 0, place: self._place.getId(), quantity: 0, picture: '', date: moment(new Date()).format(Setting.getDateTimeFormat()) });
             }
 
             var tag = '';
@@ -276,44 +297,69 @@ module FoodParent {
                 });
             });
 
+            // Event listener for uploading a file.
+            self.$('input[type=file]').off('change');
+            self.$('input[type=file]').on('change', function (event: Event) {
+                self.$('.wrapper-input-upload-picture').addClass('hidden');
+                self.$('.wrapper-uploading-picture').removeClass('hidden');
+                var files = (<any>event.target).files;
+                if (files.length > 0) {
+                    Controller.uploadNotePictureFile(files[0], fileNameEncode(self._place.getName()), function (fileName: string) {
+                        self._donation.addPicture(fileName);
+                        // Success
+                        self.$('input[type=file]').val("");
+                        self.$('.wrapper-uploading-picture').addClass('hidden');
+                        self.$('.wrapper-input-upload-picture').removeClass('hidden');
+                        self.renderDonationImages();
+                    }, function () {
+                        // Error
+                        self.$('.wrapper-uploading-picture').addClass('hidden');
+                        self.$('.wrapper-input-upload-picture').removeClass('hidden');
+                    });
+                }
+            });
+
             var template = _.template(Template.getAddNewDonationTreeTemplate());
             self.$('.new-donation-trees').html(template({
                 trees: Model.getTrees().filterByIds(self._donation.getTreeIds()),
             }));
-            /*
-            var grid = new Backgrid.Grid({
-                columns: NewDonationColumn,
-                collection: self._donations,
-                emptyText: Setting.getNoDataText(),
+
+            self.$('.content-manage-adoption-table').scrollTop();
+        }
+
+
+        public renderDonationImages() {
+            var self: AddDonationView = this;
+            var tag = '';
+            $.each(self._donation.getPictures(), function (index: number, filename: string) {
+                if (index == 0) {
+                    tag += '<img src="' + Setting.getBlankImagePath() + '" data-target="' + index + '" class="selected" />';
+                } else {
+                    tag += '<img src="' + Setting.getBlankImagePath() + '" data-target="' + index + '" />';
+                }
             });
-            grid.render();
-            self.$(".new-donation").html(grid.el);
-            */
-            /*
-            var tree: Tree = new Tree({ lat: position.coords.latitude, lng: position.coords.longitude, food: 0, type: 0, flag: 0, owner: 0, ownership: 0, description: "" });
-            var trees: Trees = new Trees();
-            trees.add(tree);
-            var optionValues = new Array<{ name: string, values: any }>();
-            optionValues.push({ name: "Food", values: Model.getFoods().toArray() });
-            NewTreeColumn[0].cell = Backgrid.SelectCell.extend({
-                editor: Backgrid.FoodSelectCellEditor,
-                optionValues: optionValues,
+            self.$('.image-group').html(tag);
+            $.each(self.$('.image-group img'), function (index: number, element: JQuery) {
+                $(element).attr('src', Setting.getContentPictureDir() + self._donation.getPictures()[index]).load(function () {
+
+                }).error(function () {
+                    $(element).attr('src', Setting.getBlankImagePath());
+                });
             });
-            var grid = new Backgrid.Grid({
-                columns: NewTreeColumn,
-                collection: trees,
-                emptyText: Setting.getNoDataText(),
+        }
+
+        private _selectCoverImage(event: Event) {
+            var self: AddDonationView = this;
+            $.each(self.$('.image-group img'), function (index: number, element: JQuery) {
+                $(element).removeClass('selected');
             });
-            grid.render();
-            //grid.sort("name", "ascending");
-            //self.$(".new-donation").html('<div class="list-title">Add a New Tree</div>');
-            self.$(".new-donation").html(grid.el);
-            //self.$(".new-donation").removeClass('hidden');
-            */
+            $(event.target).addClass('selected');
+            self._donation.setCover(parseInt($(event.target).attr('data-target')));
+            self.renderDonationImages();
         }
 
         private renderTrees = () => {
-            var self: DonationManageView = this;
+            var self: AddDonationView = this;
             Controller.fetchAllTrees(function () {
                 self.renderTreeList(Model.getTrees());
                 self.renderFilterList();
@@ -323,7 +369,7 @@ module FoodParent {
         }
 
         public renderTreeList = (trees: Trees) => {
-            var self: DonationManageView = this;
+            var self: AddDonationView = this;
             if (self._bTableView) {
                 var optionValues = new Array<{ name: string, values: any }>();
                 optionValues.push({ name: "Food", values: Model.getFoods().toArray() });
@@ -346,7 +392,7 @@ module FoodParent {
         }
 
         private renderMapError = (error: PositionError) => {
-            var self: DonationManageView = this;
+            var self: AddDonationView = this;
             switch (error.code) {
                 case error.PERMISSION_DENIED:
                     EventHandler.handleError(ERROR_MODE.GEO_PERMISSION_ERROR);
@@ -361,7 +407,7 @@ module FoodParent {
         }
 
         public renderMap = (position: Position) => {
-            var self: DonationManageView = this;
+            var self: AddDonationView = this;
             var accuracy = position.coords.accuracy;
             self._location = new L.LatLng(position.coords.latitude, position.coords.longitude);
             if (self._map == undefined) {
@@ -398,6 +444,7 @@ module FoodParent {
                     //});
                     var tree: Tree = Model.getTrees().findWhere({ id: marker.options.id });
                     self._selectedMarker = marker;
+                    self.renderTreeInfo(tree);
                     // Make MessageView invisible.
                     if (View.getMessageView()) {
                         View.getMessageView().setInvisible();
@@ -413,9 +460,55 @@ module FoodParent {
             }
         }
 
+        private renderTreeInfo(tree: Tree): void {
+            var self: AddDonationView = this;
+            var food: Food = Model.getFoods().findWhere({ id: tree.getFoodId() });
+
+            var template = _.template(Template.getTreeInfoTemplate3());
+            var data = {
+                foodname: food.getName(),
+                treename: tree.getName(),
+                lat: tree.getLat().toFixed(4),
+                lng: tree.getLng().toFixed(4),
+                description: tree.getDescription(),
+                persons: tree.getParents(),
+            }
+            self.$('#wrapper-treeinfo').html(template(data));
+            self.$('#wrapper-treeinfo').removeClass('hidden');
+
+            GeoLocation.reverseGeocoding(tree.getLocation(), function (data: ReverseGeoLocation) {
+                self.$(".tree-info-address").html("<div>" + data.road + ", " + data.county + "</div><div>" + data.state + ", " + data.country + ", " + data.postcode + "</div>");
+            }, function () {
+                EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
+            });
+            self.renderRecentActivities(tree);
+            
+        }
+
+        private renderRecentActivities(tree: Tree): void {
+            var self: AddDonationView = this;
+            var trees: Array<Tree> = new Array<Tree>();
+            trees.push(tree);
+            Controller.fetchNotesOfTrees(trees, Setting.getNumRecentActivitiesShown(), 0, function () {
+                var notes: Notes = new Notes(Model.getNotes().where({ tree: tree.getId() }));
+                notes.sortByDescendingDate();
+                var template = _.template(Template.getRecentActivitiesTemplate());
+                var data = {
+                    notes: notes,
+                    size: Setting.getNumRecentActivitiesShown(),
+                    coordinate: '@ ' + tree.getLat().toFixed(4) + ", " + tree.getLng().toFixed(4),
+                    flags: Model.getFlags(),
+                    ownerships: Model.getOwnerships(),
+                }
+                self.$('#list-activities').html(template(data));
+            }, function () {
+                EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
+            });
+        }
+
         private renderMarkers = () => {
-            var self: DonationManageView = this;
-            console.log(DonationManageView.TAG + "renderMarkers()");
+            var self: AddDonationView = this;
+            console.log(AddDonationView.TAG + "renderMarkers()");
             self._markers = new Array<L.Marker>();
             $.each(Model.getTrees().models, function (index: number, tree: Tree) {
                 var bFound: boolean = false;
@@ -460,11 +553,15 @@ module FoodParent {
 
             trees = trees.filterByAdoptStatus(adoptIds);
             self.updateMarkers(trees);
+
+
+            // render tree info
+            self.$('.leaflet-top.leaflet-right').html('<div id="wrapper-treeinfo"></div>');
         }
 
         private updateMarkers = (trees: Trees) => {
-            var self: DonationManageView = this;
-            console.log(DonationManageView.TAG + "updateMarkers()");
+            var self: AddDonationView = this;
+            console.log(AddDonationView.TAG + "updateMarkers()");
             // Add new markers
             $.each(trees.models, function (index: number, tree: Tree) {
                 var bFound: boolean = false;
@@ -499,31 +596,31 @@ module FoodParent {
         }
 
         private removeMarker(marker: L.Marker): void {
-            var self: DonationManageView = this;
+            var self: AddDonationView = this;
             self._map.removeLayer(marker);
         }
 
         private addMarker(tree: Tree): void {
-            var self: DonationManageView = this;
-            var marker: L.Marker = MarkerFractory.create(tree, true);
+            var self: AddDonationView = this;
+            var marker: L.Marker = MarkerFractory.create2(tree, true);
             self._markers.push(marker);
             marker.addTo(self._map);
         }
 
         public setLocation(location: L.LatLng): void {
-            var self: DonationManageView = this;
+            var self: AddDonationView = this;
             self._location = location;
         }
 
         private afterMoveMap = () => {
-            var self: DonationManageView = this;
+            var self: AddDonationView = this;
             if (self._selectedMarker) {
                 self._selectedMarker._bringToFront();
             }
         }
 
         public renderFilterList = () => {
-            var self: DonationManageView = this;
+            var self: AddDonationView = this;
             var template = _.template(Template.getTreeFilterListTemplate());
             var data = {
                 foods: Model.getFoods(),
@@ -537,30 +634,31 @@ module FoodParent {
                 return;
             }
             /////
-            var self: DonationManageView = this;
-            if (self.bDebug) console.log(DonationManageView.TAG + "update()");
+            var self: AddDonationView = this;
+            if (self.bDebug) console.log(AddDonationView.TAG + "update()");
             return self;
         }
 
         public resize(): any {
-            var self: DonationManageView = this;
+            var self: AddDonationView = this;
             $('#content-manage-adoption-table').css({ width: self.getWidth() - $('#wrapper-tablemenu').outerWidth() });
             $('#wrapper-main').css({ height: View.getHeight() - 60 });
             $('#wrapper-mtrees').css({ height: View.getHeight() - 60 });
             $('.collapsible-list').css({ height: self.getHeight() - 34 * 3 - 30 });
+            //$('.image-group').css({ height: self.$('.image-wrapper').innerHeight() - 60 });
         }
 
         public setVisible(): void {
-            var self: DonationManageView = this;
+            var self: AddDonationView = this;
             Setting.getPopWrapperElement().removeClass('hidden');
         }
         public setInvisible(): void {
-            var self: DonationManageView = this;
+            var self: AddDonationView = this;
             Setting.getPopWrapperElement().addClass('hidden');
         }
 
         public _applyFilter(event?: Event): void {
-            var self: DonationManageView = this;
+            var self: AddDonationView = this;
             var trees: Trees = Model.getTrees();
             setTimeout(function () {
                 // Filtering food type.
@@ -620,14 +718,18 @@ module FoodParent {
         }
 
         public _submitDonations(event: Event): void {
-            var self: DonationManageView = this;
-            if (self._donation.getTreeIds().length == 0) {
-                
+            var self: AddDonationView = this;
+            if (self._donation.getTreeIds().length == 0 || self._donation.getQuantity() == 0) {
+                new RenderMessageViewCommand({ el: Setting.getMessageWrapperElement(), message: "Please select at least <strong>one tree</strong> with proper <strong>amount</strong> for donation.", undoable: false }).execute();
             } else {
+                var treeIds = self._donation.getTreeIds();
+                var tree: Tree = Model.getTrees().findWhere({ id: treeIds[0] });
+                self._donation.setType(tree.getFoodId());
                 EventHandler.handleDonationData(self._donation, DATA_MODE.CREATE, {}, function () {
                     EventHandler.handleDataChange("Donation for <strong><i>" + self._place.getName() + "</i></strong> has been added successfully.", true);
                     self._donation = null;
                     self.renderNewDonation();
+                    self.$('.image-group').html("");
                 }, function () {
                     EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
                 });
@@ -636,12 +738,12 @@ module FoodParent {
         }
 
         private _mouseClick(event: Event): void {
-            var self: DonationManageView = this;
+            var self: AddDonationView = this;
             EventHandler.handleMouseClick($(event.currentTarget), self);
         }
 
         private _removeNewDonationTree(event: Event): void {
-            var self: DonationManageView = this;
+            var self: AddDonationView = this;
             var treeId: number = parseInt($(event.target).attr('data-target'));
             self._donation.removeTreeId(treeId);
             var template = _.template(Template.getAddNewDonationTreeTemplate());
@@ -651,7 +753,7 @@ module FoodParent {
         }
 
         private _switchView(event: Event): void {
-            var self: DonationManageView = this;
+            var self: AddDonationView = this;
             if (self._bTableView) {
                 self._bTableView = false;
                 $(event.target).html("Switch to Table View");
