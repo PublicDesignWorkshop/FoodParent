@@ -47,7 +47,9 @@
         }
         public getName(): string {
             var that: Person = this;
-            if (this.get('name').trim() == "") {
+            if (this.get('name') === undefined) {
+                return "<span class='alert'>Unknown</span>";
+            } else if (this.get('name').trim() == "") {
                 return this.get("contact");
             }
             return this.get('name');

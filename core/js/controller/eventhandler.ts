@@ -509,7 +509,7 @@
                     self._lastCommand = new UpdateTreeLocation({ tree: tree, marker: args.marker, location: args.location }, success, error);
                     break;
                 case DATA_MODE.UPDATE_FLAG:
-                    self._lastCommand = new UpdateTreeFlag({ tree: tree, flag: args.flag }, success, error);
+                    self._lastCommand = new UpdateTreeFlag({ tree: tree, flag: args.flag, addmode: args.addmode }, success, error);
                     break;
                 case DATA_MODE.UPDATE_OWNERSHIP:
                     self._lastCommand = new UpdateTreeOwnership({ tree: tree, ownership: args.ownership }, success, error);

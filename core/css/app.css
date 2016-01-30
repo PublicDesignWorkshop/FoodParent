@@ -124,4 +124,8 @@
             border-top: 1px solid #ffffff;
     }
 
+    .alert {
+        color: #990000;
+    }
+
 }

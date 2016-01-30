@@ -667,11 +667,19 @@ module FoodParent {
 
         public renderFilterList = () => {
             var self: AddDonationView = this;
-            var template = _.template(Template.getTreeFilterListTemplate());
-            var data = {
-                foods: Model.getFoods(),
-            }
-            self.$('#filter-list').html(template(data));
+            Controller.checkAdmin(function (response) {
+                if (response.result == "true") {
+                    var template = _.template(Template.getTreeFilterListTemplate());
+                    var data = {
+                        foods: Model.getFoods(),
+                        userid: parseInt(response.id),
+                    }
+                    self.$('#filter-list').html(template(data));
+                }
+            }, function (response) {
+
+            });
+            
         }
 
         public update(args?: any): any {

@@ -320,15 +320,17 @@
             template += '<% }); %>';
             template += '</div>';
             
+            
+
             template += '<div class="hr"><hr /></div>';
             template += '<div class="info-header"><i class="fa fa-tag fa-1x"></i> Status</div>';
             template += '<div class="info-group">';
             template += '<div data-toggle="buttons">';
             template += '<% _.each(flags.models, function (flag) { %>';
             template +=     '<label class="btn flag-radio" data-target="<%= flag.getId() %>">';
-            template +=     '<input type="radio" name="flag">';
-            template +=     '<i class="fa fa-circle-o fa-1x"></i>';
-            template +=     '<i class="fa fa-check-circle-o fa-1x"></i>';
+            template +=     '<input type="checkbox" name="flag">';
+            template +=     '<i class="fa fa-square-o fa-1x"></i>';
+            template +=     '<i class="fa fa-check-square-o fa-1x"></i>';
             template +=     ' <%= flag.getName() %></label>';
             template += '<% }); %>';
             template += '</div>';
@@ -389,13 +391,23 @@
             template += '<% }); %>';
             template += '</div>';
 
+            /*
+            template += '<div data-toggle="buttons">';
+            template += '<label class="btn filter-checkbox list-hiearchy1">';
+            template += '<input type="checkbox" name="onlymine" data-target="<%= userid %>">';
+            template += '<i class="fa fa-square-o fa-1x"></i>';
+            template += '<i class="fa fa-check-square-o fa-1x"></i>';
+            template += ' My children (only mine / show all)</label>';
+            template += '</div>';
+            */
+
             template += '<div class="info-group info-group-flex"><div class="button-group-tag"><i class="fa fa-tag fa-1x"></i>&nbsp;</div>';
             template += '<div data-toggle="buttons">';
             template += '<% _.each(flags.models, function (flag) { %>';
             template += '<label class="btn flag-radio" data-target="<%= flag.getId() %>">';
-            template += '<input type="radio" name="flag">';
-            template += '<i class="fa fa-circle-o fa-1x"></i>';
-            template += '<i class="fa fa-check-circle-o fa-1x"></i>';
+            template += '<input type="checkbox" name="flag">';
+            template += '<i class="fa fa-square-o fa-1x"></i>';
+            template += '<i class="fa fa-check-square-o fa-1x"></i>';
             template += ' <%= flag.getName() %></label>';
             template += '<% }); %>';
             template += '</div>';

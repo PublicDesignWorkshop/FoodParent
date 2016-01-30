@@ -3,15 +3,17 @@
     export class UpdateTreeFlag implements Command {
         private _tree: Tree;
         private _flag: number;
-        private _previousFlag: number;
+        private _previousFlag: Array<number>;
         private _success: Function;
         private _error: Function;
         private _note: Note;
+        private _addmode: boolean;
         constructor(args?: any, success?: Function, error?: Function) {
             var self: UpdateTreeFlag = this;
-            if (args != undefined && args.tree != undefined && args.flag != undefined) {
+            if (args != undefined && args.tree != undefined && args.flag != undefined && args.addmode != undefined) {
                 self._tree = args.tree;
                 self._flag = args.flag;
+                self._addmode = args.addmode;
             }
             if (success) {
                 self._success = success;
@@ -22,11 +24,14 @@
         }
         public execute(): any {
             var self: UpdateTreeFlag = this;
-            self._previousFlag = self._tree.getFlagId();
+            self._previousFlag = self._tree.getCopiedFlags();
+            if (self._addmode) {
+                self._tree.addFlag(self._flag);
+            } else {
+                self._tree.removeFlag(self._flag);
+            }
             self._tree.save(
-                {
-                    'flag': self._flag,
-                },
+                {},
                 {
                     wait: true,
                     success: function (tree: Tree, response: any) {
@@ -69,10 +74,9 @@
         }
         public undo(): any {
             var self: UpdateTreeFlag = this;
+            self._tree.setFlags(self._previousFlag);
             self._tree.save(
-                {
-                    'flag': self._previousFlag,
-                },
+                {},
                 {
                     wait: true,
                     success: function (tree: Tree, response: any) {

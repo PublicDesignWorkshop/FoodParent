@@ -3,9 +3,10 @@ var FoodParent;
     var UpdateTreeFlag = (function () {
         function UpdateTreeFlag(args, success, error) {
             var self = this;
-            if (args != undefined && args.tree != undefined && args.flag != undefined) {
+            if (args != undefined && args.tree != undefined && args.flag != undefined && args.addmode != undefined) {
                 self._tree = args.tree;
                 self._flag = args.flag;
+                self._addmode = args.addmode;
             }
             if (success) {
                 self._success = success;
@@ -16,10 +17,14 @@ var FoodParent;
         }
         UpdateTreeFlag.prototype.execute = function () {
             var self = this;
-            self._previousFlag = self._tree.getFlagId();
-            self._tree.save({
-                'flag': self._flag,
-            }, {
+            self._previousFlag = self._tree.getCopiedFlags();
+            if (self._addmode) {
+                self._tree.addFlag(self._flag);
+            }
+            else {
+                self._tree.removeFlag(self._flag);
+            }
+            self._tree.save({}, {
                 wait: true,
                 success: function (tree, response) {
                     self._note = new FoodParent.Note({
@@ -57,9 +62,8 @@ var FoodParent;
         };
         UpdateTreeFlag.prototype.undo = function () {
             var self = this;
-            self._tree.save({
-                'flag': self._previousFlag,
-            }, {
+            self._tree.setFlags(self._previousFlag);
+            self._tree.save({}, {
                 wait: true,
                 success: function (tree, response) {
                     FoodParent.Model.getNotes().remove(self._note);

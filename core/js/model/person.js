@@ -52,7 +52,10 @@ var FoodParent;
         };
         Person.prototype.getName = function () {
             var that = this;
-            if (this.get('name').trim() == "") {
+            if (this.get('name') === undefined) {
+                return "<span class='alert'>Unknown</span>";
+            }
+            else if (this.get('name').trim() == "") {
                 return this.get("contact");
             }
             return this.get('name');

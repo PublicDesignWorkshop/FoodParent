@@ -580,7 +580,7 @@ var FoodParent;
                     self._lastCommand = new FoodParent.UpdateTreeLocation({ tree: tree, marker: args.marker, location: args.location }, success, error);
                     break;
                 case DATA_MODE.UPDATE_FLAG:
-                    self._lastCommand = new FoodParent.UpdateTreeFlag({ tree: tree, flag: args.flag }, success, error);
+                    self._lastCommand = new FoodParent.UpdateTreeFlag({ tree: tree, flag: args.flag, addmode: args.addmode }, success, error);
                     break;
                 case DATA_MODE.UPDATE_OWNERSHIP:
                     self._lastCommand = new FoodParent.UpdateTreeOwnership({ tree: tree, ownership: args.ownership }, success, error);

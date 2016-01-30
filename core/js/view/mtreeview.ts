@@ -301,7 +301,6 @@
                 }
                 Controller.fetchAllFlagsAndOwners(function () {
                     var food: Food = Model.getFoods().findWhere({ id: tree.getFoodId() });
-                    var flag: Flag = Model.getFlags().findWhere({ id: tree.getFlagId() });
                     var ownership: Ownership = Model.getOwnerships().findWhere({ id: tree.getOwnershipId() });
 
                     var template = _.template(Template.getTreeInfoTemplate2());
@@ -366,7 +365,7 @@
                         });
                     }
                     
-                    self.renderFlagInfo(flag);
+                    self.renderFlagInfo(tree.getFlags());
                     self.renderOwnershipInfo(ownership);
                     self.renderRecentActivities(tree);
                     self.renderRecentComments(tree);
@@ -406,7 +405,6 @@
                                 if (tree.getFoodId() != selected) {
                                     EventHandler.handleTreeData(tree, DATA_MODE.UPDATE_FOODTYPE, { food: selected }, function () {
                                         var food: Food = Model.getFoods().findWhere({ id: tree.getFoodId() });
-                                        var flag: Flag = Model.getFlags().findWhere({ id: tree.getFlagId() });
                                         EventHandler.handleDataChange("Food type of <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has changed successfully.", true);
                                         self.renderTreeInfo(tree);
                                     }, function () {
@@ -488,11 +486,17 @@
             });
         }
 
-        private renderFlagInfo(flag: Flag): void {
+        private renderFlagInfo(flags: Array<number>): void {
             var self: DetailTreeGraphicView = this;
             if (self._bAuthor) {
                 $.each(self.$('.flag-radio'), function (index: number, item: JQuery) {
-                    if (parseInt($(item).attr('data-target')) == flag.getId()) {
+                    var bFound: boolean = false;
+                    $.each(flags, function (index2: number, flag: number) {
+                        if (parseInt($(item).attr('data-target')) == flag) {
+                            bFound = true;
+                        }
+                    });
+                    if (bFound) {
                         $(item).addClass('active');
                         $(item).find('input').prop({ 'checked': 'checked' });
                     } else {
@@ -506,7 +510,13 @@
                 });
             } else {
                 $.each(self.$('.flag-radio'), function (index: number, item: JQuery) {
-                    if (parseInt($(item).attr('data-target')) == flag.getId()) {
+                    var bFound: boolean = false;
+                    $.each(flags, function (index2: number, flag: number) {
+                        if (parseInt($(item).attr('data-target')) == flag) {
+                            bFound = true;
+                        }
+                    });
+                    if (bFound) {
                         $(item).addClass('active');
                         $(item).find('input').prop({ 'checked': 'checked' });
                     } else {
@@ -569,17 +579,28 @@
             var self: DetailTreeGraphicView = this;
             if (self._bAuthor) {
                 var flag: number = parseInt($(event.target).attr('data-target'));
-                if (self._tree.getFlagId() != flag) {
-                    EventHandler.handleTreeData(self._tree, DATA_MODE.UPDATE_FLAG, { flag: flag }, function () {
-                        var food: Food = Model.getFoods().findWhere({ id: self._tree.getFoodId() });
-                        var flag: Flag = Model.getFlags().findWhere({ id: self._tree.getFlagId() });
-                        self.renderFlagInfo(flag);
-                        self.renderRecentActivities(self._tree);
-                        EventHandler.handleDataChange("Status of <strong><i>" + food.getName() + " " + self._tree.getName() + "</i></strong> has changed successfully.", true);
-                    }, function () {
-                        EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
-                    });
-                }
+                console.log($(event.target).find('input[type="checkbox"]').prop('checked'));
+                setTimeout(function () {
+                    if ($(event.target).find('input[type="checkbox"]').prop('checked')) {   // checked
+                        EventHandler.handleTreeData(self._tree, DATA_MODE.UPDATE_FLAG, { flag: flag, addmode: true }, function () {
+                            var food: Food = Model.getFoods().findWhere({ id: self._tree.getFoodId() });
+                            self.renderFlagInfo(self._tree.getFlags());
+                            self.renderRecentActivities(self._tree);
+                            EventHandler.handleDataChange("Status of <strong><i>" + food.getName() + " " + self._tree.getName() + "</i></strong> has changed successfully.", true);
+                        }, function () {
+                            EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
+                        });
+                    } else {    // unchecked
+                        EventHandler.handleTreeData(self._tree, DATA_MODE.UPDATE_FLAG, { flag: flag, addmode: false }, function () {
+                            var food: Food = Model.getFoods().findWhere({ id: self._tree.getFoodId() });
+                            self.renderFlagInfo(self._tree.getFlags());
+                            self.renderRecentActivities(self._tree);
+                            EventHandler.handleDataChange("Status of <strong><i>" + food.getName() + " " + self._tree.getName() + "</i></strong> has changed successfully.", true);
+                        }, function () {
+                            EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
+                        });
+                    }
+                }, 1);
             }
         }
 

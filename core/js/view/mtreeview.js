@@ -189,7 +189,6 @@ var FoodParent;
                     }
                     FoodParent.Controller.fetchAllFlagsAndOwners(function () {
                         var food = FoodParent.Model.getFoods().findWhere({ id: tree.getFoodId() });
-                        var flag = FoodParent.Model.getFlags().findWhere({ id: tree.getFlagId() });
                         var ownership = FoodParent.Model.getOwnerships().findWhere({ id: tree.getOwnershipId() });
                         var template = _.template(FoodParent.Template.getTreeInfoTemplate2());
                         var data = {
@@ -253,7 +252,7 @@ var FoodParent;
                                 });
                             });
                         }
-                        self.renderFlagInfo(flag);
+                        self.renderFlagInfo(tree.getFlags());
                         self.renderOwnershipInfo(ownership);
                         self.renderRecentActivities(tree);
                         self.renderRecentComments(tree);
@@ -291,7 +290,6 @@ var FoodParent;
                                     if (tree.getFoodId() != selected) {
                                         FoodParent.EventHandler.handleTreeData(tree, FoodParent.DATA_MODE.UPDATE_FOODTYPE, { food: selected }, function () {
                                             var food = FoodParent.Model.getFoods().findWhere({ id: tree.getFoodId() });
-                                            var flag = FoodParent.Model.getFlags().findWhere({ id: tree.getFlagId() });
                                             FoodParent.EventHandler.handleDataChange("Food type of <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has changed successfully.", true);
                                             self.renderTreeInfo(tree);
                                         }, function () {
@@ -469,11 +467,17 @@ var FoodParent;
                 }
             });
         };
-        DetailTreeGraphicView.prototype.renderFlagInfo = function (flag) {
+        DetailTreeGraphicView.prototype.renderFlagInfo = function (flags) {
             var self = this;
             if (self._bAuthor) {
                 $.each(self.$('.flag-radio'), function (index, item) {
-                    if (parseInt($(item).attr('data-target')) == flag.getId()) {
+                    var bFound = false;
+                    $.each(flags, function (index2, flag) {
+                        if (parseInt($(item).attr('data-target')) == flag) {
+                            bFound = true;
+                        }
+                    });
+                    if (bFound) {
                         $(item).addClass('active');
                         $(item).find('input').prop({ 'checked': 'checked' });
                     }
@@ -489,7 +493,13 @@ var FoodParent;
             }
             else {
                 $.each(self.$('.flag-radio'), function (index, item) {
-                    if (parseInt($(item).attr('data-target')) == flag.getId()) {
+                    var bFound = false;
+                    $.each(flags, function (index2, flag) {
+                        if (parseInt($(item).attr('data-target')) == flag) {
+                            bFound = true;
+                        }
+                    });
+                    if (bFound) {
                         $(item).addClass('active');
                         $(item).find('input').prop({ 'checked': 'checked' });
                     }
@@ -549,17 +559,29 @@ var FoodParent;
             var self = this;
             if (self._bAuthor) {
                 var flag = parseInt($(event.target).attr('data-target'));
-                if (self._tree.getFlagId() != flag) {
-                    FoodParent.EventHandler.handleTreeData(self._tree, FoodParent.DATA_MODE.UPDATE_FLAG, { flag: flag }, function () {
-                        var food = FoodParent.Model.getFoods().findWhere({ id: self._tree.getFoodId() });
-                        var flag = FoodParent.Model.getFlags().findWhere({ id: self._tree.getFlagId() });
-                        self.renderFlagInfo(flag);
-                        self.renderRecentActivities(self._tree);
-                        FoodParent.EventHandler.handleDataChange("Status of <strong><i>" + food.getName() + " " + self._tree.getName() + "</i></strong> has changed successfully.", true);
-                    }, function () {
-                        FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
-                    });
-                }
+                console.log($(event.target).find('input[type="checkbox"]').prop('checked'));
+                setTimeout(function () {
+                    if ($(event.target).find('input[type="checkbox"]').prop('checked')) {
+                        FoodParent.EventHandler.handleTreeData(self._tree, FoodParent.DATA_MODE.UPDATE_FLAG, { flag: flag, addmode: true }, function () {
+                            var food = FoodParent.Model.getFoods().findWhere({ id: self._tree.getFoodId() });
+                            self.renderFlagInfo(self._tree.getFlags());
+                            self.renderRecentActivities(self._tree);
+                            FoodParent.EventHandler.handleDataChange("Status of <strong><i>" + food.getName() + " " + self._tree.getName() + "</i></strong> has changed successfully.", true);
+                        }, function () {
+                            FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+                        });
+                    }
+                    else {
+                        FoodParent.EventHandler.handleTreeData(self._tree, FoodParent.DATA_MODE.UPDATE_FLAG, { flag: flag, addmode: false }, function () {
+                            var food = FoodParent.Model.getFoods().findWhere({ id: self._tree.getFoodId() });
+                            self.renderFlagInfo(self._tree.getFlags());
+                            self.renderRecentActivities(self._tree);
+                            FoodParent.EventHandler.handleDataChange("Status of <strong><i>" + food.getName() + " " + self._tree.getName() + "</i></strong> has changed successfully.", true);
+                        }, function () {
+                            FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+                        });
+                    }
+                }, 1);
             }
         };
         DetailTreeGraphicView.prototype._applyOwnership = function (event) {

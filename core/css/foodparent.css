@@ -12639,6 +12639,10 @@ button.close {
             border-top: 1px solid #ffffff;
     }
 
+    .alert {
+        color: #990000;
+    }
+
 }
 
 @media all {

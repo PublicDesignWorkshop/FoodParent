@@ -446,11 +446,17 @@ var FoodParent;
             };
             this.renderFilterList = function () {
                 var self = _this;
-                var template = _.template(FoodParent.Template.getTreeFilterListTemplate());
-                var data = {
-                    foods: FoodParent.Model.getFoods(),
-                };
-                self.$('#filter-list').html(template(data));
+                FoodParent.Controller.checkAdmin(function (response) {
+                    if (response.result == "true") {
+                        var template = _.template(FoodParent.Template.getTreeFilterListTemplate());
+                        var data = {
+                            foods: FoodParent.Model.getFoods(),
+                            userid: parseInt(response.id),
+                        };
+                        self.$('#filter-list').html(template(data));
+                    }
+                }, function (response) {
+                });
             };
             var self = this;
             self.bDebug = true;

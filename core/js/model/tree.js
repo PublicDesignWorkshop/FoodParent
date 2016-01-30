@@ -58,10 +58,15 @@ var FoodParent;
             response.lng = parseFloat(response.lng);
             response.food = parseInt(response.food);
             response.type = parseInt(response.type);
-            response.flag = parseInt(response.flag);
             response.owner = parseInt(response.owner);
             response.ownership = parseInt(response.ownership);
             response.updated = moment(response.updated).format(FoodParent.Setting.getDateTimeFormat());
+            response.flags = Array();
+            if (response.flag != "") {
+                response.flags = response.flag.split(',').map(function (item) {
+                    return parseInt(item);
+                });
+            }
             response.parents = FoodParent.Model.getAdopts().getParentIds(response.id);
             return _super.prototype.parse.call(this, response, options);
         };
@@ -70,15 +75,55 @@ var FoodParent;
             if (this.id != null) {
                 clone["id"] = this.id;
             }
+            if (clone["flags"]) {
+                clone["flag"] = clone["flags"].toString();
+            }
+            delete clone["flags"];
             delete clone["parents"];
             return clone;
         };
         Tree.prototype.getFoodId = function () {
             return this.get('food');
         };
-        Tree.prototype.getFlagId = function () {
-            return this.get('flag');
+        Tree.prototype.addFlag = function (flag) {
+            if (this.get('flags') == undefined) {
+                this.set('flags', new Array());
+            }
+            if (this.get("flags").indexOf(Math.floor(flag)) < 0) {
+                this.get("flags").push(Math.floor(flag));
+            }
         };
+        Tree.prototype.getFlags = function () {
+            if (this.get('flags') == undefined) {
+                this.set('flags', new Array());
+            }
+            return this.get('flags');
+        };
+        Tree.prototype.getCopiedFlags = function () {
+            if (this.get('flags') == undefined) {
+                return new Array();
+            }
+            var temp = new Array();
+            $.each(this.get('flags'), function (index, item) {
+                temp.push(item);
+            });
+            return temp;
+        };
+        Tree.prototype.setFlags = function (flags) {
+            this.set('flags', flags);
+        };
+        Tree.prototype.getFlag = function (index) {
+            return this.get('flags')[index];
+        };
+        Tree.prototype.removeFlag = function (flag) {
+            var self = this;
+            self.set('flags', _.without(self.getFlags(), Math.floor(flag)));
+        };
+        /*
+        public getFlagId(): number {
+            return this.get('flag');
+        }
+        */
         Tree.prototype.getOwnershipId = function () {
             return Math.floor(this.get('ownership'));
         };
@@ -152,16 +197,18 @@ var FoodParent;
             });
             return result;
         };
-        Trees.prototype.getFlagIds = function () {
-            var self = this;
-            var result = Array();
-            $.each(self.models, function (index, model) {
+        /*
+        public getFlagIds(): Array<number> {
+            var self: Trees = this;
+            var result = Array<number>();
+            $.each(self.models, function (index: number, model: Tree) {
                 if (result.indexOf(model.getFlagId()) == -1) {
                     result.push(model.getFlagId());
                 }
             });
             return result;
-        };
+        }
+        */
         Trees.prototype.filterByIds = function (idArray) {
             var self = this;
             var trees = new Trees(self.models);

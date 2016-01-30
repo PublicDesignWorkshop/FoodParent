@@ -53,11 +53,16 @@
             response.lng = parseFloat(response.lng);
             response.food = parseInt(response.food);
             response.type = parseInt(response.type);
-            response.flag = parseInt(response.flag);
             response.owner = parseInt(response.owner);
             response.ownership = parseInt(response.ownership);
             response.updated = moment(response.updated).format(Setting.getDateTimeFormat());
-
+            response.flags = Array<number>();
+            if (response.flag != "") {
+                response.flags = response.flag.split(',').map(function (item) {
+                    return parseInt(item);
+                });
+            }
+            
             response.parents = Model.getAdopts().getParentIds(response.id);
             return super.parse(response, options);
         }
@@ -66,15 +71,57 @@
             if (this.id != null) {
                 clone["id"] = this.id;
             }
+            if (clone["flags"]) {
+                clone["flag"] = clone["flags"].toString();
+            }
+            delete clone["flags"];
             delete clone["parents"];
             return clone;
         }
         public getFoodId(): number {
             return this.get('food');
         }
+        public addFlag(flag: number): void {
+            if (this.get('flags') == undefined) {
+                this.set('flags', new Array<number>());
+            }
+            if (this.get("flags").indexOf(Math.floor(flag)) < 0) {
+                this.get("flags").push(Math.floor(flag));
+            }
+        }
+        public getFlags(): Array<number> {
+            if (this.get('flags') == undefined) {
+                this.set('flags', new Array<number>());
+            }
+            return this.get('flags');
+        }
+
+        public getCopiedFlags(): Array<number> {
+            if (this.get('flags') == undefined) {
+                return new Array<number>();
+            }
+            var temp: Array<number> = new Array<number>();
+            $.each(this.get('flags'), function (index: number, item: number) {
+                temp.push(item);
+            });
+            return temp;
+        }
+        public setFlags(flags: Array<number>) {
+            this.set('flags', flags);
+        }
+
+        public getFlag(index: number): number {
+            return this.get('flags')[index];
+        }
+        public removeFlag(flag: number): void {
+            var self: Tree = this;
+            self.set('flags', _.without(self.getFlags(), Math.floor(flag)));
+        }
+        /*
         public getFlagId(): number {
             return this.get('flag');
         }
+        */
         public getOwnershipId(): number {
             return Math.floor(this.get('ownership'));
         }
@@ -148,7 +195,7 @@
             });
             return result;
         }
-
+        /*
         public getFlagIds(): Array<number> {
             var self: Trees = this;
             var result = Array<number>();
@@ -159,6 +206,7 @@
             });
             return result;
         }
+        */
 
         public filterByIds(idArray): Array<Tree> {
             var self: Trees = this;
