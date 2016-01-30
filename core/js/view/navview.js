@@ -63,7 +63,7 @@ var FoodParent;
             }
             else if (args.viewStatus == FoodParent.VIEW_STATUS.MANAGE_TREES || args.viewStatus == FoodParent.VIEW_STATUS.MANAGE_PEOPLE || args.viewStatus == FoodParent.VIEW_STATUS.DETAIL_TREE || args.viewStatus == FoodParent.VIEW_STATUS.MANAGE_DONATIONS || args.viewStatus == FoodParent.VIEW_STATUS.DETAIL_DONATION) {
                 self.renderNavManageItems();
-                self.$('#background-nav-left').css({ left: '-30%' });
+                self.$('#background-nav-left').css({ left: '0%' });
                 self.$('#background-nav-left').css({ transform: 'skew(-0deg, 0)' });
             }
             self.resize();
@@ -85,7 +85,7 @@ var FoodParent;
             }
             else if (args.viewStatus == FoodParent.VIEW_STATUS.MANAGE_TREES || args.viewStatus == FoodParent.VIEW_STATUS.MANAGE_PEOPLE || args.viewStatus == FoodParent.VIEW_STATUS.DETAIL_TREE || args.viewStatus == FoodParent.VIEW_STATUS.MANAGE_DONATIONS || args.viewStatus == FoodParent.VIEW_STATUS.DETAIL_DONATION) {
                 self.renderNavManageItems();
-                self.$('#background-nav-left').animate({ left: '-30%' }, FoodParent.Setting.getNavAnimDuration());
+                self.$('#background-nav-left').animate({ left: '0%' }, FoodParent.Setting.getNavAnimDuration());
                 self.$('#background-nav-left').css({ transform: 'skew(-0deg, 0)' });
             }
             self.resize();

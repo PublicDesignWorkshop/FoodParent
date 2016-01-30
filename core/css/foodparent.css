@@ -12866,13 +12866,15 @@ button.close {
         color: #5e4e51;
         cursor: pointer;
         background-color: #83a656;
-        transform: skew(-10deg, 0);
+        /*transform: skew(-10deg, 0);*/
         height: 60px;
+        border-top-left-radius: 8px;
+        border-bottom-left-radius: 8px;
     }
 
     #list-nav .item-manage-login div {
         cursor: pointer;
-        transform: skew(10deg, 0);
+        /*transform: skew(10deg, 0);*/
     }
 
     #list-nav .item-manage-login:hover {
@@ -12887,11 +12889,13 @@ button.close {
         color: #5e4e51;
         cursor: pointer;
         background-color: #83a656;
-        transform: skew(-10deg, 0);
+        /*transform: skew(-10deg, 0);*/
         height: 60px;
         letter-spacing: 0;
-        flex-grow: 0;
+        flex-grow: 0.5;
         padding: 10px 20px;
+        border-top-left-radius: 8px;
+        border-bottom-left-radius: 8px;
     }
 
     #list-nav .item-manage-loggedin:hover {
@@ -13103,6 +13107,7 @@ button.close {
         border-color: rgba(255, 255, 255, 0.75);
         border-left: 2px solid;
         border-right: 2px solid;
+        border-bottom: 2px solid;
         background-color: rgba(132, 167, 87, 0.85);
         font-weight: 700;
         font-size: small;
@@ -14660,6 +14665,28 @@ button.close {
     .wrapper-tree-adopt-content .info-button-group {
         padding: 2px 0;
     }
+}
+@media all {
+    .wrapper-change-password-content {
+        padding: 4px;
+        height: 100%;
+    }
+
+    .wrapper-change-password-content .info-header {
+        text-align: left;
+        font-size: medium;
+        font-weight: 700;
+    }
+
+    .wrapper-change-password-content .info-group {
+        text-align: left;
+        padding: 8px 0;
+    }
+
+    .wrapper-change-password-content .info-button-group {
+        padding: 2px 0;
+    }
+
 }
 @media print {
     body * {

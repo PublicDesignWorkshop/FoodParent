@@ -296,6 +296,7 @@
             if (View.getPopupView()) {
                 setTimeout(function () {
                     View.getPopupView().setInvisible();
+                    Setting.getPopWrapperElement().html("");
                 }, self._delay);
             }
             View.popViewStatus();
@@ -540,6 +541,25 @@
             var view: AlertView = SignUpViewFactory.create(self._el).render();
             View.setPopupView(view);
             View.setViewStatus(VIEW_STATUS.SIGNUP);
+        }
+        public undo(): any {
+
+        }
+    }
+
+    export class RenderChangePasswordViewCommand implements Command {
+        private _el: JQuery;
+        private _person: Person;
+        constructor(args?: any) {
+            var self: RenderChangePasswordViewCommand = this;
+            self._el = args.el;
+            self._person = args.person;
+        }
+        public execute(): any {
+            var self: RenderChangePasswordViewCommand = this;
+            var view: AlertView = ChangePasswordViewFactory.create(self._el, self._person).render();
+            View.setPopupView(view);
+            View.setViewStatus(VIEW_STATUS.CHANGE_PASSWORD);
         }
         public undo(): any {
 

@@ -33,7 +33,7 @@
     
     function read() {
         $data = json_decode(file_get_contents('php://input'));
-        $sql = "SELECT * FROM `person`";
+        $sql = "SELECT `id`, `auth`, `name`, `address`, `contact`, `neighborhood`, `updated` FROM `person`";
         
         try {
             $pdo = getConnection();

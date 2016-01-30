@@ -50,6 +50,7 @@ var FoodParent;
         VIEW_STATUS[VIEW_STATUS["SERVER_RESPONSE_ERROR"] = 17] = "SERVER_RESPONSE_ERROR";
         VIEW_STATUS[VIEW_STATUS["SIGNUP"] = 18] = "SIGNUP";
         VIEW_STATUS[VIEW_STATUS["ADOPT_TREE"] = 19] = "ADOPT_TREE";
+        VIEW_STATUS[VIEW_STATUS["CHANGE_PASSWORD"] = 20] = "CHANGE_PASSWORD";
     })(FoodParent.VIEW_STATUS || (FoodParent.VIEW_STATUS = {}));
     var VIEW_STATUS = FoodParent.VIEW_STATUS;
     (function (VIEW_MODE) {
@@ -101,20 +102,47 @@ var FoodParent;
                 new FoodParent.RenderManageTreesViewCommand({ el: FoodParent.Setting.getMainWrapperElement(), viewMode: option.viewMode, id: option.id }).execute();
             }
             else if (viewStatus == VIEW_STATUS.MANAGE_PEOPLE) {
-                new FoodParent.MovePaceBarToUnderNav().execute();
-                new FoodParent.RenderManagePeopleViewCommand({ el: FoodParent.Setting.getMainWrapperElement(), viewMode: option.viewMode, id: option.id }).execute();
+                FoodParent.Controller.checkAdmin(function (response) {
+                    if (response.result == true || response.result == 'true') {
+                        new FoodParent.MovePaceBarToUnderNav().execute();
+                        new FoodParent.RenderManagePeopleViewCommand({ el: FoodParent.Setting.getMainWrapperElement(), viewMode: option.viewMode, id: option.id }).execute();
+                    }
+                    else if (response.result == false || response.result == 'false') {
+                        new FoodParent.NavigateCommand({ hash: 'mtrees', viewMode: VIEW_MODE.MAP, id: 0 }).execute();
+                    }
+                }, function () {
+                    EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
+                });
             }
             else if (viewStatus == VIEW_STATUS.DETAIL_TREE) {
                 new FoodParent.MovePaceBarToUnderNav().execute();
                 new FoodParent.RenderDetailTreeViewCommand({ el: FoodParent.Setting.getMainWrapperElement(), viewMode: option.viewMode, id: option.id }).execute();
             }
             else if (viewStatus == VIEW_STATUS.MANAGE_DONATIONS) {
-                new FoodParent.MovePaceBarToUnderNav().execute();
-                new FoodParent.RenderManageDonationsViewCommand({ el: FoodParent.Setting.getMainWrapperElement(), viewMode: option.viewMode, id: option.id }).execute();
+                FoodParent.Controller.checkAdmin(function (response) {
+                    if (response.result == true || response.result == 'true') {
+                        new FoodParent.MovePaceBarToUnderNav().execute();
+                        new FoodParent.RenderManageDonationsViewCommand({ el: FoodParent.Setting.getMainWrapperElement(), viewMode: option.viewMode, id: option.id }).execute();
+                    }
+                    else if (response.result == false || response.result == 'false') {
+                        new FoodParent.NavigateCommand({ hash: 'mtrees', viewMode: VIEW_MODE.MAP, id: 0 }).execute();
+                    }
+                }, function () {
+                    EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
+                });
             }
             else if (viewStatus == VIEW_STATUS.DETAIL_DONATION) {
-                new FoodParent.MovePaceBarToUnderNav().execute();
-                new FoodParent.RenderDetailDonationViewCommand({ el: FoodParent.Setting.getMainWrapperElement(), viewMode: option.viewMode, id: option.id }).execute();
+                FoodParent.Controller.checkAdmin(function (response) {
+                    if (response.result == true || response.result == 'true') {
+                        new FoodParent.MovePaceBarToUnderNav().execute();
+                        new FoodParent.RenderDetailDonationViewCommand({ el: FoodParent.Setting.getMainWrapperElement(), viewMode: option.viewMode, id: option.id }).execute();
+                    }
+                    else if (response.result == false || response.result == 'false') {
+                        new FoodParent.NavigateCommand({ hash: 'mtrees', viewMode: VIEW_MODE.MAP, id: 0 }).execute();
+                    }
+                }, function () {
+                    EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
+                });
             }
             FoodParent.View.getNavView().setActiveNavItem(viewStatus);
             FoodParent.View.setViewStatus(viewStatus);
@@ -137,10 +165,28 @@ var FoodParent;
                     new FoodParent.NavigateCommand({ hash: 'mtrees', viewMode: VIEW_MODE.MAP, id: 0 }).execute();
                 }
                 else if (el.hasClass('people')) {
-                    new FoodParent.NavigateCommand({ hash: 'mpeople', viewMode: VIEW_MODE.TABLE, id: 0 }).execute();
+                    FoodParent.Controller.checkAdmin(function (response) {
+                        if (response.result == true || response.result == 'true') {
+                            new FoodParent.NavigateCommand({ hash: 'mpeople', viewMode: VIEW_MODE.TABLE, id: 0 }).execute();
+                        }
+                        else if (response.result == false || response.result == 'false') {
+                            new FoodParent.NavigateCommand({ hash: 'mtrees', viewMode: VIEW_MODE.MAP, id: 0 }).execute();
+                        }
+                    }, function () {
+                        EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
+                    });
                 }
                 else if (el.hasClass('donations')) {
-                    new FoodParent.NavigateCommand({ hash: 'mdonations', viewMode: VIEW_MODE.TABLE, id: 0 }).execute();
+                    FoodParent.Controller.checkAdmin(function (response) {
+                        if (response.result == true || response.result == 'true') {
+                            new FoodParent.NavigateCommand({ hash: 'mdonations', viewMode: VIEW_MODE.TABLE, id: 0 }).execute();
+                        }
+                        else if (response.result == false || response.result == 'false') {
+                            new FoodParent.NavigateCommand({ hash: 'mtrees', viewMode: VIEW_MODE.MAP, id: 0 }).execute();
+                        }
+                    }, function () {
+                        EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
+                    });
                 }
                 else if (el.hasClass('login')) {
                     if (FoodParent.View.getViewStatus() != VIEW_STATUS.LOGIN) {
@@ -414,6 +460,26 @@ var FoodParent;
                         new FoodParent.RemoveAlertViewCommand({ delay: FoodParent.Setting.getRemovePopupDuration() }).execute();
                     }
                     break;
+                case VIEW_STATUS.MANAGE_PEOPLE:
+                    if (el.hasClass('change-password')) {
+                        FoodParent.Controller.checkAdmin(function (data) {
+                            if (parseInt(data.auth) != 0 && parseInt(data.auth) > options.person.getAuth()) {
+                                new FoodParent.RenderMessageViewCommand({
+                                    el: FoodParent.Setting.getMessageWrapperElement(), message: "You <strong>don't</strong> have privilege to change <strong>higher level</strong> of authorization.", undoable: false
+                                }).execute();
+                            }
+                            else {
+                                new FoodParent.RenderChangePasswordViewCommand({ el: FoodParent.Setting.getPopWrapperElement(), person: options.person }).execute();
+                            }
+                        }, function () {
+                            FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+                        });
+                    }
+                    break;
+                case VIEW_STATUS.CHANGE_PASSWORD:
+                    if (el.hasClass('password-cancel') || el.hasClass('button-close')) {
+                        new FoodParent.RemoveAlertViewCommand({ delay: FoodParent.Setting.getRemovePopupDuration() }).execute();
+                    }
                     break;
             }
         };

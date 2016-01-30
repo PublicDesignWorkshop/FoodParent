@@ -43,7 +43,7 @@
                 "id" => $_GET['id'],
             );
         }
-        $sql = "SELECT * FROM `person` WHERE (`id` = :id)";
+        $sql = "SELECT `id`, `auth`, `name`, `address`, `contact`, `neighborhood`, `updated` FROM `person` WHERE (`id` = :id)";
         try {
             $pdo = getConnection();
             $stmt = $pdo->prepare($sql);
@@ -77,7 +77,7 @@
             $stmt = $pdo->prepare($sql);
             $stmt->execute($params);
             
-            $sql = "SELECT * FROM `person` WHERE (`id` = :id)";
+            $sql = "SELECT `id`, `auth`, `name`, `address`, `contact`, `neighborhood`, `updated` FROM `person` WHERE (`id` = :id)";
             $params = array(
                 "id" => $data->{'id'},
             );
@@ -104,17 +104,19 @@
             "name" => $data->{'name'},
             "address" => $data->{'address'},
             "contact" => $data->{'contact'},
+            "password" => "",
+            "salt" => "",
             "neighborhood" => $data->{'neighborhood'},
             "updated" => date("Y-m-d H:i:s"),
         );
-        $sql = "INSERT INTO `person` VALUES ( NULL, :auth, :name, :address, :contact, :neighborhood, :updated )";
+        $sql = "INSERT INTO `person` VALUES ( NULL, :auth, :name, :address, :contact, :password, :salt, :neighborhood, :updated )";
         
         try {
             $pdo = getConnection();
             $stmt = $pdo->prepare($sql);
             $stmt->execute($params);
             
-            $sql = "SELECT * FROM `person` WHERE `id` = :id";
+            $sql = "SELECT `id`, `auth`, `name`, `address`, `contact`, `neighborhood`, `updated` FROM `person` WHERE `id` = :id";
             $params = array(
                 "id" => $pdo->lastInsertId(),
             );

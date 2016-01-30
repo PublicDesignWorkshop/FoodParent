@@ -52,6 +52,7 @@
     <Content Include="core\css\nav.css" />
     <Content Include="core\css\pace.css" />
     <Content Include="core\css\mpeople.css" />
+    <Content Include="core\css\password.css" />
     <Content Include="core\css\pop.css" />
     <Content Include="core\css\leaflet.css" />
     <Content Include="core\css\print.css" />
@@ -205,6 +206,7 @@
     <Content Include="core\php\logincheck.php" />
     <Content Include="core\php\admincheck.php" />
     <Content Include="core\php\signup.php" />
+    <Content Include="core\php\password.php" />
     <None Include="web.Debug.config">
       <DependentUpon>web.config</DependentUpon>
     </None>
@@ -258,6 +260,7 @@
     <TypeScriptCompile Include="core\js\view\mtreesview.ts" />
     <TypeScriptCompile Include="core\js\view\mtreeview.ts" />
     <TypeScriptCompile Include="core\js\view\navview.ts" />
+    <TypeScriptCompile Include="core\js\view\passwordview.ts" />
     <TypeScriptCompile Include="core\js\view\postview.ts" />
     <TypeScriptCompile Include="core\js\view\template.ts" />
     <TypeScriptCompile Include="core\js\view\view.ts" />

@@ -23,7 +23,6 @@
             }
             response.auth = parseInt(response.auth);
             response.updated = moment(response.updated).format(Setting.getDateTimeFormat());
-
             response.trees = Model.getAdopts().getTreeIds(response.id);
 
             return super.parse(response, options);

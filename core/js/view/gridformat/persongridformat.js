@@ -337,19 +337,60 @@ var PersonDetailCell = Backgrid.Cell.extend({
         return this;
     }
 });
+var PersonPasswordCell = Backgrid.Cell.extend({
+    template: _.template('<div class="marker-control-item change-password"><i class="fa fa-chain fa-2x"></i></div>'),
+    events: {
+        "click": "_changePassword"
+    },
+    _changePassword: function (event) {
+        var person = this.model;
+        FoodParent.EventHandler.handleMouseClick($(event.currentTarget).find('.marker-control-item'), this, { person: person });
+        //FoodParent.Router.getInstance().navigate("tree/" + this.model.getId(), { trigger: true });
+    },
+    render: function () {
+        var self = this;
+        var person = this.model;
+        if (person.getAuth() == 1 || person.getAuth() == 2) {
+            $(self.el).html(this.template());
+        }
+        else {
+            $(self.el).html('<div class="blank-marker-control-item"></div>');
+        }
+        this.delegateEvents();
+        return this;
+    }
+});
 var PersonDeleteCell = Backgrid.Cell.extend({
     template: _.template('<div class="marker-control-item"><i class="fa fa-remove fa-2x"></i></div>'),
     events: {
         "click": "_deleteRow"
     },
     _deleteRow: function (e) {
+        var model = this.model;
         var person = this.model;
         if (person.getId() == undefined) {
             $('#wrapper-mpeople .new-person').addClass('hidden');
         }
         else {
-            FoodParent.EventHandler.handlePersonData(person, FoodParent.DATA_MODE.DELETE, {}, function () {
-                FoodParent.EventHandler.handleDataChange("<strong><i>" + person.getName() + "</i></strong> has deleted successfully.", false);
+            var bAvailable = true;
+            FoodParent.Controller.checkAdmin(function (data) {
+                if (data.result == "true") {
+                    if (parseInt(data.auth) == 2) {
+                        if (person.getAuth() == 1) {
+                            bAvailable = false;
+                        }
+                    }
+                }
+                if (bAvailable) {
+                    FoodParent.EventHandler.handlePersonData(person, FoodParent.DATA_MODE.DELETE, {}, function () {
+                        FoodParent.EventHandler.handleDataChange("<strong><i>" + person.getName() + "</i></strong> has deleted successfully.", false);
+                    }, function () {
+                        FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+                    });
+                }
+                else {
+                    new FoodParent.RenderMessageViewCommand({ el: FoodParent.Setting.getMessageWrapperElement(), message: "You <strong>don't</strong> have privilege to change <strong>higher level</strong> of authorization.", undoable: false }).execute();
+                }
             }, function () {
                 FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
             });
@@ -440,6 +481,7 @@ var AuthSelectCellEditor = Backgrid.AuthSelectCellEditor = Backgrid.CellEditor.e
     save: function (e) {
         var person = this.model;
         var column = this.column;
+        var model = this.model;
         //tree.set(column.get("name"), parseInt(this.formatter.toRaw(this.$el.val(), tree)));
         var selected = parseInt(this.$el.val());
         var command = new Backgrid.Command(e);
@@ -448,9 +490,27 @@ var AuthSelectCellEditor = Backgrid.AuthSelectCellEditor = Backgrid.CellEditor.e
             person.trigger("backgrid:edited", person, column, command);
         }
         else {
-            FoodParent.EventHandler.handlePersonData(person, FoodParent.DATA_MODE.UPDATE_AUTH, { auth: selected }, function () {
-                person.trigger("backgrid:edited", person, column, new Backgrid.Command(e));
-                FoodParent.EventHandler.handleDataChange("Authorization of <strong><i>" + person.getName() + "</i></strong> has changed successfully.", true);
+            var bAvailable = true;
+            FoodParent.Controller.checkAdmin(function (data) {
+                if (data.result == "true") {
+                    if (parseInt(data.auth) == 2) {
+                        if (selected == 1 || person.getAuth() == 1) {
+                            bAvailable = false;
+                        }
+                    }
+                }
+                if (bAvailable) {
+                    FoodParent.EventHandler.handlePersonData(person, FoodParent.DATA_MODE.UPDATE_AUTH, { auth: selected }, function () {
+                        person.trigger("backgrid:edited", person, column, new Backgrid.Command(e));
+                        FoodParent.EventHandler.handleDataChange("Authorization of <strong><i>" + person.getName() + "</i></strong> has changed successfully.", true);
+                    }, function () {
+                        FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+                    });
+                }
+                else {
+                    model.trigger("backgrid:edited", model, column, new Backgrid.Command(e));
+                    new FoodParent.RenderMessageViewCommand({ el: FoodParent.Setting.getMessageWrapperElement(), message: "You <strong>don't</strong> have privilege to change <strong>higher level</strong> of authorization.", undoable: false }).execute();
+                }
             }, function () {
                 FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
             });
@@ -534,6 +594,11 @@ var PersonColumn = [
         label: "Adoption",
         editable: false,
         cell: PersonAdoptionCell,
+    }, {
+        label: "",
+        sortable: false,
+        editable: false,
+        cell: PersonPasswordCell,
     }, {
         label: "",
         sortable: false,

@@ -73,7 +73,7 @@ var FoodParent;
             this._addNewPerson = function () {
                 var self = _this;
                 if (self.$(".new-person").hasClass('hidden')) {
-                    var person = new FoodParent.Person({ auth: 0, name: "", address: "", contact: "", neightborhood: "" });
+                    var person = new FoodParent.Person({ auth: 0, name: "", address: "", contact: "", neighborhood: "" });
                     var persons = new FoodParent.Persons();
                     persons.add(person);
                     var optionValues = new Array();

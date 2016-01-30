@@ -111,13 +111,15 @@
         color: #5e4e51;
         cursor: pointer;
         background-color: #83a656;
-        transform: skew(-10deg, 0);
+        /*transform: skew(-10deg, 0);*/
         height: 60px;
+        border-top-left-radius: 8px;
+        border-bottom-left-radius: 8px;
     }
 
     #list-nav .item-manage-login div {
         cursor: pointer;
-        transform: skew(10deg, 0);
+        /*transform: skew(10deg, 0);*/
     }
 
     #list-nav .item-manage-login:hover {
@@ -132,11 +134,13 @@
         color: #5e4e51;
         cursor: pointer;
         background-color: #83a656;
-        transform: skew(-10deg, 0);
+        /*transform: skew(-10deg, 0);*/
         height: 60px;
         letter-spacing: 0;
-        flex-grow: 0;
+        flex-grow: 0.5;
         padding: 10px 20px;
+        border-top-left-radius: 8px;
+        border-bottom-left-radius: 8px;
     }
 
     #list-nav .item-manage-loggedin:hover {

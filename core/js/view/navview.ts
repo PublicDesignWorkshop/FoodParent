@@ -60,7 +60,7 @@
                 self.$('#background-nav-left').css({ transform: 'skew(-10deg, 0)' });
             } else if (args.viewStatus == VIEW_STATUS.MANAGE_TREES || args.viewStatus == VIEW_STATUS.MANAGE_PEOPLE || args.viewStatus == VIEW_STATUS.DETAIL_TREE || args.viewStatus == VIEW_STATUS.MANAGE_DONATIONS || args.viewStatus == VIEW_STATUS.DETAIL_DONATION) {
                 self.renderNavManageItems();
-                self.$('#background-nav-left').css({ left: '-30%' });
+                self.$('#background-nav-left').css({ left: '0%' });
                 self.$('#background-nav-left').css({ transform: 'skew(-0deg, 0)' });
             }
 
@@ -82,7 +82,7 @@
                 self.$('#background-nav-left').css({ transform: 'skew(-10deg, 0)' });
             } else if (args.viewStatus == VIEW_STATUS.MANAGE_TREES || args.viewStatus == VIEW_STATUS.MANAGE_PEOPLE || args.viewStatus == VIEW_STATUS.DETAIL_TREE || args.viewStatus == VIEW_STATUS.MANAGE_DONATIONS || args.viewStatus == VIEW_STATUS.DETAIL_DONATION) {
                 self.renderNavManageItems();
-                self.$('#background-nav-left').animate({ left: '-30%' }, Setting.getNavAnimDuration());
+                self.$('#background-nav-left').animate({ left: '0%' }, Setting.getNavAnimDuration());
                 self.$('#background-nav-left').css({ transform: 'skew(-0deg, 0)' });
             }
 

@@ -1395,6 +1395,36 @@ var FoodParent;
             template += '</div>'; // end of #wrapper-note
             return template;
         };
+        Template.getChangePasswordViewTemplate = function () {
+            var template = '';
+            template += '<div id="wrapper-change-password">';
+            template += '<div class="outer-frame">';
+            template += '<div class="inner-frame">';
+            template += '<div class="wrapper-change-password-content">';
+            template += '<div class="info-group">';
+            template += '<div class="name">Please enter a new password for <i><strong><%= personname %></strong></i>.</div>';
+            template += '</div>';
+            template += '<div class="info-group">';
+            template += '<input type="password" class="form-control input-password" placeholder="password"/>';
+            template += '<input type="password" class="form-control input-password2" placeholder="confirm password"/>';
+            template += '<div class="button-description2">* The password should be longer than 6 characters.</div>';
+            template += '<div class="button-description2">* Changing your own password will sign you out automatically.</div>';
+            template += '</div>';
+            template += '<div class="info-button-group">';
+            template += '<div class="button-outer-frame2 button3"><div class="button-inner-frame2 password-submit">Change</div></div>';
+            template += '</div>';
+            template += '<div class="info-button-group">';
+            template += '<div class="button-outer-frame2 button3"><div class="button-inner-frame2 password-cancel">Cancel</div></div>';
+            template += '</div>';
+            template += '</div>'; // end of .wrapper-login-content
+            template += '</div>'; // end of .inner-frame
+            template += '<div class="top-right-button button-close">';
+            template += '<i class="fa fa-remove fa-2x"></i>';
+            template += '</div>'; // end of top-right-button button-close
+            template += '</div>'; // end of .outer-frame
+            template += '</div>'; // end of #wrapper-note
+            return template;
+        };
         Template._instance = new Template();
         return Template;
     })();

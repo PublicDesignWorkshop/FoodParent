@@ -411,6 +411,39 @@ var FoodParent;
             });
             Controller.pushXHR(xhr1);
         };
+        Controller.changePassword = function (id, password, success, error) {
+            var xhr1 = $.ajax({
+                url: FoodParent.Setting.getPhpDir() + "password.php",
+                type: "POST",
+                data: {
+                    'id': id,
+                    'password': password,
+                },
+                cache: false,
+                dataType: "json",
+                success: function (data, textStatus, jqXHR) {
+                    Controller.removeXHR(xhr1);
+                    console.log(data);
+                    if (typeof data.error === "undefined") {
+                        if (success) {
+                            success(data);
+                        }
+                    }
+                    else {
+                        if (error) {
+                            error(data);
+                        }
+                    }
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    Controller.removeXHR(xhr1);
+                    if (error) {
+                        error(jqXHR);
+                    }
+                }
+            });
+            Controller.pushXHR(xhr1);
+        };
         Controller._instance = new Controller();
         Controller.TAG = "Controller - ";
         return Controller;

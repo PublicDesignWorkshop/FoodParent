@@ -105,7 +105,7 @@ module FoodParent {
         private _addNewPerson = () => {
             var self: ManagePeopleTableView = this;
             if (self.$(".new-person").hasClass('hidden')) {
-                var person: Person = new Person({ auth: 0, name: "", address: "", contact: "", neightborhood: "" });
+                var person: Person = new Person({ auth: 0, name: "", address: "", contact: "", neighborhood: "" });
                 var persons: Persons = new Persons();
                 persons.add(person);
                 var optionValues = new Array<{ name: string, values: any }>();

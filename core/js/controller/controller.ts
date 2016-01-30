@@ -439,6 +439,40 @@
             });
             Controller.pushXHR(xhr1);
         }
+
+        public static changePassword(id: number, password: string, success?: any, error?: any) {
+            var xhr1: JQueryXHR = $.ajax({
+                url: Setting.getPhpDir() + "password.php",
+                type: "POST",
+                data: {
+                    'id': id,
+                    'password': password,
+                },
+                cache: false,
+                dataType: "json",
+                success: function (data, textStatus, jqXHR) {
+                    Controller.removeXHR(xhr1);
+                    console.log(data);
+                    if (typeof data.error === "undefined") {
+                        if (success) {
+                            success(data);
+                            //success(data.files[0].replace(Setting.getRelativeFileUploadPath(), ""));
+                        }
+                    } else {
+                        if (error) {
+                            error(data);
+                        }
+                    }
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    Controller.removeXHR(xhr1);
+                    if (error) {
+                        error(jqXHR);
+                    }
+                }
+            });
+            Controller.pushXHR(xhr1);
+        }
     }
 
     export class Router extends Backbone.Router {

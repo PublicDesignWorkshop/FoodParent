@@ -272,6 +272,7 @@ var FoodParent;
             if (FoodParent.View.getPopupView()) {
                 setTimeout(function () {
                     FoodParent.View.getPopupView().setInvisible();
+                    FoodParent.Setting.getPopWrapperElement().html("");
                 }, self._delay);
             }
             FoodParent.View.popViewStatus();
@@ -518,4 +519,21 @@ var FoodParent;
         return RenderSignUpViewCommand;
     })();
     FoodParent.RenderSignUpViewCommand = RenderSignUpViewCommand;
+    var RenderChangePasswordViewCommand = (function () {
+        function RenderChangePasswordViewCommand(args) {
+            var self = this;
+            self._el = args.el;
+            self._person = args.person;
+        }
+        RenderChangePasswordViewCommand.prototype.execute = function () {
+            var self = this;
+            var view = FoodParent.ChangePasswordViewFactory.create(self._el, self._person).render();
+            FoodParent.View.setPopupView(view);
+            FoodParent.View.setViewStatus(FoodParent.VIEW_STATUS.CHANGE_PASSWORD);
+        };
+        RenderChangePasswordViewCommand.prototype.undo = function () {
+        };
+        return RenderChangePasswordViewCommand;
+    })();
+    FoodParent.RenderChangePasswordViewCommand = RenderChangePasswordViewCommand;
 })(FoodParent || (FoodParent = {}));

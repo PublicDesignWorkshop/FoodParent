@@ -11,7 +11,8 @@
         ADD_DONATION_TREE, REMOVE_DONATION_TREE, UPDATE_DONATION_AMOUNT,
     }
     export enum VIEW_STATUS {
-        NONE, HOME, MANAGE_TREES, PARENT_TREES, GEO_ERROR, NETWORK_ERROR, CONFIRM, MANAGE_PEOPLE, MANAGE_ADOPTION, DETAIL_TREE, IMAGENOTE_TREE, POST_NOTE, MANAGE_DONATIONS, ADD_DONATION, DETAIL_DONATION, EDIT_DONATION, LOGIN, SERVER_RESPONSE_ERROR, SIGNUP, ADOPT_TREE
+        NONE, HOME, MANAGE_TREES, PARENT_TREES, GEO_ERROR, NETWORK_ERROR, CONFIRM, MANAGE_PEOPLE, MANAGE_ADOPTION, DETAIL_TREE, IMAGENOTE_TREE, POST_NOTE, MANAGE_DONATIONS, ADD_DONATION, DETAIL_DONATION, EDIT_DONATION, LOGIN, SERVER_RESPONSE_ERROR, SIGNUP, ADOPT_TREE,
+        CHANGE_PASSWORD
     }
     export enum VIEW_MODE {
         NONE, MAP, GRAPHIC, TABLE
@@ -58,17 +59,41 @@
                 new MovePaceBarToUnderNav().execute();
                 new RenderManageTreesViewCommand({ el: Setting.getMainWrapperElement(), viewMode: option.viewMode, id: option.id }).execute();
             } else if (viewStatus == VIEW_STATUS.MANAGE_PEOPLE) {
-                new MovePaceBarToUnderNav().execute();
-                new RenderManagePeopleViewCommand({ el: Setting.getMainWrapperElement(), viewMode: option.viewMode, id: option.id }).execute();
+                Controller.checkAdmin(function (response) {
+                    if (response.result == true || response.result == 'true') {   // Admin
+                        new MovePaceBarToUnderNav().execute();
+                        new RenderManagePeopleViewCommand({ el: Setting.getMainWrapperElement(), viewMode: option.viewMode, id: option.id }).execute();
+                    } else if (response.result == false || response.result == 'false') {   // Not admin
+                        new NavigateCommand({ hash: 'mtrees', viewMode: VIEW_MODE.MAP, id: 0 }).execute();
+                    }
+                }, function () {
+                    EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
+                });
             } else if (viewStatus == VIEW_STATUS.DETAIL_TREE) {
                 new MovePaceBarToUnderNav().execute();
                 new RenderDetailTreeViewCommand({ el: Setting.getMainWrapperElement(), viewMode: option.viewMode, id: option.id }).execute();
             } else if (viewStatus == VIEW_STATUS.MANAGE_DONATIONS) {
-                new MovePaceBarToUnderNav().execute();
-                new RenderManageDonationsViewCommand({ el: Setting.getMainWrapperElement(), viewMode: option.viewMode, id: option.id }).execute();
+                Controller.checkAdmin(function (response) {
+                    if (response.result == true || response.result == 'true') {   // Admin
+                        new MovePaceBarToUnderNav().execute();
+                        new RenderManageDonationsViewCommand({ el: Setting.getMainWrapperElement(), viewMode: option.viewMode, id: option.id }).execute();
+                    } else if (response.result == false || response.result == 'false') {   // Not admin
+                        new NavigateCommand({ hash: 'mtrees', viewMode: VIEW_MODE.MAP, id: 0 }).execute();
+                    }
+                }, function () {
+                    EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
+                });
             } else if (viewStatus == VIEW_STATUS.DETAIL_DONATION) {
-                new MovePaceBarToUnderNav().execute();
-                new RenderDetailDonationViewCommand({ el: Setting.getMainWrapperElement(), viewMode: option.viewMode, id: option.id }).execute();
+                Controller.checkAdmin(function (response) {
+                    if (response.result == true || response.result == 'true') {   // Admin
+                        new MovePaceBarToUnderNav().execute();
+                        new RenderDetailDonationViewCommand({ el: Setting.getMainWrapperElement(), viewMode: option.viewMode, id: option.id }).execute();
+                    } else if (response.result == false || response.result == 'false') {   // Not admin
+                        new NavigateCommand({ hash: 'mtrees', viewMode: VIEW_MODE.MAP, id: 0 }).execute();
+                    }
+                }, function () {
+                    EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
+                });
             }
 
             View.getNavView().setActiveNavItem(viewStatus);
@@ -91,9 +116,27 @@
                 } else if (el.hasClass('trees')) {
                     new NavigateCommand({ hash: 'mtrees', viewMode: VIEW_MODE.MAP, id: 0 }).execute();
                 } else if (el.hasClass('people')) {
-                    new NavigateCommand({ hash: 'mpeople', viewMode: VIEW_MODE.TABLE, id: 0 }).execute();
+                    Controller.checkAdmin(function (response) {
+                        if (response.result == true || response.result == 'true') {   // Admin
+                            new NavigateCommand({ hash: 'mpeople', viewMode: VIEW_MODE.TABLE, id: 0 }).execute();
+                        } else if (response.result == false || response.result == 'false') {   // Not admin
+                            new NavigateCommand({ hash: 'mtrees', viewMode: VIEW_MODE.MAP, id: 0 }).execute();
+                        }
+                    }, function () {
+                        EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
+                    });
+                    
                 } else if (el.hasClass('donations')) {
-                    new NavigateCommand({ hash: 'mdonations', viewMode: VIEW_MODE.TABLE, id: 0 }).execute();
+                    Controller.checkAdmin(function (response) {
+                        if (response.result == true || response.result == 'true') {   // Admin
+                            new NavigateCommand({ hash: 'mdonations', viewMode: VIEW_MODE.TABLE, id: 0 }).execute();
+                        } else if (response.result == false || response.result == 'false') {   // Not admin
+                            new NavigateCommand({ hash: 'mtrees', viewMode: VIEW_MODE.MAP, id: 0 }).execute();
+                        }
+                    }, function () {
+                        EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
+                    });
+                    
                 } else if (el.hasClass('login')) {
                     if (View.getViewStatus() != VIEW_STATUS.LOGIN) {
                         Controller.checkLogin(function (data) {
@@ -342,6 +385,25 @@
                         new RemoveAlertViewCommand({ delay: Setting.getRemovePopupDuration() }).execute();
                     }
                     break;
+                case VIEW_STATUS.MANAGE_PEOPLE:
+                    if (el.hasClass('change-password')) {
+                        Controller.checkAdmin(function (data) {
+                            if (parseInt(data.auth) != 0 && parseInt(data.auth) > options.person.getAuth()) {
+                                new RenderMessageViewCommand({
+                                    el: Setting.getMessageWrapperElement(), message: "You <strong>don't</strong> have privilege to change <strong>higher level</strong> of authorization.", undoable: false
+                                }).execute();
+                            } else {
+                                new RenderChangePasswordViewCommand({ el: Setting.getPopWrapperElement(), person: options.person }).execute();
+                            }
+                        }, function () {
+                            FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+                        });
+                    }
+                    break;
+                case VIEW_STATUS.CHANGE_PASSWORD:
+                    if (el.hasClass('password-cancel') || el.hasClass('button-close')) {
+                        new RemoveAlertViewCommand({ delay: Setting.getRemovePopupDuration() }).execute();
+                    }
                     break;
 
             }
