@@ -11,7 +11,7 @@
         ADD_DONATION_TREE, REMOVE_DONATION_TREE, UPDATE_DONATION_AMOUNT,
     }
     export enum VIEW_STATUS {
-        NONE, HOME, MANAGE_TREES, PARENT_TREES, GEO_ERROR, NETWORK_ERROR, CONFIRM, MANAGE_PEOPLE, MANAGE_ADOPTION, DETAIL_TREE, IMAGENOTE_TREE, POST_NOTE, MANAGE_DONATIONS, ADD_DONATION, DETAIL_DONATION, EDIT_DONATION
+        NONE, HOME, MANAGE_TREES, PARENT_TREES, GEO_ERROR, NETWORK_ERROR, CONFIRM, MANAGE_PEOPLE, MANAGE_ADOPTION, DETAIL_TREE, IMAGENOTE_TREE, POST_NOTE, MANAGE_DONATIONS, ADD_DONATION, DETAIL_DONATION, EDIT_DONATION, LOGIN
     }
     export enum VIEW_MODE {
         NONE, MAP, GRAPHIC, TABLE
@@ -94,6 +94,19 @@
                     new NavigateCommand({ hash: 'mpeople', viewMode: VIEW_MODE.TABLE, id: 0 }).execute();
                 } else if (el.hasClass('donations')) {
                     new NavigateCommand({ hash: 'mdonations', viewMode: VIEW_MODE.TABLE, id: 0 }).execute();
+                } else if (el.hasClass('login')) {
+                    if (View.getViewStatus() != VIEW_STATUS.LOGIN) {
+                        Controller.checkLogin(function (data) {
+                            if (data.result == true || data.result == 'true') {   // Already logged in
+                                new RenderLoggedInViewCommand({ el: Setting.getPopWrapperElement() }).execute();
+                            } else {    // Not logged in
+                                new RenderLogInViewCommand({ el: Setting.getPopWrapperElement() }).execute();
+                            }
+                        }, function () {
+
+                        });
+                    }
+                    //new NavigateCommand({ hash: 'mdonations', viewMode: VIEW_MODE.TABLE, id: 0 }).execute();
                 }
             }
 
@@ -134,7 +147,7 @@
                         }
                     } else if (el.hasClass('marker-control-adoption')) {
                         new RenderManageAdoptionViewCommand({ el: Setting.getPopWrapperElement(), tree: options.tree }).execute();
-                    } else if (el.hasClass('marker-control-info')) {
+                    } else if (el.hasClass('marker-control-info') || el.hasClass('button-tree-detail')) {
                         new NavigateCommand({ hash: 'mtree', viewMode: VIEW_MODE.GRAPHIC, id: options.tree }).execute();
                     } else if (el.hasClass('marker-control-delete')) {
                         var tree: Tree = Model.getTrees().findWhere({ id: options.marker.options.id });
@@ -165,6 +178,8 @@
                         new RenderManageAdoptionViewCommand({ el: Setting.getPopWrapperElement(), tree: options.tree.getId() }).execute();
                     } else if (el.hasClass('button-new-note')) {
                         new RenderPostNoteViewCommand({ el: Setting.getPopWrapperElement(), tree: options.tree }).execute();
+                    } else if (el.hasClass('button-back-map')) {
+                        Backbone.history.history.back();
                     }
                     break;
                 case VIEW_STATUS.IMAGENOTE_TREE:
@@ -209,7 +224,6 @@
                             new RenderEditDonationViewCommand({ el: Setting.getPopWrapperElement(), donation: options.donation }).execute();
                         }
                     } else if (el.hasClass('button-new-donation')) {
-                        console.log(options.place);
                         if (options.place) {
                             new RenderAddDonationViewCommand({ el: Setting.getPopWrapperElement(), place: options.place }).execute();
                         }
@@ -224,6 +238,51 @@
                         }
                     } else if (el.hasClass('delete-donation')) {
 
+                    }
+                    break;
+                case VIEW_STATUS.LOGIN:
+                    if (el.hasClass('button-close') || el.hasClass('login-cancel') || el.hasClass('logged-cancel')) {
+                        new RemoveAlertViewCommand({ delay: Setting.getRemovePopupDuration() }).execute();
+                    } else if (el.hasClass('login-submit')) {
+                        if (options.contact != undefined && options.password != undefined) {
+                            Controller.processLogin(options.contact, options.password, function (data) {
+                                if (data.result == true || data.result == 'true') {
+                                    //new RemoveAlertViewCommand({ delay: 0 }).execute();
+                                    //new RenderNavViewCommand({ el: Setting.getNavWrapperElement(), viewStatus: View.getViewStatus() }).execute();
+                                    Backbone.history.loadUrl(Backbone.history.fragment);
+                                }
+                                /*
+                                switch (View.getViewStatus()) {
+                                    case VIEW_STATUS.MANAGE_TREES:
+                                        if (View.getManageTreesView()) {
+                                            View.getManageTreesView().renderFilterList();
+                                        }
+                                        break;
+                                }
+                                */
+                            }, function () {
+                                EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
+                            });
+                        }
+                    } else if (el.hasClass('logged-logout')) {
+                        Controller.processLogout(function (data) {
+                            if (data.result == true || data.result == 'true') {
+                                //new RemoveAlertViewCommand({ delay: 0 }).execute();
+                                //new RenderNavViewCommand({ el: Setting.getNavWrapperElement(), viewStatus: View.getViewStatus() }).execute();
+                                Backbone.history.loadUrl(Backbone.history.fragment);
+                            }
+                            /*
+                            switch (View.getViewStatus()) {
+                                case VIEW_STATUS.MANAGE_TREES:
+                                    if (View.getManageTreesView()) {
+                                        View.getManageTreesView().renderFilterList();
+                                    }
+                                    break;
+                            }
+                            */
+                        }, function () {
+                            EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
+                        });
                     }
                     break;
 

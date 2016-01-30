@@ -41,14 +41,23 @@
         text-align: left;
         width: 100%;
         padding: 4px 8px;
-    }
-
-    .filter-checkbox {
         color: rgba(255, 255, 255, 0.35);
     }
+
     .filter-checkbox.active {
         color: rgba(255, 255, 255, 1);
         background-color: rgba(0, 0, 0, 0.05);
+    }
+
+    .filter-checkbox2 {
+        text-align: left;
+        width: 100%;
+        padding: 4px 8px;
+        color: rgba(94, 78, 81, 1);
+    }
+
+    .filter-checkbox2.active {
+        color: rgba(94, 78, 81, 1);
     }
 
     .list-hiearchy1 {

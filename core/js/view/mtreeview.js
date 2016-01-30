@@ -214,6 +214,7 @@ var FoodParent;
                     self.renderFlagInfo(flag);
                     self.renderOwnershipInfo(ownership);
                     self.renderRecentActivities(tree);
+                    self.renderRecentComments(tree);
                     self.$('.input-description').on('click', function (event) {
                         $(this).replaceWith("<input type='text' class='input-description form-control' value='" + htmlEncode($(this).text()).trim() + "' />");
                         self.$('.input-description').focus();
@@ -314,6 +315,7 @@ var FoodParent;
                 "click .ownership-radio": "_applyOwnership",
                 "dblclick .content-chart": "_mouseClick",
                 "click .button-delete-tree": "_deleteTree",
+                "click .button-back-map": "_mouseClick",
                 "click .button-manage-adoption": "_mouseClick",
                 "click .button-new-note": "_mouseClick",
                 "click .date-preset": "_datePreset",
@@ -339,6 +341,18 @@ var FoodParent;
             self.setElement(self.$('#wrapper-mtree'));
             self.resize();
             //self.renderTrees();
+            FoodParent.Controller.checkAdmin(function (data) {
+                if (data.result == true || data.result == 'true') {
+                    var template = _.template(FoodParent.Template.getDetailMenuTemplate());
+                    self.$('#wrapper-mapmenu').html(template({}));
+                }
+                else if (data.result == false || data.result == 'false') {
+                    var template = _.template(FoodParent.Template.getDetailMenuTemplate2());
+                    self.$('#wrapper-mapmenu').html(template({}));
+                }
+            }, function () {
+                FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+            });
             FoodParent.Controller.fetchAllTrees(function () {
                 self._tree = FoodParent.Model.getTrees().findWhere({ id: self._id });
                 // add grid instance for existing data
@@ -435,8 +449,8 @@ var FoodParent;
             var self = this;
             var trees = new Array();
             trees.push(tree);
-            FoodParent.Controller.fetchNotesOfTrees(trees, FoodParent.Setting.getLargeNumRecentActivitiesShown(), 0, function () {
-                var notes = new FoodParent.Notes(FoodParent.Model.getNotes().where({ tree: tree.getId() }));
+            FoodParent.Controller.fetchNotesOfTrees(trees, FoodParent.NoteType.INFO, FoodParent.Setting.getLargeNumRecentActivitiesShown(), 0, function () {
+                var notes = new FoodParent.Notes(FoodParent.Model.getNotes().where({ tree: tree.getId(), type: FoodParent.NoteType.INFO }));
                 notes.sortByDescendingDate();
                 var template = _.template(FoodParent.Template.getRecentActivitiesTemplate());
                 var data = {
@@ -447,6 +461,26 @@ var FoodParent;
                     ownerships: FoodParent.Model.getOwnerships(),
                 };
                 self.$('#list-activities').html(template(data));
+            }, function () {
+                FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+            });
+        };
+        DetailTreeGraphicView.prototype.renderRecentComments = function (tree) {
+            var self = this;
+            var trees = new Array();
+            trees.push(tree);
+            FoodParent.Controller.fetchNotesOfTrees(trees, FoodParent.NoteType.IMAGE, FoodParent.Setting.getLargeNumRecentActivitiesShown(), 0, function () {
+                var notes = new FoodParent.Notes(FoodParent.Model.getNotes().where({ tree: tree.getId(), type: FoodParent.NoteType.IMAGE }));
+                notes.sortByDescendingDate();
+                var template = _.template(FoodParent.Template.getRecentCommentsTemplate());
+                var data = {
+                    notes: notes,
+                    size: FoodParent.Setting.getLargeNumRecentActivitiesShown(),
+                    coordinate: '@ ' + tree.getLat().toFixed(4) + ", " + tree.getLng().toFixed(4),
+                    flags: FoodParent.Model.getFlags(),
+                    ownerships: FoodParent.Model.getOwnerships(),
+                };
+                self.$('#list-comments').html(template(data));
             }, function () {
                 FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
             });

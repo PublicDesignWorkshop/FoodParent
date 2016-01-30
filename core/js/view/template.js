@@ -92,6 +92,25 @@ var FoodParent;
             template += '</div>';
             return template;
         };
+        Template.getManageTreesMapViewTemplate2 = function () {
+            var template = '';
+            template += '<div id="wrapper-mtrees">';
+            template += '<div id="content-map">';
+            template += '</div>';
+            template += '<div id="wrapper-mapmenu">';
+            template += '<div class="button-outer-frame2 button3"><div class="button-inner-frame2 collapsible-button" data-target="#filter-list">Filter List</div></div>';
+            template += '<div id="filter-list" class="collapsible-list">';
+            template += '</div>';
+            template += '<div class="button-outer-frame2 button3"><div class="button-inner-frame2 collapsible-button" data-target="#forage-list">Foragable List</div></div>';
+            template += '<div id="forage-list" class="collapsible-list hidden">';
+            template += '</div>';
+            template += '</div>';
+            template += '<div id="wrapper-treeinfo" class="hidden">';
+            template += '</div>';
+            template += '</div>';
+            template += '</div>';
+            return template;
+        };
         Template.getNavViewHomeTemplate = function () {
             var template = '';
             template += '<div id="background-nav-right">';
@@ -116,10 +135,27 @@ var FoodParent;
             var template = '';
             template += '<div class="item-nav item-manage-title">FoodParent</div>';
             template += '<div class="item-nav item-manage trees">TREES</div>';
-            template += '<div class="item-nav item-manage people">PEOPLE</div>';
-            template += '<div class="item-nav item-manage adops">ADOPTS</div>';
+            template += '<div class="item-nav item-manage"></div>';
+            template += '<div class="item-nav item-manage signup"><div>BECOME A PARENT</div></div>';
+            template += '<div class="item-nav item-manage-login login"><div>PARENT IN</div></div>';
+            return template;
+        };
+        Template.getNavViewManageItemsTemplate2 = function () {
+            var template = '';
+            template += '<div class="item-nav item-manage-title">FoodParent</div>';
+            template += '<div class="item-nav item-manage trees">TREES</div>';
+            template += '<div class="item-nav item-manage people">PARENTS</div>';
             template += '<div class="item-nav item-manage donations">DONATIONS</div>';
-            template += '<div class="item-nav item-manage-parent parent"><div>PARENT</div></div>';
+            template += '<div class="item-nav item-manage-loggedin login"><div class="loggedinas">you are logged in as: </div><div><%= contact %></div></div>';
+            return template;
+        };
+        Template.getNavViewManageItemsTemplate3 = function () {
+            var template = '';
+            template += '<div class="item-nav item-manage-title">FoodParent</div>';
+            template += '<div class="item-nav item-manage trees">TREES</div>';
+            template += '<div class="item-nav item-manage people">PARENT</div>';
+            template += '<div class="item-nav item-manage"></div>';
+            template += '<div class="item-nav item-manage-loggedin login"><div class="loggedinas">you are logged in as: </div><div><%= contact %></div></div>';
             return template;
         };
         Template.getAlertViewTemplate = function () {
@@ -173,7 +209,7 @@ var FoodParent;
             template += '<i class="fa fa-user-plus fa-2x"></i>';
             template += '</div>';
             template += '<div class="marker-control-item marker-control-info">';
-            template += '<i class="fa fa-arrow-circle-right fa-2x"></i>';
+            template += '<i class="fa fa-heartbeat fa-2x"></i>';
             template += '</div>';
             template += '<div class="marker-control-item marker-control-delete">';
             template += '<i class="fa fa-remove fa-2x"></i>';
@@ -186,6 +222,15 @@ var FoodParent;
             template += '<div class="marker-control-wrapper">';
             template += '<div class="marker-control-item marker-control-plus">';
             template += '<i class="fa fa-plus fa-2x"></i>';
+            template += '</div>';
+            template += '</div>';
+            return template;
+        };
+        Template.getManageTreesPopupTemplate3 = function () {
+            var template = '';
+            template += '<div class="marker-control-wrapper">';
+            template += '<div class="marker-control-item marker-control-info">';
+            template += '<i class="fa fa-heartbeat fa-2x"></i>';
             template += '</div>';
             template += '</div>';
             return template;
@@ -264,17 +309,22 @@ var FoodParent;
             template += '</div>';
             template += '</div>';
             template += '<div class="hr"><hr /></div>';
-            template += '<div class="info-header"><i class="fa fa-leaf fa-1x"></i> Recent Activities</div>';
+            template += '<div class="info-header"><i class="fa fa-leaf fa-1x"></i> Recent Comments</div>';
             template += '<div id="list-activities" class="info-group">';
             template += '<div>&nbsp;</div>';
             template += '</div>';
+            template += '<div class="hr"><hr /></div>';
+            template += '<div class="info-button">';
+            template += '<div class="button-outer-frame2 button5"><div class="button-inner-frame2 button-tree-detail"><i class="fa fa-heartbeat"></i> See Tree Detail</div></div>';
+            template += '<div class="button-outer-frame2 button5"><div class="button-inner-frame2 button-manage-adoption"><i class="fa  fa-user-plus"></i> Adopt This Tree</div></div>';
+            template += '<div class="button-outer-frame2 button5"><div class="button-inner-frame2 button-new-note"><i class="fa fa-sticky-note-o"></i> Post New Note</div></div>';
             return template;
         };
         Template.getTreeInfoTemplate2 = function () {
             var template = '';
             template += '<div class="tree-info-name"><div class="info-group-flex"><div class="input-food"><%= foodname %></div>&nbsp;<%= treename %></div>';
-            template += '<div class="tree-info-coordinate">@&nbsp;<div class="input-lat"><%= lat %></div>,&nbsp;<div class="input-lng"><%= lng %></div></div>';
             template += '</div>';
+            template += '<div class="tree-info-coordinate">@&nbsp;&nbsp;&nbsp;&nbsp;<div class="input-lat"><%= lat %></div>,&nbsp;<div class="input-lng"><%= lng %></div></div>';
             template += '<div class="info-group">';
             template += '<div class="input-address">&nbsp;</div>';
             template += '</div>';
@@ -338,9 +388,34 @@ var FoodParent;
             template += '<% }); %>';
             template += '</div>';
             template += '<div class="hr"><hr /></div>';
-            template += '<div class="info-header"><i class="fa fa-leaf fa-1x"></i> Recent Activities</div>';
+            template += '<div class="info-header"><i class="fa fa-leaf fa-1x"></i> Recent Comments</div>';
             template += '<div id="list-activities" class="info-group">';
             template += '<div>&nbsp;</div>';
+            template += '</div>';
+            return template;
+        };
+        Template.getTreeInfoTemplate4 = function () {
+            var template = '';
+            template += '<div class="tree-info-name"><div class="input-food"><%= foodname %></div>&nbsp;<%= treename %></div>';
+            //template += '<div class="tree-info-coordinate"><div>@&nbsp;</div><div class="input-lat"><%= lat %></div>,&nbsp;<div class="input-lng"><%= lng %></div></div>';
+            template += '<div class="info-group">';
+            template += '<div class="input-address">&nbsp;</div>';
+            template += '</div>';
+            template += '<div class="hr"><hr /></div>';
+            template += '<div class="info-header"><i class="fa fa-sticky-note fa-1x"></i> Description</div>';
+            template += '<div class="info-group">';
+            template += '<div class="input-description"><%= description %></div>';
+            template += '</div>';
+            template += '<div class="hr"><hr /></div>';
+            template += '<div class="info-header"><i class="fa fa-leaf fa-1x"></i> Recent Comments</div>';
+            template += '<div id="list-activities" class="info-group">';
+            template += '<div>&nbsp;</div>';
+            template += '</div>';
+            template += '<div class="hr"><hr /></div>';
+            template += '<div class="info-button">';
+            template += '<div class="button-outer-frame2 button5"><div class="button-inner-frame2 button-tree-detail"><i class="fa fa-heartbeat"></i> See Tree Detail</div></div>';
+            template += '<div class="button-outer-frame2 button5"><div class="button-inner-frame2 button-manage-adoption"><i class="fa  fa-user-plus"></i> Adopt This Tree</div></div>';
+            template += '<div class="button-outer-frame2 button5"><div class="button-inner-frame2 button-new-note"><i class="fa fa-sticky-note-o"></i> Post New Note</div></div>';
             template += '</div>';
             return template;
         };
@@ -353,7 +428,74 @@ var FoodParent;
             template += '<% }); %>';
             return template;
         };
+        Template.getRecentCommentsTemplate = function () {
+            var template = '';
+            template += '<% _.each(notes.models, function (note, index) { %>';
+            template += '<% if (index < size) { %>';
+            template += '<% var person = FoodParent.Model.getPersons().findWhere({id: note.getPersonId() }); %>';
+            template += '<% if (person != undefined) { %>';
+            template += '<% if (person.getName() != "") { %>';
+            template += '<div class="item-activity"><i class="fa fa-caret-right fa-1x"></i> <div><span class="treeinfocomment">"<%= note.getComment() %>"</span> by <i><%= person.getName() %></i> (<%= note.getFormattedDate() %>)</div></div>';
+            template += '<% } else { %>';
+            template += '<div class="item-activity"><i class="fa fa-caret-right fa-1x"></i> <div><span class="treeinfocomment">"<%= note.getComment() %>"</span> by <i><%= person.getContact() %></i> (<%= note.getFormattedDate() %>)</div></div>';
+            template += '<% } %>';
+            template += '<% } else { %>';
+            template += '<div class="item-activity"><i class="fa fa-caret-right fa-1x"></i> <div><span class="treeinfocomment">"<%= note.getComment() %>"</span> (<%= note.getFormattedDate() %>)</div></div>';
+            template += '<% } %>';
+            template += '<% } %>';
+            template += '<% }); %>';
+            return template;
+        };
         Template.getTreeFilterListTemplate = function () {
+            var template = '';
+            template += '<div data-toggle="buttons">';
+            template += '<label class="btn filter-checkbox list-hiearchy1">';
+            template += '<input type="checkbox" name="onlymine" data-target="<%= userid %>">';
+            template += '<i class="fa fa-square-o fa-1x"></i>';
+            template += '<i class="fa fa-check-square-o fa-1x"></i>';
+            template += ' My children (only mine / show all)</label>';
+            template += '</div>';
+            template += '<div data-toggle="buttons">';
+            template += '<label class="btn filter-checkbox active list-hiearchy1">';
+            template += '<input type="checkbox" name="adoptsall" checked>';
+            template += '<i class="fa fa-square-o fa-1x"></i>';
+            template += '<i class="fa fa-check-square-o fa-1x"></i>';
+            template += ' Adopting Status (show all / hide)</label>';
+            template += '</div>';
+            template += '<div data-toggle="buttons">';
+            template += '<label class="btn filter-checkbox filter-adopt active list-hiearchy2">';
+            template += '<input type="checkbox" name="1" checked>';
+            template += '<i class="fa fa-square-o fa-1x"></i>';
+            template += '<i class="fa fa-check-square-o fa-1x"></i>';
+            template += ' Assigned</label>';
+            template += '</div>';
+            template += '<div data-toggle="buttons">';
+            template += '<label class="btn filter-checkbox filter-adopt active list-hiearchy2">';
+            template += '<input type="checkbox" name="0" checked>';
+            template += '<i class="fa fa-square-o fa-1x"></i>';
+            template += '<i class="fa fa-check-square-o fa-1x"></i>';
+            template += ' Unassigned</label>';
+            template += '</div>';
+            template += '<hr />';
+            template += '<div data-toggle="buttons">';
+            template += '<label class="btn filter-checkbox active list-hiearchy1">';
+            template += '<input type="checkbox" name="foodsall" checked>';
+            template += '<i class="fa fa-square-o fa-1x"></i>';
+            template += '<i class="fa fa-check-square-o fa-1x"></i>';
+            template += ' Food Type (show all / hide)</label>';
+            template += '</div>';
+            template += '<% _.each(foods.models, function (food) { %>';
+            template += '<div data-toggle="buttons">';
+            template += '<label class="btn filter-checkbox filter-food active list-hiearchy2">';
+            template += '<input type="checkbox" name="<%= food.getId() %>" checked>';
+            template += '<i class="fa fa-square-o fa-1x"></i>';
+            template += '<i class="fa fa-check-square-o fa-1x"></i>';
+            template += ' <%= food.getName() %></label>';
+            template += '</div>';
+            template += '<% }); %>';
+            return template;
+        };
+        Template.getTreeFilterListTemplate2 = function () {
             var template = '';
             template += '<div data-toggle="buttons">';
             template += '<label class="btn filter-checkbox active list-hiearchy1">';
@@ -531,6 +673,22 @@ var FoodParent;
             template += '</div>';
             return template;
         };
+        Template.getDetailMenuTemplate = function () {
+            var template = '';
+            template += '<div class="button-outer-frame2 button3"><div class="button-inner-frame2 button-back-map"><i class="fa fa-arrow-left"></i> Back To Map</div></div>';
+            template += '<div class="button-outer-frame2 button3"><div class="button-inner-frame2 button-new-note"><i class="fa fa-sticky-note-o"></i> Post New Note</div></div>';
+            template += '<div class="button-outer-frame2 button3"><div class="button-inner-frame2 button-manage-adoption"><i class="fa  fa-user-plus"></i> Manage Adoption</div></div>';
+            template += '<div class="button-outer-frame2 button3"><div class="button-inner-frame2 button-delete-tree"><i class="fa fa-remove"></i> Delete Tree*</div></div>';
+            template += '<div class="button-description2">* marked operation cannot be undone.</div>';
+            return template;
+        };
+        Template.getDetailMenuTemplate2 = function () {
+            var template = '';
+            template += '<div class="button-outer-frame2 button3"><div class="button-inner-frame2 button-back-map"><i class="fa fa-arrow-left"></i> Back To Map</div></div>';
+            template += '<div class="button-outer-frame2 button3"><div class="button-inner-frame2 button-manage-adoption"><i class="fa  fa-user-plus"></i> Adopt This Tree</div></div>';
+            template += '<div class="button-outer-frame2 button3"><div class="button-inner-frame2 button-new-note"><i class="fa fa-sticky-note-o"></i> Post New Note</div></div>';
+            return template;
+        };
         Template.getDetailTreeGraphicViewTemplate = function () {
             var template = '';
             template += '<div id="wrapper-mtree">';
@@ -538,7 +696,6 @@ var FoodParent;
             template += '<div id="wrapper-chart"></div>';
             template += '<div id="wrapper-tooltip" class="hidden"></div>';
             template += '<div id="wrapper-mapmenu">';
-            template += '<div class="button-outer-frame2 button3"><div class="button-inner-frame2">Switch To Map View</div></div>';
             template += '</div>';
             template += '<div id="wrapper-date-select">';
             template += '<div class="wrapper-date-preset">';
@@ -555,17 +712,24 @@ var FoodParent;
             template += '<div id="wrapper-tree-detail">';
             template += '<div class="content-tree-info">';
             template += '</div>'; // end of .content-tree-info
+            template += '<div class="content-tree-recentcomments">';
+            template += '<div class="info-header"><i class="fa fa-comments fa-1x"></i> Recent Comments</div>';
+            template += '<div id="list-comments" class="info-group">';
+            template += '</div>';
+            template += '</div>'; // end of .content-tree-recentcomments
             template += '<div class="content-tree-recentactivities">';
-            template += '<div class="info-header"><i class="fa fa-leaf fa-1x"></i> Recent Activities</div>';
+            template += '<div class="info-header"><i class="fa fa-leaf fa-1x"></i> Recent Changes</div>';
             template += '<div id="list-activities" class="info-group">';
             template += '</div>';
             template += '</div>'; // end of .content-tree-recentactivities
+            /*
             template += '<div class="content-tree-control">';
-            template += '<div class="button-outer-frame2 button4"><div class="button-inner-frame2 button-new-note">Post New Note</div></div>';
-            template += '<div class="button-outer-frame2 button4"><div class="button-inner-frame2 button-manage-adoption">Manage Adoption</div></div>';
-            template += '<div class="button-outer-frame2 button4"><div class="button-inner-frame2 button-delete-tree">Delete Tree*</div></div>';
-            template += '<div class="button-description">* marked operation cannot be undone.</div>';
-            template += '</div>'; // end of .tree-control
+            template +=     '<div class="button-outer-frame2 button4"><div class="button-inner-frame2 button-new-note">Post New Note</div></div>';
+            template +=     '<div class="button-outer-frame2 button4"><div class="button-inner-frame2 button-manage-adoption">Manage Adoption</div></div>';
+            template +=     '<div class="button-outer-frame2 button4"><div class="button-inner-frame2 button-delete-tree">Delete Tree*</div></div>';
+            template +=     '<div class="button-description">* marked operation cannot be undone.</div>';
+            template += '</div>';   // end of .tree-control
+            */
             template += '</div>'; // end of #wrapper-tree-detail
             template += '</div>'; // end of #wrapper-mtree
             return template;
@@ -872,6 +1036,106 @@ var FoodParent;
             template += '</div>';
             template += '</div>';
             template += '</div>'; // end of .wrapper-note-content
+            template += '</div>'; // end of .inner-frame
+            template += '<div class="top-right-button button-close">';
+            template += '<i class="fa fa-remove fa-2x"></i>';
+            template += '</div>'; // end of top-right-button button-close
+            template += '</div>'; // end of .outer-frame
+            template += '</div>'; // end of #wrapper-note
+            return template;
+        };
+        Template.getLogInViewTemplate = function () {
+            var template = '';
+            template += '<div id="wrapper-login">';
+            template += '<div class="outer-frame">';
+            template += '<div class="inner-frame">';
+            template += '<div class="wrapper-login-content">';
+            template += '<div class="info-group">';
+            template += '<div class="name">Please put your <i>e-mail address</i> to log in.</div>';
+            template += '</div>';
+            template += '<div class="info-group">';
+            template += '<input type="email" name="email" class="form-control input-contact" placeholder="e-mail address" autocomplete="on"/>';
+            template += '</div>';
+            template += '<div class="info-group hidden">';
+            template += '<input type="password" name="password" class="form-control input-password" placeholder="password"/>';
+            template += '</div>';
+            template += '<div class="info-group">';
+            template += '<div data-toggle="buttons">';
+            template += '<label class="btn filter-checkbox2 filter-manager">';
+            template += '<input type="checkbox" name="manager">';
+            template += '<i class="fa fa-square-o fa-1x"></i>';
+            template += '<i class="fa fa-check-square-o fa-1x"></i>';
+            template += ' I am a manager</label>';
+            template += '</div>';
+            template += '</div>';
+            template += '<div class="info-button-group">';
+            template += '<div class="button-outer-frame2 button3"><div class="button-inner-frame2 login-submit">Submit</div></div>';
+            template += '</div>';
+            template += '<div class="info-button-group">';
+            template += '<div class="button-outer-frame2 button3"><div class="button-inner-frame2 login-cancel">Cancel</div></div>';
+            template += '</div>';
+            template += '</div>'; // end of .wrapper-login-content
+            template += '</div>'; // end of .inner-frame
+            template += '<div class="top-right-button button-close">';
+            template += '<i class="fa fa-remove fa-2x"></i>';
+            template += '</div>'; // end of top-right-button button-close
+            template += '</div>'; // end of .outer-frame
+            template += '</div>'; // end of #wrapper-note
+            return template;
+        };
+        Template.getLoggedInViewTemplate = function () {
+            var template = '';
+            template += '<div id="wrapper-login">';
+            template += '<div class="outer-frame">';
+            template += '<div class="inner-frame">';
+            template += '<div class="wrapper-login-content">';
+            template += '<div class="info-group">';
+            template += '<div class="name"><i>You are logged in as </i><strong><%= contact %></strong></div>';
+            template += '</div>';
+            template += '<div class="info-button-group">';
+            template += '<div class="button-outer-frame2 button3"><div class="button-inner-frame2 logged-logout">Log Out</div></div>';
+            template += '</div>';
+            template += '<div class="hr"><hr /></div>';
+            template += '<div class="info-group">';
+            template += '<input type="text" class="form-control input-name" placeholder="name"/>';
+            template += '</div>';
+            template += '<div class="info-group">';
+            template += '<input type="text" class="form-control input-address" placeholder="address"/>';
+            template += '</div>';
+            template += '<div class="info-group">';
+            template += '<input type="text" class="form-control input-neighborhood" placeholder="neighborhood"/>';
+            template += '</div>';
+            template += '<% if (auth < 3) { %>';
+            template += '<div class="info-group">';
+            template += '<div data-toggle="buttons">';
+            template += '<label class="btn filter-checkbox2 filter-manager">';
+            template += '<input type="checkbox" name="changepassword">';
+            template += '<i class="fa fa-square-o fa-1x"></i>';
+            template += '<i class="fa fa-check-square-o fa-1x"></i>';
+            template += ' change password</label>';
+            template += '</div>';
+            template += '</div>';
+            template += '<div class="info-group hidden">';
+            template += '<input type="text" class="form-control input-password" placeholder="password"/>';
+            template += '<input type="text" class="form-control input-password2" placeholder="confirm password"/>';
+            template += '</div>';
+            template += '<% } %>';
+            template += '<div class="info-button-group">';
+            template += '<div class="button-outer-frame2 button3"><div class="button-inner-frame2 logged-submit">Change Information</div></div>';
+            template += '</div>';
+            template += '<div class="info-button-group">';
+            template += '<div class="button-outer-frame2 button3"><div class="button-inner-frame2 logged-cancel">Cancel</div></div>';
+            template += '</div>';
+            /*
+            template += '<div class="hr"><hr /></div>';
+
+            template += '<br />';
+            template += '<div class="info-button-group">';
+            template += '<div class="button-outer-frame2 button3"><div class="button-inner-frame2 logged-delete">Delete Account*</div></div>';
+            template += '<div class="button-description2">* marked operation cannot be undone.</div>';
+            template += '</div>';
+            */
+            template += '</div>'; // end of .wrapper-login-content
             template += '</div>'; // end of .inner-frame
             template += '<div class="top-right-button button-close">';
             template += '<i class="fa fa-remove fa-2x"></i>';

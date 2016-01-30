@@ -12,7 +12,7 @@ var FoodParent;
     })(FoodParent.SortType || (FoodParent.SortType = {}));
     var SortType = FoodParent.SortType;
     (function (NoteType) {
-        NoteType[NoteType["NONE"] = 0] = "NONE";
+        NoteType[NoteType["ALL"] = 0] = "ALL";
         NoteType[NoteType["IMAGE"] = 1] = "IMAGE";
         NoteType[NoteType["INFO"] = 2] = "INFO";
         NoteType[NoteType["PICKUP"] = 3] = "PICKUP";
@@ -105,6 +105,9 @@ var FoodParent;
         };
         Note.prototype.getTreeId = function () {
             return parseInt(this.get('tree'));
+        };
+        Note.prototype.getPersonId = function () {
+            return parseInt(this.get('person'));
         };
         Note.prototype.addPicture = function (filename) {
             if (this.get('pictures') == undefined) {

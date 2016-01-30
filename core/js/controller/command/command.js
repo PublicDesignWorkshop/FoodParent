@@ -430,4 +430,36 @@ var FoodParent;
         return RenderEditDonationViewCommand;
     })();
     FoodParent.RenderEditDonationViewCommand = RenderEditDonationViewCommand;
+    var RenderLogInViewCommand = (function () {
+        function RenderLogInViewCommand(args) {
+            var self = this;
+            self._el = args.el;
+        }
+        RenderLogInViewCommand.prototype.execute = function () {
+            var self = this;
+            var view = FoodParent.LogInViewFactory.create(self._el).render();
+            FoodParent.View.setPopupView(view);
+            FoodParent.View.setViewStatus(FoodParent.VIEW_STATUS.LOGIN);
+        };
+        RenderLogInViewCommand.prototype.undo = function () {
+        };
+        return RenderLogInViewCommand;
+    })();
+    FoodParent.RenderLogInViewCommand = RenderLogInViewCommand;
+    var RenderLoggedInViewCommand = (function () {
+        function RenderLoggedInViewCommand(args) {
+            var self = this;
+            self._el = args.el;
+        }
+        RenderLoggedInViewCommand.prototype.execute = function () {
+            var self = this;
+            var view = FoodParent.LoggedInViewFactory.create(self._el).render();
+            FoodParent.View.setPopupView(view);
+            FoodParent.View.setViewStatus(FoodParent.VIEW_STATUS.LOGIN);
+        };
+        RenderLoggedInViewCommand.prototype.undo = function () {
+        };
+        return RenderLoggedInViewCommand;
+    })();
+    FoodParent.RenderLoggedInViewCommand = RenderLoggedInViewCommand;
 })(FoodParent || (FoodParent = {}));

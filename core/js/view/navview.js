@@ -78,12 +78,13 @@ var FoodParent;
             var self = this;
             if (self.bDebug)
                 console.log(NavView.TAG + "update()");
+            console.log(args.viewStatus);
             if (args.viewStatus == FoodParent.VIEW_STATUS.HOME) {
                 self.urenderNavItems();
                 self.$('#background-nav-left').animate({ left: '-76%' }, FoodParent.Setting.getNavAnimDuration());
                 self.$('#background-nav-left').css({ transform: 'skew(-10deg, 0)' });
             }
-            else if (args.viewStatus == FoodParent.VIEW_STATUS.MANAGE_TREES || args.viewStatus == FoodParent.VIEW_STATUS.MANAGE_PEOPLE || args.viewStatus == FoodParent.VIEW_STATUS.DETAIL_TREE || args.viewStatus == FoodParent.VIEW_STATUS.MANAGE_DONATIONS) {
+            else if (args.viewStatus == FoodParent.VIEW_STATUS.MANAGE_TREES || args.viewStatus == FoodParent.VIEW_STATUS.MANAGE_PEOPLE || args.viewStatus == FoodParent.VIEW_STATUS.DETAIL_TREE || args.viewStatus == FoodParent.VIEW_STATUS.MANAGE_DONATIONS || args.viewStatus == FoodParent.VIEW_STATUS.DETAIL_DONATION) {
                 self.renderNavManageItems();
                 self.$('#background-nav-left').animate({ left: '-30%' }, FoodParent.Setting.getNavAnimDuration());
                 self.$('#background-nav-left').css({ transform: 'skew(-0deg, 0)' });
@@ -110,9 +111,33 @@ var FoodParent;
             var self = this;
             var template;
             var data;
-            template = _.template(FoodParent.Template.getNavViewManageItemsTemplate());
-            data = {};
-            self.$('#list-nav').html(template(data));
+            FoodParent.Controller.checkLogin(function (data) {
+                if (data.result == true || data.result == 'true') {
+                    console.log(data);
+                    FoodParent.Controller.checkAdmin(function (data2) {
+                        console.log(data2);
+                        if (data2.result == true || data2.result == 'true') {
+                            template = _.template(FoodParent.Template.getNavViewManageItemsTemplate2());
+                            self.$('#list-nav').html(template({
+                                contact: data2.contact,
+                            }));
+                        }
+                        else if (data2.result == false || data2.result == 'false') {
+                            template = _.template(FoodParent.Template.getNavViewManageItemsTemplate3());
+                            self.$('#list-nav').html(template({
+                                contact: data.contact,
+                            }));
+                        }
+                    }, function () {
+                    });
+                }
+                else if (data.result == false || data.result == 'false') {
+                    template = _.template(FoodParent.Template.getNavViewManageItemsTemplate());
+                    data = {};
+                    self.$('#list-nav').html(template(data));
+                }
+            }, function () {
+            });
         };
         NavView.prototype.setActiveNavItem = function (viewStatus) {
             var self = this;

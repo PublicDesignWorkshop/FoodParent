@@ -296,7 +296,7 @@ declare module Backbone {
     var history: History;
 
     class History extends Events {
-
+        fragment: any
         handlers: any[];
         interval: number;
 

@@ -50,6 +50,7 @@
                 "click .ownership-radio": "_applyOwnership",
                 "dblclick .content-chart": "_mouseClick",
                 "click .button-delete-tree": "_deleteTree",
+                "click .button-back-map": "_mouseClick",
                 "click .button-manage-adoption": "_mouseClick",
                 "click .button-new-note": "_mouseClick",
                 "click .date-preset": "_datePreset",
@@ -79,6 +80,18 @@
             self.setElement(self.$('#wrapper-mtree'));
             self.resize();
             //self.renderTrees();
+
+            Controller.checkAdmin(function (data) {
+                if (data.result == true || data.result == 'true') {   // Already logged in
+                    var template = _.template(Template.getDetailMenuTemplate());
+                    self.$('#wrapper-mapmenu').html(template({}));
+                } else if (data.result == false || data.result == 'false') {   // Not logged in
+                    var template = _.template(Template.getDetailMenuTemplate2());
+                    self.$('#wrapper-mapmenu').html(template({}));
+                }   
+            }, function () {
+                FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+            });
 
             Controller.fetchAllTrees(function () {
                 self._tree = Model.getTrees().findWhere({ id: self._id });
@@ -322,6 +335,7 @@
                 self.renderFlagInfo(flag);
                 self.renderOwnershipInfo(ownership);
                 self.renderRecentActivities(tree);
+                self.renderRecentComments(tree);
 
                 self.$('.input-description').on('click', function (event) {
                     $(this).replaceWith("<input type='text' class='input-description form-control' value='" + htmlEncode($(this).text()).trim() + "' />");
@@ -453,8 +467,8 @@
             var self: DetailTreeGraphicView = this;
             var trees: Array<Tree> = new Array<Tree>();
             trees.push(tree);
-            Controller.fetchNotesOfTrees(trees, Setting.getLargeNumRecentActivitiesShown(), 0, function () {
-                var notes: Notes = new Notes(Model.getNotes().where({ tree: tree.getId() }));
+            Controller.fetchNotesOfTrees(trees, NoteType.INFO, Setting.getLargeNumRecentActivitiesShown(), 0, function () {
+                var notes: Notes = new Notes(Model.getNotes().where({ tree: tree.getId(), type: NoteType.INFO }));
                 notes.sortByDescendingDate();
                 var template = _.template(Template.getRecentActivitiesTemplate());
                 var data = {
@@ -465,6 +479,27 @@
                     ownerships: Model.getOwnerships(),
                 }
                 self.$('#list-activities').html(template(data));
+            }, function () {
+                EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
+            });
+        }
+
+        private renderRecentComments(tree: Tree): void {
+            var self: DetailTreeGraphicView = this;
+            var trees: Array<Tree> = new Array<Tree>();
+            trees.push(tree);
+            Controller.fetchNotesOfTrees(trees, NoteType.IMAGE, Setting.getLargeNumRecentActivitiesShown(), 0, function () {
+                var notes: Notes = new Notes(Model.getNotes().where({ tree: tree.getId(), type: NoteType.IMAGE }));
+                notes.sortByDescendingDate();
+                var template = _.template(Template.getRecentCommentsTemplate());
+                var data = {
+                    notes: notes,
+                    size: Setting.getLargeNumRecentActivitiesShown(),
+                    coordinate: '@ ' + tree.getLat().toFixed(4) + ", " + tree.getLng().toFixed(4),
+                    flags: Model.getFlags(),
+                    ownerships: Model.getOwnerships(),
+                }
+                self.$('#list-comments').html(template(data));
             }, function () {
                 EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
             });

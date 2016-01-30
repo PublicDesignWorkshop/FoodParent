@@ -20,7 +20,7 @@ var FoodParent;
                 popupAnchor: new L.Point(0, 48),
             });
         };
-        MarkerFractory.create = function (tree, bCloseOnClick) {
+        MarkerFractory.create = function (tree, bCloseOnClick, editable) {
             var food = FoodParent.Model.getFoods().findWhere({ id: tree.getFoodId() });
             var icon = new L.Icon({
                 iconUrl: food.getIconPath(),
@@ -30,10 +30,18 @@ var FoodParent;
                 shadowAnchor: new L.Point(9, 38),
                 popupAnchor: new L.Point(0, 48),
             });
-            var template = _.template(FoodParent.Template.getManageTreesPopupTemplate());
-            var data = {
-                id: tree.getId()
-            };
+            if (editable) {
+                var template = _.template(FoodParent.Template.getManageTreesPopupTemplate());
+                var data = {
+                    id: tree.getId()
+                };
+            }
+            else {
+                template = _.template(FoodParent.Template.getManageTreesPopupTemplate3());
+                data = {
+                    id: tree.getId()
+                };
+            }
             var marker = new L.Marker(tree.getLocation(), {
                 id: tree.getId(),
                 icon: icon,

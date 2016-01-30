@@ -12810,7 +12810,7 @@ button.close {
 
     #list-nav .item-nav {
         font-size: 24px;
-        letter-spacing: 2px;
+        letter-spacing: 1px;
         font-weight: 700;
         padding: 20px 20px;
         flex-grow: 1;
@@ -12841,7 +12841,6 @@ button.close {
     #list-nav .item-manage {
         font-size: large;
         cursor: pointer;
-        background-color: #5e4e51;
     }
 
     #list-nav .item-manage:hover {
@@ -12862,7 +12861,7 @@ button.close {
         text-shadow: -1px -1px 1px #28331b;
     }
 
-    #list-nav .item-manage-parent {
+    #list-nav .item-manage-login {
         font-size: large;
         color: #5e4e51;
         cursor: pointer;
@@ -12871,18 +12870,45 @@ button.close {
         height: 60px;
     }
 
-    #list-nav .item-manage-parent div {
+    #list-nav .item-manage-login div {
         cursor: pointer;
-        background-color: #83a656;
         transform: skew(10deg, 0);
     }
 
-    #list-nav .item-manage-parent:hover {
+    #list-nav .item-manage-login:hover {
         color: rgba(255,255,255,0.75);
     }
-    #list-nav .item-manage-parent:active {
+    #list-nav .item-manage-login:active {
         text-shadow: -1px -1px 1px #403537;
     }
+
+    #list-nav .item-manage-loggedin {
+        font-size: medium;
+        color: #5e4e51;
+        cursor: pointer;
+        background-color: #83a656;
+        transform: skew(-10deg, 0);
+        height: 60px;
+        letter-spacing: 0;
+        flex-grow: 0;
+        padding: 10px 20px;
+    }
+
+    #list-nav .item-manage-loggedin:hover {
+        color: rgba(255,255,255,0.75);
+    }
+
+    #list-nav .item-manage-loggedin:active {
+        text-shadow: -1px -1px 1px #403537;
+    }
+
+    .loggedinas {
+        font-size: small;
+        font-weight: 400;
+        font-style: italic;
+    }
+
+    
 }
 @media all {
     #wrapper-pop {
@@ -13032,6 +13058,12 @@ button.close {
         padding: 2px;
     }
 
+    .button-description2 {
+        color: #403537;
+        font-size: small;
+        padding: 2px;
+    }
+
     .button4 {
         background-color: #84a757;
     }
@@ -13055,6 +13087,38 @@ button.close {
     .tree-info-name .btn {
         font-size: x-large;
         font-weight: 700;
+    }
+
+    #wrapper-treeinfo .info-button {
+        border-color: rgba(255, 255, 255, 0.75);
+        border-left: 2px solid;
+        border-right: 2px solid;
+        background-color: rgba(132, 167, 87, 0.85);
+        font-weight: 700;
+        font-size: small;
+        text-align: left;
+        padding: 4px 4px 4px 4px;
+    }
+
+    .button5 {
+        
+    }
+
+    .button5 .button-inner-frame2 {
+        font-size: small;
+        color: rgba(255, 255, 255, 0.95);
+        border: 2px solid rgba(255, 255, 255, 0.85);
+        text-align: center;
+    }
+
+    .button5 .button-inner-frame2:hover {
+        color: #5e4e51;
+        border: 2px solid #5e4e51;
+    }
+
+    .button5 .button-inner-frame2:active {
+        text-shadow: 1px 1px 1px rgba(255, 255, 255, 0.5);
+        box-shadow: inset 0 0 1px 1px rgba(255, 255, 255, 0.5);
     }
 }
 @media all {
@@ -13528,6 +13592,10 @@ button.close {
         font-weight: 700;
         padding: 8px 4px;
     }
+
+    .treeinfocomment {
+        font-weight: 600;
+    }
 }
 @media all {
     #wrapper-mtree {
@@ -13560,12 +13628,17 @@ button.close {
         height: 100%;
         overflow-y: auto;
         padding: 8px;
-        max-width: 520px;
-        
     }
 
     #wrapper-tree-detail .content-tree-recentactivities {
-        flex-grow: 2;
+        flex-grow: 1;
+        height: 100%;
+        overflow-y: auto;
+        padding: 24px 8px 8px 8px;
+    }
+
+    #wrapper-tree-detail .content-tree-recentcomments {
+        flex-grow: 1;
         height: 100%;
         overflow-y: auto;
         padding: 24px 8px 8px 8px;
@@ -13576,7 +13649,7 @@ button.close {
         height: 100%;
         padding: 24px 8px 8px 8px;
         overflow-y: auto;
-        min-width: 280px;
+        max-width: 320px;
     }
 
 
@@ -13601,9 +13674,6 @@ button.close {
         font-weight: 700;
         padding: 2px 0;
         margin: 0;
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
     }
     
 
@@ -13613,13 +13683,13 @@ button.close {
         font-weight: 400;
         margin: 0;
         display: flex;
-        justify-content: center;
+        justify-content: flex-start;
         align-items: center;
         vertical-align: bottom;
     }
 
     .content-tree-info .tree-info-coordinate div {
-        padding: 16px 2px;
+        padding: 2px 2px;
     }
 
     .content-tree-info .tree-info-address {
@@ -13677,6 +13747,27 @@ button.close {
     }
 
     .content-tree-recentactivities #list-activities {
+        padding: 8px 0 0 0;
+    }
+
+    .content-tree-recentcomments .item-activity i {
+        padding: 2px 2px 0 0;
+    }
+
+    .content-tree-recentcomments .item-activity {
+        padding: 2px;
+        font-weight: 400;
+        display: flex;
+        font-size: small;
+        justify-content: flex-start;
+    }
+
+    .content-tree-recentcomments .item-activity div{
+        text-align: left;
+        width: 100%;
+    }
+
+    .content-tree-recentcomments #list-activities {
         padding: 8px 0 0 0;
     }
 
@@ -14065,14 +14156,23 @@ button.close {
         text-align: left;
         width: 100%;
         padding: 4px 8px;
-    }
-
-    .filter-checkbox {
         color: rgba(255, 255, 255, 0.35);
     }
+
     .filter-checkbox.active {
         color: rgba(255, 255, 255, 1);
         background-color: rgba(0, 0, 0, 0.05);
+    }
+
+    .filter-checkbox2 {
+        text-align: left;
+        width: 100%;
+        padding: 4px 8px;
+        color: rgba(94, 78, 81, 1);
+    }
+
+    .filter-checkbox2.active {
+        color: rgba(94, 78, 81, 1);
     }
 
     .list-hiearchy1 {
@@ -14484,6 +14584,28 @@ button.close {
     }
 }
 
+@media all {
+    .wrapper-login-content {
+        padding: 4px;
+        height: 100%;
+    }
+
+    .wrapper-login-content .info-header {
+        text-align: left;
+        font-size: medium;
+        font-weight: 700;
+    }
+
+    .wrapper-login-content .info-group {
+        text-align: left;
+        padding: 8px 0;
+    }
+
+    .wrapper-login-content .info-button-group {
+        padding: 2px 0;
+    }
+
+}
 @media print {
     body * {
         visibility: hidden;

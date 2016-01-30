@@ -242,5 +242,17 @@
                 tree.attributes.parents = Model.getAdopts().getParentIds(tree.id);
             });
         }
+
+        public filterByParent(parentid: number): Trees {
+            var self: Trees = this;
+            var trees: Trees = new Trees();
+            $.each(Model.getAdopts().models, function (index: number, adopt: Adopt) {
+                if (adopt.getParentId() == parentid) {
+                    var tree: Tree = Model.getTrees().findWhere({ id: adopt.getTreeId() });
+                    trees.add(tree);
+                }
+            });
+            return trees;
+        }
     }
 }

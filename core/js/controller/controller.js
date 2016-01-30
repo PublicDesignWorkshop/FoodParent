@@ -143,12 +143,12 @@ var FoodParent;
                 }
             });
         };
-        Controller.fetchNotesOfTrees = function (trees, size, offset, success, error) {
+        Controller.fetchNotesOfTrees = function (trees, type, size, offset, success, error) {
             var ids = new Array();
             $.each(trees, function (index, tree) {
                 ids.push(tree.getId());
             });
-            var xhr1 = FoodParent.Model.fetchNotesOfTrees(ids, size, offset);
+            var xhr1 = FoodParent.Model.fetchNotesOfTrees(ids, type, size, offset);
             Controller.pushXHR(xhr1);
             $.when(xhr1).then(function () {
                 Controller.removeXHR(xhr1);
@@ -253,6 +253,129 @@ var FoodParent;
                     error(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
                 }
             });
+        };
+        Controller.checkLogin = function (success, error) {
+            var xhr1 = $.ajax({
+                url: FoodParent.Setting.getPhpDir() + "logincheck.php",
+                type: "POST",
+                data: {},
+                cache: false,
+                dataType: "json",
+                processData: false,
+                contentType: false,
+                success: function (data, textStatus, jqXHR) {
+                    Controller.removeXHR(xhr1);
+                    if (typeof data.error === "undefined") {
+                        if (success) {
+                            success(data);
+                        }
+                    }
+                    else {
+                        if (error) {
+                            error();
+                        }
+                    }
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    Controller.removeXHR(xhr1);
+                    if (error) {
+                        error();
+                    }
+                }
+            });
+            Controller.pushXHR(xhr1);
+        };
+        Controller.checkAdmin = function (success, error) {
+            var xhr1 = $.ajax({
+                url: FoodParent.Setting.getPhpDir() + "admincheck.php",
+                type: "POST",
+                data: {},
+                cache: false,
+                dataType: "json",
+                processData: false,
+                contentType: false,
+                success: function (data, textStatus, jqXHR) {
+                    Controller.removeXHR(xhr1);
+                    if (typeof data.error === "undefined") {
+                        if (success) {
+                            success(data);
+                        }
+                    }
+                    else {
+                        if (error) {
+                            error();
+                        }
+                    }
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    Controller.removeXHR(xhr1);
+                    if (error) {
+                        error();
+                    }
+                }
+            });
+            Controller.pushXHR(xhr1);
+        };
+        Controller.processLogin = function (contact, password, success, error) {
+            var xhr1 = $.ajax({
+                url: FoodParent.Setting.getPhpDir() + "login.php",
+                type: "POST",
+                data: {
+                    'contact': contact,
+                    'p': password,
+                },
+                cache: false,
+                dataType: "json",
+                success: function (data, textStatus, jqXHR) {
+                    Controller.removeXHR(xhr1);
+                    if (typeof data.error === "undefined") {
+                        if (success) {
+                            success(data);
+                        }
+                    }
+                    else {
+                        if (error) {
+                            error();
+                        }
+                    }
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    Controller.removeXHR(xhr1);
+                    if (error) {
+                        error();
+                    }
+                }
+            });
+            Controller.pushXHR(xhr1);
+        };
+        Controller.processLogout = function (success, error) {
+            var xhr1 = $.ajax({
+                url: FoodParent.Setting.getPhpDir() + "logout.php",
+                type: "POST",
+                data: {},
+                cache: false,
+                dataType: "json",
+                success: function (data, textStatus, jqXHR) {
+                    Controller.removeXHR(xhr1);
+                    if (typeof data.error === "undefined") {
+                        if (success) {
+                            success(data);
+                        }
+                    }
+                    else {
+                        if (error) {
+                            error();
+                        }
+                    }
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    Controller.removeXHR(xhr1);
+                    if (error) {
+                        error();
+                    }
+                }
+            });
+            Controller.pushXHR(xhr1);
         };
         Controller._instance = new Controller();
         Controller.TAG = "Controller - ";

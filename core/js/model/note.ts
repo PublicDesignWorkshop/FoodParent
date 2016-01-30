@@ -3,7 +3,7 @@
         NONE, DESCENDING, ASCENDING
     }
     export enum NoteType {
-        NONE, IMAGE, INFO, PICKUP
+        ALL, IMAGE, INFO, PICKUP
     }
     export class Note extends Backbone.Model {
         url: string = "note.php";
@@ -92,6 +92,9 @@
         }
         public getTreeId(): number {
             return parseInt(this.get('tree'));
+        }
+        public getPersonId(): number {
+            return parseInt(this.get('person'));
         }
         public addPicture(filename: string): void {
             if (this.get('pictures') == undefined) {

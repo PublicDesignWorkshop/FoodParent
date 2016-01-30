@@ -23,7 +23,7 @@
             });
         }
 
-        public static create(tree: Tree, bCloseOnClick: boolean): L.Marker {
+        public static create(tree: Tree, bCloseOnClick: boolean, editable: boolean): L.Marker {
             var food: Food = Model.getFoods().findWhere({ id: tree.getFoodId() });
             var icon: L.Icon = new L.Icon({
                 iconUrl: food.getIconPath(),
@@ -33,11 +33,18 @@
                 shadowAnchor: new L.Point(9, 38),
                 popupAnchor: new L.Point(0, 48),
             });
-
-            var template = _.template(Template.getManageTreesPopupTemplate());
-            var data = {
-                id: tree.getId()
+            if (editable) {
+                var template = _.template(Template.getManageTreesPopupTemplate());
+                var data = {
+                    id: tree.getId()
+                }
+            } else {
+                template = _.template(Template.getManageTreesPopupTemplate3());
+                data = {
+                    id: tree.getId()
+                }
             }
+            
             var marker: L.Marker = new L.Marker(
                 tree.getLocation(),
                 {

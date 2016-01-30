@@ -46,6 +46,7 @@ var FoodParent;
         VIEW_STATUS[VIEW_STATUS["ADD_DONATION"] = 13] = "ADD_DONATION";
         VIEW_STATUS[VIEW_STATUS["DETAIL_DONATION"] = 14] = "DETAIL_DONATION";
         VIEW_STATUS[VIEW_STATUS["EDIT_DONATION"] = 15] = "EDIT_DONATION";
+        VIEW_STATUS[VIEW_STATUS["LOGIN"] = 16] = "LOGIN";
     })(FoodParent.VIEW_STATUS || (FoodParent.VIEW_STATUS = {}));
     var VIEW_STATUS = FoodParent.VIEW_STATUS;
     (function (VIEW_MODE) {
@@ -137,6 +138,19 @@ var FoodParent;
                 else if (el.hasClass('donations')) {
                     new FoodParent.NavigateCommand({ hash: 'mdonations', viewMode: VIEW_MODE.TABLE, id: 0 }).execute();
                 }
+                else if (el.hasClass('login')) {
+                    if (FoodParent.View.getViewStatus() != VIEW_STATUS.LOGIN) {
+                        FoodParent.Controller.checkLogin(function (data) {
+                            if (data.result == true || data.result == 'true') {
+                                new FoodParent.RenderLoggedInViewCommand({ el: FoodParent.Setting.getPopWrapperElement() }).execute();
+                            }
+                            else {
+                                new FoodParent.RenderLogInViewCommand({ el: FoodParent.Setting.getPopWrapperElement() }).execute();
+                            }
+                        }, function () {
+                        });
+                    }
+                }
             }
             // Handle specific event on each view status.
             switch (FoodParent.View.getViewStatus()) {
@@ -179,7 +193,7 @@ var FoodParent;
                     else if (el.hasClass('marker-control-adoption')) {
                         new FoodParent.RenderManageAdoptionViewCommand({ el: FoodParent.Setting.getPopWrapperElement(), tree: options.tree }).execute();
                     }
-                    else if (el.hasClass('marker-control-info')) {
+                    else if (el.hasClass('marker-control-info') || el.hasClass('button-tree-detail')) {
                         new FoodParent.NavigateCommand({ hash: 'mtree', viewMode: VIEW_MODE.GRAPHIC, id: options.tree }).execute();
                     }
                     else if (el.hasClass('marker-control-delete')) {
@@ -218,6 +232,9 @@ var FoodParent;
                     }
                     else if (el.hasClass('button-new-note')) {
                         new FoodParent.RenderPostNoteViewCommand({ el: FoodParent.Setting.getPopWrapperElement(), tree: options.tree }).execute();
+                    }
+                    else if (el.hasClass('button-back-map')) {
+                        Backbone.history.history.back();
                     }
                     break;
                 case VIEW_STATUS.IMAGENOTE_TREE:
@@ -263,7 +280,6 @@ var FoodParent;
                         }
                     }
                     else if (el.hasClass('button-new-donation')) {
-                        console.log(options.place);
                         if (options.place) {
                             new FoodParent.RenderAddDonationViewCommand({ el: FoodParent.Setting.getPopWrapperElement(), place: options.place }).execute();
                         }
@@ -277,6 +293,53 @@ var FoodParent;
                         }
                     }
                     else if (el.hasClass('delete-donation')) {
+                    }
+                    break;
+                case VIEW_STATUS.LOGIN:
+                    if (el.hasClass('button-close') || el.hasClass('login-cancel') || el.hasClass('logged-cancel')) {
+                        new FoodParent.RemoveAlertViewCommand({ delay: FoodParent.Setting.getRemovePopupDuration() }).execute();
+                    }
+                    else if (el.hasClass('login-submit')) {
+                        if (options.contact != undefined && options.password != undefined) {
+                            FoodParent.Controller.processLogin(options.contact, options.password, function (data) {
+                                if (data.result == true || data.result == 'true') {
+                                    //new RemoveAlertViewCommand({ delay: 0 }).execute();
+                                    //new RenderNavViewCommand({ el: Setting.getNavWrapperElement(), viewStatus: View.getViewStatus() }).execute();
+                                    Backbone.history.loadUrl(Backbone.history.fragment);
+                                }
+                                /*
+                                switch (View.getViewStatus()) {
+                                    case VIEW_STATUS.MANAGE_TREES:
+                                        if (View.getManageTreesView()) {
+                                            View.getManageTreesView().renderFilterList();
+                                        }
+                                        break;
+                                }
+                                */
+                            }, function () {
+                                EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
+                            });
+                        }
+                    }
+                    else if (el.hasClass('logged-logout')) {
+                        FoodParent.Controller.processLogout(function (data) {
+                            if (data.result == true || data.result == 'true') {
+                                //new RemoveAlertViewCommand({ delay: 0 }).execute();
+                                //new RenderNavViewCommand({ el: Setting.getNavWrapperElement(), viewStatus: View.getViewStatus() }).execute();
+                                Backbone.history.loadUrl(Backbone.history.fragment);
+                            }
+                            /*
+                            switch (View.getViewStatus()) {
+                                case VIEW_STATUS.MANAGE_TREES:
+                                    if (View.getManageTreesView()) {
+                                        View.getManageTreesView().renderFilterList();
+                                    }
+                                    break;
+                            }
+                            */
+                        }, function () {
+                            EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
+                        });
                     }
                     break;
             }

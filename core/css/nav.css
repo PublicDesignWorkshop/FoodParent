@@ -55,7 +55,7 @@
 
     #list-nav .item-nav {
         font-size: 24px;
-        letter-spacing: 2px;
+        letter-spacing: 1px;
         font-weight: 700;
         padding: 20px 20px;
         flex-grow: 1;
@@ -86,7 +86,6 @@
     #list-nav .item-manage {
         font-size: large;
         cursor: pointer;
-        background-color: #5e4e51;
     }
 
     #list-nav .item-manage:hover {
@@ -107,7 +106,7 @@
         text-shadow: -1px -1px 1px #28331b;
     }
 
-    #list-nav .item-manage-parent {
+    #list-nav .item-manage-login {
         font-size: large;
         color: #5e4e51;
         cursor: pointer;
@@ -116,16 +115,43 @@
         height: 60px;
     }
 
-    #list-nav .item-manage-parent div {
+    #list-nav .item-manage-login div {
         cursor: pointer;
-        background-color: #83a656;
         transform: skew(10deg, 0);
     }
 
-    #list-nav .item-manage-parent:hover {
+    #list-nav .item-manage-login:hover {
         color: rgba(255,255,255,0.75);
     }
-    #list-nav .item-manage-parent:active {
+    #list-nav .item-manage-login:active {
         text-shadow: -1px -1px 1px #403537;
     }
+
+    #list-nav .item-manage-loggedin {
+        font-size: medium;
+        color: #5e4e51;
+        cursor: pointer;
+        background-color: #83a656;
+        transform: skew(-10deg, 0);
+        height: 60px;
+        letter-spacing: 0;
+        flex-grow: 0;
+        padding: 10px 20px;
+    }
+
+    #list-nav .item-manage-loggedin:hover {
+        color: rgba(255,255,255,0.75);
+    }
+
+    #list-nav .item-manage-loggedin:active {
+        text-shadow: -1px -1px 1px #403537;
+    }
+
+    .loggedinas {
+        font-size: small;
+        font-weight: 400;
+        font-style: italic;
+    }
+
+    
 }

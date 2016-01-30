@@ -237,6 +237,17 @@ var FoodParent;
                 tree.attributes.parents = FoodParent.Model.getAdopts().getParentIds(tree.id);
             });
         };
+        Trees.prototype.filterByParent = function (parentid) {
+            var self = this;
+            var trees = new Trees();
+            $.each(FoodParent.Model.getAdopts().models, function (index, adopt) {
+                if (adopt.getParentId() == parentid) {
+                    var tree = FoodParent.Model.getTrees().findWhere({ id: adopt.getTreeId() });
+                    trees.add(tree);
+                }
+            });
+            return trees;
+        };
         return Trees;
     })(Backbone.Collection);
     FoodParent.Trees = Trees;

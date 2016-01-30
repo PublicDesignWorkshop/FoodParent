@@ -354,31 +354,54 @@
             });
         }
 
-        public static fetchNotesOfTrees(ids: Array<number>, size: number, offset: number): JQueryXHR {
+        public static fetchNotesOfTrees(ids: Array<number>, type: NoteType, size: number, offset: number): JQueryXHR {
             var self: Model = Model._instance;
             if (self.notes == undefined) {
                 self.notes = new Notes();
             }
             if (ids.length != 0) {
-                return self.notes.fetch({
-                    remove: false,	// if remove == false, it only adds new items, not removing old items.
-                    processData: true,
-                    data: {
-                        mode: 0,    // 0: fetch only the number of the size from offset, 1: fetch image notes between start and end
-                        trees: ids.toString(),
-                        start: "",
-                        end: "",
-                        size: size,
-                        offset: offset,
-                    },
-                    success(collection?: any, response?: any, options?: any): void {
-                        //console.log("success fetch with " + collection.models.length + " notes");
-                        //Controller.getInstance().renderTreesOnMap();
-                    },
-                    error(collection?: any, jqxhr?: JQueryXHR, options?: any): void {
-                        console.log("error while fetching item data from the server");
-                    }
-                });
+                if (type == NoteType.IMAGE) {
+                    return self.notes.fetch({
+                        remove: false,	// if remove == false, it only adds new items, not removing old items.
+                        processData: true,
+                        data: {
+                            mode: 2,    // 0: fetch only the number of the size from offset, 1: fetch image notes between start and end, 2: fetch only image note the number of the size from offset, 3: fetch only info note the number of the size from offset
+                            trees: ids.toString(),
+                            start: "",
+                            end: "",
+                            size: size,
+                            offset: offset,
+                        },
+                        success(collection?: any, response?: any, options?: any): void {
+                            //console.log("success fetch with " + collection.models.length + " notes");
+                            //Controller.getInstance().renderTreesOnMap();
+                        },
+                        error(collection?: any, jqxhr?: JQueryXHR, options?: any): void {
+                            console.log("error while fetching item data from the server");
+                        }
+                    });
+                } else if (type == NoteType.INFO) {
+                    return self.notes.fetch({
+                        remove: false,	// if remove == false, it only adds new items, not removing old items.
+                        processData: true,
+                        data: {
+                            mode: 3,    // 0: fetch only the number of the size from offset, 1: fetch image notes between start and end, 2: fetch only image note the number of the size from offset, 3: fetch only info note the number of the size from offset
+                            trees: ids.toString(),
+                            start: "",
+                            end: "",
+                            size: size,
+                            offset: offset,
+                        },
+                        success(collection?: any, response?: any, options?: any): void {
+                            //console.log("success fetch with " + collection.models.length + " notes");
+                            //Controller.getInstance().renderTreesOnMap();
+                        },
+                        error(collection?: any, jqxhr?: JQueryXHR, options?: any): void {
+                            console.log("error while fetching item data from the server");
+                        }
+                    });
+                }
+                
             }
             return null;
         }
@@ -393,7 +416,7 @@
                     remove: false,	// if remove == false, it only adds new items, not removing old items.
                     processData: true,
                     data: {
-                        mode: 1,    // 0: fetch only the number of the size from offset, 1: fetch image notes between start and end
+                        mode: 1,    // 0: fetch only the number of the size from offset, 1: fetch image notes between start and end, 2: fetch only image note the number of the size from offset, 3: fetch only info note the number of the size from offset
                         trees: ids.toString(),
                         start: start,
                         end: end,

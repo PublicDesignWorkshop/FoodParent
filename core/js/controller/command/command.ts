@@ -449,4 +449,38 @@
 
         }
     }
+
+    export class RenderLogInViewCommand implements Command {
+        private _el: JQuery;
+        constructor(args?: any) {
+            var self: RenderLogInViewCommand = this;
+            self._el = args.el;
+        }
+        public execute(): any {
+            var self: RenderLogInViewCommand = this;
+            var view: AlertView = LogInViewFactory.create(self._el).render();
+            View.setPopupView(view);
+            View.setViewStatus(VIEW_STATUS.LOGIN);
+        }
+        public undo(): any {
+
+        }
+    }
+
+    export class RenderLoggedInViewCommand implements Command {
+        private _el: JQuery;
+        constructor(args?: any) {
+            var self: RenderLoggedInViewCommand = this;
+            self._el = args.el;
+        }
+        public execute(): any {
+            var self: RenderLoggedInViewCommand = this;
+            var view: AlertView = LoggedInViewFactory.create(self._el).render();
+            View.setPopupView(view);
+            View.setViewStatus(VIEW_STATUS.LOGIN);
+        }
+        public undo(): any {
+
+        }
+    }
 }

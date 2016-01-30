@@ -322,31 +322,54 @@ var FoodParent;
                 }
             });
         };
-        Model.fetchNotesOfTrees = function (ids, size, offset) {
+        Model.fetchNotesOfTrees = function (ids, type, size, offset) {
             var self = Model._instance;
             if (self.notes == undefined) {
                 self.notes = new FoodParent.Notes();
             }
             if (ids.length != 0) {
-                return self.notes.fetch({
-                    remove: false,
-                    processData: true,
-                    data: {
-                        mode: 0,
-                        trees: ids.toString(),
-                        start: "",
-                        end: "",
-                        size: size,
-                        offset: offset,
-                    },
-                    success: function (collection, response, options) {
-                        //console.log("success fetch with " + collection.models.length + " notes");
-                        //Controller.getInstance().renderTreesOnMap();
-                    },
-                    error: function (collection, jqxhr, options) {
-                        console.log("error while fetching item data from the server");
-                    }
-                });
+                if (type == FoodParent.NoteType.IMAGE) {
+                    return self.notes.fetch({
+                        remove: false,
+                        processData: true,
+                        data: {
+                            mode: 2,
+                            trees: ids.toString(),
+                            start: "",
+                            end: "",
+                            size: size,
+                            offset: offset,
+                        },
+                        success: function (collection, response, options) {
+                            //console.log("success fetch with " + collection.models.length + " notes");
+                            //Controller.getInstance().renderTreesOnMap();
+                        },
+                        error: function (collection, jqxhr, options) {
+                            console.log("error while fetching item data from the server");
+                        }
+                    });
+                }
+                else if (type == FoodParent.NoteType.INFO) {
+                    return self.notes.fetch({
+                        remove: false,
+                        processData: true,
+                        data: {
+                            mode: 3,
+                            trees: ids.toString(),
+                            start: "",
+                            end: "",
+                            size: size,
+                            offset: offset,
+                        },
+                        success: function (collection, response, options) {
+                            //console.log("success fetch with " + collection.models.length + " notes");
+                            //Controller.getInstance().renderTreesOnMap();
+                        },
+                        error: function (collection, jqxhr, options) {
+                            console.log("error while fetching item data from the server");
+                        }
+                    });
+                }
             }
             return null;
         };
