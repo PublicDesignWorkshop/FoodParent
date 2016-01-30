@@ -34,6 +34,8 @@ var FoodParent;
         __extends(DetailTreeView, _super);
         function DetailTreeView() {
             _super.apply(this, arguments);
+            this.renderMenu = function () {
+            };
         }
         DetailTreeView.prototype.setTreeId = function (id) {
             this._id = Math.floor(id);
@@ -46,6 +48,38 @@ var FoodParent;
         function DetailTreeGraphicView(options) {
             var _this = this;
             _super.call(this, options);
+            this.renderMenu = function () {
+                var self = _this;
+                FoodParent.Controller.checkLogin(function (response1) {
+                    if (response1.result == true || response1.result == 'true') {
+                        FoodParent.Controller.checkAdmin(function (response2) {
+                            if (response2.result == true || response2.result == 'true') {
+                                var template = _.template(FoodParent.Template.getDetailMenuTemplate());
+                                self.$('#wrapper-mapmenu').html(template({}));
+                            }
+                            else if (response2.result == false || response2.result == 'false') {
+                                var adopt = FoodParent.Model.getAdopts().findWhere({ tree: self._tree.getId(), parent: parseInt(response1.id) });
+                                if (adopt) {
+                                    var template = _.template(FoodParent.Template.getDetailMenuTemplate3());
+                                    self.$('#wrapper-mapmenu').html(template({}));
+                                }
+                                else {
+                                    var template = _.template(FoodParent.Template.getDetailMenuTemplate2());
+                                    self.$('#wrapper-mapmenu').html(template({}));
+                                }
+                            }
+                        }, function () {
+                            FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+                        });
+                    }
+                    else {
+                        var template = _.template(FoodParent.Template.getDetailMenuTemplate2());
+                        self.$('#wrapper-mapmenu').html(template({}));
+                    }
+                }, function (response1) {
+                    FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+                });
+            };
             this.renderTreeChart = function (tree, startDate, endDate) {
                 var self = _this;
                 FoodParent.Controller.fetchImageNotesOfTreesDuringPeriod([self._tree], startDate, endDate, 10000, 0, function () {
@@ -319,6 +353,8 @@ var FoodParent;
                 "click .button-manage-adoption": "_mouseClick",
                 "click .button-new-note": "_mouseClick",
                 "click .date-preset": "_datePreset",
+                "click .button-tree-adopt": "_adoptTree",
+                "click .button-tree-unadopt": "_adoptTree",
             };
             self.delegateEvents();
         }
@@ -341,18 +377,7 @@ var FoodParent;
             self.setElement(self.$('#wrapper-mtree'));
             self.resize();
             //self.renderTrees();
-            FoodParent.Controller.checkAdmin(function (data) {
-                if (data.result == true || data.result == 'true') {
-                    var template = _.template(FoodParent.Template.getDetailMenuTemplate());
-                    self.$('#wrapper-mapmenu').html(template({}));
-                }
-                else if (data.result == false || data.result == 'false') {
-                    var template = _.template(FoodParent.Template.getDetailMenuTemplate2());
-                    self.$('#wrapper-mapmenu').html(template({}));
-                }
-            }, function () {
-                FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
-            });
+            self.renderMenu();
             FoodParent.Controller.fetchAllTrees(function () {
                 self._tree = FoodParent.Model.getTrees().findWhere({ id: self._id });
                 // add grid instance for existing data
@@ -553,6 +578,10 @@ var FoodParent;
             }, function () {
                 FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
             });
+        };
+        DetailTreeGraphicView.prototype._adoptTree = function (event) {
+            var self = this;
+            FoodParent.EventHandler.handleMouseClick($(event.currentTarget), self, { tree: self._tree });
         };
         DetailTreeGraphicView.TAG = "DetailTreeGraphicView - ";
         return DetailTreeGraphicView;

@@ -48,6 +48,9 @@
         }
         public getName(): string {
             var that: Person = this;
+            if (this.get('name').trim() == "") {
+                return this.get("contact");
+            }
             return this.get('name');
         }
         public getAddress(): string {

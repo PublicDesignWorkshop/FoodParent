@@ -29,6 +29,9 @@
         public setTreeId(id: number) {
             this._id = Math.floor(id);
         }
+        public renderMenu = () => {
+
+        }
     }
 
     export class DetailTreeGraphicView extends DetailTreeView {
@@ -54,6 +57,8 @@
                 "click .button-manage-adoption": "_mouseClick",
                 "click .button-new-note": "_mouseClick",
                 "click .date-preset": "_datePreset",
+                "click .button-tree-adopt": "_adoptTree",
+                "click .button-tree-unadopt": "_adoptTree",
             };
             self.delegateEvents();
         }
@@ -81,17 +86,7 @@
             self.resize();
             //self.renderTrees();
 
-            Controller.checkAdmin(function (data) {
-                if (data.result == true || data.result == 'true') {   // Already logged in
-                    var template = _.template(Template.getDetailMenuTemplate());
-                    self.$('#wrapper-mapmenu').html(template({}));
-                } else if (data.result == false || data.result == 'false') {   // Not logged in
-                    var template = _.template(Template.getDetailMenuTemplate2());
-                    self.$('#wrapper-mapmenu').html(template({}));
-                }   
-            }, function () {
-                FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
-            });
+            self.renderMenu();
 
             Controller.fetchAllTrees(function () {
                 self._tree = Model.getTrees().findWhere({ id: self._id });
@@ -142,6 +137,36 @@
                 EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
             });
             return self;
+        }
+
+        public renderMenu = () => {
+            var self: DetailTreeGraphicView = this;
+            Controller.checkLogin(function (response1) {
+                if (response1.result == true || response1.result == 'true') {   // Already logged in
+                    Controller.checkAdmin(function (response2) {
+                        if (response2.result == true || response2.result == 'true') {   // admin
+                            var template = _.template(Template.getDetailMenuTemplate());
+                            self.$('#wrapper-mapmenu').html(template({}));
+                        } else if (response2.result == false || response2.result == 'false') {   // Not admin
+                            var adopt: Adopt = Model.getAdopts().findWhere({ tree: self._tree.getId(), parent: parseInt(response1.id) });
+                            if (adopt) {
+                                var template = _.template(Template.getDetailMenuTemplate3());
+                                self.$('#wrapper-mapmenu').html(template({}));
+                            } else {
+                                var template = _.template(Template.getDetailMenuTemplate2());
+                                self.$('#wrapper-mapmenu').html(template({}));
+                            }
+                        }
+                    }, function () {
+                        FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+                    });
+                } else {   // Not logged in
+                    var template = _.template(Template.getDetailMenuTemplate2());
+                    self.$('#wrapper-mapmenu').html(template({}));
+                }
+            }, function (response1) {
+                EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
+            });
         }
 
         public resize(): any {
@@ -572,6 +597,11 @@
             }, function () {
                 EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
             });
+        }
+
+        public _adoptTree(event: Event) {
+            var self: DetailTreeGraphicView = this;
+            EventHandler.handleMouseClick($(event.currentTarget), self, { tree: self._tree });
         }
     }
 }

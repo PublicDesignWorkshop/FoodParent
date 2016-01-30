@@ -109,6 +109,9 @@ var FoodParent;
         Note.prototype.getPersonId = function () {
             return parseInt(this.get('person'));
         };
+        Note.prototype.setPersonId = function (personId) {
+            this.set('person', Math.floor(personId));
+        };
         Note.prototype.addPicture = function (filename) {
             if (this.get('pictures') == undefined) {
                 this.set('pictures', new Array());

@@ -171,6 +171,44 @@
         }
     }
 
+    export class RenderAdoptTreeViewCommand implements Command {
+        private _el: JQuery;
+        private _tree: number;
+        constructor(args?: any) {
+            var self: RenderAdoptTreeViewCommand = this;
+            self._el = args.el;
+            self._tree = args.tree;
+        }
+        public execute(): any {
+            var self: RenderAdoptTreeViewCommand = this;
+            var view: AlertView = AdoptTreeViewFactory.create(self._el, self._tree).render();
+            View.setPopupView(view);
+            View.setViewStatus(VIEW_STATUS.ADOPT_TREE);
+        }
+        public undo(): any {
+
+        }
+    }
+
+    export class RenderUnadoptTreeViewCommand implements Command {
+        private _el: JQuery;
+        private _tree: number;
+        constructor(args?: any) {
+            var self: RenderUnadoptTreeViewCommand = this;
+            self._el = args.el;
+            self._tree = args.tree;
+        }
+        public execute(): any {
+            var self: RenderUnadoptTreeViewCommand = this;
+            var view: AlertView = UnadoptTreeViewFactory.create(self._el, self._tree).render();
+            View.setPopupView(view);
+            View.setViewStatus(VIEW_STATUS.ADOPT_TREE);
+        }
+        public undo(): any {
+
+        }
+    }
+
     export class RenderImageNoteViewCommand implements Command {
         private _el: JQuery;
         private _note: Note;
@@ -212,14 +250,18 @@
     export class RenderAlertViewCommand implements Command {
         private _el: JQuery;
         private _errorMode: ERROR_MODE;
+        private _customMessage: string;
         constructor(args?: any) {
             var self: RenderAlertViewCommand = this;
             self._el = args.el;
             self._errorMode = args.errorMode;
+            if (args.customMessage) {
+                self._customMessage = args.customMessage;
+            }
         }
         public execute(): any {
             var self: RenderAlertViewCommand = this;
-            var view: AlertView = AlertViewFractory.create(self._el, self._errorMode).render();
+            var view: AlertView = AlertViewFractory.create(self._el, self._errorMode, self._customMessage).render();
             View.setPopupView(view);
             switch (self._errorMode) {
                 case ERROR_MODE.GEO_PERMISSION_ERROR:
@@ -227,6 +269,9 @@
                     break;
                 case ERROR_MODE.SEVER_CONNECTION_ERROR:
                     View.setViewStatus(VIEW_STATUS.NETWORK_ERROR);
+                    break;
+                case ERROR_MODE.SEVER_RESPONSE_ERROR:
+                    View.setViewStatus(VIEW_STATUS.SERVER_RESPONSE_ERROR);
                     break;
             }
             
@@ -478,6 +523,23 @@
             var view: AlertView = LoggedInViewFactory.create(self._el).render();
             View.setPopupView(view);
             View.setViewStatus(VIEW_STATUS.LOGIN);
+        }
+        public undo(): any {
+
+        }
+    }
+
+    export class RenderSignUpViewCommand implements Command {
+        private _el: JQuery;
+        constructor(args?: any) {
+            var self: RenderSignUpViewCommand = this;
+            self._el = args.el;
+        }
+        public execute(): any {
+            var self: RenderSignUpViewCommand = this;
+            var view: AlertView = SignUpViewFactory.create(self._el).render();
+            View.setPopupView(view);
+            View.setViewStatus(VIEW_STATUS.SIGNUP);
         }
         public undo(): any {
 

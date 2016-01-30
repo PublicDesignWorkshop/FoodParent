@@ -297,14 +297,14 @@
                         }
                     } else {
                         if (error) {
-                            error();
+                            error(data);
                         }
                     }
                 },
                 error: function (jqXHR, textStatus, errorThrown) {
                     Controller.removeXHR(xhr1);
                     if (error) {
-                        error();
+                        error(jqXHR);
                     }
                 }
             });
@@ -399,6 +399,41 @@
                     Controller.removeXHR(xhr1);
                     if (error) {
                         error();
+                    }
+                }
+            });
+            Controller.pushXHR(xhr1);
+        }
+
+        public static processSignup(contact: string, name: string, neighborhood: string, success?: any, error?: any) {
+            var xhr1: JQueryXHR = $.ajax({
+                url: Setting.getPhpDir() + "signup.php",
+                type: "POST",
+                data: {
+                    'contact': contact,
+                    'name': name,
+                    'neighborhood': neighborhood,
+                },
+                cache: false,
+                dataType: "json",
+                success: function (data, textStatus, jqXHR) {
+                    Controller.removeXHR(xhr1);
+                    console.log(data);
+                    if (typeof data.error === "undefined") {
+                        if (success) {
+                            success(data);
+                            //success(data.files[0].replace(Setting.getRelativeFileUploadPath(), ""));
+                        }
+                    } else {
+                        if (error) {
+                            error(data);
+                        }
+                    }
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    Controller.removeXHR(xhr1);
+                    if (error) {
+                        error(jqXHR);
                     }
                 }
             });

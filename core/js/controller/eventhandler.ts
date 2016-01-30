@@ -11,13 +11,13 @@
         ADD_DONATION_TREE, REMOVE_DONATION_TREE, UPDATE_DONATION_AMOUNT,
     }
     export enum VIEW_STATUS {
-        NONE, HOME, MANAGE_TREES, PARENT_TREES, GEO_ERROR, NETWORK_ERROR, CONFIRM, MANAGE_PEOPLE, MANAGE_ADOPTION, DETAIL_TREE, IMAGENOTE_TREE, POST_NOTE, MANAGE_DONATIONS, ADD_DONATION, DETAIL_DONATION, EDIT_DONATION, LOGIN
+        NONE, HOME, MANAGE_TREES, PARENT_TREES, GEO_ERROR, NETWORK_ERROR, CONFIRM, MANAGE_PEOPLE, MANAGE_ADOPTION, DETAIL_TREE, IMAGENOTE_TREE, POST_NOTE, MANAGE_DONATIONS, ADD_DONATION, DETAIL_DONATION, EDIT_DONATION, LOGIN, SERVER_RESPONSE_ERROR, SIGNUP, ADOPT_TREE
     }
     export enum VIEW_MODE {
         NONE, MAP, GRAPHIC, TABLE
     }
     export enum ERROR_MODE {
-        NONE, GEO_PERMISSION_ERROR, SEVER_CONNECTION_ERROR
+        NONE, GEO_PERMISSION_ERROR, SEVER_CONNECTION_ERROR, SEVER_RESPONSE_ERROR
     }
     export class EventHandler {
         private static _instance: EventHandler = new EventHandler();
@@ -103,10 +103,14 @@
                                 new RenderLogInViewCommand({ el: Setting.getPopWrapperElement() }).execute();
                             }
                         }, function () {
-
+                            EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
                         });
                     }
                     //new NavigateCommand({ hash: 'mdonations', viewMode: VIEW_MODE.TABLE, id: 0 }).execute();
+                } else if (el.hasClass('signup')) {
+                    if (View.getViewStatus() != VIEW_STATUS.SIGNUP) {
+                        new RenderSignUpViewCommand({ el: Setting.getPopWrapperElement() }).execute();
+                    }
                 }
             }
 
@@ -145,7 +149,7 @@
                             el.html('<i class="fa fa-lock fa-2x"></i>');
                             options.marker._popup.setContent('<div class="marker-control-wrapper">' + $('.marker-control-wrapper').html() + '</div>');
                         }
-                    } else if (el.hasClass('marker-control-adoption')) {
+                    } else if (el.hasClass('marker-control-adoption') || el.hasClass('button-manage-adoption')) {
                         new RenderManageAdoptionViewCommand({ el: Setting.getPopWrapperElement(), tree: options.tree }).execute();
                     } else if (el.hasClass('marker-control-info') || el.hasClass('button-tree-detail')) {
                         new NavigateCommand({ hash: 'mtree', viewMode: VIEW_MODE.GRAPHIC, id: options.tree }).execute();
@@ -162,6 +166,29 @@
                         new RenderManageAdoptionViewCommand({ el: Setting.getPopWrapperElement(), tree: options.tree }).execute();
                     } else if (el.hasClass('tree-detail')) {
                         new NavigateCommand({ hash: 'mtree', viewMode: VIEW_MODE.GRAPHIC, id: options.tree }).execute();
+                    } else if (el.hasClass('button-tree-adopt')) {
+                        Controller.checkLogin(function (response) {
+                            if (response.result == true || response.result == 'true') {   // Already logged in
+                                new RenderAdoptTreeViewCommand({ el: Setting.getPopWrapperElement(), tree: options.tree }).execute();
+                            } else {
+                                new RenderMessageViewCommand({ el: Setting.getMessageWrapperElement(), message: Setting.getErrorMessage(response.code), undoable: false }).execute();
+                            }
+                        }, function (response) {
+                            EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
+                        });
+                    } else if (el.hasClass('button-tree-unadopt')) {
+                        Controller.checkLogin(function (response) {
+                            if (response.result == true || response.result == 'true') {   // Already logged in
+                                new RenderUnadoptTreeViewCommand({ el: Setting.getPopWrapperElement(), tree: options.tree }).execute();
+                            } else {
+                                new RenderMessageViewCommand({ el: Setting.getMessageWrapperElement(), message: Setting.getErrorMessage(response.code), undoable: false }).execute();
+                            }
+                        }, function (response) {
+                            EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
+                        });
+                    } else if (el.hasClass('button-new-note')) {
+                        var tree: Tree = Model.getTrees().findWhere({ id: parseInt(options.tree) });
+                        new RenderPostNoteViewCommand({ el: Setting.getPopWrapperElement(), tree: tree }).execute();
                     }
                     break;
                 case VIEW_STATUS.MANAGE_ADOPTION:
@@ -180,6 +207,26 @@
                         new RenderPostNoteViewCommand({ el: Setting.getPopWrapperElement(), tree: options.tree }).execute();
                     } else if (el.hasClass('button-back-map')) {
                         Backbone.history.history.back();
+                    } else if (el.hasClass('button-tree-adopt')) {
+                        Controller.checkLogin(function (response) {
+                            if (response.result == true || response.result == 'true') {   // Already logged in
+                                new RenderAdoptTreeViewCommand({ el: Setting.getPopWrapperElement(), tree: options.tree.getId() }).execute();
+                            } else {
+                                new RenderMessageViewCommand({ el: Setting.getMessageWrapperElement(), message: Setting.getErrorMessage(response.code), undoable: false }).execute();
+                            }
+                        }, function (response) {
+                            EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
+                        });
+                    } else if (el.hasClass('button-tree-unadopt')) {
+                        Controller.checkLogin(function (response) {
+                            if (response.result == true || response.result == 'true') {   // Already logged in
+                                new RenderUnadoptTreeViewCommand({ el: Setting.getPopWrapperElement(), tree: options.tree.getId() }).execute();
+                            } else {
+                                new RenderMessageViewCommand({ el: Setting.getMessageWrapperElement(), message: Setting.getErrorMessage(response.code), undoable: false }).execute();
+                            }
+                        }, function (response) {
+                            EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
+                        });
                     }
                     break;
                 case VIEW_STATUS.IMAGENOTE_TREE:
@@ -241,7 +288,7 @@
                     }
                     break;
                 case VIEW_STATUS.LOGIN:
-                    if (el.hasClass('button-close') || el.hasClass('login-cancel') || el.hasClass('logged-cancel')) {
+                    if (el.hasClass('button-close') || el.hasClass('login-cancel') || el.hasClass('logged-cancel') || el.hasClass('signup-cancel')) {
                         new RemoveAlertViewCommand({ delay: Setting.getRemovePopupDuration() }).execute();
                     } else if (el.hasClass('login-submit')) {
                         if (options.contact != undefined && options.password != undefined) {
@@ -285,6 +332,17 @@
                         });
                     }
                     break;
+                case VIEW_STATUS.SIGNUP:
+                    if (el.hasClass('signup-cancel') || el.hasClass('button-close')) {
+                        new RemoveAlertViewCommand({ delay: Setting.getRemovePopupDuration() }).execute();
+                    }
+                    break;
+                case VIEW_STATUS.ADOPT_TREE:
+                    if (el.hasClass('adopt-cancel') || el.hasClass('button-close')) {
+                        new RemoveAlertViewCommand({ delay: Setting.getRemovePopupDuration() }).execute();
+                    }
+                    break;
+                    break;
 
             }
         }
@@ -303,8 +361,8 @@
             }
         }
 
-        public static handleError(errorMode: ERROR_MODE): void {
-            new RenderAlertViewCommand({ el: Setting.getPopWrapperElement(), errorMode: errorMode }).execute();
+        public static handleError(errorMode: ERROR_MODE, customMessage?: string): void {
+            new RenderAlertViewCommand({ el: Setting.getPopWrapperElement(), errorMode: errorMode, customMessage: customMessage }).execute();
         }
 
         public static handleDataChange(message: string, undoable?: boolean): void {

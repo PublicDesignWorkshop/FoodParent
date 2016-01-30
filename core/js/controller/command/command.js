@@ -159,6 +159,40 @@ var FoodParent;
         return RenderManageAdoptionViewCommand;
     })();
     FoodParent.RenderManageAdoptionViewCommand = RenderManageAdoptionViewCommand;
+    var RenderAdoptTreeViewCommand = (function () {
+        function RenderAdoptTreeViewCommand(args) {
+            var self = this;
+            self._el = args.el;
+            self._tree = args.tree;
+        }
+        RenderAdoptTreeViewCommand.prototype.execute = function () {
+            var self = this;
+            var view = FoodParent.AdoptTreeViewFactory.create(self._el, self._tree).render();
+            FoodParent.View.setPopupView(view);
+            FoodParent.View.setViewStatus(FoodParent.VIEW_STATUS.ADOPT_TREE);
+        };
+        RenderAdoptTreeViewCommand.prototype.undo = function () {
+        };
+        return RenderAdoptTreeViewCommand;
+    })();
+    FoodParent.RenderAdoptTreeViewCommand = RenderAdoptTreeViewCommand;
+    var RenderUnadoptTreeViewCommand = (function () {
+        function RenderUnadoptTreeViewCommand(args) {
+            var self = this;
+            self._el = args.el;
+            self._tree = args.tree;
+        }
+        RenderUnadoptTreeViewCommand.prototype.execute = function () {
+            var self = this;
+            var view = FoodParent.UnadoptTreeViewFactory.create(self._el, self._tree).render();
+            FoodParent.View.setPopupView(view);
+            FoodParent.View.setViewStatus(FoodParent.VIEW_STATUS.ADOPT_TREE);
+        };
+        RenderUnadoptTreeViewCommand.prototype.undo = function () {
+        };
+        return RenderUnadoptTreeViewCommand;
+    })();
+    FoodParent.RenderUnadoptTreeViewCommand = RenderUnadoptTreeViewCommand;
     var RenderImageNoteViewCommand = (function () {
         function RenderImageNoteViewCommand(args) {
             var self = this;
@@ -198,10 +232,13 @@ var FoodParent;
             var self = this;
             self._el = args.el;
             self._errorMode = args.errorMode;
+            if (args.customMessage) {
+                self._customMessage = args.customMessage;
+            }
         }
         RenderAlertViewCommand.prototype.execute = function () {
             var self = this;
-            var view = FoodParent.AlertViewFractory.create(self._el, self._errorMode).render();
+            var view = FoodParent.AlertViewFractory.create(self._el, self._errorMode, self._customMessage).render();
             FoodParent.View.setPopupView(view);
             switch (self._errorMode) {
                 case FoodParent.ERROR_MODE.GEO_PERMISSION_ERROR:
@@ -209,6 +246,9 @@ var FoodParent;
                     break;
                 case FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR:
                     FoodParent.View.setViewStatus(FoodParent.VIEW_STATUS.NETWORK_ERROR);
+                    break;
+                case FoodParent.ERROR_MODE.SEVER_RESPONSE_ERROR:
+                    FoodParent.View.setViewStatus(FoodParent.VIEW_STATUS.SERVER_RESPONSE_ERROR);
                     break;
             }
         };
@@ -462,4 +502,20 @@ var FoodParent;
         return RenderLoggedInViewCommand;
     })();
     FoodParent.RenderLoggedInViewCommand = RenderLoggedInViewCommand;
+    var RenderSignUpViewCommand = (function () {
+        function RenderSignUpViewCommand(args) {
+            var self = this;
+            self._el = args.el;
+        }
+        RenderSignUpViewCommand.prototype.execute = function () {
+            var self = this;
+            var view = FoodParent.SignUpViewFactory.create(self._el).render();
+            FoodParent.View.setPopupView(view);
+            FoodParent.View.setViewStatus(FoodParent.VIEW_STATUS.SIGNUP);
+        };
+        RenderSignUpViewCommand.prototype.undo = function () {
+        };
+        return RenderSignUpViewCommand;
+    })();
+    FoodParent.RenderSignUpViewCommand = RenderSignUpViewCommand;
 })(FoodParent || (FoodParent = {}));

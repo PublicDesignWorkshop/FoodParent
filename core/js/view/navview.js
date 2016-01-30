@@ -78,7 +78,6 @@ var FoodParent;
             var self = this;
             if (self.bDebug)
                 console.log(NavView.TAG + "update()");
-            console.log(args.viewStatus);
             if (args.viewStatus == FoodParent.VIEW_STATUS.HOME) {
                 self.urenderNavItems();
                 self.$('#background-nav-left').animate({ left: '-76%' }, FoodParent.Setting.getNavAnimDuration());
@@ -113,9 +112,7 @@ var FoodParent;
             var data;
             FoodParent.Controller.checkLogin(function (data) {
                 if (data.result == true || data.result == 'true') {
-                    console.log(data);
                     FoodParent.Controller.checkAdmin(function (data2) {
-                        console.log(data2);
                         if (data2.result == true || data2.result == 'true') {
                             template = _.template(FoodParent.Template.getNavViewManageItemsTemplate2());
                             self.$('#list-nav').html(template({

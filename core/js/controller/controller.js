@@ -272,14 +272,14 @@ var FoodParent;
                     }
                     else {
                         if (error) {
-                            error();
+                            error(data);
                         }
                     }
                 },
                 error: function (jqXHR, textStatus, errorThrown) {
                     Controller.removeXHR(xhr1);
                     if (error) {
-                        error();
+                        error(jqXHR);
                     }
                 }
             });
@@ -372,6 +372,40 @@ var FoodParent;
                     Controller.removeXHR(xhr1);
                     if (error) {
                         error();
+                    }
+                }
+            });
+            Controller.pushXHR(xhr1);
+        };
+        Controller.processSignup = function (contact, name, neighborhood, success, error) {
+            var xhr1 = $.ajax({
+                url: FoodParent.Setting.getPhpDir() + "signup.php",
+                type: "POST",
+                data: {
+                    'contact': contact,
+                    'name': name,
+                    'neighborhood': neighborhood,
+                },
+                cache: false,
+                dataType: "json",
+                success: function (data, textStatus, jqXHR) {
+                    Controller.removeXHR(xhr1);
+                    console.log(data);
+                    if (typeof data.error === "undefined") {
+                        if (success) {
+                            success(data);
+                        }
+                    }
+                    else {
+                        if (error) {
+                            error(data);
+                        }
+                    }
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    Controller.removeXHR(xhr1);
+                    if (error) {
+                        error(jqXHR);
                     }
                 }
             });

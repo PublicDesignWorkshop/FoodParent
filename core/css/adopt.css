@@ -1,0 +1,21 @@
+﻿@media all {
+    .wrapper-tree-adopt-content {
+        padding: 4px;
+        height: 100%;
+    }
+
+    .wrapper-tree-adopt-content .info-header {
+        text-align: left;
+        font-size: medium;
+        font-weight: 700;
+    }
+
+    .wrapper-tree-adopt-content .info-group {
+        text-align: left;
+        padding: 8px 0;
+    }
+
+    .wrapper-tree-adopt-content .info-button-group {
+        padding: 2px 0;
+    }
+}

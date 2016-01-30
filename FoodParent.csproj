@@ -30,6 +30,7 @@
     <Content Include="content\picture\blackberry5.jpg" />
     <Content Include="content\picture\blackberry6.jpg" />
     <Content Include="content\picture\blackberry7.jpg" />
+    <Content Include="core\css\adopt.css" />
     <Content Include="core\css\alert.css" />
     <Content Include="core\css\app.css" />
     <Content Include="core\css\backgrid.css" />
@@ -203,6 +204,7 @@
     <Content Include="core\php\logout.php" />
     <Content Include="core\php\logincheck.php" />
     <Content Include="core\php\admincheck.php" />
+    <Content Include="core\php\signup.php" />
     <None Include="web.Debug.config">
       <DependentUpon>web.config</DependentUpon>
     </None>
@@ -236,6 +238,7 @@
     <TypeScriptCompile Include="core\js\model\ownership.ts" />
     <TypeScriptCompile Include="core\js\model\person.ts" />
     <TypeScriptCompile Include="core\js\model\tree.ts" />
+    <TypeScriptCompile Include="core\js\view\adoptionview.ts" />
     <TypeScriptCompile Include="core\js\view\alertview.ts" />
     <TypeScriptCompile Include="core\js\view\gridformat\donationgridformat.ts" />
     <TypeScriptCompile Include="core\js\view\gridformat\locationgridformat.ts" />

@@ -171,7 +171,7 @@
             var template = '';
             template += '<div class="item-nav item-manage-title">FoodParent</div>';
             template += '<div class="item-nav item-manage trees">TREES</div>';
-            template += '<div class="item-nav item-manage people">PARENT</div>';
+            template += '<div class="item-nav item-manage parent">PARENT</div>';
             template += '<div class="item-nav item-manage"></div>';
             template += '<div class="item-nav item-manage-loggedin login"><div class="loggedinas">you are logged in as: </div><div><%= contact %></div></div>';
             return template;
@@ -357,7 +357,7 @@
             template += '<div class="hr"><hr /></div>';
             template += '<div class="info-button">';
             template += '<div class="button-outer-frame2 button5"><div class="button-inner-frame2 button-tree-detail"><i class="fa fa-heartbeat"></i> See Tree Detail</div></div>';
-            template += '<div class="button-outer-frame2 button5"><div class="button-inner-frame2 button-manage-adoption"><i class="fa  fa-user-plus"></i> Adopt This Tree</div></div>';
+            template += '<div class="button-outer-frame2 button5"><div class="button-inner-frame2 button-manage-adoption"><i class="fa fa-user-plus"></i> Manage Adoption</div></div>';
             template += '<div class="button-outer-frame2 button5"><div class="button-inner-frame2 button-new-note"><i class="fa fa-sticky-note-o"></i> Post New Note</div></div>';
             
 
@@ -477,9 +477,42 @@
             template += '<div class="hr"><hr /></div>';
             template += '<div class="info-button">';
             template += '<div class="button-outer-frame2 button5"><div class="button-inner-frame2 button-tree-detail"><i class="fa fa-heartbeat"></i> See Tree Detail</div></div>';
-            template += '<div class="button-outer-frame2 button5"><div class="button-inner-frame2 button-manage-adoption"><i class="fa  fa-user-plus"></i> Adopt This Tree</div></div>';
+            template += '<div class="button-outer-frame2 button5"><div class="button-inner-frame2 button-tree-adopt"><i class="fa  fa-user-plus"></i> Adopt This Tree</div></div>';
             template += '<div class="button-outer-frame2 button5"><div class="button-inner-frame2 button-new-note"><i class="fa fa-sticky-note-o"></i> Post New Note</div></div>';
             
+            template += '</div>';
+
+
+            return template;
+        }
+
+        public static getTreeInfoTemplate5(): string {
+            var template = '';
+            template += '<div class="tree-info-name"><div class="input-food"><%= foodname %></div>&nbsp;<%= treename %></div>';
+            //template += '<div class="tree-info-coordinate"><div>@&nbsp;</div><div class="input-lat"><%= lat %></div>,&nbsp;<div class="input-lng"><%= lng %></div></div>';
+
+            template += '<div class="info-group">';
+            template += '<div class="input-address">&nbsp;</div>';
+            template += '</div>';
+
+            template += '<div class="hr"><hr /></div>';
+            template += '<div class="info-header"><i class="fa fa-sticky-note fa-1x"></i> Description</div>';
+            template += '<div class="info-group">';
+            template += '<div class="input-description"><%= description %></div>';
+            template += '</div>';
+
+            template += '<div class="hr"><hr /></div>';
+            template += '<div class="info-header"><i class="fa fa-leaf fa-1x"></i> Recent Comments</div>';
+            template += '<div id="list-activities" class="info-group">';
+            template += '<div>&nbsp;</div>';
+            template += '</div>';
+
+            template += '<div class="hr"><hr /></div>';
+            template += '<div class="info-button">';
+            template += '<div class="button-outer-frame2 button5"><div class="button-inner-frame2 button-tree-detail"><i class="fa fa-heartbeat"></i> See Tree Detail</div></div>';
+            template += '<div class="button-outer-frame2 button5"><div class="button-inner-frame2 button-tree-unadopt"><i class="fa  fa-user-times"></i> Unadopt This Tree</div></div>';
+            template += '<div class="button-outer-frame2 button5"><div class="button-inner-frame2 button-new-note"><i class="fa fa-sticky-note-o"></i> Post New Note</div></div>';
+
             template += '</div>';
 
 
@@ -811,9 +844,18 @@
         public static getDetailMenuTemplate2(): string {
             var template = '';
             template += '<div class="button-outer-frame2 button3"><div class="button-inner-frame2 button-back-map"><i class="fa fa-arrow-left"></i> Back To List</div></div>';
-            template += '<div class="button-outer-frame2 button3"><div class="button-inner-frame2 button-manage-adoption"><i class="fa  fa-user-plus"></i> Adopt This Tree</div></div>';
+            template += '<div class="button-outer-frame2 button3"><div class="button-inner-frame2 button-tree-adopt"><i class="fa  fa-user-plus"></i> Adopt This Tree</div></div>';
             template += '<div class="button-outer-frame2 button3"><div class="button-inner-frame2 button-new-note"><i class="fa fa-sticky-note-o"></i> Post New Note</div></div>';
             
+            return template;
+        }
+
+        public static getDetailMenuTemplate3(): string {
+            var template = '';
+            template += '<div class="button-outer-frame2 button3"><div class="button-inner-frame2 button-back-map"><i class="fa fa-arrow-left"></i> Back To List</div></div>';
+            template += '<div class="button-outer-frame2 button3"><div class="button-inner-frame2 button-tree-unadopt"><i class="fa  fa-user-times"></i> Unadopt This Tree</div></div>';
+            template += '<div class="button-outer-frame2 button3"><div class="button-inner-frame2 button-new-note"><i class="fa fa-sticky-note-o"></i> Post New Note</div></div>';
+
             return template;
         }
 
@@ -921,9 +963,6 @@
             template +=                 '<div class="wrapper-note-info">';
 
 
-            
-
-
             template +=                     '<div class="name"><%= name %></div>';
 
             template += '<div class="hr"><hr /></div>';
@@ -952,6 +991,12 @@
             template += '</div>';
 
             template += '<div class="hr"><hr /></div>';
+            template += '<div class="info-header"><i class="fa fa-user"></i> Author</div>';
+            template += '<div class="info-group">';
+            template += '<div class="input-author"><%= author %></div>';
+            template += '</div>';
+
+            template += '<div class="hr"><hr /></div>';
             template += '<div class="info-button-group">';
             template += '<div class="button-outer-frame2 button3"><div class="button-inner-frame2 delete-note"><i class="fa fa-remove"></i> Delete</div></div>';
             template += '</div>';
@@ -965,6 +1010,66 @@
             template +=             '<i class="fa fa-remove fa-2x"></i>';
             template +=         '</div>';   // end of top-right-button button-close
             template +=     '</div>';   // end of .outer-frame
+            template += '</div>';   // end of #wrapper-note
+            return template;
+        }
+
+        public static getImageNoteViewTemplate2(): string {
+            var template = '';
+            template += '<div id="wrapper-note">';
+            template += '<div class="outer-frame">';
+            template += '<div class="inner-frame">';
+            template += '<div class="wrapper-note-content">';
+            template += '<div class="image-wrapper">';
+
+            template += '<div class="image-group"></div>';
+            template += '</div>';   // end of .image-wrapper
+
+            template += '<div class="wrapper-note-info">';
+
+
+            template += '<div class="name"><%= name %></div>';
+
+            template += '<div class="hr"><hr /></div>';
+            template += '<div class="info-button-group">';
+            template += '<div class="button-outer-frame2 button3"><div class="button-inner-frame2 prev-note"><i class="fa fa-caret-left"></i></div></div>';
+            template += '<div class="button-outer-frame2 button3"><div class="button-inner-frame2 next-note"><i class="fa fa-caret-right"></i></div></div>';
+            template += '</div>';
+
+            template += '<div class="hr"><hr /></div>';
+            template += '<div class="info-header"><i class="fa fa-star-half-o"></i> Rating</div>';
+            template += '<div class="info-group">';
+            template += '<div class="input-rating"><%= value %></div>';
+            template += '<div class="input-rating-slider"></div>';
+            template += '</div>';
+
+            template += '<div class="hr"><hr /></div>';
+            template += '<div class="info-header"><i class="fa fa-comment"></i> Comment</div>';
+            template += '<div class="info-group">';
+            template += '<div class="text-comment"><%= comment %></div>';
+            template += '</div>';
+
+            template += '<div class="hr"><hr /></div>';
+            template += '<div class="info-header"><i class="fa fa-calendar-o"></i> Date</div>';
+            template += '<div class="info-group">';
+            template += '<div class="text-date"><%= date %></div>';
+            template += '</div>';
+
+            template += '<div class="hr"><hr /></div>';
+            template += '<div class="info-header"><i class="fa fa-user"></i> Author</div>';
+            template += '<div class="info-group">';
+            template += '<div class="input-author"><%= author %></div>';
+            template += '</div>';
+
+
+            template += '</div>';
+
+            template += '</div>';   // end of .wrapper-note-content
+            template += '</div>';   // end of .inner-frame
+            template += '<div class="top-right-button button-close">';
+            template += '<i class="fa fa-remove fa-2x"></i>';
+            template += '</div>';   // end of top-right-button button-close
+            template += '</div>';   // end of .outer-frame
             template += '</div>';   // end of #wrapper-note
             return template;
         }
@@ -1015,6 +1120,12 @@
             template += '</div>';
 
             template += '<div class="hr"><hr /></div>';
+            template += '<div class="info-header"><i class="fa fa-user"></i> Author</div>';
+            template += '<div class="info-group">';
+            template += '<div class="input-author"><%= author %></div>';
+            template += '</div>';
+
+            template += '<div class="hr"><hr /></div>';
             template += '<div class="info-button-group">';
             template += '<div class="button-outer-frame2 button3"><div class="button-inner-frame2 create-note"><i class="fa fa-save"></i> Save</div></div>';
             template += '</div>';
@@ -1028,6 +1139,77 @@
             template +=         '<i class="fa fa-remove fa-2x"></i>';
             template +=         '</div>';   // end of top-right-button button-close
             template +=     '</div>';   // end of .outer-frame
+            template += '</div>';   // end of #wrapper-note
+
+            return template;
+        }
+
+        public static getPostNoteViewTemplate2(): string {
+            var template = '';
+            template += '<div id="wrapper-note">';
+            template += '<div class="outer-frame">';
+            template += '<div class="inner-frame">';
+            template += '<div class="wrapper-post-note-content">';
+
+            template += '<div class="image-wrapper">';
+
+
+            template += '<div class="wrapper-input-upload-picture">';
+            template += '<input class="input-upload-picture fileupload" type="file" accept="image/*" capture="camera" />';
+            template += '</div>';
+            template += '<div class="wrapper-uploading-picture hidden">';
+            template += '<div class="uploading-picture">Uploading...</div>';
+            template += '</div>';
+            template += '<div class="info-header"><i class="fa fa-image"></i> Select Cover Picture</div>';
+            template += '<div class="image-group"></div>';
+
+            template += '</div>';   // end of .image-wrapper
+
+
+            template += '<div class="wrapper-note-info">';
+
+            template += '<div class="name"><%= name %></div>';
+
+            template += '<div class="hr"><hr /></div>';
+            template += '<div class="info-header"><i class="fa fa-star-half-o"></i> Rating</div>';
+            template += '<div class="info-group">';
+            template += '<div class="input-rating"></div>';
+            template += '<div class="input-rating-slider"></div>';
+            template += '</div>';
+
+            template += '<div class="hr"><hr /></div>';
+            template += '<div class="info-header"><i class="fa fa-comment"></i> Comment</div>';
+            template += '<div class="info-group">';
+            template += '<div class="input-comment">&nbsp;</div>';
+            template += '</div>';
+
+            template += '<div class="hr"><hr /></div>';
+            template += '<div class="info-header"><i class="fa fa-calendar-o"></i> Date</div>';
+            template += '<div class="info-group">';
+            template += '<input type="text" class="form-control input-date" />';
+            template += '</div>';
+
+            template += '<div class="hr"><hr /></div>';
+            template += '<div class="info-header"><i class="fa fa-user"></i> Author\'s E-mail Address</div>';
+            template += '<div class="info-group">';
+            template += '<input type="email" name="email" class="form-control input-author" placeholder="e-mail address" autocomplete="on"/>';
+            template += '<div class="button-description2">* The <strong>e-mail address</strong> that you enter will be stored as a perspective foodparent. You can <strong>become a parent</strong> using the same e-mail address that you provide.</div>';
+            template += '</div>';
+
+            template += '<div class="hr"><hr /></div>';
+            template += '<div class="info-button-group">';
+            template += '<div class="button-outer-frame2 button3"><div class="button-inner-frame2 create-note"><i class="fa fa-save"></i> Save</div></div>';
+            template += '</div>';
+
+            template += '</div>';   // .wrapper-note-info
+
+            template += '</div>';   // end of .wrapper-post-note-content
+
+            template += '</div>';   // end of .inner-frame
+            template += '<div class="top-right-button button-close">';
+            template += '<i class="fa fa-remove fa-2x"></i>';
+            template += '</div>';   // end of top-right-button button-close
+            template += '</div>';   // end of .outer-frame
             template += '</div>';   // end of #wrapper-note
 
             return template;
@@ -1356,6 +1538,7 @@
             template += '<div class="button-outer-frame2 button3"><div class="button-inner-frame2 logged-logout">Log Out</div></div>';
             template += '</div>';
 
+            /*
             template += '<div class="hr"><hr /></div>';
 
             template += '<div class="info-group">';
@@ -1369,6 +1552,7 @@
             template += '<div class="info-group">';
             template += '<input type="text" class="form-control input-neighborhood" placeholder="neighborhood"/>';
             template += '</div>';
+            */
 
             
             template += '<% if (auth < 3) { %>';
@@ -1387,10 +1571,11 @@
             template += '</div>';
             template += '<% } %>';
 
+            
             template += '<div class="info-button-group">';
-            template += '<div class="button-outer-frame2 button3"><div class="button-inner-frame2 logged-submit">Change Information</div></div>';
+            template += '<div class="button-outer-frame2 button3"><div class="button-inner-frame2 logged-submit">See Parent Detail</div></div>';
             template += '</div>';
-
+            
             
 
             template += '<div class="info-button-group">';
@@ -1407,6 +1592,128 @@
             template += '</div>';
             */
 
+
+            template += '</div>';   // end of .wrapper-login-content
+            template += '</div>';   // end of .inner-frame
+            template += '<div class="top-right-button button-close">';
+            template += '<i class="fa fa-remove fa-2x"></i>';
+            template += '</div>';   // end of top-right-button button-close
+            template += '</div>';   // end of .outer-frame
+            template += '</div>';   // end of #wrapper-note
+            return template;
+        }
+
+        public static getSignUpViewTemplate(): string {
+            var template = '';
+            template += '<div id="wrapper-signup">';
+            template += '<div class="outer-frame">';
+            template += '<div class="inner-frame">';
+            template += '<div class="wrapper-signup-content">';
+
+            template += '<div class="info-group">';
+            template += '<div class="name"><i>E-mail address</i></div>';
+            template += '</div>';
+
+            template += '<div class="info-group">';
+            template += '<input type="email" name="email" class="form-control input-contact" placeholder="e-mail address" autocomplete="on"/>';
+            template += '</div>';            
+
+            template += '<div class="hr"><hr /></div>';
+
+            template += '<div class="info-group">';
+            template += '<div class="name">Information</div>';
+            template += '</div>';
+
+            template += '<div class="info-group">';
+            template += '<input type="text" class="form-control input-name" placeholder="first & last name"/>';
+            template += '</div>';
+
+            //template += '<div class="info-group">';
+            //template += '<input type="text" class="form-control input-address" placeholder="address"/>';
+            //template += '</div>';
+
+            template += '<div class="info-group">';
+            template += '<input type="text" class="form-control input-neighborhood" placeholder="name of place near you (street, park)"/>';
+            template += '</div>';
+            
+            template += '<div class="hr"><hr /></div>';
+
+            template += '<div class="info-button-group">';
+            template += '<div class="button-outer-frame2 button3"><div class="button-inner-frame2 signup-submit">Sign Up</div></div>';
+            template += '</div>';
+
+            template += '<div class="info-button-group">';
+            template += '<div class="button-outer-frame2 button3"><div class="button-inner-frame2 signup-cancel">Cancel</div></div>';
+            template += '</div>';
+
+            /*
+            template += '<div class="hr"><hr /></div>';
+
+            template += '<br />';
+            template += '<div class="info-button-group">';
+            template += '<div class="button-outer-frame2 button3"><div class="button-inner-frame2 logged-delete">Delete Account*</div></div>';
+            template += '<div class="button-description2">* marked operation cannot be undone.</div>';
+            template += '</div>';
+            */
+
+
+            template += '</div>';   // end of .wrapper-login-content
+            template += '</div>';   // end of .inner-frame
+            template += '<div class="top-right-button button-close">';
+            template += '<i class="fa fa-remove fa-2x"></i>';
+            template += '</div>';   // end of top-right-button button-close
+            template += '</div>';   // end of .outer-frame
+            template += '</div>';   // end of #wrapper-note
+            return template;
+        }
+
+        public static getAdoptTreeViewTemplate(): string {
+            var template = '';
+            template += '<div id="wrapper-tree-adopt">';
+            template += '<div class="outer-frame">';
+            template += '<div class="inner-frame">';
+            template += '<div class="wrapper-tree-adopt-content">';
+
+            template += '<div class="info-group">';
+            template += '<div class="name">Do you want to adopt <i><strong><%= treename %></strong></i>?</div>';
+            template += '</div>';
+
+            template += '<div class="info-button-group">';
+            template += '<div class="button-outer-frame2 button3"><div class="button-inner-frame2 adopt-submit">Adopt Tree</div></div>';
+            template += '</div>';
+
+            template += '<div class="info-button-group">';
+            template += '<div class="button-outer-frame2 button3"><div class="button-inner-frame2 adopt-cancel">Cancel</div></div>';
+            template += '</div>';
+
+            template += '</div>';   // end of .wrapper-login-content
+            template += '</div>';   // end of .inner-frame
+            template += '<div class="top-right-button button-close">';
+            template += '<i class="fa fa-remove fa-2x"></i>';
+            template += '</div>';   // end of top-right-button button-close
+            template += '</div>';   // end of .outer-frame
+            template += '</div>';   // end of #wrapper-note
+            return template;
+        }
+
+        public static getUnadoptTreeViewTemplate(): string {
+            var template = '';
+            template += '<div id="wrapper-tree-adopt">';
+            template += '<div class="outer-frame">';
+            template += '<div class="inner-frame">';
+            template += '<div class="wrapper-tree-adopt-content">';
+
+            template += '<div class="info-group">';
+            template += '<div class="name">Do you want to unadopt <i><strong><%= treename %></strong></i>?</div>';
+            template += '</div>';
+
+            template += '<div class="info-button-group">';
+            template += '<div class="button-outer-frame2 button3"><div class="button-inner-frame2 adopt-submit">Unadopt Tree</div></div>';
+            template += '</div>';
+
+            template += '<div class="info-button-group">';
+            template += '<div class="button-outer-frame2 button3"><div class="button-inner-frame2 adopt-cancel">Cancel</div></div>';
+            template += '</div>';
 
             template += '</div>';   // end of .wrapper-login-content
             template += '</div>';   // end of .inner-frame

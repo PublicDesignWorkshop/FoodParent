@@ -47,6 +47,9 @@ var FoodParent;
         VIEW_STATUS[VIEW_STATUS["DETAIL_DONATION"] = 14] = "DETAIL_DONATION";
         VIEW_STATUS[VIEW_STATUS["EDIT_DONATION"] = 15] = "EDIT_DONATION";
         VIEW_STATUS[VIEW_STATUS["LOGIN"] = 16] = "LOGIN";
+        VIEW_STATUS[VIEW_STATUS["SERVER_RESPONSE_ERROR"] = 17] = "SERVER_RESPONSE_ERROR";
+        VIEW_STATUS[VIEW_STATUS["SIGNUP"] = 18] = "SIGNUP";
+        VIEW_STATUS[VIEW_STATUS["ADOPT_TREE"] = 19] = "ADOPT_TREE";
     })(FoodParent.VIEW_STATUS || (FoodParent.VIEW_STATUS = {}));
     var VIEW_STATUS = FoodParent.VIEW_STATUS;
     (function (VIEW_MODE) {
@@ -60,6 +63,7 @@ var FoodParent;
         ERROR_MODE[ERROR_MODE["NONE"] = 0] = "NONE";
         ERROR_MODE[ERROR_MODE["GEO_PERMISSION_ERROR"] = 1] = "GEO_PERMISSION_ERROR";
         ERROR_MODE[ERROR_MODE["SEVER_CONNECTION_ERROR"] = 2] = "SEVER_CONNECTION_ERROR";
+        ERROR_MODE[ERROR_MODE["SEVER_RESPONSE_ERROR"] = 3] = "SEVER_RESPONSE_ERROR";
     })(FoodParent.ERROR_MODE || (FoodParent.ERROR_MODE = {}));
     var ERROR_MODE = FoodParent.ERROR_MODE;
     var EventHandler = (function () {
@@ -148,7 +152,13 @@ var FoodParent;
                                 new FoodParent.RenderLogInViewCommand({ el: FoodParent.Setting.getPopWrapperElement() }).execute();
                             }
                         }, function () {
+                            EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
                         });
+                    }
+                }
+                else if (el.hasClass('signup')) {
+                    if (FoodParent.View.getViewStatus() != VIEW_STATUS.SIGNUP) {
+                        new FoodParent.RenderSignUpViewCommand({ el: FoodParent.Setting.getPopWrapperElement() }).execute();
                     }
                 }
             }
@@ -190,7 +200,7 @@ var FoodParent;
                             options.marker._popup.setContent('<div class="marker-control-wrapper">' + $('.marker-control-wrapper').html() + '</div>');
                         }
                     }
-                    else if (el.hasClass('marker-control-adoption')) {
+                    else if (el.hasClass('marker-control-adoption') || el.hasClass('button-manage-adoption')) {
                         new FoodParent.RenderManageAdoptionViewCommand({ el: FoodParent.Setting.getPopWrapperElement(), tree: options.tree }).execute();
                     }
                     else if (el.hasClass('marker-control-info') || el.hasClass('button-tree-detail')) {
@@ -215,6 +225,34 @@ var FoodParent;
                     else if (el.hasClass('tree-detail')) {
                         new FoodParent.NavigateCommand({ hash: 'mtree', viewMode: VIEW_MODE.GRAPHIC, id: options.tree }).execute();
                     }
+                    else if (el.hasClass('button-tree-adopt')) {
+                        FoodParent.Controller.checkLogin(function (response) {
+                            if (response.result == true || response.result == 'true') {
+                                new FoodParent.RenderAdoptTreeViewCommand({ el: FoodParent.Setting.getPopWrapperElement(), tree: options.tree }).execute();
+                            }
+                            else {
+                                new FoodParent.RenderMessageViewCommand({ el: FoodParent.Setting.getMessageWrapperElement(), message: FoodParent.Setting.getErrorMessage(response.code), undoable: false }).execute();
+                            }
+                        }, function (response) {
+                            EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
+                        });
+                    }
+                    else if (el.hasClass('button-tree-unadopt')) {
+                        FoodParent.Controller.checkLogin(function (response) {
+                            if (response.result == true || response.result == 'true') {
+                                new FoodParent.RenderUnadoptTreeViewCommand({ el: FoodParent.Setting.getPopWrapperElement(), tree: options.tree }).execute();
+                            }
+                            else {
+                                new FoodParent.RenderMessageViewCommand({ el: FoodParent.Setting.getMessageWrapperElement(), message: FoodParent.Setting.getErrorMessage(response.code), undoable: false }).execute();
+                            }
+                        }, function (response) {
+                            EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
+                        });
+                    }
+                    else if (el.hasClass('button-new-note')) {
+                        var tree = FoodParent.Model.getTrees().findWhere({ id: parseInt(options.tree) });
+                        new FoodParent.RenderPostNoteViewCommand({ el: FoodParent.Setting.getPopWrapperElement(), tree: tree }).execute();
+                    }
                     break;
                 case VIEW_STATUS.MANAGE_ADOPTION:
                     if (el.hasClass('button-close')) {
@@ -235,6 +273,30 @@ var FoodParent;
                     }
                     else if (el.hasClass('button-back-map')) {
                         Backbone.history.history.back();
+                    }
+                    else if (el.hasClass('button-tree-adopt')) {
+                        FoodParent.Controller.checkLogin(function (response) {
+                            if (response.result == true || response.result == 'true') {
+                                new FoodParent.RenderAdoptTreeViewCommand({ el: FoodParent.Setting.getPopWrapperElement(), tree: options.tree.getId() }).execute();
+                            }
+                            else {
+                                new FoodParent.RenderMessageViewCommand({ el: FoodParent.Setting.getMessageWrapperElement(), message: FoodParent.Setting.getErrorMessage(response.code), undoable: false }).execute();
+                            }
+                        }, function (response) {
+                            EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
+                        });
+                    }
+                    else if (el.hasClass('button-tree-unadopt')) {
+                        FoodParent.Controller.checkLogin(function (response) {
+                            if (response.result == true || response.result == 'true') {
+                                new FoodParent.RenderUnadoptTreeViewCommand({ el: FoodParent.Setting.getPopWrapperElement(), tree: options.tree.getId() }).execute();
+                            }
+                            else {
+                                new FoodParent.RenderMessageViewCommand({ el: FoodParent.Setting.getMessageWrapperElement(), message: FoodParent.Setting.getErrorMessage(response.code), undoable: false }).execute();
+                            }
+                        }, function (response) {
+                            EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
+                        });
                     }
                     break;
                 case VIEW_STATUS.IMAGENOTE_TREE:
@@ -296,7 +358,7 @@ var FoodParent;
                     }
                     break;
                 case VIEW_STATUS.LOGIN:
-                    if (el.hasClass('button-close') || el.hasClass('login-cancel') || el.hasClass('logged-cancel')) {
+                    if (el.hasClass('button-close') || el.hasClass('login-cancel') || el.hasClass('logged-cancel') || el.hasClass('signup-cancel')) {
                         new FoodParent.RemoveAlertViewCommand({ delay: FoodParent.Setting.getRemovePopupDuration() }).execute();
                     }
                     else if (el.hasClass('login-submit')) {
@@ -342,6 +404,17 @@ var FoodParent;
                         });
                     }
                     break;
+                case VIEW_STATUS.SIGNUP:
+                    if (el.hasClass('signup-cancel') || el.hasClass('button-close')) {
+                        new FoodParent.RemoveAlertViewCommand({ delay: FoodParent.Setting.getRemovePopupDuration() }).execute();
+                    }
+                    break;
+                case VIEW_STATUS.ADOPT_TREE:
+                    if (el.hasClass('adopt-cancel') || el.hasClass('button-close')) {
+                        new FoodParent.RemoveAlertViewCommand({ delay: FoodParent.Setting.getRemovePopupDuration() }).execute();
+                    }
+                    break;
+                    break;
             }
         };
         EventHandler.handleMouseEnter = function (el, view) {
@@ -358,8 +431,8 @@ var FoodParent;
                     break;
             }
         };
-        EventHandler.handleError = function (errorMode) {
-            new FoodParent.RenderAlertViewCommand({ el: FoodParent.Setting.getPopWrapperElement(), errorMode: errorMode }).execute();
+        EventHandler.handleError = function (errorMode, customMessage) {
+            new FoodParent.RenderAlertViewCommand({ el: FoodParent.Setting.getPopWrapperElement(), errorMode: errorMode, customMessage: customMessage }).execute();
         };
         EventHandler.handleDataChange = function (message, undoable) {
             var self = EventHandler._instance;

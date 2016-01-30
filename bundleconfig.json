@@ -69,6 +69,7 @@
       "core/js/view/mdonationsview.js",
       "core/js/view/mdonationview.js",
       "core/js/view/loginview.js",
+      "core/js/view/adoptionview.js",
       // Model
       "core/js/model/model.js",
       "core/js/model/adopt.js",
@@ -122,6 +123,7 @@
       "core/css/mdonations.css",
       "core/css/mdonation.css",
       "core/css/login.css",
+      "core/css/adopt.css",
 
       // Print (not working for safari)
       "core/css/print.css",

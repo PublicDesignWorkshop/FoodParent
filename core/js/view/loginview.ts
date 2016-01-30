@@ -105,8 +105,6 @@
                     EventHandler.handleMouseClick($(event.currentTarget), self, { contact: $('.input-contact').val().trim(), password: $('.input-contact').val().trim() });
                 }
             }
-
-            //
         }
     }
 
@@ -225,6 +223,107 @@
             }
 
             //
+        }
+    }
+
+    export class SignUpViewFactory {
+        private static _instance: SignUpViewFactory = new SignUpViewFactory();
+        private baseUrl: string;
+        constructor(args?: any) {
+            if (SignUpViewFactory._instance) {
+                throw new Error("Error: Instantiation failed: Use SignUpViewFactory.getInstance() instead of new.");
+            }
+            SignUpViewFactory._instance = this;
+        }
+        public static getInstance(): SignUpViewFactory {
+            return SignUpViewFactory._instance;
+        }
+        public static create(el: JQuery): SignUpView {
+            var view: SignUpView = new SignUpView({ el: el });
+            return view;
+        }
+    }
+    export class SignUpView extends PopupView {
+        private static TAG: string = "SignUpView - ";
+        private bProcessing: boolean = false;
+        constructor(options?: Backbone.ViewOptions<Backbone.Model>) {
+            super(options);
+            var self: SignUpView = this;
+            self.bDebug = true;
+            //$(window).resize(_.debounce(that.customResize, Setting.getInstance().getResizeTimeout()));
+            self.events = <any>{
+                "click .top-right-button": "_mouseClick",
+                "click .signup-cancel": "_mouseClick",
+                "click .signup-submit": "_signupSubmit",
+            };
+            self.delegateEvents();
+        }
+        public render(args?: any): any {
+            if (this.bRendered) {
+                this.update(args);
+                return;
+            }
+            this.bRendered = true;
+            /////
+            var self: SignUpView = this;
+            if (self.bDebug) console.log(SignUpView.TAG + "render()");
+
+            var template = _.template(Template.getSignUpViewTemplate());
+            $('#wrapper-pop').html(template({
+
+            }));
+            self.setElement($('#wrapper-signup'));
+
+            
+
+            /*
+            var place: Place = Model.getPlaces().findWhere({ id: self._donation.getPlaceId() });
+            
+            self.renderDonationInfo();
+            */
+            self.setVisible();
+            self.resize();
+            return self;
+        }
+
+        public setVisible(): void {
+            var self: SignUpView = this;
+            Setting.getPopWrapperElement().removeClass('hidden');
+        }
+        public setInvisible(): void {
+            var self: SignUpView = this;
+            Setting.getPopWrapperElement().addClass('hidden');
+        }
+
+        private _mouseClick(event: Event): void {
+            var self: SignUpView = this;
+            EventHandler.handleMouseClick($(event.currentTarget), self);
+        }
+
+        private _signupSubmit(event: Event): void {
+            var self: SignUpView = this;
+            if (!self.bProcessing) {
+                self.bProcessing = true;
+                if (!isValidEmailAddress($('.input-contact').val())) {
+                    new RenderMessageViewCommand({ el: Setting.getMessageWrapperElement(), message: Setting.getErrorMessage(803), undoable: false }).execute();
+                    self.bProcessing = false;
+                } else if ($('.input-name').val().trim() == "") {
+                    new RenderMessageViewCommand({ el: Setting.getMessageWrapperElement(), message: Setting.getErrorMessage(604), undoable: false }).execute();
+                    self.bProcessing = false;
+                } else if ($('.input-neighborhood').val().trim() == "") {
+                    new RenderMessageViewCommand({ el: Setting.getMessageWrapperElement(), message: Setting.getErrorMessage(605), undoable: false }).execute();
+                    self.bProcessing = false;
+                } else {
+                    Controller.processSignup($('.input-contact').val().trim(), $('.input-name').val().trim(), $('.input-neighborhood').val().trim(), function (data) {
+                        Backbone.history.loadUrl(Backbone.history.fragment);
+                        self.bProcessing = false;
+                    }, function (data) {
+                        new RenderMessageViewCommand({ el: Setting.getMessageWrapperElement(), message: Setting.getErrorMessage(data.error), undoable: false }).execute();
+                        self.bProcessing = false;
+                    });
+                }
+            }
+            
         }
     }
 }

@@ -109,7 +109,6 @@ var FoodParent;
                     FoodParent.EventHandler.handleMouseClick($(event.currentTarget), self, { contact: $('.input-contact').val().trim(), password: $('.input-contact').val().trim() });
                 }
             }
-            //
         };
         LogInView.TAG = "LogInView - ";
         return LogInView;
@@ -231,4 +230,102 @@ var FoodParent;
         return LoggedInView;
     })(FoodParent.PopupView);
     FoodParent.LoggedInView = LoggedInView;
+    var SignUpViewFactory = (function () {
+        function SignUpViewFactory(args) {
+            if (SignUpViewFactory._instance) {
+                throw new Error("Error: Instantiation failed: Use SignUpViewFactory.getInstance() instead of new.");
+            }
+            SignUpViewFactory._instance = this;
+        }
+        SignUpViewFactory.getInstance = function () {
+            return SignUpViewFactory._instance;
+        };
+        SignUpViewFactory.create = function (el) {
+            var view = new SignUpView({ el: el });
+            return view;
+        };
+        SignUpViewFactory._instance = new SignUpViewFactory();
+        return SignUpViewFactory;
+    })();
+    FoodParent.SignUpViewFactory = SignUpViewFactory;
+    var SignUpView = (function (_super) {
+        __extends(SignUpView, _super);
+        function SignUpView(options) {
+            _super.call(this, options);
+            this.bProcessing = false;
+            var self = this;
+            self.bDebug = true;
+            //$(window).resize(_.debounce(that.customResize, Setting.getInstance().getResizeTimeout()));
+            self.events = {
+                "click .top-right-button": "_mouseClick",
+                "click .signup-cancel": "_mouseClick",
+                "click .signup-submit": "_signupSubmit",
+            };
+            self.delegateEvents();
+        }
+        SignUpView.prototype.render = function (args) {
+            if (this.bRendered) {
+                this.update(args);
+                return;
+            }
+            this.bRendered = true;
+            /////
+            var self = this;
+            if (self.bDebug)
+                console.log(SignUpView.TAG + "render()");
+            var template = _.template(FoodParent.Template.getSignUpViewTemplate());
+            $('#wrapper-pop').html(template({}));
+            self.setElement($('#wrapper-signup'));
+            /*
+            var place: Place = Model.getPlaces().findWhere({ id: self._donation.getPlaceId() });
+            
+            self.renderDonationInfo();
+            */
+            self.setVisible();
+            self.resize();
+            return self;
+        };
+        SignUpView.prototype.setVisible = function () {
+            var self = this;
+            FoodParent.Setting.getPopWrapperElement().removeClass('hidden');
+        };
+        SignUpView.prototype.setInvisible = function () {
+            var self = this;
+            FoodParent.Setting.getPopWrapperElement().addClass('hidden');
+        };
+        SignUpView.prototype._mouseClick = function (event) {
+            var self = this;
+            FoodParent.EventHandler.handleMouseClick($(event.currentTarget), self);
+        };
+        SignUpView.prototype._signupSubmit = function (event) {
+            var self = this;
+            if (!self.bProcessing) {
+                self.bProcessing = true;
+                if (!isValidEmailAddress($('.input-contact').val())) {
+                    new FoodParent.RenderMessageViewCommand({ el: FoodParent.Setting.getMessageWrapperElement(), message: FoodParent.Setting.getErrorMessage(803), undoable: false }).execute();
+                    self.bProcessing = false;
+                }
+                else if ($('.input-name').val().trim() == "") {
+                    new FoodParent.RenderMessageViewCommand({ el: FoodParent.Setting.getMessageWrapperElement(), message: FoodParent.Setting.getErrorMessage(604), undoable: false }).execute();
+                    self.bProcessing = false;
+                }
+                else if ($('.input-neighborhood').val().trim() == "") {
+                    new FoodParent.RenderMessageViewCommand({ el: FoodParent.Setting.getMessageWrapperElement(), message: FoodParent.Setting.getErrorMessage(605), undoable: false }).execute();
+                    self.bProcessing = false;
+                }
+                else {
+                    FoodParent.Controller.processSignup($('.input-contact').val().trim(), $('.input-name').val().trim(), $('.input-neighborhood').val().trim(), function (data) {
+                        Backbone.history.loadUrl(Backbone.history.fragment);
+                        self.bProcessing = false;
+                    }, function (data) {
+                        new FoodParent.RenderMessageViewCommand({ el: FoodParent.Setting.getMessageWrapperElement(), message: FoodParent.Setting.getErrorMessage(data.error), undoable: false }).execute();
+                        self.bProcessing = false;
+                    });
+                }
+            }
+        };
+        SignUpView.TAG = "SignUpView - ";
+        return SignUpView;
+    })(FoodParent.PopupView);
+    FoodParent.SignUpView = SignUpView;
 })(FoodParent || (FoodParent = {}));

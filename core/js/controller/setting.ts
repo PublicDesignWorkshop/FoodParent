@@ -112,5 +112,49 @@
         public static getMaxRating(): number {
             return 10
         }
+
+        /*
+
+        Server Error Code
+
+        404: Connection Error
+        
+        604: Missing name field
+        605: Missing neiborhood field
+
+        803: Not Valid Email Address
+        804: User existing Error
+        805: Wrong Login Parameters
+        
+        901: Not Logged In Error
+
+
+        */
+
+        public static getErrorMessage(code: any): string {
+            switch (parseInt(code)) {
+                case 404:
+                    return "Server connection error occured.";
+                    break;
+                case 604:
+                    return "Please enter your <strong>first and last name</strong>.";
+                    break;
+                case 605:
+                    return "Please enter a <strong>name of location</strong> near you live.";
+                case 803:
+                    return "Please put a <strong>valid e-mail address</strong>.";
+                    break;
+                case 804:
+                    return "The <strong>e-mail address</strong> that you entered <strong>already exists</strong>.<br>Please selecting <strong>'PARENT IN'</strong> menu to sign in.";
+                    break;
+                case 805:
+                    return "You have entered an <strong>incorrect username or password</strong>.";
+                    break;
+                case 901:
+                    return "You need to sign in first by selecting <strong>'PARENT IN'</strong> menu.";
+                    break;
+            }
+            return "";
+        }
     }
 }

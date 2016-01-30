@@ -96,6 +96,9 @@
         public getPersonId(): number {
             return parseInt(this.get('person'));
         }
+        public setPersonId(personId: number): void {
+            this.set('person', Math.floor(personId));
+        }
         public addPicture(filename: string): void {
             if (this.get('pictures') == undefined) {
                 this.set('pictures', new Array<string>());

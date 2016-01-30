@@ -76,7 +76,6 @@
             ////
             var self: NavView = this;
             if (self.bDebug) console.log(NavView.TAG + "update()");
-            console.log(args.viewStatus);
             if (args.viewStatus == VIEW_STATUS.HOME) {
                 self.urenderNavItems();
                 self.$('#background-nav-left').animate({ left: '-76%' }, Setting.getNavAnimDuration());
@@ -117,9 +116,7 @@
 
             Controller.checkLogin(function (data) {
                 if (data.result == true || data.result == 'true') {   // Already logged in
-                    console.log(data);
                     Controller.checkAdmin(function (data2) {
-                        console.log(data2);
                         if (data2.result == true || data2.result == 'true') {   // Already logged in
                             template = _.template(Template.getNavViewManageItemsTemplate2());
                             self.$('#list-nav').html(template({

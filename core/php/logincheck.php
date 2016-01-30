@@ -13,6 +13,7 @@
     } else {
         $params = array(
             "result" => "false",
+            "code" => 901,
         );
         echo json_encode($params);
     }

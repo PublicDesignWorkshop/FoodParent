@@ -3,7 +3,7 @@
     sec_session_start(); // Our custom secure way of starting a PHP session.
     if (isset($_POST['contact'], $_POST['p'])) {
         $contact = $_POST['contact'];
-        $password = $_POST['p']; // The hashed password.
+        $password = $_POST['p']; // not hashed password.
         
         if (login($contact, $password) == true) {
             $params = array(
@@ -21,5 +21,6 @@
         $params = array(
             "result" => "false",
         );
+        echo json_encode($params);
     }
 ?>

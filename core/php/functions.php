@@ -53,7 +53,6 @@
         try {
             $pdo = getConnection();
             $stmt = $pdo->prepare($sql);
-            $stmt->execute($params);
             if ($stmt) {
                 $stmt->execute($params);
                 $result = $stmt->fetch();
@@ -111,7 +110,6 @@
             try {
                 $pdo = getConnection();
                 $stmt = $pdo->prepare($sql);
-                $stmt->execute($params);
                 if ($stmt) {
                     $stmt->execute($params);
                     $result = $stmt->fetch();
@@ -164,7 +162,6 @@
             try {
                 $pdo = getConnection();
                 $stmt = $pdo->prepare($sql);
-                $stmt->execute($params);
                 if ($stmt) {
                     $stmt->execute($params);
                     $result = $stmt->fetch();
