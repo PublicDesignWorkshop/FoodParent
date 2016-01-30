@@ -675,7 +675,7 @@ var FoodParent;
         };
         Template.getDetailMenuTemplate = function () {
             var template = '';
-            template += '<div class="button-outer-frame2 button3"><div class="button-inner-frame2 button-back-map"><i class="fa fa-arrow-left"></i> Back To Map</div></div>';
+            template += '<div class="button-outer-frame2 button3"><div class="button-inner-frame2 button-back-map"><i class="fa fa-arrow-left"></i> Back To Tree List</div></div>';
             template += '<div class="button-outer-frame2 button3"><div class="button-inner-frame2 button-new-note"><i class="fa fa-sticky-note-o"></i> Post New Note</div></div>';
             template += '<div class="button-outer-frame2 button3"><div class="button-inner-frame2 button-manage-adoption"><i class="fa  fa-user-plus"></i> Manage Adoption</div></div>';
             template += '<div class="button-outer-frame2 button3"><div class="button-inner-frame2 button-delete-tree"><i class="fa fa-remove"></i> Delete Tree*</div></div>';
@@ -684,7 +684,7 @@ var FoodParent;
         };
         Template.getDetailMenuTemplate2 = function () {
             var template = '';
-            template += '<div class="button-outer-frame2 button3"><div class="button-inner-frame2 button-back-map"><i class="fa fa-arrow-left"></i> Back To Map</div></div>';
+            template += '<div class="button-outer-frame2 button3"><div class="button-inner-frame2 button-back-map"><i class="fa fa-arrow-left"></i> Back To List</div></div>';
             template += '<div class="button-outer-frame2 button3"><div class="button-inner-frame2 button-manage-adoption"><i class="fa  fa-user-plus"></i> Adopt This Tree</div></div>';
             template += '<div class="button-outer-frame2 button3"><div class="button-inner-frame2 button-new-note"><i class="fa fa-sticky-note-o"></i> Post New Note</div></div>';
             return template;
@@ -785,7 +785,7 @@ var FoodParent;
             template += '<div class="input-comment"><%= comment %></div>';
             template += '</div>';
             template += '<div class="hr"><hr /></div>';
-            template += '<div class="info-header"><i class="fa fa-calendar-o"></i> Posted</div>';
+            template += '<div class="info-header"><i class="fa fa-calendar-o"></i> Date</div>';
             template += '<div class="info-group">';
             template += '<input type="text" class="form-control input-date" />';
             template += '</div>';
@@ -833,7 +833,7 @@ var FoodParent;
             template += '<div class="input-comment">&nbsp;</div>';
             template += '</div>';
             template += '<div class="hr"><hr /></div>';
-            template += '<div class="info-header"><i class="fa fa-calendar-o"></i> Posted</div>';
+            template += '<div class="info-header"><i class="fa fa-calendar-o"></i> Date</div>';
             template += '<div class="info-group">';
             template += '<input type="text" class="form-control input-date" />';
             template += '</div>';
@@ -930,7 +930,10 @@ var FoodParent;
             template += '<div id="wrapper-chart"></div>';
             template += '<div id="wrapper-tooltip" class="hidden"></div>';
             template += '<div id="wrapper-mapmenu">';
-            template += '<div class="button-outer-frame2 button3"><div class="button-inner-frame2">Switch To Map View</div></div>';
+            template += '<div class="button-outer-frame2 button3"><div class="button-inner-frame2"><i class="fa fa-arrow-left"></i> Back to List</div></div>';
+            template += '<div class="button-outer-frame2 button3"><div class="button-inner-frame2 button-new-donation"><i class="fa fa-sticky-note-o"></i> Post New Donation</div></div>';
+            template += '<div class="button-outer-frame2 button3"><div class="button-inner-frame2 button-delete-location"><i class="fa fa-remove"></i> Delete Place*</div></div>';
+            template += '<div class="button-description2">* marked operation cannot be undone.</div>';
             template += '</div>';
             template += '<div id="wrapper-date-select">';
             template += '<div class="wrapper-date-preset">';
@@ -952,11 +955,13 @@ var FoodParent;
             template += '<div id="list-donations" class="info-group">';
             template += '</div>';
             template += '</div>'; // end of .content-donation-recentactivities
+            /*
             template += '<div class="content-donation-control">';
             template += '<div class="button-outer-frame2 button4"><div class="button-inner-frame2 button-new-donation">Post New Donation</div></div>';
             template += '<div class="button-outer-frame2 button4"><div class="button-inner-frame2 button-delete-location">Delete Place*</div></div>';
             template += '<div class="button-description">* marked operation cannot be undone.</div>';
-            template += '</div>'; // end of .donation-control
+            template += '</div>';   // end of .donation-control
+            */
             template += '</div>'; // end of #wrapper-donation-detail
             template += '</div>'; // end of #wrapper-mtree
             return template;
@@ -1026,7 +1031,7 @@ var FoodParent;
             template += '<div class="add-donation-tree"></div>';
             template += '</div>';
             template += '<div class="hr"><hr /></div>';
-            template += '<div class="info-header"><i class="fa fa-calendar-o"></i> Posted</div>';
+            template += '<div class="info-header"><i class="fa fa-calendar-o"></i> Date</div>';
             template += '<div class="info-group">';
             template += '<input type="text" class="form-control input-date" />';
             template += '</div>';

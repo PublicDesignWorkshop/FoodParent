@@ -96,12 +96,14 @@
         color: #eeeeee;
         font-size: small;
         padding: 2px;
+        pointer-events: none;
     }
 
     .button-description2 {
         color: #403537;
         font-size: small;
         padding: 2px;
+        pointer-events: none;
     }
 
     .button4 {

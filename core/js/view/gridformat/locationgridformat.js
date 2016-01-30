@@ -470,7 +470,7 @@ var ManageDonationViewCell = Backgrid.Cell.extend({
     }
 });
 var LocationDetailCell = Backgrid.Cell.extend({
-    template: _.template('<div class="marker-control-item location-detail" data-target="<%= treeid %>"><i class="fa fa-arrow-circle-right fa-2x"></i></div>'),
+    template: _.template('<div class="marker-control-item location-detail" data-target="<%= treeid %>"><i class="fa fa-heartbeat fa-2x"></i></div>'),
     events: {
         "click .marker-control-item": "_showDetail"
     },

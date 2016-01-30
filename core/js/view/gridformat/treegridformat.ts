@@ -382,7 +382,7 @@ var ManageAdoptionViewCell = Backgrid.Cell.extend({
 });
 
 var TreeDetailCell = Backgrid.Cell.extend({
-    template: _.template('<div class="marker-control-item tree-detail" data-target="<%= treeid %>"><i class="fa fa-arrow-circle-right fa-2x"></i></div>'),
+    template: _.template('<div class="marker-control-item tree-detail" data-target="<%= treeid %>"><i class="fa fa-heartbeat fa-2x"></i></div>'),
     events: {
         "click .marker-control-item": "_showDetail"
     },
