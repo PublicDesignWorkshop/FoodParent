@@ -590,10 +590,10 @@ var FoodParent;
             var self = this;
             var trees = new Array();
             trees.push(tree);
-            FoodParent.Controller.fetchNotesOfTrees(trees, FoodParent.Setting.getNumRecentActivitiesShown(), 0, function () {
-                var notes = new FoodParent.Notes(FoodParent.Model.getNotes().where({ tree: tree.getId() }));
+            FoodParent.Controller.fetchNotesOfTrees(trees, FoodParent.NoteType.IMAGE, FoodParent.Setting.getNumRecentActivitiesShown(), 0, function () {
+                var notes = new FoodParent.Notes(FoodParent.Model.getNotes().where({ tree: tree.getId(), type: FoodParent.NoteType.IMAGE }));
                 notes.sortByDescendingDate();
-                var template = _.template(FoodParent.Template.getRecentActivitiesTemplate());
+                var template = _.template(FoodParent.Template.getRecentCommentsTemplate());
                 var data = {
                     notes: notes,
                     size: FoodParent.Setting.getNumRecentActivitiesShown(),

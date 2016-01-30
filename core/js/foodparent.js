@@ -52050,7 +52050,7 @@ var FoodParent;
                 if (self._map == undefined) {
                     self.$('#list-donation').css({ height: FoodParent.View.getHeight() - 60 });
                     self.setLocation(new L.LatLng(position.coords.latitude, position.coords.longitude));
-                    self._map = L.map(self.$('#content-map')[0].id, {
+                    self._map = L.map($('#content-map')[0].id, {
                         zoomControl: false,
                         closePopupOnClick: self._bClosePopupOnClick,
                         doubleClickZoom: true,
@@ -52252,10 +52252,10 @@ var FoodParent;
                     $('#wrapper-mtrees').css({ height: FoodParent.View.getHeight() - 60 });
                     $('.collapsible-list').css({ height: FoodParent.View.getHeight() - 60 - 34 * 2 - 20 });
                 }
+                FoodParent.Controller.updateGeoLocation(self.renderMap, self.renderMapError);
             }, function () {
                 FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
             });
-            FoodParent.Controller.updateGeoLocation(self.renderMap, self.renderMapError);
             return self;
         };
         ManageTreesMapView.prototype.update = function (args) {
@@ -54337,10 +54337,10 @@ var FoodParent;
             var self = this;
             var trees = new Array();
             trees.push(tree);
-            FoodParent.Controller.fetchNotesOfTrees(trees, FoodParent.Setting.getNumRecentActivitiesShown(), 0, function () {
-                var notes = new FoodParent.Notes(FoodParent.Model.getNotes().where({ tree: tree.getId() }));
+            FoodParent.Controller.fetchNotesOfTrees(trees, FoodParent.NoteType.IMAGE, FoodParent.Setting.getNumRecentActivitiesShown(), 0, function () {
+                var notes = new FoodParent.Notes(FoodParent.Model.getNotes().where({ tree: tree.getId(), type: FoodParent.NoteType.IMAGE }));
                 notes.sortByDescendingDate();
-                var template = _.template(FoodParent.Template.getRecentActivitiesTemplate());
+                var template = _.template(FoodParent.Template.getRecentCommentsTemplate());
                 var data = {
                     notes: notes,
                     size: FoodParent.Setting.getNumRecentActivitiesShown(),

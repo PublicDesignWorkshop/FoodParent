@@ -535,10 +535,10 @@ module FoodParent {
             var self: AddDonationView = this;
             var trees: Array<Tree> = new Array<Tree>();
             trees.push(tree);
-            Controller.fetchNotesOfTrees(trees, Setting.getNumRecentActivitiesShown(), 0, function () {
-                var notes: Notes = new Notes(Model.getNotes().where({ tree: tree.getId() }));
+            Controller.fetchNotesOfTrees(trees, NoteType.IMAGE, Setting.getNumRecentActivitiesShown(), 0, function () {
+                var notes: Notes = new Notes(Model.getNotes().where({ tree: tree.getId(), type: NoteType.IMAGE }));
                 notes.sortByDescendingDate();
-                var template = _.template(Template.getRecentActivitiesTemplate());
+                var template = _.template(Template.getRecentCommentsTemplate());
                 var data = {
                     notes: notes,
                     size: Setting.getNumRecentActivitiesShown(),

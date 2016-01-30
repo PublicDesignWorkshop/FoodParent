@@ -495,7 +495,7 @@ var FoodParent;
                 if (self._map == undefined) {
                     self.$('#list-donation').css({ height: FoodParent.View.getHeight() - 60 });
                     self.setLocation(new L.LatLng(position.coords.latitude, position.coords.longitude));
-                    self._map = L.map(self.$('#content-map')[0].id, {
+                    self._map = L.map($('#content-map')[0].id, {
                         zoomControl: false,
                         closePopupOnClick: self._bClosePopupOnClick,
                         doubleClickZoom: true,
@@ -697,10 +697,10 @@ var FoodParent;
                     $('#wrapper-mtrees').css({ height: FoodParent.View.getHeight() - 60 });
                     $('.collapsible-list').css({ height: FoodParent.View.getHeight() - 60 - 34 * 2 - 20 });
                 }
+                FoodParent.Controller.updateGeoLocation(self.renderMap, self.renderMapError);
             }, function () {
                 FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
             });
-            FoodParent.Controller.updateGeoLocation(self.renderMap, self.renderMapError);
             return self;
         };
         ManageTreesMapView.prototype.update = function (args) {

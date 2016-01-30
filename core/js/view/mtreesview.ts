@@ -332,10 +332,10 @@ module FoodParent {
                     $('.collapsible-list').css({ height: View.getHeight() - 60 - 34 * 2 - 20 });
                     //self.resize();
                 }
+                Controller.updateGeoLocation(self.renderMap, self.renderMapError);
             }, function () {
                 FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
             });
-            Controller.updateGeoLocation(self.renderMap, self.renderMapError);
             return self;
         }
 
@@ -702,7 +702,7 @@ module FoodParent {
             if (self._map == undefined) {
                 self.$('#list-donation').css({ height: View.getHeight() - 60 });
                 self.setLocation(new L.LatLng(position.coords.latitude, position.coords.longitude));
-                self._map = L.map(self.$('#content-map')[0].id, {
+                self._map = L.map($('#content-map')[0].id, {
                     zoomControl: false,
                     closePopupOnClick: self._bClosePopupOnClick,
                     doubleClickZoom: true,
