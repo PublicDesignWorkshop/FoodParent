@@ -201,7 +201,6 @@
     <Content Include="core\php\login.php" />
     <Content Include="core\php\logout.php" />
     <Content Include="core\php\logincheck.php" />
-    <Content Include="core\php\logintest.php" />
     <Content Include="core\php\admincheck.php" />
     <None Include="web.Debug.config">
       <DependentUpon>web.config</DependentUpon>
