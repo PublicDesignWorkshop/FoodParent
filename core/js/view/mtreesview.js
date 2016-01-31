@@ -91,7 +91,7 @@ var FoodParent;
             };
             this.renderNewTree = function (position) {
                 var self = _this;
-                var tree = new FoodParent.Tree({ lat: position.coords.latitude, lng: position.coords.longitude, food: 1, type: 0, flag: 0, owner: 0, ownership: 0, description: "", address: "" });
+                var tree = new FoodParent.Tree({ lat: position.coords.latitude, lng: position.coords.longitude, food: 1, type: 0, flag: 0, owner: 0, ownership: 1, description: "", address: "" });
                 var trees = new FoodParent.Trees();
                 trees.add(tree);
                 var optionValues = new Array();
@@ -132,12 +132,16 @@ var FoodParent;
                         self.$('#filter-list').html(template({
                             foods: FoodParent.Model.getFoods(),
                             userid: parseInt(data.id),
+                            flags: FoodParent.Model.getFlags(),
+                            ownerships: FoodParent.Model.getOwnerships(),
                         }));
                     }
                     else if (data.result == false || data.result == 'false') {
                         var template = _.template(FoodParent.Template.getTreeFilterListTemplate2());
                         self.$('#filter-list').html(template({
                             foods: FoodParent.Model.getFoods(),
+                            flags: FoodParent.Model.getFlags(),
+                            ownerships: FoodParent.Model.getOwnerships(),
                         }));
                     }
                 }, function () {
@@ -185,6 +189,48 @@ var FoodParent;
                 if (self.$('input[name="onlymine"]').prop('checked') == true) {
                     trees = trees.filterByParent(parseInt(self.$('input[name="onlymine"]').attr('data-target')));
                 }
+                // Filtering ownership type.
+                if (event != undefined) {
+                    if ($(event.target).find('input').prop('name') == 'ownershipsall') {
+                        if ($(event.target).find('input').prop('checked') == true) {
+                            $('.filter-ownership').addClass('active');
+                            $('.filter-ownership input').prop({ 'checked': 'checked' });
+                        }
+                        else {
+                            $('.filter-ownership').removeClass('active');
+                            $('.filter-ownership input').prop({ 'checked': '' });
+                        }
+                    }
+                }
+                // Apply ownership filtering
+                var ownershipIds = new Array();
+                $.each(self.$('.filter-ownership input'), function (index, item) {
+                    if ($(item).prop('checked') == true) {
+                        ownershipIds.push(Math.floor($(item).prop('name')));
+                    }
+                });
+                trees = trees.filterByOwnershipIds(ownershipIds);
+                // Filtering flag type.
+                if (event != undefined) {
+                    if ($(event.target).find('input').prop('name') == 'flagsall') {
+                        if ($(event.target).find('input').prop('checked') == true) {
+                            $('.filter-flag').addClass('active');
+                            $('.filter-flag input').prop({ 'checked': 'checked' });
+                        }
+                        else {
+                            $('.filter-flag').removeClass('active');
+                            $('.filter-flag input').prop({ 'checked': '' });
+                        }
+                    }
+                }
+                // Apply flag filtering
+                var flagIds = new Array();
+                $.each(self.$('.filter-flag input'), function (index, item) {
+                    if ($(item).prop('checked') == true) {
+                        flagIds.push(Math.floor($(item).prop('name')));
+                    }
+                });
+                trees = trees.filterByFlagIds(flagIds);
                 // Filtering food type.
                 if (event != undefined) {
                     if ($(event.target).find('input').prop('name') == 'foodsall') {
@@ -256,6 +302,8 @@ var FoodParent;
                         var template = _.template(FoodParent.Template.getTreeFilterListTemplate());
                         self.$('#filter-list').html(template({
                             foods: FoodParent.Model.getFoods(),
+                            flags: FoodParent.Model.getFlags(),
+                            ownerships: FoodParent.Model.getOwnerships(),
                             userid: parseInt(data.id),
                         }));
                     }
@@ -263,6 +311,8 @@ var FoodParent;
                         var template = _.template(FoodParent.Template.getTreeFilterListTemplate2());
                         self.$('#filter-list').html(template({
                             foods: FoodParent.Model.getFoods(),
+                            flags: FoodParent.Model.getFlags(),
+                            ownerships: FoodParent.Model.getOwnerships(),
                         }));
                     }
                 }, function () {
@@ -956,6 +1006,48 @@ var FoodParent;
                 if (self.$('input[name="onlymine"]').prop('checked') == true) {
                     trees = trees.filterByParent(parseInt(self.$('input[name="onlymine"]').attr('data-target')));
                 }
+                // Filtering ownership type.
+                if (event != undefined) {
+                    if ($(event.target).find('input').prop('name') == 'ownershipsall') {
+                        if ($(event.target).find('input').prop('checked') == true) {
+                            $('.filter-ownership').addClass('active');
+                            $('.filter-ownership input').prop({ 'checked': 'checked' });
+                        }
+                        else {
+                            $('.filter-ownership').removeClass('active');
+                            $('.filter-ownership input').prop({ 'checked': '' });
+                        }
+                    }
+                }
+                // Apply ownership filtering
+                var ownershipIds = new Array();
+                $.each(self.$('.filter-ownership input'), function (index, item) {
+                    if ($(item).prop('checked') == true) {
+                        ownershipIds.push(Math.floor($(item).prop('name')));
+                    }
+                });
+                trees = trees.filterByOwnershipIds(ownershipIds);
+                // Filtering flag type.
+                if (event != undefined) {
+                    if ($(event.target).find('input').prop('name') == 'flagsall') {
+                        if ($(event.target).find('input').prop('checked') == true) {
+                            $('.filter-flag').addClass('active');
+                            $('.filter-flag input').prop({ 'checked': 'checked' });
+                        }
+                        else {
+                            $('.filter-flag').removeClass('active');
+                            $('.filter-flag input').prop({ 'checked': '' });
+                        }
+                    }
+                }
+                // Apply flag filtering
+                var flagIds = new Array();
+                $.each(self.$('.filter-flag input'), function (index, item) {
+                    if ($(item).prop('checked') == true) {
+                        flagIds.push(Math.floor($(item).prop('name')));
+                    }
+                });
+                trees = trees.filterByFlagIds(flagIds);
                 // Filtering food type.
                 if (event != undefined) {
                     if ($(event.target).find('input').prop('name') == 'foodsall') {
@@ -1015,6 +1107,7 @@ var FoodParent;
                             self.renderFlagInfo(tree.getFlags());
                             self.renderRecentActivities(tree);
                             FoodParent.EventHandler.handleDataChange("Status of <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has changed successfully.", true);
+                            self._applyFilter();
                         }, function () {
                             FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
                         });
@@ -1025,6 +1118,7 @@ var FoodParent;
                             self.renderFlagInfo(tree.getFlags());
                             self.renderRecentActivities(tree);
                             FoodParent.EventHandler.handleDataChange("Status of <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has changed successfully.", true);
+                            self._applyFilter();
                         }, function () {
                             FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
                         });
@@ -1066,7 +1160,7 @@ var FoodParent;
         };
         ManageTreesMapView.prototype._addNewTree = function (event) {
             var self = this;
-            var tree = new FoodParent.Tree({ lat: self._map.getCenter().lat, lng: self._map.getCenter().lng, food: 1, type: 0, flag: 0, owner: 0, ownership: 0, description: "", address: "" });
+            var tree = new FoodParent.Tree({ lat: self._map.getCenter().lat, lng: self._map.getCenter().lng, food: 1, type: 0, flag: 0, owner: 0, ownership: 1, description: "", address: "" });
             FoodParent.EventHandler.handleTreeData(tree, FoodParent.DATA_MODE.CREATE, {}, function () {
                 var food = FoodParent.Model.getFoods().findWhere({ id: tree.getFoodId() });
                 //self.updateMarkers(Model.getTrees());

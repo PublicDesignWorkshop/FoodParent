@@ -34,10 +34,39 @@
     }
     export class Flags extends Backbone.Collection<Flag> {
         url: string = "flags.php";
+        sortType: SortType = SortType.ASCENDING;
         constructor(models?: Flag[], options?: any) {
             super(models, options);
             this.url = Setting.getPhpDir() + this.url;
             this.model = Flag;
+        }
+
+        comparator(model: Flag) {
+            var that: Flags = this;
+            switch (that.sortType) {
+                case SortType.NONE:
+                    return 0;
+                    break;
+                case SortType.ASCENDING:
+                    return model.get('name');
+                    break;
+                case SortType.DESCENDING:
+                    return -model.get('name');
+                    break;
+            }
+        }
+
+        public sortByDescendingName(): void {
+            var that: Flags = this;
+            that.sortType = SortType.DESCENDING;
+            that.sort();
+        }
+
+        public sortByAscendingName(): void {
+            var self: Flags = this;
+            //that.sortType = SortType.ASCENDING;
+            //that.sort();
+            self.models = _.sortBy(self.models, 'name');
         }
     }
 }

@@ -116,6 +116,9 @@
         public removeFlag(flag: number): void {
             var self: Tree = this;
             self.set('flags', _.without(self.getFlags(), Math.floor(flag)));
+            if (this.get('flags').length == 0) {
+                this.get('flags').push(0);
+            }
         }
         /*
         public getFlagId(): number {
@@ -219,6 +222,30 @@
             var trees: Trees = new Trees(self.models);
             return new Trees(trees.filter(function (tree: Tree, index: number) {
                 if ($.inArray(tree.getFoodId(), idArray) > -1) {
+                    return true;
+                }
+                return false;
+            }));
+        }
+
+        public filterByFlagIds(idArray): Trees {
+            var self: Trees = this;
+            var trees: Trees = new Trees();
+            $.each(self.models, function (index: number, tree: Tree) {
+                $.each(tree.getFlags(), function (index2: number, flag: number) {
+                    if ($.inArray(flag, idArray) > -1) {
+                        trees.add(tree);
+                    }
+                });
+            });
+            return trees;
+        }
+
+        public filterByOwnershipIds(idArray): Trees {
+            var self: Trees = this;
+            var trees: Trees = new Trees(self.models);
+            return new Trees(trees.filter(function (tree: Tree, index: number) {
+                if ($.inArray(tree.getOwnershipId(), idArray) > -1) {
                     return true;
                 }
                 return false;

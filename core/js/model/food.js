@@ -53,6 +53,7 @@ var FoodParent;
         function Foods(models, options) {
             _super.call(this, models, options);
             this.url = "foods.php";
+            this.sortType = FoodParent.SortType.ASCENDING;
             this.url = FoodParent.Setting.getPhpDir() + this.url;
             this.model = Food;
         }
@@ -75,6 +76,31 @@ var FoodParent;
                 result.push([model.getName(), model.getId()]);
             });
             return result;
+        };
+        Foods.prototype.comparator = function (model) {
+            var that = this;
+            switch (that.sortType) {
+                case FoodParent.SortType.NONE:
+                    return 0;
+                    break;
+                case FoodParent.SortType.ASCENDING:
+                    return model.get('name');
+                    break;
+                case FoodParent.SortType.DESCENDING:
+                    return -model.get('name');
+                    break;
+            }
+        };
+        Foods.prototype.sortByDescendingName = function () {
+            var that = this;
+            that.sortType = FoodParent.SortType.DESCENDING;
+            that.sort();
+        };
+        Foods.prototype.sortByAscendingName = function () {
+            var self = this;
+            //that.sortType = SortType.ASCENDING;
+            //that.sort();
+            self.models = _.sortBy(self.models, 'name');
         };
         return Foods;
     })(Backbone.Collection);

@@ -20,6 +20,7 @@ var FoodParent;
             self._previousFlag = self._tree.getCopiedFlags();
             if (self._addmode) {
                 self._tree.addFlag(self._flag);
+                self._tree.removeFlag(0);
             }
             else {
                 self._tree.removeFlag(self._flag);

@@ -56,8 +56,21 @@
                 new MovePaceBarToTop().execute();
                 new RenderHomeViewCommand({ el: Setting.getMainWrapperElement() }).execute();
             } else if (viewStatus == VIEW_STATUS.MANAGE_TREES) {
-                new MovePaceBarToUnderNav().execute();
-                new RenderManageTreesViewCommand({ el: Setting.getMainWrapperElement(), viewMode: option.viewMode, id: option.id }).execute();
+                Controller.checkAdmin(function (response) {
+                    if (response.result == false || response.result == 'false') {   // Not admin && in table view
+                        if (option.viewMode == VIEW_MODE.TABLE) {
+                            new NavigateCommand({ hash: 'mtrees', viewMode: VIEW_MODE.MAP, id: 0 }).execute();
+                        } else {
+                            new MovePaceBarToUnderNav().execute();
+                            new RenderManageTreesViewCommand({ el: Setting.getMainWrapperElement(), viewMode: option.viewMode, id: option.id }).execute();
+                        }
+                    } else {
+                        new MovePaceBarToUnderNav().execute();
+                        new RenderManageTreesViewCommand({ el: Setting.getMainWrapperElement(), viewMode: option.viewMode, id: option.id }).execute();
+                    }
+                }, function () {
+                    EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
+                });
             } else if (viewStatus == VIEW_STATUS.MANAGE_PEOPLE) {
                 Controller.checkAdmin(function (response) {
                     if (response.result == true || response.result == 'true') {   // Admin

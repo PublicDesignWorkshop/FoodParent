@@ -215,6 +215,7 @@ var FoodParent;
                     id: 0,
                 },
                 success: function (collection, response, options) {
+                    self.foods.sortByAscendingName();
                     //console.log("success fetch with " + collection.models.length + " foods");
                 },
                 error: function (collection, jqxhr, options) {
@@ -260,6 +261,7 @@ var FoodParent;
                 processData: true,
                 data: {},
                 success: function (collection, response, options) {
+                    self.flags.sortByAscendingName();
                     //console.log("success fetch with " + collection.models.length + " trees");
                     //that.fetchFoods(that.foods.getUndetectedIds(that.trees.getFoodIds()));
                 },

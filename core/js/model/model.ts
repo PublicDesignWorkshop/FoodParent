@@ -232,6 +232,7 @@
                     id: 0,
                 },
                 success(collection?: any, response?: any, options?: any): void {
+                    self.foods.sortByAscendingName();
                     //console.log("success fetch with " + collection.models.length + " foods");
                 },
                 error(collection?: any, jqxhr?: JQueryXHR, options?: any): void {
@@ -282,6 +283,7 @@
                     
                 },
                 success(collection?: any, response?: any, options?: any): void {
+                    self.flags.sortByAscendingName();
                     //console.log("success fetch with " + collection.models.length + " trees");
                     //that.fetchFoods(that.foods.getUndetectedIds(that.trees.getFoodIds()));
                 },

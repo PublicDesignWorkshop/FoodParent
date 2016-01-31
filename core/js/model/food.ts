@@ -41,6 +41,7 @@
     }
     export class Foods extends Backbone.Collection<Food> {
         url: string = "foods.php";
+        sortType: SortType = SortType.ASCENDING;
         constructor(models?: Food[], options?: any) {
             super(models, options);
             this.url = Setting.getPhpDir() + this.url;
@@ -67,6 +68,34 @@
                 result.push([model.getName(), model.getId()]);
             });
             return result;
+        }
+
+        comparator(model: Food) {
+            var that: Food = this;
+            switch (that.sortType) {
+                case SortType.NONE:
+                    return 0;
+                    break;
+                case SortType.ASCENDING:
+                    return model.get('name');
+                    break;
+                case SortType.DESCENDING:
+                    return -model.get('name');
+                    break;
+            }
+        }
+
+        public sortByDescendingName(): void {
+            var that: Flags = this;
+            that.sortType = SortType.DESCENDING;
+            that.sort();
+        }
+
+        public sortByAscendingName(): void {
+            var self: Foods = this;
+            //that.sortType = SortType.ASCENDING;
+            //that.sort();
+            self.models = _.sortBy(self.models, 'name');
         }
     }
 }

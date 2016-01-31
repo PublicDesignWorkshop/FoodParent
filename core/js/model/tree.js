@@ -118,6 +118,9 @@ var FoodParent;
         Tree.prototype.removeFlag = function (flag) {
             var self = this;
             self.set('flags', _.without(self.getFlags(), Math.floor(flag)));
+            if (this.get('flags').length == 0) {
+                this.get('flags').push(0);
+            }
         };
         /*
         public getFlagId(): number {
@@ -219,6 +222,28 @@ var FoodParent;
             var trees = new Trees(self.models);
             return new Trees(trees.filter(function (tree, index) {
                 if ($.inArray(tree.getFoodId(), idArray) > -1) {
+                    return true;
+                }
+                return false;
+            }));
+        };
+        Trees.prototype.filterByFlagIds = function (idArray) {
+            var self = this;
+            var trees = new Trees();
+            $.each(self.models, function (index, tree) {
+                $.each(tree.getFlags(), function (index2, flag) {
+                    if ($.inArray(flag, idArray) > -1) {
+                        trees.add(tree);
+                    }
+                });
+            });
+            return trees;
+        };
+        Trees.prototype.filterByOwnershipIds = function (idArray) {
+            var self = this;
+            var trees = new Trees(self.models);
+            return new Trees(trees.filter(function (tree, index) {
+                if ($.inArray(tree.getOwnershipId(), idArray) > -1) {
                     return true;
                 }
                 return false;

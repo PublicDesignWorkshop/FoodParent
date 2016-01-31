@@ -46,9 +46,35 @@ var FoodParent;
         function Flags(models, options) {
             _super.call(this, models, options);
             this.url = "flags.php";
+            this.sortType = FoodParent.SortType.ASCENDING;
             this.url = FoodParent.Setting.getPhpDir() + this.url;
             this.model = Flag;
         }
+        Flags.prototype.comparator = function (model) {
+            var that = this;
+            switch (that.sortType) {
+                case FoodParent.SortType.NONE:
+                    return 0;
+                    break;
+                case FoodParent.SortType.ASCENDING:
+                    return model.get('name');
+                    break;
+                case FoodParent.SortType.DESCENDING:
+                    return -model.get('name');
+                    break;
+            }
+        };
+        Flags.prototype.sortByDescendingName = function () {
+            var that = this;
+            that.sortType = FoodParent.SortType.DESCENDING;
+            that.sort();
+        };
+        Flags.prototype.sortByAscendingName = function () {
+            var self = this;
+            //that.sortType = SortType.ASCENDING;
+            //that.sort();
+            self.models = _.sortBy(self.models, 'name');
+        };
         return Flags;
     })(Backbone.Collection);
     FoodParent.Flags = Flags;

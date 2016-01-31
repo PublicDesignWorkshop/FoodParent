@@ -673,6 +673,8 @@ module FoodParent {
                     var data = {
                         foods: Model.getFoods(),
                         userid: parseInt(response.id),
+                        flags: Model.getFlags(),
+                        ownerships: Model.getOwnerships(),
                     }
                     self.$('#filter-list').html(template(data));
                 }
@@ -715,6 +717,56 @@ module FoodParent {
             var self: AddDonationView = this;
             var trees: Trees = Model.getTrees();
             setTimeout(function () {
+
+                // Apply only my trees
+                if (self.$('input[name="onlymine"]').prop('checked') == true) {
+                    trees = trees.filterByParent(parseInt(self.$('input[name="onlymine"]').attr('data-target')));
+                }
+
+                // Filtering ownership type.
+                if (event != undefined) {
+                    if ($(event.target).find('input').prop('name') == 'ownershipsall') {
+                        if ($(event.target).find('input').prop('checked') == true) {
+                            $('.filter-ownership').addClass('active');
+                            $('.filter-ownership input').prop({ 'checked': 'checked' });
+                        } else {
+                            $('.filter-ownership').removeClass('active');
+                            $('.filter-ownership input').prop({ 'checked': '' });
+                        }
+                    }
+                }
+
+                // Apply ownership filtering
+                var ownershipIds = new Array<number>();
+                $.each(self.$('.filter-ownership input'), function (index: number, item: JQuery) {
+                    if ($(item).prop('checked') == true) {
+                        ownershipIds.push(Math.floor($(item).prop('name')));
+                    }
+                });
+                trees = trees.filterByOwnershipIds(ownershipIds);
+
+                // Filtering flag type.
+                if (event != undefined) {
+                    if ($(event.target).find('input').prop('name') == 'flagsall') {
+                        if ($(event.target).find('input').prop('checked') == true) {
+                            $('.filter-flag').addClass('active');
+                            $('.filter-flag input').prop({ 'checked': 'checked' });
+                        } else {
+                            $('.filter-flag').removeClass('active');
+                            $('.filter-flag input').prop({ 'checked': '' });
+                        }
+                    }
+                }
+
+                // Apply flag filtering
+                var flagIds = new Array<number>();
+                $.each(self.$('.filter-flag input'), function (index: number, item: JQuery) {
+                    if ($(item).prop('checked') == true) {
+                        flagIds.push(Math.floor($(item).prop('name')));
+                    }
+                });
+                trees = trees.filterByFlagIds(flagIds);
+
                 // Filtering food type.
                 if (event != undefined) {
                     if ($(event.target).find('input').prop('name') == 'foodsall') {

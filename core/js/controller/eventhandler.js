@@ -98,8 +98,23 @@ var FoodParent;
                 new FoodParent.RenderHomeViewCommand({ el: FoodParent.Setting.getMainWrapperElement() }).execute();
             }
             else if (viewStatus == VIEW_STATUS.MANAGE_TREES) {
-                new FoodParent.MovePaceBarToUnderNav().execute();
-                new FoodParent.RenderManageTreesViewCommand({ el: FoodParent.Setting.getMainWrapperElement(), viewMode: option.viewMode, id: option.id }).execute();
+                FoodParent.Controller.checkAdmin(function (response) {
+                    if (response.result == false || response.result == 'false') {
+                        if (option.viewMode == VIEW_MODE.TABLE) {
+                            new FoodParent.NavigateCommand({ hash: 'mtrees', viewMode: VIEW_MODE.MAP, id: 0 }).execute();
+                        }
+                        else {
+                            new FoodParent.MovePaceBarToUnderNav().execute();
+                            new FoodParent.RenderManageTreesViewCommand({ el: FoodParent.Setting.getMainWrapperElement(), viewMode: option.viewMode, id: option.id }).execute();
+                        }
+                    }
+                    else {
+                        new FoodParent.MovePaceBarToUnderNav().execute();
+                        new FoodParent.RenderManageTreesViewCommand({ el: FoodParent.Setting.getMainWrapperElement(), viewMode: option.viewMode, id: option.id }).execute();
+                    }
+                }, function () {
+                    EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
+                });
             }
             else if (viewStatus == VIEW_STATUS.MANAGE_PEOPLE) {
                 FoodParent.Controller.checkAdmin(function (response) {
