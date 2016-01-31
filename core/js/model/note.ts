@@ -174,7 +174,7 @@
                 return null;
             }
             self.sortByAscendingDate();
-            var result: Note = self.findWhere({ type: treeId });
+            var result: Note = null;
 
             $.each(self.models, function (index: number, note: Note) {
                 if (date > note.getDateValueOf() && note.getType() == noteType && note.getTreeId() == treeId) {

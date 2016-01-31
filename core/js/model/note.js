@@ -187,7 +187,7 @@ var FoodParent;
                 return null;
             }
             self.sortByAscendingDate();
-            var result = self.findWhere({ type: treeId });
+            var result = null;
             $.each(self.models, function (index, note) {
                 if (date > note.getDateValueOf() && note.getType() == noteType && note.getTreeId() == treeId) {
                     result = note;

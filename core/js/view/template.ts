@@ -535,9 +535,21 @@
             var template = '';
             template += '<% _.each(notes.models, function (note, index) { %>';
             template += '<% if (index < size) { %>';
-            template +=     '<div class="item-activity"><i class="fa fa-caret-right fa-1x"></i> <div><%= note.getComment() %></div></div>';
+            template += '<% var person = FoodParent.Model.getPersons().findWhere({id: note.getPersonId() }); %>';
+            template += '<% if (person != undefined) { %>';
+
+            template += '<% if (person.getName() != "") { %>';
+            template += '<div class="item-activity"><i class="fa fa-caret-right fa-1x"></i> <div><span class="treeinfocomment">"<%= note.getComment() %>"</span> by <i><%= person.getName() %></i> (<%= note.getFormattedDate() %>)</div></div>';
+            template += '<% } else { %>';
+            template += '<div class="item-activity"><i class="fa fa-caret-right fa-1x"></i> <div><span class="treeinfocomment">"<%= note.getComment() %>"</span> by <i><%= person.getContact() %></i> (<%= note.getFormattedDate() %>)</div></div>';
+            template += '<% } %>';
+
+            template += '<% } else { %>';
+            template += '<div class="item-activity"><i class="fa fa-caret-right fa-1x"></i> <div><span class="treeinfocomment">"<%= note.getComment() %>"</span> (<%= note.getFormattedDate() %>)</div></div>';
+            template += '<% } %>';
             template += '<% } %>';
             template += '<% }); %>';
+
             return template;
         }
 
