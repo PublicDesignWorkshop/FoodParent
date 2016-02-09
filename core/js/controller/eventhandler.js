@@ -228,11 +228,8 @@ var FoodParent;
                 case VIEW_STATUS.NONE:
                     break;
                 case VIEW_STATUS.HOME:
-                    if (el.hasClass('home-menu-left')) {
+                    if (el.hasClass('button-logo')) {
                         new FoodParent.NavigateCommand({ hash: 'mtrees', viewMode: VIEW_MODE.MAP, id: 0 }).execute();
-                    }
-                    else if (el.hasClass('home-menu-right')) {
-                        new FoodParent.NavigateCommand({ hash: 'ptrees' }).execute();
                     }
                     break;
                 case VIEW_STATUS.GEO_ERROR:

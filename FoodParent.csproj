@@ -57,6 +57,7 @@
     <Content Include="core\css\leaflet.css" />
     <Content Include="core\css\print.css" />
     <Content Include="core\image\logo-green-32x32.png" />
+    <Content Include="core\image\logo-splash.png" />
     <Content Include="core\image\logo-white-32x32.png" />
     <Content Include="core\image\marker-shadow.png" />
     <Content Include="core\image\picture-blank.jpg" />
@@ -178,7 +179,9 @@
     <Content Include="core\php\foods.php" />
     <Content Include="core\php\tree.php" />
     <Content Include="core\php\trees.php" />
-    <Content Include="core\php\database.php" />
+    <Content Include="core\php\database.php">
+      <SubType>Designer</SubType>
+    </Content>
     <None Include="bundleconfig.json" />
     <Content Include="bundleconfig.json.bindings">
       <DependentUpon>bundleconfig.json</DependentUpon>
@@ -192,7 +195,9 @@
     <Content Include="core\php\adopt.php" />
     <Content Include="core\php\adopts.php" />
     <Content Include="core\php\person.php" />
-    <Content Include="core\php\persons.php" />
+    <Content Include="core\php\persons.php">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="core\php\auth.php" />
     <Content Include="core\php\auths.php" />
     <Content Include="core\php\upload.php" />

@@ -31,10 +31,12 @@ var FoodParent;
             self.bDebug = true;
             //$(window).resize(_.debounce(that.customResize, Setting.getInstance().getResizeTimeout()));
             self.events = {
-                "mouseenter .home-menu-left": "_mouseEnter",
-                "mouseenter .home-menu-right": "_mouseEnter",
-                "click .home-menu-left": "_mouseClick",
-                "click .home-menu-right": "_mouseClick",
+                /* "mouseenter .home-menu-left": "_mouseEnter",
+                 "mouseenter .home-menu-right": "_mouseEnter",
+                 "click .home-menu-left": "_mouseClick",
+                 "click .home-menu-right": "_mouseClick",
+                 */
+                "click #wrapper-logo": "_mouseClick",
             };
             self.delegateEvents();
         }
@@ -44,7 +46,10 @@ var FoodParent;
             if (self.bDebug)
                 console.log(HomeView.TAG + "render!!()");
             var template = _.template(FoodParent.Template.getHomeViewTemplate());
-            var data = {};
+            var data = {
+                image: FoodParent.Setting.getCoreImageDir() + "logo-splash.png",
+                description: "Manage, parent, and care fruits",
+            };
             self.$el.html(template(data));
             self.setElement(self.$('#wrapper-home'));
             self.resize();
@@ -70,6 +75,7 @@ var FoodParent;
         };
         HomeView.prototype._mouseClick = function (event) {
             var self = this;
+            //console.log($(event.currentTarget));
             FoodParent.EventHandler.handleMouseClick($(event.currentTarget), self);
         };
         HomeView.TAG = "HomeView - ";

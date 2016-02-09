@@ -12650,7 +12650,6 @@ button.close {
         position: absolute;
         top: 0;
         left: 0;
-        margin-top: 60px;
         width: 100%;
         height: 100%;
         overflow: hidden;
@@ -12717,17 +12716,35 @@ button.close {
 @media all {
     #wrapper-home {
         position: absolute;
-        top: -60px;
+        top: 0;
         left: 0;
         width: 100%;
         height: 100%;
+        background-color: #5e4e51;
         display: -webkit-flex;
         display: flex;
         -webkit-justify-content: space-around;
         justify-content: space-around;
         -webkit-align-items: center;
         align-items: center;
+
     }
+    #wrapper-wrapper {
+        position: relative;
+        width: 100%;
+        margin: auto;
+    }
+    #wrapper-logo {
+        width: 100%;
+    }
+
+    #wrapper-description {
+       font-size: x-large;
+       font-weight: 700;
+       color: #83a656;
+       letter-spacing: 2px;
+    }
+
     .home-menu-left {
         padding: 0 20px 20px 10px;
         color: #eeeeee;
@@ -12756,7 +12773,15 @@ button.close {
         font-size: 30px;
     }
 }
+@media only screen
+    and (max-width: 420px) 
+    and (orientation: portrait) {
 
+    #wrapper-description {
+        margin: 5%;
+       font-size: medium;
+    }
+}
 @media all {
     #wrapper-nav {
         position: absolute;

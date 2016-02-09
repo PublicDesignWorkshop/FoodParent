@@ -43791,11 +43791,8 @@ var FoodParent;
                 case VIEW_STATUS.NONE:
                     break;
                 case VIEW_STATUS.HOME:
-                    if (el.hasClass('home-menu-left')) {
+                    if (el.hasClass('button-logo')) {
                         new FoodParent.NavigateCommand({ hash: 'mtrees', viewMode: VIEW_MODE.MAP, id: 0 }).execute();
-                    }
-                    else if (el.hasClass('home-menu-right')) {
-                        new FoodParent.NavigateCommand({ hash: 'ptrees' }).execute();
                     }
                     break;
                 case VIEW_STATUS.GEO_ERROR:
@@ -49614,13 +49611,12 @@ var FoodParent;
         Template.getHomeViewTemplate = function () {
             var template = '';
             template += '<div id="wrapper-home">';
-            template += '<div class="home-menu-left">';
-            template += '<div class="title-left">Food</div>';
-            template += '<div class="enter-left"><i class="fa fa-angle-left"></i> managing food assets</div>';
+            template += '<div id="wrapper-wraper">';
+            template += '<img id="wrapper-logo" class="button-logo" src="<%= image %>">';
+            template += '</img>';
+            template += '<div id="wrapper-description">';
+            template += '<%= description %>';
             template += '</div>';
-            template += '<div class="home-menu-right">';
-            template += '<div class="title-right">Parent</div>';
-            template += '<div class="enter-left">parenting & caring food assets <i class="fa fa-angle-right"></i></div>';
             template += '</div>';
             template += '</div>';
             return template;
@@ -51424,10 +51420,12 @@ var FoodParent;
             self.bDebug = true;
             //$(window).resize(_.debounce(that.customResize, Setting.getInstance().getResizeTimeout()));
             self.events = {
-                "mouseenter .home-menu-left": "_mouseEnter",
-                "mouseenter .home-menu-right": "_mouseEnter",
-                "click .home-menu-left": "_mouseClick",
-                "click .home-menu-right": "_mouseClick",
+                /* "mouseenter .home-menu-left": "_mouseEnter",
+                 "mouseenter .home-menu-right": "_mouseEnter",
+                 "click .home-menu-left": "_mouseClick",
+                 "click .home-menu-right": "_mouseClick",
+                 */
+                "click #wrapper-logo": "_mouseClick",
             };
             self.delegateEvents();
         }
@@ -51437,7 +51435,10 @@ var FoodParent;
             if (self.bDebug)
                 console.log(HomeView.TAG + "render!!()");
             var template = _.template(FoodParent.Template.getHomeViewTemplate());
-            var data = {};
+            var data = {
+                image: FoodParent.Setting.getCoreImageDir() + "logo-splash.png",
+                description: "Manage, parent, and care fruits",
+            };
             self.$el.html(template(data));
             self.setElement(self.$('#wrapper-home'));
             self.resize();
@@ -51463,9 +51464,10 @@ var FoodParent;
         };
         HomeView.prototype._mouseClick = function (event) {
             var self = this;
+            //console.log($(event.currentTarget));
             FoodParent.EventHandler.handleMouseClick($(event.currentTarget), self);
         };
-        HomeView.TAG = "HomeVieww - ";
+        HomeView.TAG = "HomeView - ";
         return HomeView;
     })(FoodParent.BaseView);
     FoodParent.HomeView = HomeView;

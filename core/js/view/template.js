@@ -13,13 +13,12 @@ var FoodParent;
         Template.getHomeViewTemplate = function () {
             var template = '';
             template += '<div id="wrapper-home">';
-            template += '<div class="home-menu-left">';
-            template += '<div class="title-left">Food</div>';
-            template += '<div class="enter-left"><i class="fa fa-angle-left"></i> managing food assets</div>';
+            template += '<div id="wrapper-wraper">';
+            template += '<img id="wrapper-logo" class="button-logo" src="<%= image %>">';
+            template += '</img>';
+            template += '<div id="wrapper-description">';
+            template += '<%= description %>';
             template += '</div>';
-            template += '<div class="home-menu-right">';
-            template += '<div class="title-right">Parent</div>';
-            template += '<div class="enter-left">parenting & caring food assets <i class="fa fa-angle-right"></i></div>';
             template += '</div>';
             template += '</div>';
             return template;
