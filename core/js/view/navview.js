@@ -41,12 +41,13 @@ var FoodParent;
                 return;
             }
             this.bRendered = true;
-            ////
+            //////////////// Execute ////////////////
             var self = this;
             if (self.bDebug)
                 console.log(NavView.TAG + "render()");
             var template = _.template(FoodParent.Template.getNavViewTemplate());
             self.$el.html(template({}));
+            self.setElement(FoodParent.Setting.getNavWrapperElement());
             self.renderNavManageItems();
             self.resize();
             return self;
@@ -56,8 +57,11 @@ var FoodParent;
                 this.render(args);
                 return;
             }
-            ////
+            //////////////// Execute ////////////////
             var self = this;
+            if (self.bDebug)
+                console.log(NavView.TAG + "update()");
+            self.setActiveNavItem(args.viewStatus);
             self.resize();
             return self;
         };
@@ -82,25 +86,38 @@ var FoodParent;
                                 contact: data.contact,
                             }));
                         }
+                        self.setActiveNavItem(FoodParent.View.getViewStatus());
                     }, function () {
                     });
                 }
                 else if (data.result == false || data.result == 'false') {
                     template = _.template(FoodParent.Template.getNavViewManageItemsTemplate());
                     self.$('#list-nav').html(template({}));
+                    self.setActiveNavItem(FoodParent.View.getViewStatus());
                 }
             }, function () {
             });
         };
         NavView.prototype.setActiveNavItem = function (viewStatus) {
             var self = this;
-            switch (viewStatus) {
+            if (viewStatus) {
+                var _viewStatus = viewStatus;
+            }
+            else {
+                var _viewStatus = FoodParent.View.getViewStatus();
+            }
+            switch (_viewStatus) {
+                case FoodParent.VIEW_STATUS.HOME:
+                    self.$el.addClass('hidden');
+                    break;
                 case FoodParent.VIEW_STATUS.MANAGE_TREES:
                 case FoodParent.VIEW_STATUS.DETAIL_TREE:
+                    self.$el.removeClass('hidden');
                     self.$('.item-nav').removeClass('active');
                     self.$('.trees').addClass('active');
                     break;
                 case FoodParent.VIEW_STATUS.MANAGE_PEOPLE:
+                    self.$el.removeClass('hidden');
                     self.$('.item-nav').removeClass('active');
                     self.$('.people').addClass('active');
                     break;

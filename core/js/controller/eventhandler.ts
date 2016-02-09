@@ -109,7 +109,7 @@
                 });
             }
 
-            View.getNavView().setActiveNavItem(viewStatus);
+            View.getNavView().update(viewStatus);
             View.setViewStatus(viewStatus);
         }
 
@@ -124,8 +124,8 @@
             }
             // Handle NavView
             if (view instanceof NavView) {
-                if (el.hasClass('item-manage-title')) {
-                    new NavigateCommand({ hash: '' }).execute();
+                if (el.hasClass('title')) {
+                    new NavigateCommand({ hash: 'mtrees', viewMode: VIEW_MODE.MAP, id: 0 }).execute();
                 } else if (el.hasClass('trees')) {
                     new NavigateCommand({ hash: 'mtrees', viewMode: VIEW_MODE.MAP, id: 0 }).execute();
                 } else if (el.hasClass('people')) {

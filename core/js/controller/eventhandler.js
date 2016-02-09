@@ -159,7 +159,7 @@ var FoodParent;
                     EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
                 });
             }
-            FoodParent.View.getNavView().setActiveNavItem(viewStatus);
+            FoodParent.View.getNavView().update(viewStatus);
             FoodParent.View.setViewStatus(viewStatus);
         };
         EventHandler.handleMouseClick = function (el, view, options) {
@@ -173,8 +173,8 @@ var FoodParent;
             }
             // Handle NavView
             if (view instanceof FoodParent.NavView) {
-                if (el.hasClass('item-manage-title')) {
-                    new FoodParent.NavigateCommand({ hash: '' }).execute();
+                if (el.hasClass('title')) {
+                    new FoodParent.NavigateCommand({ hash: 'mtrees', viewMode: VIEW_MODE.MAP, id: 0 }).execute();
                 }
                 else if (el.hasClass('trees')) {
                     new FoodParent.NavigateCommand({ hash: 'mtrees', viewMode: VIEW_MODE.MAP, id: 0 }).execute();

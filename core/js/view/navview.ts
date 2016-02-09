@@ -35,11 +35,12 @@
                 return;
             }
             this.bRendered = true;
-            ////
+            //////////////// Execute ////////////////
             var self: NavView = this;
             if (self.bDebug) console.log(NavView.TAG + "render()");
             var template = _.template(Template.getNavViewTemplate());
             self.$el.html(template({}));
+            self.setElement(Setting.getNavWrapperElement());
             self.renderNavManageItems();
             self.resize();
             return self;
@@ -50,8 +51,10 @@
                 this.render(args);
                 return;
             }
-            ////
+            //////////////// Execute ////////////////
             var self: NavView = this;
+            if (self.bDebug) console.log(NavView.TAG + "update()");
+            self.setActiveNavItem(args.viewStatus);
             self.resize();
             return self;
         }
@@ -77,12 +80,14 @@
                                 contact: data.contact,
                             }));
                         }
+                        self.setActiveNavItem(View.getViewStatus());
                     }, function () {
 
                     });
                 } else if (data.result == false || data.result == 'false') {   // Not signed in
                     template = _.template(Template.getNavViewManageItemsTemplate());
                     self.$('#list-nav').html(template({}));
+                    self.setActiveNavItem(View.getViewStatus());
                 }
             }, function () {
 
@@ -92,13 +97,24 @@
 
         public setActiveNavItem(viewStatus: VIEW_STATUS) {
             var self: NavView = this;
-            switch (viewStatus) {
+            
+            if (viewStatus) {
+                var _viewStatus = viewStatus;
+            } else {
+                var _viewStatus = View.getViewStatus();
+            }
+            switch (_viewStatus) {
+                case VIEW_STATUS.HOME:
+                    self.$el.addClass('hidden');
+                    break;
                 case VIEW_STATUS.MANAGE_TREES:
                 case VIEW_STATUS.DETAIL_TREE:
+                    self.$el.removeClass('hidden');
                     self.$('.item-nav').removeClass('active');
                     self.$('.trees').addClass('active');
                     break;
                 case VIEW_STATUS.MANAGE_PEOPLE:
+                    self.$el.removeClass('hidden');
                     self.$('.item-nav').removeClass('active');
                     self.$('.people').addClass('active');
                     break;
