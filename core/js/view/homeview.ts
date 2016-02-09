@@ -18,7 +18,7 @@
     }
 
     export class HomeView extends BaseView {
-        private static TAG: string = "HomeVieww - ";
+        private static TAG: string = "HomeView - ";
         constructor(options?: Backbone.ViewOptions<Backbone.Model>) {
             super(options);
             var self: HomeView = this;
