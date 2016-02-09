@@ -78,8 +78,8 @@ var FoodParent;
             return result;
         };
         Foods.prototype.comparator = function (model) {
-            var that = this;
-            switch (that.sortType) {
+            var self = this;
+            switch (self.sortType) {
                 case FoodParent.SortType.NONE:
                     return 0;
                     break;

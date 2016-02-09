@@ -177,8 +177,6 @@ var FoodParent;
         };
         ManageTreesTableView.prototype.resize = function () {
             $('#content-mtrees-table').css({ width: FoodParent.View.getWidth() - $('#wrapper-tablemenu').outerWidth() });
-            $('#wrapper-main').css({ height: FoodParent.View.getHeight() - 60 });
-            $('#wrapper-mtrees').css({ height: FoodParent.View.getHeight() - 60 });
             $('.collapsible-list').css({ height: FoodParent.View.getHeight() - 60 - 34 * 4 - 20 });
         };
         ManageTreesTableView.prototype._applyFilter = function (event) {
@@ -758,13 +756,9 @@ var FoodParent;
         ManageTreesMapView.prototype.resize = function () {
             FoodParent.Controller.checkAdmin(function (data) {
                 if (data.result == true || data.result == 'true') {
-                    $('#wrapper-main').css({ height: FoodParent.View.getHeight() - 60 });
-                    $('#wrapper-mtrees').css({ height: FoodParent.View.getHeight() - 60 });
                     $('.collapsible-list').css({ height: FoodParent.View.getHeight() - 60 - 34 * 4 - 20 });
                 }
                 else if (data.result == false || data.result == 'false') {
-                    $('#wrapper-main').css({ height: FoodParent.View.getHeight() - 60 });
-                    $('#wrapper-mtrees').css({ height: FoodParent.View.getHeight() - 60 });
                     $('.collapsible-list').css({ height: FoodParent.View.getHeight() - 60 - 34 * 2 - 20 });
                 }
             }, function () {
@@ -785,8 +779,6 @@ var FoodParent;
                     var template = _.template(FoodParent.Template.getManageTreesMapViewTemplate());
                     self.$el.html(template({}));
                     self.setElement(self.$('#wrapper-mtrees'));
-                    $('#wrapper-main').css({ height: FoodParent.View.getHeight() - 60 });
-                    $('#wrapper-mtrees').css({ height: FoodParent.View.getHeight() - 60 });
                     $('.collapsible-list').css({ height: FoodParent.View.getHeight() - 60 - 34 * 4 - 20 });
                 }
                 else if (data.result == false || data.result == 'false') {
@@ -795,8 +787,6 @@ var FoodParent;
                     var template = _.template(FoodParent.Template.getManageTreesMapViewTemplate2());
                     self.$el.html(template({}));
                     self.setElement(self.$('#wrapper-mtrees'));
-                    $('#wrapper-main').css({ height: FoodParent.View.getHeight() - 60 });
-                    $('#wrapper-mtrees').css({ height: FoodParent.View.getHeight() - 60 });
                     $('.collapsible-list').css({ height: FoodParent.View.getHeight() - 60 - 34 * 2 - 20 });
                 }
                 FoodParent.Controller.updateGeoLocation(self.renderMap, self.renderMapError);

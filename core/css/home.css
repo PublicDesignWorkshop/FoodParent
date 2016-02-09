@@ -14,56 +14,44 @@
         align-items: center;
 
     }
-    #wrapper-wrapper {
+    #wrapper-logo {
         position: relative;
         width: 100%;
         margin: auto;
     }
-    #wrapper-logo {
+    #content-logo {
         width: 100%;
+        cursor: pointer;
     }
 
     #wrapper-description {
        font-size: x-large;
        font-weight: 700;
        color: #83a656;
-       letter-spacing: 2px;
-    }
-
-    .home-menu-left {
-        padding: 0 20px 20px 10px;
-        color: #eeeeee;
-        cursor: pointer;
-        text-align: left;
-    }
-    .home-menu-left:hover {
-        color: #83a656;
-    }
-    .home-menu-right {
-        padding: 0 10px 20px 20px;
-        color: #eeeeee;
-        cursor: pointer;
-        text-align: right;
-    }
-    .home-menu-right:hover {
-        color: #5e4e51;
-    }
-    .title-left {
-        font-size: 150px;
-    }
-    .title-right {
-        font-size: 150px;
-    }
-    .enter-left {
-        font-size: 30px;
     }
 }
-@media only screen
-    and (max-width: 420px) 
-    and (orientation: portrait) {
 
+@media only screen and (orientation: portrait) {
     #wrapper-description {
         margin: 5%;
-       font-size: medium;
+        letter-spacing: 1px;
+    }
+}
+
+@media only screen and (max-width: 420px) and (orientation: portrait) {
+    #wrapper-description {
+        font-size: large;
+    }
+}
+
+@media only screen and (orientation: landscape) {
+    #wrapper-description {
+        letter-spacing: 2px;
+    }
+}
+
+@media only screen and (max-width: 1280px) and (orientation: landscape) {
+    #wrapper-description {
+        font-size: xx-large;
     }
 }

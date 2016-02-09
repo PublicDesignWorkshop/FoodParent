@@ -282,30 +282,6 @@ var FoodParent;
         return RemoveAlertViewCommand;
     })();
     FoodParent.RemoveAlertViewCommand = RemoveAlertViewCommand;
-    var FocusMenuLeftCommand = (function () {
-        function FocusMenuLeftCommand() {
-        }
-        FocusMenuLeftCommand.prototype.execute = function () {
-            var self = this;
-            FoodParent.View.getNavView().focusOnLeft();
-        };
-        FocusMenuLeftCommand.prototype.undo = function () {
-        };
-        return FocusMenuLeftCommand;
-    })();
-    FoodParent.FocusMenuLeftCommand = FocusMenuLeftCommand;
-    var FocusMenuRightCommand = (function () {
-        function FocusMenuRightCommand() {
-        }
-        FocusMenuRightCommand.prototype.execute = function () {
-            var self = this;
-            FoodParent.View.getNavView().focusOnRight();
-        };
-        FocusMenuRightCommand.prototype.undo = function () {
-        };
-        return FocusMenuRightCommand;
-    })();
-    FoodParent.FocusMenuRightCommand = FocusMenuRightCommand;
     var NavigateCommand = (function () {
         function NavigateCommand(args) {
             var self = this;
@@ -334,46 +310,40 @@ var FoodParent;
         return NavigateCommand;
     })();
     FoodParent.NavigateCommand = NavigateCommand;
-    var MovePaceBarToTop = (function () {
-        function MovePaceBarToTop() {
-        }
-        MovePaceBarToTop.prototype.execute = function () {
-            var self = this;
-            var bFound = false;
+    /*
+    export class MovePaceBarToTop implements Command {
+        public execute(): any {
+            var self: MovePaceBarToTop = this;
+            var bFound: boolean = false;
             if ($('.pace-progress').length) {
                 $('.pace-progress').css({ top: 0 });
-            }
-            else {
+            } else {
                 setTimeout(function () {
                     new MovePaceBarToTop().execute();
                 }, 100);
             }
-        };
-        MovePaceBarToTop.prototype.undo = function () {
-        };
-        return MovePaceBarToTop;
-    })();
-    FoodParent.MovePaceBarToTop = MovePaceBarToTop;
-    var MovePaceBarToUnderNav = (function () {
-        function MovePaceBarToUnderNav() {
         }
-        MovePaceBarToUnderNav.prototype.execute = function () {
-            var self = this;
-            var bFound = false;
+        public undo(): any {
+
+        }
+    }
+    export class MovePaceBarToUnderNav implements Command {
+        public execute(): any {
+            var self: MovePaceBarToUnderNav = this;
+            var bFound: boolean = false;
             if ($('.pace-progress').length) {
-                $('.pace-progress').css({ top: '64px' });
-            }
-            else {
+                $('.pace-progress').css({ top: '48px' });
+            } else {
                 setTimeout(function () {
                     new MovePaceBarToUnderNav().execute();
                 }, 100);
             }
-        };
-        MovePaceBarToUnderNav.prototype.undo = function () {
-        };
-        return MovePaceBarToUnderNav;
-    })();
-    FoodParent.MovePaceBarToUnderNav = MovePaceBarToUnderNav;
+        }
+        public undo(): any {
+
+        }
+    }
+    */
     var RenderMessageViewCommand = (function () {
         function RenderMessageViewCommand(args) {
             var self = this;

@@ -13,9 +13,8 @@ var FoodParent;
         Template.getHomeViewTemplate = function () {
             var template = '';
             template += '<div id="wrapper-home">';
-            template += '<div id="wrapper-wraper">';
-            template += '<img id="wrapper-logo" class="button-logo" src="<%= image %>">';
-            template += '</img>';
+            template += '<div id="wrapper-logo">';
+            template += '<img id="content-logo" class="button-logo" src="<%= image %>" />';
             template += '<div id="wrapper-description">';
             template += '<%= description %>';
             template += '</div>';
@@ -110,51 +109,33 @@ var FoodParent;
             template += '</div>';
             return template;
         };
-        Template.getNavViewHomeTemplate = function () {
+        Template.getNavViewTemplate = function () {
             var template = '';
-            template += '<div id="background-nav-right">';
-            template += '</div>';
-            template += '<div id="background-nav-left">';
-            template += '</div>';
-            template += '<div id="list-nav">';
-            template += '</div>';
-            return template;
-        };
-        Template.getNavViewManageTemplate = function () {
-            var template = '';
-            template += '<div id="background-nav-right">';
-            template += '</div>';
-            template += '<div id="background-nav-left">';
-            template += '</div>';
             template += '<div id="list-nav">';
             template += '</div>';
             return template;
         };
         Template.getNavViewManageItemsTemplate = function () {
             var template = '';
-            template += '<div class="item-nav item-manage-title">FoodParent</div>';
-            template += '<div class="item-nav item-manage trees">TREES</div>';
-            template += '<div class="item-nav item-manage"></div>';
-            template += '<div class="item-nav item-manage signup"><div>BECOME A PARENT</div></div>';
-            template += '<div class="item-nav item-manage-login login"><div>PARENT IN</div></div>';
+            template += '<div class="item-nav title">FoodParent</div>';
+            template += '<div class="item-nav trees">TREES</div>';
+            template += '<div class="item-nav login"><div class="login-decoration"><div></div></div><div class="login-text">PARENT IN</div></div>';
             return template;
         };
         Template.getNavViewManageItemsTemplate2 = function () {
             var template = '';
-            template += '<div class="item-nav item-manage-title">FoodParent</div>';
-            template += '<div class="item-nav item-manage trees">TREES</div>';
-            template += '<div class="item-nav item-manage people">PARENTS</div>';
-            template += '<div class="item-nav item-manage donations">DONATIONS</div>';
-            template += '<div class="item-nav item-manage-loggedin login"><div class="loggedinas">you are logged in as: </div><div><%= contact %></div></div>';
+            template += '<div class="item-nav title">FoodParent</div>';
+            template += '<div class="item-nav trees">TREES</div>';
+            template += '<div class="item-nav people">PARENTS</div>';
+            template += '<div class="item-nav donations">DONATIONS</div>';
+            template += '<div class="item-nav login"><div class="login-decoration"><div></div></div><div class="login-text loggedinas">you are logged in as: </div><div><%= contact %></div></div>';
             return template;
         };
         Template.getNavViewManageItemsTemplate3 = function () {
             var template = '';
-            template += '<div class="item-nav item-manage-title">FoodParent</div>';
-            template += '<div class="item-nav item-manage trees">TREES</div>';
-            template += '<div class="item-nav item-manage parent">PARENT</div>';
-            template += '<div class="item-nav item-manage"></div>';
-            template += '<div class="item-nav item-manage-loggedin login"><div class="loggedinas">you are logged in as: </div><div><%= contact %></div></div>';
+            template += '<div class="item-nav title">FoodParent</div>';
+            template += '<div class="item-nav trees">TREES</div>';
+            template += '<div class="item-nav loggedin"><div class="login-decoration"><div></div></div><div class="login-text loggedinas">you are logged in as: </div><div><%= contact %></div></div>';
             return template;
         };
         Template.getAlertViewTemplate = function () {

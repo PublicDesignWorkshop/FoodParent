@@ -36,7 +36,9 @@ var FoodParent;
                  "click .home-menu-left": "_mouseClick",
                  "click .home-menu-right": "_mouseClick",
                  */
-                "click #wrapper-logo": "_mouseClick",
+                "click .button-logo": "_mouseClick",
+                "mouseenter .button-logo": "_mouseEnter",
+                "mouseout .button-logo": "_mouseOut",
             };
             self.delegateEvents();
         }
@@ -47,8 +49,8 @@ var FoodParent;
                 console.log(HomeView.TAG + "render!!()");
             var template = _.template(FoodParent.Template.getHomeViewTemplate());
             var data = {
-                image: FoodParent.Setting.getCoreImageDir() + "logo-splash.png",
-                description: "Manage, parent, and care fruits",
+                image: FoodParent.Setting.getLogoSplashDefaultImage(),
+                description: FoodParent.Setting.getApplicationDescription(),
             };
             self.$el.html(template(data));
             self.setElement(self.$('#wrapper-home'));
@@ -65,13 +67,14 @@ var FoodParent;
         };
         HomeView.prototype.resize = function () {
             var self = this;
-            self.$('.title-left').css({ 'font-size': Math.floor(self.getWidth() * 0.15) + 'px' });
-            self.$('.title-right').css({ 'font-size': Math.floor(self.getWidth() * 0.15) + 'px' });
-            self.$('.enter-left').css({ 'font-size': Math.floor(self.getWidth() * 0.15 * 0.2) + 'px' });
         };
         HomeView.prototype._mouseEnter = function (event) {
             var self = this;
-            FoodParent.EventHandler.handleMouseEnter($(event.currentTarget), self);
+            self.$('.button-logo').attr({ 'src': FoodParent.Setting.getLogoSplashMouseOverImage() });
+        };
+        HomeView.prototype._mouseOut = function (event) {
+            var self = this;
+            self.$('.button-logo').attr({ 'src': FoodParent.Setting.getLogoSplashDefaultImage() });
         };
         HomeView.prototype._mouseClick = function (event) {
             var self = this;

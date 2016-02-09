@@ -94,7 +94,7 @@ var FoodParent;
             //}
             new FoodParent.RenderNavViewCommand({ el: FoodParent.Setting.getNavWrapperElement(), viewStatus: viewStatus }).execute();
             if (viewStatus == VIEW_STATUS.HOME) {
-                new FoodParent.MovePaceBarToTop().execute();
+                //new MovePaceBarToTop().execute();
                 new FoodParent.RenderHomeViewCommand({ el: FoodParent.Setting.getMainWrapperElement() }).execute();
             }
             else if (viewStatus == VIEW_STATUS.MANAGE_TREES) {
@@ -104,12 +104,12 @@ var FoodParent;
                             new FoodParent.NavigateCommand({ hash: 'mtrees', viewMode: VIEW_MODE.MAP, id: 0 }).execute();
                         }
                         else {
-                            new FoodParent.MovePaceBarToUnderNav().execute();
+                            //new MovePaceBarToUnderNav().execute();
                             new FoodParent.RenderManageTreesViewCommand({ el: FoodParent.Setting.getMainWrapperElement(), viewMode: option.viewMode, id: option.id }).execute();
                         }
                     }
                     else {
-                        new FoodParent.MovePaceBarToUnderNav().execute();
+                        //new MovePaceBarToUnderNav().execute();
                         new FoodParent.RenderManageTreesViewCommand({ el: FoodParent.Setting.getMainWrapperElement(), viewMode: option.viewMode, id: option.id }).execute();
                     }
                 }, function () {
@@ -119,7 +119,7 @@ var FoodParent;
             else if (viewStatus == VIEW_STATUS.MANAGE_PEOPLE) {
                 FoodParent.Controller.checkAdmin(function (response) {
                     if (response.result == true || response.result == 'true') {
-                        new FoodParent.MovePaceBarToUnderNav().execute();
+                        //new MovePaceBarToUnderNav().execute();
                         new FoodParent.RenderManagePeopleViewCommand({ el: FoodParent.Setting.getMainWrapperElement(), viewMode: option.viewMode, id: option.id }).execute();
                     }
                     else if (response.result == false || response.result == 'false') {
@@ -130,13 +130,13 @@ var FoodParent;
                 });
             }
             else if (viewStatus == VIEW_STATUS.DETAIL_TREE) {
-                new FoodParent.MovePaceBarToUnderNav().execute();
+                //new MovePaceBarToUnderNav().execute();
                 new FoodParent.RenderDetailTreeViewCommand({ el: FoodParent.Setting.getMainWrapperElement(), viewMode: option.viewMode, id: option.id }).execute();
             }
             else if (viewStatus == VIEW_STATUS.MANAGE_DONATIONS) {
                 FoodParent.Controller.checkAdmin(function (response) {
                     if (response.result == true || response.result == 'true') {
-                        new FoodParent.MovePaceBarToUnderNav().execute();
+                        //new MovePaceBarToUnderNav().execute();
                         new FoodParent.RenderManageDonationsViewCommand({ el: FoodParent.Setting.getMainWrapperElement(), viewMode: option.viewMode, id: option.id }).execute();
                     }
                     else if (response.result == false || response.result == 'false') {
@@ -149,7 +149,7 @@ var FoodParent;
             else if (viewStatus == VIEW_STATUS.DETAIL_DONATION) {
                 FoodParent.Controller.checkAdmin(function (response) {
                     if (response.result == true || response.result == 'true') {
-                        new FoodParent.MovePaceBarToUnderNav().execute();
+                        //new MovePaceBarToUnderNav().execute();
                         new FoodParent.RenderDetailDonationViewCommand({ el: FoodParent.Setting.getMainWrapperElement(), viewMode: option.viewMode, id: option.id }).execute();
                     }
                     else if (response.result == false || response.result == 'false') {
@@ -498,14 +498,6 @@ var FoodParent;
         EventHandler.handleMouseEnter = function (el, view) {
             switch (FoodParent.View.getViewStatus()) {
                 case VIEW_STATUS.NONE:
-                    break;
-                case VIEW_STATUS.HOME:
-                    if (el.hasClass('home-menu-left')) {
-                        new FoodParent.FocusMenuLeftCommand().execute();
-                    }
-                    else if (el.hasClass('home-menu-right')) {
-                        new FoodParent.FocusMenuRightCommand().execute();
-                    }
                     break;
             }
         };

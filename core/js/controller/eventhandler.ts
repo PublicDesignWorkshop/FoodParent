@@ -53,7 +53,7 @@
             
             new RenderNavViewCommand({ el: Setting.getNavWrapperElement(), viewStatus: viewStatus }).execute();
             if (viewStatus == VIEW_STATUS.HOME) {
-                new MovePaceBarToTop().execute();
+                //new MovePaceBarToTop().execute();
                 new RenderHomeViewCommand({ el: Setting.getMainWrapperElement() }).execute();
             } else if (viewStatus == VIEW_STATUS.MANAGE_TREES) {
                 Controller.checkAdmin(function (response) {
@@ -61,11 +61,11 @@
                         if (option.viewMode == VIEW_MODE.TABLE) {
                             new NavigateCommand({ hash: 'mtrees', viewMode: VIEW_MODE.MAP, id: 0 }).execute();
                         } else {
-                            new MovePaceBarToUnderNav().execute();
+                            //new MovePaceBarToUnderNav().execute();
                             new RenderManageTreesViewCommand({ el: Setting.getMainWrapperElement(), viewMode: option.viewMode, id: option.id }).execute();
                         }
                     } else {
-                        new MovePaceBarToUnderNav().execute();
+                        //new MovePaceBarToUnderNav().execute();
                         new RenderManageTreesViewCommand({ el: Setting.getMainWrapperElement(), viewMode: option.viewMode, id: option.id }).execute();
                     }
                 }, function () {
@@ -74,7 +74,7 @@
             } else if (viewStatus == VIEW_STATUS.MANAGE_PEOPLE) {
                 Controller.checkAdmin(function (response) {
                     if (response.result == true || response.result == 'true') {   // Admin
-                        new MovePaceBarToUnderNav().execute();
+                        //new MovePaceBarToUnderNav().execute();
                         new RenderManagePeopleViewCommand({ el: Setting.getMainWrapperElement(), viewMode: option.viewMode, id: option.id }).execute();
                     } else if (response.result == false || response.result == 'false') {   // Not admin
                         new NavigateCommand({ hash: 'mtrees', viewMode: VIEW_MODE.MAP, id: 0 }).execute();
@@ -83,12 +83,12 @@
                     EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
                 });
             } else if (viewStatus == VIEW_STATUS.DETAIL_TREE) {
-                new MovePaceBarToUnderNav().execute();
+                //new MovePaceBarToUnderNav().execute();
                 new RenderDetailTreeViewCommand({ el: Setting.getMainWrapperElement(), viewMode: option.viewMode, id: option.id }).execute();
             } else if (viewStatus == VIEW_STATUS.MANAGE_DONATIONS) {
                 Controller.checkAdmin(function (response) {
                     if (response.result == true || response.result == 'true') {   // Admin
-                        new MovePaceBarToUnderNav().execute();
+                        //new MovePaceBarToUnderNav().execute();
                         new RenderManageDonationsViewCommand({ el: Setting.getMainWrapperElement(), viewMode: option.viewMode, id: option.id }).execute();
                     } else if (response.result == false || response.result == 'false') {   // Not admin
                         new NavigateCommand({ hash: 'mtrees', viewMode: VIEW_MODE.MAP, id: 0 }).execute();
@@ -99,7 +99,7 @@
             } else if (viewStatus == VIEW_STATUS.DETAIL_DONATION) {
                 Controller.checkAdmin(function (response) {
                     if (response.result == true || response.result == 'true') {   // Admin
-                        new MovePaceBarToUnderNav().execute();
+                        //new MovePaceBarToUnderNav().execute();
                         new RenderDetailDonationViewCommand({ el: Setting.getMainWrapperElement(), viewMode: option.viewMode, id: option.id }).execute();
                     } else if (response.result == false || response.result == 'false') {   // Not admin
                         new NavigateCommand({ hash: 'mtrees', viewMode: VIEW_MODE.MAP, id: 0 }).execute();
@@ -423,13 +423,6 @@
         public static handleMouseEnter(el: JQuery, view: BaseView): void {
             switch (View.getViewStatus()) {
                 case VIEW_STATUS.NONE:
-                    break;
-                case VIEW_STATUS.HOME:
-                    if (el.hasClass('home-menu-left')) {
-                        new FocusMenuLeftCommand().execute();
-                    } else if (el.hasClass('home-menu-right')) {
-                        new FocusMenuRightCommand().execute();
-                    }
                     break;
             }
         }
