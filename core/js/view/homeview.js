@@ -72,7 +72,7 @@ var FoodParent;
             var self = this;
             FoodParent.EventHandler.handleMouseClick($(event.currentTarget), self);
         };
-        HomeView.TAG = "HomeVieww - ";
+        HomeView.TAG = "HomeView - ";
         return HomeView;
     })(FoodParent.BaseView);
     FoodParent.HomeView = HomeView;
