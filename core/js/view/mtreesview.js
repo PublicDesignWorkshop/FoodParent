@@ -306,12 +306,18 @@ var FoodParent;
                         }));
                     }
                     else if (data.result == false || data.result == 'false') {
-                        var template = _.template(FoodParent.Template.getTreeFilterListTemplate2());
-                        self.$('#filter-list').html(template({
+                        var template = _.template(FoodParent.Template.getFoodItemTemplate());
+                        self.$('#list-food').html(template({
                             foods: FoodParent.Model.getFoods(),
-                            flags: FoodParent.Model.getFlags(),
-                            ownerships: FoodParent.Model.getOwnerships(),
                         }));
+                        $('#list-food').btsListFilter('#search-food', {
+                            itemChild: 'span',
+                            //sourceTmpl: '<div class="food-item">{title}</div>',
+                            itemEl: '.food-item',
+                            emptyNode: function (data) {
+                                return '<div class="user-item-none">No Result</div><div class="clear" />';
+                            },
+                        });
                     }
                 }, function () {
                     FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
@@ -750,6 +756,7 @@ var FoodParent;
                 "click .button-tree-adopt": "_mouseClick",
                 "click .button-tree-unadopt": "_mouseClick",
                 "click .button-new-note": "_mouseClick",
+                "keydown #search-food": "_searchKeyDown",
             };
             self.delegateEvents();
         }
@@ -1169,6 +1176,18 @@ var FoodParent;
                 FoodParent.EventHandler.handleDataChange("<strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has been deleted successfully.", false);
                 self.updateMarkers(FoodParent.Model.getTrees());
             });
+        };
+        ManageTreesMapView.prototype._searchKeyDown = function (event) {
+            var self = this;
+            //console.log($(event.currentTarget));
+            setTimeout(function () {
+                if (self.$('#search-food').val().trim() != "") {
+                    self.$('#wrapper-list-food').removeClass('hidden');
+                }
+                else {
+                    self.$('#wrapper-list-food').addClass('hidden');
+                }
+            }, 500);
         };
         ManageTreesMapView.TAG = "ManageTreesMapView - ";
         return ManageTreesMapView;

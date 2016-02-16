@@ -107,7 +107,17 @@
             template += '<div id="wrapper-mtrees">';
             template += '<div id="content-map">';
             template += '</div>';
+
             template += '<div id="wrapper-mapmenu">';
+            
+            template += '<div id="wrapper-food-search">';
+            template +=     '<div id="wrapper-list-food" class="hidden">';
+            template +=         '<div id="list-food" class="list-group">';
+            template +=         '</div>';
+            template +=     '</div>';
+            template +=     '<input type="text" class="form-control" id="search-food" type="search" placeholder="Food Name" value=""/>';
+            template += '</div>';
+            /*
             template += '<div class="button-outer-frame2 button3"><div class="button-inner-frame2 collapsible-button" data-target="#filter-list">Filter List</div></div>';
             template += '<div id="filter-list" class="collapsible-list">';
             template += '</div>';
@@ -115,11 +125,25 @@
             template += '<div class="button-outer-frame2 button3"><div class="button-inner-frame2 collapsible-button" data-target="#forage-list">Foragable List</div></div>';
             template += '<div id="forage-list" class="collapsible-list hidden">';
             template += '</div>';
-            template += '</div>';
+
+            */
+            //template += '</div>';
+
+
             template += '<div id="wrapper-treeinfo" class="hidden">';
             template += '</div>';
             template += '</div>';
             template += '</div>';
+            return template;
+        }
+
+        public static getFoodItemTemplate(): string {
+            var template = "";
+            
+            template += '<% _.each(foods.models, function (food) { %>';
+            template += '<div class="food-item"><span><%= food.getName() %></span></div>';
+            template += '<% }); %>';
+
             return template;
         }
 

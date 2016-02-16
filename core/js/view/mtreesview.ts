@@ -334,6 +334,7 @@ module FoodParent {
                 "click .button-tree-adopt": "_mouseClick",
                 "click .button-tree-unadopt": "_mouseClick",
                 "click .button-new-note": "_mouseClick",
+                "keydown #search-food": "_searchKeyDown",
             };
             self.delegateEvents();
         }
@@ -408,12 +409,21 @@ module FoodParent {
                         userid: parseInt(data.id),
                     }));
                 } else if (data.result == false || data.result == 'false') {   // Not logged in
-                    var template = _.template(Template.getTreeFilterListTemplate2());
-                    self.$('#filter-list').html(template({
+                    
+                    var template = _.template(Template.getFoodItemTemplate());
+                    self.$('#list-food').html(template({
                         foods: Model.getFoods(),
-                        flags: Model.getFlags(),
-                        ownerships: Model.getOwnerships(),
                     }));
+
+                    $('#list-food').btsListFilter('#search-food', {
+                        itemChild: 'span',
+                        //sourceTmpl: '<div class="food-item">{title}</div>',
+                        itemEl: '.food-item',
+                        emptyNode: function (data) {
+                            return '<div class="user-item-none">No Result</div><div class="clear" />';
+                        },
+                    });
+                    
                 }
             }, function () {
                 FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
@@ -1223,6 +1233,19 @@ module FoodParent {
                 EventHandler.handleDataChange("<strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has been deleted successfully.", false);
                 self.updateMarkers(Model.getTrees());
             });
+        }
+
+        private _searchKeyDown(event: Event): void {
+            var self: ManageTreesMapView = this;
+            //console.log($(event.currentTarget));
+
+            setTimeout(function () {
+                if (self.$('#search-food').val().trim() != "") {
+                    self.$('#wrapper-list-food').removeClass('hidden');
+                } else {
+                    self.$('#wrapper-list-food').addClass('hidden');
+                }
+            }, 500);
         }
     }
 }
