@@ -47,6 +47,10 @@
 @media only screen and (orientation: landscape) {
     #wrapper-description {
         letter-spacing: 2px;
+        padding: 3% 0;
+    }
+    #wrapper-logo {
+        margin: 0 10%;
     }
 }
 
@@ -54,4 +58,14 @@
     #wrapper-description {
         font-size: xx-large;
     }
+
+
+}
+
+
+@media only screen and (min-width: 1281px) and (max-width: 1920px) and (orientation: landscape) {
+    #wrapper-description {
+        font-size: xx-large;
+    }
+
 }
