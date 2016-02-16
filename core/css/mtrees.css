@@ -219,3 +219,26 @@
         font-weight: 600;
     }
 }
+
+@media only screen and (orientation: portrait) {
+
+}
+
+@media only screen and (max-width: 420px) and (orientation: portrait) {
+
+}
+
+@media only screen and (orientation: landscape) {
+    #wrapper-mapmenu {
+        max-width: 360px;
+    }
+}
+
+@media only screen and (max-width: 1280px) and (orientation: landscape) {
+
+}
+
+
+@media only screen and (min-width: 1281px) and (max-width: 1920px) and (orientation: landscape) {
+
+}
