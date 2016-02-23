@@ -1250,7 +1250,7 @@ module FoodParent {
                 } else {
                     self.$('#wrapper-list-food').addClass('hidden');
                 }
-            }, 1);
+            }, 10);
         }
 
         private _applySearch(event: Event): void {

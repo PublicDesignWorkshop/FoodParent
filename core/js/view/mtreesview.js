@@ -1191,7 +1191,7 @@ var FoodParent;
                 else {
                     self.$('#wrapper-list-food').addClass('hidden');
                 }
-            }, 1);
+            }, 10);
         };
         ManageTreesMapView.prototype._applySearch = function (event) {
             var self = this;
