@@ -71,7 +71,7 @@
         }
 
         comparator(model: Food) {
-            var that: Food = this;
+            var that: Foods = this;
             switch (that.sortType) {
                 case SortType.NONE:
                     return 0;
