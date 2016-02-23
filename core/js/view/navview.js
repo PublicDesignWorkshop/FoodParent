@@ -61,6 +61,7 @@ var FoodParent;
             var self = this;
             if (self.bDebug)
                 console.log(NavView.TAG + "update()");
+            self.renderNavManageItems();
             self.setActiveNavItem(args.viewStatus);
             self.resize();
             return self;

@@ -12859,7 +12859,7 @@ button.close {
 
     
 
-    #list-nav .login {
+    #list-nav .login, #list-nav .loggedin {
         height: 48px;
         padding-top: 0;
         
@@ -12869,7 +12869,7 @@ button.close {
         display: flex;
     }
 
-    #list-nav .login .login-text {
+    #list-nav .login .login-text, #list-nav .loggedin .login-text  {
         width: 100%;
         padding-top: 14px;
         color: #5e4e51;
