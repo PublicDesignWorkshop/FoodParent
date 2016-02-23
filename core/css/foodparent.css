@@ -13174,6 +13174,7 @@ button.close {
         color: rgba(255, 255, 255, 0.95);
         border: 2px solid rgba(255, 255, 255, 0.85);
         text-align: center;
+        padding: 6px 0 6px 0;
     }
 
     .button5 .button-inner-frame2:hover {
@@ -13490,10 +13491,9 @@ button.close {
 
     #wrapper-treeinfo {
         position: absolute;
-        top: 0;
+        top: 52px;
         right: 0;
         width: 100%;
-        max-width: 360px;
         height: 100%;
         pointer-events: none;
         padding: 12px 8px 8px 8px;
@@ -13655,11 +13655,21 @@ button.close {
         text-align: center;
     }
 
+    
+
     .food-item {
         color: #5e4e51;
         text-align: left;
-        padding: 0 5% 0 5%;
+        padding: 4px 8px;
         background-color: rgba(255, 255, 255, 0.55);
+        pointer-events: all;
+        cursor: pointer;
+    }
+
+    #wrapper-food-search span.btn {
+        color: #5e4e51;
+        pointer-events: all;
+        cursor: pointer;
     }
 
     .list-title {
@@ -13668,6 +13678,7 @@ button.close {
         font-weight: 700;
         padding: 8px 4px;
     }
+    
 
     .treeinfocomment {
         font-weight: 600;
@@ -13675,7 +13686,27 @@ button.close {
 }
 
 @media only screen and (orientation: portrait) {
+    #wrapper-treeinfo {
+    }
 
+    #list-activities {
+        height: 30%;
+        overflow-y: auto;
+    }
+
+    #wrapper-treeinfo .info-button {
+        display: -webkit-flex;
+        display: flex;
+        -webkit-justify-content: space-around;
+        justify-content: space-around;
+        -webkit-align-items: center;
+        align-items: center;
+    }
+
+    #wrapper-treeinfo .info-button div {
+        flex-grow: 1;
+        -webkit-flex-grow: 1;
+    }
 }
 
 @media only screen and (max-width: 420px) and (orientation: portrait) {
@@ -13684,6 +13715,9 @@ button.close {
 
 @media only screen and (orientation: landscape) {
     #wrapper-mapmenu {
+        max-width: 360px;
+    }
+    #wrapper-treeinfo {
         max-width: 360px;
     }
 }

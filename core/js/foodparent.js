@@ -49677,10 +49677,13 @@ var FoodParent;
             template += '<div id="wrapper-mapmenu">';
             template += '<div id="wrapper-food-search">';
             template += '<div id="wrapper-list-food" class="hidden">';
-            template += '<div id="list-food" class="list-group">';
+            template += '<div id="list-food" class="">';
             template += '</div>';
             template += '</div>';
+            template += '<div class="form-group">';
             template += '<input type="text" class="form-control" id="search-food" type="search" placeholder="Food Name" value=""/>';
+            template += '</div>';
+            template += '</div>';
             template += '</div>';
             /*
             template += '<div class="button-outer-frame2 button3"><div class="button-inner-frame2 collapsible-button" data-target="#filter-list">Filter List</div></div>';
@@ -49696,13 +49699,12 @@ var FoodParent;
             template += '<div id="wrapper-treeinfo" class="hidden">';
             template += '</div>';
             template += '</div>';
-            template += '</div>';
             return template;
         };
         Template.getFoodItemTemplate = function () {
             var template = "";
             template += '<% _.each(foods.models, function (food) { %>';
-            template += '<div class="food-item"><span><%= food.getName() %></span></div>';
+            template += '<div class="food-item" data-id="<%= food.getId() %>"><span><%= food.getName() %></span></div>';
             template += '<% }); %>';
             return template;
         };
@@ -53129,6 +53131,8 @@ var FoodParent;
             self.events = {
                 //"mouseover .home-menu-left": "_mouseOver",
                 //"mouseover .home-menu-right": "_mouseOver",
+                "click .food-item": "_applySearch",
+                "click #wrapper-food-search span.btn": "_resetSearch",
                 "click .marker-control-item": "_mouseClick",
                 "click .collapsible-button": "_openCollapsible",
                 "click .filter-checkbox": "_applyFilter",
@@ -53567,12 +53571,36 @@ var FoodParent;
             //console.log($(event.currentTarget));
             setTimeout(function () {
                 if (self.$('#search-food').val().trim() != "") {
-                    self.$('#wrapper-list-food').removeClass('hidden');
+                    setTimeout(function () {
+                        self.$('#wrapper-list-food').removeClass('hidden');
+                    }, 500);
                 }
                 else {
                     self.$('#wrapper-list-food').addClass('hidden');
                 }
-            }, 500);
+            }, 1);
+        };
+        ManageTreesMapView.prototype._applySearch = function (event) {
+            var self = this;
+            console.log($(event.currentTarget).attr('data-id'));
+            var food = FoodParent.Model.getFoods().findWhere({
+                'id': parseInt($(event.currentTarget).attr('data-id'))
+            });
+            console.log(food.getName());
+            self.$('#search-food').val(food.getName());
+            // Find all trees
+            var trees = FoodParent.Model.getTrees();
+            // Apply food filtering
+            trees = trees.filterByFoodIds([parseInt($(event.currentTarget).attr('data-id'))]);
+            // update markers
+            self.updateMarkers(trees);
+        };
+        ManageTreesMapView.prototype._resetSearch = function (event) {
+            var self = this;
+            self.$('#search-food').val("");
+            var trees = FoodParent.Model.getTrees();
+            self.updateMarkers(trees);
+            self.$('#wrapper-list-food').addClass('hidden');
         };
         ManageTreesMapView.TAG = "ManageTreesMapView - ";
         return ManageTreesMapView;

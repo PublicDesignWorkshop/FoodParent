@@ -160,6 +160,7 @@
         color: rgba(255, 255, 255, 0.95);
         border: 2px solid rgba(255, 255, 255, 0.85);
         text-align: center;
+        padding: 6px 0 6px 0;
     }
 
     .button5 .button-inner-frame2:hover {

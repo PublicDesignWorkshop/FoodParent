@@ -744,6 +744,8 @@ var FoodParent;
             self.events = {
                 //"mouseover .home-menu-left": "_mouseOver",
                 //"mouseover .home-menu-right": "_mouseOver",
+                "click .food-item": "_applySearch",
+                "click #wrapper-food-search span.btn": "_resetSearch",
                 "click .marker-control-item": "_mouseClick",
                 "click .collapsible-button": "_openCollapsible",
                 "click .filter-checkbox": "_applyFilter",
@@ -1182,12 +1184,36 @@ var FoodParent;
             //console.log($(event.currentTarget));
             setTimeout(function () {
                 if (self.$('#search-food').val().trim() != "") {
-                    self.$('#wrapper-list-food').removeClass('hidden');
+                    setTimeout(function () {
+                        self.$('#wrapper-list-food').removeClass('hidden');
+                    }, 500);
                 }
                 else {
                     self.$('#wrapper-list-food').addClass('hidden');
                 }
-            }, 500);
+            }, 1);
+        };
+        ManageTreesMapView.prototype._applySearch = function (event) {
+            var self = this;
+            console.log($(event.currentTarget).attr('data-id'));
+            var food = FoodParent.Model.getFoods().findWhere({
+                'id': parseInt($(event.currentTarget).attr('data-id'))
+            });
+            console.log(food.getName());
+            self.$('#search-food').val(food.getName());
+            // Find all trees
+            var trees = FoodParent.Model.getTrees();
+            // Apply food filtering
+            trees = trees.filterByFoodIds([parseInt($(event.currentTarget).attr('data-id'))]);
+            // update markers
+            self.updateMarkers(trees);
+        };
+        ManageTreesMapView.prototype._resetSearch = function (event) {
+            var self = this;
+            self.$('#search-food').val("");
+            var trees = FoodParent.Model.getTrees();
+            self.updateMarkers(trees);
+            self.$('#wrapper-list-food').addClass('hidden');
         };
         ManageTreesMapView.TAG = "ManageTreesMapView - ";
         return ManageTreesMapView;

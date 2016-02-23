@@ -322,6 +322,8 @@ module FoodParent {
             self.events = <any>{
                 //"mouseover .home-menu-left": "_mouseOver",
                 //"mouseover .home-menu-right": "_mouseOver",
+                "click .food-item": "_applySearch",
+                "click #wrapper-food-search span.btn" : "_resetSearch",
                 "click .marker-control-item": "_mouseClick",
                 "click .collapsible-button": "_openCollapsible",
                 "click .filter-checkbox": "_applyFilter",
@@ -1043,6 +1045,7 @@ module FoodParent {
             $('.collapsible-list').addClass('hidden');
             $($(event.currentTarget).attr('data-target')).removeClass('hidden');
         }
+
         public _applyFilter(event?: Event): void {
             var self: ManageTreesMapView = this;
             var trees: Trees = Model.getTrees();
@@ -1241,11 +1244,40 @@ module FoodParent {
 
             setTimeout(function () {
                 if (self.$('#search-food').val().trim() != "") {
-                    self.$('#wrapper-list-food').removeClass('hidden');
+                    setTimeout(function () {
+                        self.$('#wrapper-list-food').removeClass('hidden'); 
+                    }, 500);
                 } else {
                     self.$('#wrapper-list-food').addClass('hidden');
                 }
-            }, 500);
+            }, 1);
+        }
+
+        private _applySearch(event: Event): void {
+            var self: ManageTreesMapView = this;
+            console.log($(event.currentTarget).attr('data-id'));
+            var food: Food = Model.getFoods().findWhere({
+                'id': parseInt($(event.currentTarget).attr('data-id'))
+            });
+            console.log(food.getName());
+            self.$('#search-food').val(food.getName());
+
+            // Find all trees
+            var trees: Trees = Model.getTrees();
+            // Apply food filtering
+            trees = trees.filterByFoodIds([parseInt($(event.currentTarget).attr('data-id'))]);
+            
+            // update markers
+            self.updateMarkers(trees);
+        }
+
+        private _resetSearch(event: Event): void {
+            var self: ManageTreesMapView = this;
+            self.$('#search-food').val("");
+            var trees: Trees = Model.getTrees();
+            self.updateMarkers(trees);
+            self.$('#wrapper-list-food').addClass('hidden');
+
         }
     }
 }

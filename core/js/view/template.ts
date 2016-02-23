@@ -105,18 +105,21 @@
         public static getManageTreesMapViewTemplate2(): string {
             var template = '';
             template += '<div id="wrapper-mtrees">';
-            template += '<div id="content-map">';
-            template += '</div>';
+            template +=     '<div id="content-map">';
+            template +=     '</div>';
 
-            template += '<div id="wrapper-mapmenu">';
+            template +=     '<div id="wrapper-mapmenu">';
             
-            template += '<div id="wrapper-food-search">';
-            template +=     '<div id="wrapper-list-food" class="hidden">';
-            template +=         '<div id="list-food" class="list-group">';
+            template +=         '<div id="wrapper-food-search">';
+            template +=             '<div id="wrapper-list-food" class="hidden">';
+            template +=                 '<div id="list-food" class="">';
+            template +=                 '</div>';
+            template +=             '</div>';
+            template +=             '<div class="form-group">';
+            template +=                 '<input type="text" class="form-control" id="search-food" type="search" placeholder="Food Name" value=""/>';
+            template +=             '</div>';
             template +=         '</div>';
             template +=     '</div>';
-            template +=     '<input type="text" class="form-control" id="search-food" type="search" placeholder="Food Name" value=""/>';
-            template += '</div>';
             /*
             template += '<div class="button-outer-frame2 button3"><div class="button-inner-frame2 collapsible-button" data-target="#filter-list">Filter List</div></div>';
             template += '<div id="filter-list" class="collapsible-list">';
@@ -130,10 +133,10 @@
             //template += '</div>';
 
 
-            template += '<div id="wrapper-treeinfo" class="hidden">';
+            template +=     '<div id="wrapper-treeinfo" class="hidden">';
+            template +=     '</div>';
             template += '</div>';
-            template += '</div>';
-            template += '</div>';
+
             return template;
         }
 
@@ -141,7 +144,7 @@
             var template = "";
             
             template += '<% _.each(foods.models, function (food) { %>';
-            template += '<div class="food-item"><span><%= food.getName() %></span></div>';
+            template += '<div class="food-item" data-id="<%= food.getId() %>"><span><%= food.getName() %></span></div>';
             template += '<% }); %>';
 
             return template;
@@ -491,6 +494,7 @@
 
             template += '<div class="hr"><hr /></div>';
             template += '<div class="info-button">';
+
             template += '<div class="button-outer-frame2 button5"><div class="button-inner-frame2 button-tree-detail"><i class="fa fa-heartbeat"></i> See Tree Detail</div></div>';
             template += '<div class="button-outer-frame2 button5"><div class="button-inner-frame2 button-tree-adopt"><i class="fa  fa-user-plus"></i> Adopt This Tree</div></div>';
             template += '<div class="button-outer-frame2 button5"><div class="button-inner-frame2 button-new-note"><i class="fa fa-sticky-note-o"></i> Post New Note</div></div>';
