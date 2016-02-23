@@ -30,7 +30,9 @@
                 "click .home-menu-left": "_mouseClick",
                 "click .home-menu-right": "_mouseClick",
                 */
-               "click #wrapper-logo": "_mouseClick",
+               "click .button-logo": "_mouseClick", // change to .class instead of using id
+               "mouseenter .button-logo": "_mouseEnter",
+               "mouseout .button-logo": "_mouseOut",
             };
             self.delegateEvents();
         }
@@ -41,8 +43,8 @@
 
             var template = _.template(Template.getHomeViewTemplate());
             var data = {
-                image: Setting.getCoreImageDir() + "logo-splash.png",
-                description: "Manage, parent, and care fruits",
+                image: Setting.getLogoSplashDefaultImage(),   //Setting.getCoreImageDir() + "logo-splash.png",: I create another to call the address of image file function in setting.ts file so that later we can change the setting file only if we want to change the name of the file.
+                description: Setting.getApplicationDescription(),   //"Manage, parent, and care fruits",
             }
             self.$el.html(template(data));
             self.setElement(self.$('#wrapper-home'));
@@ -60,13 +62,14 @@
 
         public resize(): any {
             var self: HomeView = this;
-            self.$('.title-left').css({ 'font-size': Math.floor(self.getWidth() * 0.15) + 'px' });
-            self.$('.title-right').css({ 'font-size': Math.floor(self.getWidth() * 0.15) + 'px' });
-            self.$('.enter-left').css({ 'font-size': Math.floor(self.getWidth() * 0.15 * 0.2) + 'px' });
         }
         private _mouseEnter(event: Event): void {
             var self: HomeView = this;
-            EventHandler.handleMouseEnter($(event.currentTarget), self);
+            self.$('.button-logo').attr({ 'src': Setting.getLogoSplashMouseOverImage() });
+        }
+        private _mouseOut(event: Event): void {
+            var self: HomeView = this;
+            self.$('.button-logo').attr({ 'src': Setting.getLogoSplashDefaultImage() });
         }
         private _mouseClick(event: Event): void {
             var self: HomeView = this;

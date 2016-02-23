@@ -111,6 +111,15 @@ var FoodParent;
         Setting.getMaxRating = function () {
             return 10;
         };
+        Setting.getLogoSplashDefaultImage = function () {
+            return Setting.getCoreImageDir() + "logo-splash-default.png";
+        };
+        Setting.getLogoSplashMouseOverImage = function () {
+            return Setting.getCoreImageDir() + "logo-splash-mouseover.png";
+        };
+        Setting.getApplicationDescription = function () {
+            return "Manage, parent, and care food assets";
+        };
         /*
 
         Server Error Code

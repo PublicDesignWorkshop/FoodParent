@@ -305,25 +305,7 @@
 
         }
     }
-
-    export class FocusMenuLeftCommand implements Command {
-        public execute(): any {
-            var self: FocusMenuLeftCommand = this;
-            View.getNavView().focusOnLeft();
-        }
-        public undo(): any {
-
-        }
-    }
-    export class FocusMenuRightCommand implements Command {
-        public execute(): any {
-            var self: FocusMenuLeftCommand = this;
-            View.getNavView().focusOnRight();
-        }
-        public undo(): any {
-
-        }
-    }
+    
     export class NavigateCommand implements Command {
         private _hash: string;
         private _id: number;
@@ -352,7 +334,7 @@
 
         }
     }
-
+    /*
     export class MovePaceBarToTop implements Command {
         public execute(): any {
             var self: MovePaceBarToTop = this;
@@ -374,7 +356,7 @@
             var self: MovePaceBarToUnderNav = this;
             var bFound: boolean = false;
             if ($('.pace-progress').length) {
-                $('.pace-progress').css({ top: '64px' });
+                $('.pace-progress').css({ top: '48px' });
             } else {
                 setTimeout(function () {
                     new MovePaceBarToUnderNav().execute();
@@ -385,6 +367,7 @@
 
         }
     }
+    */
 
     export class RenderMessageViewCommand implements Command {
         private _el: JQuery;

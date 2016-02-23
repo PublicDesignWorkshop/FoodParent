@@ -57,7 +57,8 @@
     <Content Include="core\css\leaflet.css" />
     <Content Include="core\css\print.css" />
     <Content Include="core\image\logo-green-32x32.png" />
-    <Content Include="core\image\logo-splash.png" />
+    <Content Include="core\image\logo-splash-default.png" />
+    <Content Include="core\image\logo-splash-mouseover.png" />
     <Content Include="core\image\logo-white-32x32.png" />
     <Content Include="core\image\marker-shadow.png" />
     <Content Include="core\image\picture-blank.jpg" />

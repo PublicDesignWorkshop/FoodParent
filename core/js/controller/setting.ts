@@ -113,6 +113,16 @@
             return 10
         }
 
+        public static getLogoSplashDefaultImage(): string {
+            return Setting.getCoreImageDir() + "logo-splash-default.png";
+        }
+        public static getLogoSplashMouseOverImage(): string {
+            return Setting.getCoreImageDir() + "logo-splash-mouseover.png";
+        }
+        public static getApplicationDescription(): string {
+            return "Manage, parent, and care food assets";
+        }
+
         /*
 
         Server Error Code

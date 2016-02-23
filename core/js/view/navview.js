@@ -45,27 +45,9 @@ var FoodParent;
             var self = this;
             if (self.bDebug)
                 console.log(NavView.TAG + "render()");
-            var template;
-            var data;
-            if (args.viewStatus == FoodParent.VIEW_STATUS.HOME) {
-                template = _.template(FoodParent.Template.getNavViewHomeTemplate());
-                data = {};
-            }
-            else if (args.viewStatus == FoodParent.VIEW_STATUS.MANAGE_TREES || args.viewStatus == FoodParent.VIEW_STATUS.MANAGE_PEOPLE || args.viewStatus == FoodParent.VIEW_STATUS.DETAIL_TREE || args.viewStatus == FoodParent.VIEW_STATUS.MANAGE_DONATIONS || args.viewStatus == FoodParent.VIEW_STATUS.DETAIL_DONATION) {
-                template = _.template(FoodParent.Template.getNavViewManageTemplate());
-                data = {};
-            }
-            self.$el.html(template(data));
-            if (args.viewStatus == FoodParent.VIEW_STATUS.HOME) {
-                self.urenderNavItems();
-                self.$('#background-nav-left').css({ left: '-76%' });
-                self.$('#background-nav-left').css({ transform: 'skew(-10deg, 0)' });
-            }
-            else if (args.viewStatus == FoodParent.VIEW_STATUS.MANAGE_TREES || args.viewStatus == FoodParent.VIEW_STATUS.MANAGE_PEOPLE || args.viewStatus == FoodParent.VIEW_STATUS.DETAIL_TREE || args.viewStatus == FoodParent.VIEW_STATUS.MANAGE_DONATIONS || args.viewStatus == FoodParent.VIEW_STATUS.DETAIL_DONATION) {
-                self.renderNavManageItems();
-                self.$('#background-nav-left').css({ left: '0%' });
-                self.$('#background-nav-left').css({ transform: 'skew(-0deg, 0)' });
-            }
+            var template = _.template(FoodParent.Template.getNavViewTemplate());
+            self.$el.html(template({}));
+            self.renderNavManageItems();
             self.resize();
             return self;
         };
@@ -76,40 +58,15 @@ var FoodParent;
             }
             ////
             var self = this;
-            if (self.bDebug)
-                console.log(NavView.TAG + "update()");
-            if (args.viewStatus == FoodParent.VIEW_STATUS.HOME) {
-                self.urenderNavItems();
-                self.$('#background-nav-left').animate({ left: '-76%' }, FoodParent.Setting.getNavAnimDuration());
-                self.$('#background-nav-left').css({ transform: 'skew(-10deg, 0)' });
-            }
-            else if (args.viewStatus == FoodParent.VIEW_STATUS.MANAGE_TREES || args.viewStatus == FoodParent.VIEW_STATUS.MANAGE_PEOPLE || args.viewStatus == FoodParent.VIEW_STATUS.DETAIL_TREE || args.viewStatus == FoodParent.VIEW_STATUS.MANAGE_DONATIONS || args.viewStatus == FoodParent.VIEW_STATUS.DETAIL_DONATION) {
-                self.renderNavManageItems();
-                self.$('#background-nav-left').animate({ left: '0%' }, FoodParent.Setting.getNavAnimDuration());
-                self.$('#background-nav-left').css({ transform: 'skew(-0deg, 0)' });
-            }
             self.resize();
             return self;
         };
         NavView.prototype.resize = function () {
             var self = this;
         };
-        NavView.prototype.focusOnLeft = function () {
-            var self = this;
-            self.$('#background-nav-left').animate({ left: '-72%' }, FoodParent.Setting.getNavAnimDuration());
-        };
-        NavView.prototype.focusOnRight = function () {
-            var self = this;
-            self.$('#background-nav-left').animate({ left: '-76%' }, FoodParent.Setting.getNavAnimDuration());
-        };
-        NavView.prototype.urenderNavItems = function () {
-            var self = this;
-            self.$('#list-nav').html("");
-        };
         NavView.prototype.renderNavManageItems = function () {
             var self = this;
             var template;
-            var data;
             FoodParent.Controller.checkLogin(function (data) {
                 if (data.result == true || data.result == 'true') {
                     FoodParent.Controller.checkAdmin(function (data2) {
@@ -130,8 +87,7 @@ var FoodParent;
                 }
                 else if (data.result == false || data.result == 'false') {
                     template = _.template(FoodParent.Template.getNavViewManageItemsTemplate());
-                    data = {};
-                    self.$('#list-nav').html(template(data));
+                    self.$('#list-nav').html(template({}));
                 }
             }, function () {
             });

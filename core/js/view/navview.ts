@@ -38,32 +38,9 @@
             ////
             var self: NavView = this;
             if (self.bDebug) console.log(NavView.TAG + "render()");
-            var template: any;
-            var data: any;
-            if (args.viewStatus == VIEW_STATUS.HOME) {
-                template = _.template(Template.getNavViewHomeTemplate());
-                data = {
-
-                }
-            } else if (args.viewStatus == VIEW_STATUS.MANAGE_TREES || args.viewStatus == VIEW_STATUS.MANAGE_PEOPLE || args.viewStatus == VIEW_STATUS.DETAIL_TREE || args.viewStatus == VIEW_STATUS.MANAGE_DONATIONS || args.viewStatus == VIEW_STATUS.DETAIL_DONATION) {
-                template = _.template(Template.getNavViewManageTemplate());
-                data = {
-
-                }
-            }
-
-            
-            self.$el.html(template(data));
-            if (args.viewStatus == VIEW_STATUS.HOME) {
-                self.urenderNavItems();
-                self.$('#background-nav-left').css({ left: '-76%' });
-                self.$('#background-nav-left').css({ transform: 'skew(-10deg, 0)' });
-            } else if (args.viewStatus == VIEW_STATUS.MANAGE_TREES || args.viewStatus == VIEW_STATUS.MANAGE_PEOPLE || args.viewStatus == VIEW_STATUS.DETAIL_TREE || args.viewStatus == VIEW_STATUS.MANAGE_DONATIONS || args.viewStatus == VIEW_STATUS.DETAIL_DONATION) {
-                self.renderNavManageItems();
-                self.$('#background-nav-left').css({ left: '0%' });
-                self.$('#background-nav-left').css({ transform: 'skew(-0deg, 0)' });
-            }
-
+            var template = _.template(Template.getNavViewTemplate());
+            self.$el.html(template({}));
+            self.renderNavManageItems();
             self.resize();
             return self;
         }
@@ -75,17 +52,6 @@
             }
             ////
             var self: NavView = this;
-            if (self.bDebug) console.log(NavView.TAG + "update()");
-            if (args.viewStatus == VIEW_STATUS.HOME) {
-                self.urenderNavItems();
-                self.$('#background-nav-left').animate({ left: '-76%' }, Setting.getNavAnimDuration());
-                self.$('#background-nav-left').css({ transform: 'skew(-10deg, 0)' });
-            } else if (args.viewStatus == VIEW_STATUS.MANAGE_TREES || args.viewStatus == VIEW_STATUS.MANAGE_PEOPLE || args.viewStatus == VIEW_STATUS.DETAIL_TREE || args.viewStatus == VIEW_STATUS.MANAGE_DONATIONS || args.viewStatus == VIEW_STATUS.DETAIL_DONATION) {
-                self.renderNavManageItems();
-                self.$('#background-nav-left').animate({ left: '0%' }, Setting.getNavAnimDuration());
-                self.$('#background-nav-left').css({ transform: 'skew(-0deg, 0)' });
-            }
-
             self.resize();
             return self;
         }
@@ -94,35 +60,18 @@
             var self: NavView = this;
         }
 
-        public focusOnLeft(): void {
-            var self: NavView = this;
-            self.$('#background-nav-left').animate({ left: '-72%' }, Setting.getNavAnimDuration());
-        }
-
-        public focusOnRight(): void {
-            var self: NavView = this;
-            self.$('#background-nav-left').animate({ left: '-76%' }, Setting.getNavAnimDuration());
-        }
-
-        public urenderNavItems(): void {
-            var self: NavView = this;
-            self.$('#list-nav').html("");
-        }
-
         public renderNavManageItems(): void {
             var self: NavView = this;
             var template: any;
-            var data: any;
-
             Controller.checkLogin(function (data) {
-                if (data.result == true || data.result == 'true') {   // Already logged in
+                if (data.result == true || data.result == 'true') {   // Is signed in
                     Controller.checkAdmin(function (data2) {
-                        if (data2.result == true || data2.result == 'true') {   // Already logged in
+                        if (data2.result == true || data2.result == 'true') {   // Is admin
                             template = _.template(Template.getNavViewManageItemsTemplate2());
                             self.$('#list-nav').html(template({
                                 contact: data2.contact,
                             }));
-                        } else if (data2.result == false || data2.result == 'false') {   // Not logged in
+                        } else if (data2.result == false || data2.result == 'false') {   // Not admin
                             template = _.template(Template.getNavViewManageItemsTemplate3());
                             self.$('#list-nav').html(template({
                                 contact: data.contact,
@@ -131,12 +80,9 @@
                     }, function () {
 
                     });
-                } else if (data.result == false || data.result == 'false') {   // Not logged in
+                } else if (data.result == false || data.result == 'false') {   // Not signed in
                     template = _.template(Template.getNavViewManageItemsTemplate());
-                    data = {
-
-                    }
-                    self.$('#list-nav').html(template(data));
+                    self.$('#list-nav').html(template({}));
                 }
             }, function () {
 

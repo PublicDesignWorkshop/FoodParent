@@ -43007,6 +43007,15 @@ var FoodParent;
         Setting.getMaxRating = function () {
             return 10;
         };
+        Setting.getLogoSplashDefaultImage = function () {
+            return Setting.getCoreImageDir() + "logo-splash-default.png";
+        };
+        Setting.getLogoSplashMouseOverImage = function () {
+            return Setting.getCoreImageDir() + "logo-splash-mouseover.png";
+        };
+        Setting.getApplicationDescription = function () {
+            return "Manage, parent, and care food assets";
+        };
         /*
 
         Server Error Code
@@ -43657,7 +43666,7 @@ var FoodParent;
             //}
             new FoodParent.RenderNavViewCommand({ el: FoodParent.Setting.getNavWrapperElement(), viewStatus: viewStatus }).execute();
             if (viewStatus == VIEW_STATUS.HOME) {
-                new FoodParent.MovePaceBarToTop().execute();
+                //new MovePaceBarToTop().execute();
                 new FoodParent.RenderHomeViewCommand({ el: FoodParent.Setting.getMainWrapperElement() }).execute();
             }
             else if (viewStatus == VIEW_STATUS.MANAGE_TREES) {
@@ -43667,12 +43676,12 @@ var FoodParent;
                             new FoodParent.NavigateCommand({ hash: 'mtrees', viewMode: VIEW_MODE.MAP, id: 0 }).execute();
                         }
                         else {
-                            new FoodParent.MovePaceBarToUnderNav().execute();
+                            //new MovePaceBarToUnderNav().execute();
                             new FoodParent.RenderManageTreesViewCommand({ el: FoodParent.Setting.getMainWrapperElement(), viewMode: option.viewMode, id: option.id }).execute();
                         }
                     }
                     else {
-                        new FoodParent.MovePaceBarToUnderNav().execute();
+                        //new MovePaceBarToUnderNav().execute();
                         new FoodParent.RenderManageTreesViewCommand({ el: FoodParent.Setting.getMainWrapperElement(), viewMode: option.viewMode, id: option.id }).execute();
                     }
                 }, function () {
@@ -43682,7 +43691,7 @@ var FoodParent;
             else if (viewStatus == VIEW_STATUS.MANAGE_PEOPLE) {
                 FoodParent.Controller.checkAdmin(function (response) {
                     if (response.result == true || response.result == 'true') {
-                        new FoodParent.MovePaceBarToUnderNav().execute();
+                        //new MovePaceBarToUnderNav().execute();
                         new FoodParent.RenderManagePeopleViewCommand({ el: FoodParent.Setting.getMainWrapperElement(), viewMode: option.viewMode, id: option.id }).execute();
                     }
                     else if (response.result == false || response.result == 'false') {
@@ -43693,13 +43702,13 @@ var FoodParent;
                 });
             }
             else if (viewStatus == VIEW_STATUS.DETAIL_TREE) {
-                new FoodParent.MovePaceBarToUnderNav().execute();
+                //new MovePaceBarToUnderNav().execute();
                 new FoodParent.RenderDetailTreeViewCommand({ el: FoodParent.Setting.getMainWrapperElement(), viewMode: option.viewMode, id: option.id }).execute();
             }
             else if (viewStatus == VIEW_STATUS.MANAGE_DONATIONS) {
                 FoodParent.Controller.checkAdmin(function (response) {
                     if (response.result == true || response.result == 'true') {
-                        new FoodParent.MovePaceBarToUnderNav().execute();
+                        //new MovePaceBarToUnderNav().execute();
                         new FoodParent.RenderManageDonationsViewCommand({ el: FoodParent.Setting.getMainWrapperElement(), viewMode: option.viewMode, id: option.id }).execute();
                     }
                     else if (response.result == false || response.result == 'false') {
@@ -43712,7 +43721,7 @@ var FoodParent;
             else if (viewStatus == VIEW_STATUS.DETAIL_DONATION) {
                 FoodParent.Controller.checkAdmin(function (response) {
                     if (response.result == true || response.result == 'true') {
-                        new FoodParent.MovePaceBarToUnderNav().execute();
+                        //new MovePaceBarToUnderNav().execute();
                         new FoodParent.RenderDetailDonationViewCommand({ el: FoodParent.Setting.getMainWrapperElement(), viewMode: option.viewMode, id: option.id }).execute();
                     }
                     else if (response.result == false || response.result == 'false') {
@@ -44061,14 +44070,6 @@ var FoodParent;
         EventHandler.handleMouseEnter = function (el, view) {
             switch (FoodParent.View.getViewStatus()) {
                 case VIEW_STATUS.NONE:
-                    break;
-                case VIEW_STATUS.HOME:
-                    if (el.hasClass('home-menu-left')) {
-                        new FoodParent.FocusMenuLeftCommand().execute();
-                    }
-                    else if (el.hasClass('home-menu-right')) {
-                        new FoodParent.FocusMenuRightCommand().execute();
-                    }
                     break;
             }
         };
@@ -44593,30 +44594,6 @@ var FoodParent;
         return RemoveAlertViewCommand;
     })();
     FoodParent.RemoveAlertViewCommand = RemoveAlertViewCommand;
-    var FocusMenuLeftCommand = (function () {
-        function FocusMenuLeftCommand() {
-        }
-        FocusMenuLeftCommand.prototype.execute = function () {
-            var self = this;
-            FoodParent.View.getNavView().focusOnLeft();
-        };
-        FocusMenuLeftCommand.prototype.undo = function () {
-        };
-        return FocusMenuLeftCommand;
-    })();
-    FoodParent.FocusMenuLeftCommand = FocusMenuLeftCommand;
-    var FocusMenuRightCommand = (function () {
-        function FocusMenuRightCommand() {
-        }
-        FocusMenuRightCommand.prototype.execute = function () {
-            var self = this;
-            FoodParent.View.getNavView().focusOnRight();
-        };
-        FocusMenuRightCommand.prototype.undo = function () {
-        };
-        return FocusMenuRightCommand;
-    })();
-    FoodParent.FocusMenuRightCommand = FocusMenuRightCommand;
     var NavigateCommand = (function () {
         function NavigateCommand(args) {
             var self = this;
@@ -44645,46 +44622,40 @@ var FoodParent;
         return NavigateCommand;
     })();
     FoodParent.NavigateCommand = NavigateCommand;
-    var MovePaceBarToTop = (function () {
-        function MovePaceBarToTop() {
-        }
-        MovePaceBarToTop.prototype.execute = function () {
-            var self = this;
-            var bFound = false;
+    /*
+    export class MovePaceBarToTop implements Command {
+        public execute(): any {
+            var self: MovePaceBarToTop = this;
+            var bFound: boolean = false;
             if ($('.pace-progress').length) {
                 $('.pace-progress').css({ top: 0 });
-            }
-            else {
+            } else {
                 setTimeout(function () {
                     new MovePaceBarToTop().execute();
                 }, 100);
             }
-        };
-        MovePaceBarToTop.prototype.undo = function () {
-        };
-        return MovePaceBarToTop;
-    })();
-    FoodParent.MovePaceBarToTop = MovePaceBarToTop;
-    var MovePaceBarToUnderNav = (function () {
-        function MovePaceBarToUnderNav() {
         }
-        MovePaceBarToUnderNav.prototype.execute = function () {
-            var self = this;
-            var bFound = false;
+        public undo(): any {
+
+        }
+    }
+    export class MovePaceBarToUnderNav implements Command {
+        public execute(): any {
+            var self: MovePaceBarToUnderNav = this;
+            var bFound: boolean = false;
             if ($('.pace-progress').length) {
-                $('.pace-progress').css({ top: '64px' });
-            }
-            else {
+                $('.pace-progress').css({ top: '48px' });
+            } else {
                 setTimeout(function () {
                     new MovePaceBarToUnderNav().execute();
                 }, 100);
             }
-        };
-        MovePaceBarToUnderNav.prototype.undo = function () {
-        };
-        return MovePaceBarToUnderNav;
-    })();
-    FoodParent.MovePaceBarToUnderNav = MovePaceBarToUnderNav;
+        }
+        public undo(): any {
+
+        }
+    }
+    */
     var RenderMessageViewCommand = (function () {
         function RenderMessageViewCommand(args) {
             var self = this;
@@ -49611,9 +49582,8 @@ var FoodParent;
         Template.getHomeViewTemplate = function () {
             var template = '';
             template += '<div id="wrapper-home">';
-            template += '<div id="wrapper-wraper">';
-            template += '<img id="wrapper-logo" class="button-logo" src="<%= image %>">';
-            template += '</img>';
+            template += '<div id="wrapper-logo">';
+            template += '<img id="content-logo" class="button-logo" src="<%= image %>" />';
             template += '<div id="wrapper-description">';
             template += '<%= description %>';
             template += '</div>';
@@ -49708,51 +49678,33 @@ var FoodParent;
             template += '</div>';
             return template;
         };
-        Template.getNavViewHomeTemplate = function () {
+        Template.getNavViewTemplate = function () {
             var template = '';
-            template += '<div id="background-nav-right">';
-            template += '</div>';
-            template += '<div id="background-nav-left">';
-            template += '</div>';
-            template += '<div id="list-nav">';
-            template += '</div>';
-            return template;
-        };
-        Template.getNavViewManageTemplate = function () {
-            var template = '';
-            template += '<div id="background-nav-right">';
-            template += '</div>';
-            template += '<div id="background-nav-left">';
-            template += '</div>';
             template += '<div id="list-nav">';
             template += '</div>';
             return template;
         };
         Template.getNavViewManageItemsTemplate = function () {
             var template = '';
-            template += '<div class="item-nav item-manage-title">FoodParent</div>';
-            template += '<div class="item-nav item-manage trees">TREES</div>';
-            template += '<div class="item-nav item-manage"></div>';
-            template += '<div class="item-nav item-manage signup"><div>BECOME A PARENT</div></div>';
-            template += '<div class="item-nav item-manage-login login"><div>PARENT IN</div></div>';
+            template += '<div class="item-nav title">FoodParent</div>';
+            template += '<div class="item-nav trees">TREES</div>';
+            template += '<div class="item-nav login"><div class="login-decoration"><div></div></div><div class="login-text">PARENT IN</div></div>';
             return template;
         };
         Template.getNavViewManageItemsTemplate2 = function () {
             var template = '';
-            template += '<div class="item-nav item-manage-title">FoodParent</div>';
-            template += '<div class="item-nav item-manage trees">TREES</div>';
-            template += '<div class="item-nav item-manage people">PARENTS</div>';
-            template += '<div class="item-nav item-manage donations">DONATIONS</div>';
-            template += '<div class="item-nav item-manage-loggedin login"><div class="loggedinas">you are logged in as: </div><div><%= contact %></div></div>';
+            template += '<div class="item-nav title">FoodParent</div>';
+            template += '<div class="item-nav trees">TREES</div>';
+            template += '<div class="item-nav people">PARENTS</div>';
+            template += '<div class="item-nav donations">DONATIONS</div>';
+            template += '<div class="item-nav login"><div class="login-decoration"><div></div></div><div class="login-text loggedinas">you are logged in as: </div><div><%= contact %></div></div>';
             return template;
         };
         Template.getNavViewManageItemsTemplate3 = function () {
             var template = '';
-            template += '<div class="item-nav item-manage-title">FoodParent</div>';
-            template += '<div class="item-nav item-manage trees">TREES</div>';
-            template += '<div class="item-nav item-manage parent">PARENT</div>';
-            template += '<div class="item-nav item-manage"></div>';
-            template += '<div class="item-nav item-manage-loggedin login"><div class="loggedinas">you are logged in as: </div><div><%= contact %></div></div>';
+            template += '<div class="item-nav title">FoodParent</div>';
+            template += '<div class="item-nav trees">TREES</div>';
+            template += '<div class="item-nav loggedin"><div class="login-decoration"><div></div></div><div class="login-text loggedinas">you are logged in as: </div><div><%= contact %></div></div>';
             return template;
         };
         Template.getAlertViewTemplate = function () {
@@ -51425,7 +51377,9 @@ var FoodParent;
                  "click .home-menu-left": "_mouseClick",
                  "click .home-menu-right": "_mouseClick",
                  */
-                "click #wrapper-logo": "_mouseClick",
+                "click .button-logo": "_mouseClick",
+                "mouseenter .button-logo": "_mouseEnter",
+                "mouseout .button-logo": "_mouseOut",
             };
             self.delegateEvents();
         }
@@ -51436,8 +51390,8 @@ var FoodParent;
                 console.log(HomeView.TAG + "render!!()");
             var template = _.template(FoodParent.Template.getHomeViewTemplate());
             var data = {
-                image: FoodParent.Setting.getCoreImageDir() + "logo-splash.png",
-                description: "Manage, parent, and care fruits",
+                image: FoodParent.Setting.getLogoSplashDefaultImage(),
+                description: FoodParent.Setting.getApplicationDescription(),
             };
             self.$el.html(template(data));
             self.setElement(self.$('#wrapper-home'));
@@ -51454,13 +51408,14 @@ var FoodParent;
         };
         HomeView.prototype.resize = function () {
             var self = this;
-            self.$('.title-left').css({ 'font-size': Math.floor(self.getWidth() * 0.15) + 'px' });
-            self.$('.title-right').css({ 'font-size': Math.floor(self.getWidth() * 0.15) + 'px' });
-            self.$('.enter-left').css({ 'font-size': Math.floor(self.getWidth() * 0.15 * 0.2) + 'px' });
         };
         HomeView.prototype._mouseEnter = function (event) {
             var self = this;
-            FoodParent.EventHandler.handleMouseEnter($(event.currentTarget), self);
+            self.$('.button-logo').attr({ 'src': FoodParent.Setting.getLogoSplashMouseOverImage() });
+        };
+        HomeView.prototype._mouseOut = function (event) {
+            var self = this;
+            self.$('.button-logo').attr({ 'src': FoodParent.Setting.getLogoSplashDefaultImage() });
         };
         HomeView.prototype._mouseClick = function (event) {
             var self = this;
@@ -51520,27 +51475,9 @@ var FoodParent;
             var self = this;
             if (self.bDebug)
                 console.log(NavView.TAG + "render()");
-            var template;
-            var data;
-            if (args.viewStatus == FoodParent.VIEW_STATUS.HOME) {
-                template = _.template(FoodParent.Template.getNavViewHomeTemplate());
-                data = {};
-            }
-            else if (args.viewStatus == FoodParent.VIEW_STATUS.MANAGE_TREES || args.viewStatus == FoodParent.VIEW_STATUS.MANAGE_PEOPLE || args.viewStatus == FoodParent.VIEW_STATUS.DETAIL_TREE || args.viewStatus == FoodParent.VIEW_STATUS.MANAGE_DONATIONS || args.viewStatus == FoodParent.VIEW_STATUS.DETAIL_DONATION) {
-                template = _.template(FoodParent.Template.getNavViewManageTemplate());
-                data = {};
-            }
-            self.$el.html(template(data));
-            if (args.viewStatus == FoodParent.VIEW_STATUS.HOME) {
-                self.urenderNavItems();
-                self.$('#background-nav-left').css({ left: '-76%' });
-                self.$('#background-nav-left').css({ transform: 'skew(-10deg, 0)' });
-            }
-            else if (args.viewStatus == FoodParent.VIEW_STATUS.MANAGE_TREES || args.viewStatus == FoodParent.VIEW_STATUS.MANAGE_PEOPLE || args.viewStatus == FoodParent.VIEW_STATUS.DETAIL_TREE || args.viewStatus == FoodParent.VIEW_STATUS.MANAGE_DONATIONS || args.viewStatus == FoodParent.VIEW_STATUS.DETAIL_DONATION) {
-                self.renderNavManageItems();
-                self.$('#background-nav-left').css({ left: '0%' });
-                self.$('#background-nav-left').css({ transform: 'skew(-0deg, 0)' });
-            }
+            var template = _.template(FoodParent.Template.getNavViewTemplate());
+            self.$el.html(template({}));
+            self.renderNavManageItems();
             self.resize();
             return self;
         };
@@ -51551,40 +51488,15 @@ var FoodParent;
             }
             ////
             var self = this;
-            if (self.bDebug)
-                console.log(NavView.TAG + "update()");
-            if (args.viewStatus == FoodParent.VIEW_STATUS.HOME) {
-                self.urenderNavItems();
-                self.$('#background-nav-left').animate({ left: '-76%' }, FoodParent.Setting.getNavAnimDuration());
-                self.$('#background-nav-left').css({ transform: 'skew(-10deg, 0)' });
-            }
-            else if (args.viewStatus == FoodParent.VIEW_STATUS.MANAGE_TREES || args.viewStatus == FoodParent.VIEW_STATUS.MANAGE_PEOPLE || args.viewStatus == FoodParent.VIEW_STATUS.DETAIL_TREE || args.viewStatus == FoodParent.VIEW_STATUS.MANAGE_DONATIONS || args.viewStatus == FoodParent.VIEW_STATUS.DETAIL_DONATION) {
-                self.renderNavManageItems();
-                self.$('#background-nav-left').animate({ left: '0%' }, FoodParent.Setting.getNavAnimDuration());
-                self.$('#background-nav-left').css({ transform: 'skew(-0deg, 0)' });
-            }
             self.resize();
             return self;
         };
         NavView.prototype.resize = function () {
             var self = this;
         };
-        NavView.prototype.focusOnLeft = function () {
-            var self = this;
-            self.$('#background-nav-left').animate({ left: '-72%' }, FoodParent.Setting.getNavAnimDuration());
-        };
-        NavView.prototype.focusOnRight = function () {
-            var self = this;
-            self.$('#background-nav-left').animate({ left: '-76%' }, FoodParent.Setting.getNavAnimDuration());
-        };
-        NavView.prototype.urenderNavItems = function () {
-            var self = this;
-            self.$('#list-nav').html("");
-        };
         NavView.prototype.renderNavManageItems = function () {
             var self = this;
             var template;
-            var data;
             FoodParent.Controller.checkLogin(function (data) {
                 if (data.result == true || data.result == 'true') {
                     FoodParent.Controller.checkAdmin(function (data2) {
@@ -51605,8 +51517,7 @@ var FoodParent;
                 }
                 else if (data.result == false || data.result == 'false') {
                     template = _.template(FoodParent.Template.getNavViewManageItemsTemplate());
-                    data = {};
-                    self.$('#list-nav').html(template(data));
+                    self.$('#list-nav').html(template({}));
                 }
             }, function () {
             });
@@ -52606,8 +52517,6 @@ var FoodParent;
         };
         ManageTreesTableView.prototype.resize = function () {
             $('#content-mtrees-table').css({ width: FoodParent.View.getWidth() - $('#wrapper-tablemenu').outerWidth() });
-            $('#wrapper-main').css({ height: FoodParent.View.getHeight() - 60 });
-            $('#wrapper-mtrees').css({ height: FoodParent.View.getHeight() - 60 });
             $('.collapsible-list').css({ height: FoodParent.View.getHeight() - 60 - 34 * 4 - 20 });
         };
         ManageTreesTableView.prototype._applyFilter = function (event) {
@@ -53187,13 +53096,9 @@ var FoodParent;
         ManageTreesMapView.prototype.resize = function () {
             FoodParent.Controller.checkAdmin(function (data) {
                 if (data.result == true || data.result == 'true') {
-                    $('#wrapper-main').css({ height: FoodParent.View.getHeight() - 60 });
-                    $('#wrapper-mtrees').css({ height: FoodParent.View.getHeight() - 60 });
                     $('.collapsible-list').css({ height: FoodParent.View.getHeight() - 60 - 34 * 4 - 20 });
                 }
                 else if (data.result == false || data.result == 'false') {
-                    $('#wrapper-main').css({ height: FoodParent.View.getHeight() - 60 });
-                    $('#wrapper-mtrees').css({ height: FoodParent.View.getHeight() - 60 });
                     $('.collapsible-list').css({ height: FoodParent.View.getHeight() - 60 - 34 * 2 - 20 });
                 }
             }, function () {
@@ -53214,8 +53119,6 @@ var FoodParent;
                     var template = _.template(FoodParent.Template.getManageTreesMapViewTemplate());
                     self.$el.html(template({}));
                     self.setElement(self.$('#wrapper-mtrees'));
-                    $('#wrapper-main').css({ height: FoodParent.View.getHeight() - 60 });
-                    $('#wrapper-mtrees').css({ height: FoodParent.View.getHeight() - 60 });
                     $('.collapsible-list').css({ height: FoodParent.View.getHeight() - 60 - 34 * 4 - 20 });
                 }
                 else if (data.result == false || data.result == 'false') {
@@ -53224,8 +53127,6 @@ var FoodParent;
                     var template = _.template(FoodParent.Template.getManageTreesMapViewTemplate2());
                     self.$el.html(template({}));
                     self.setElement(self.$('#wrapper-mtrees'));
-                    $('#wrapper-main').css({ height: FoodParent.View.getHeight() - 60 });
-                    $('#wrapper-mtrees').css({ height: FoodParent.View.getHeight() - 60 });
                     $('.collapsible-list').css({ height: FoodParent.View.getHeight() - 60 - 34 * 2 - 20 });
                 }
                 FoodParent.Controller.updateGeoLocation(self.renderMap, self.renderMapError);
@@ -57867,8 +57768,8 @@ var FoodParent;
             return result;
         };
         Foods.prototype.comparator = function (model) {
-            var that = this;
-            switch (that.sortType) {
+            var self = this;
+            switch (self.sortType) {
                 case FoodParent.SortType.NONE:
                     return 0;
                     break;

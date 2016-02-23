@@ -161,8 +161,6 @@ module FoodParent {
 
         public resize(): any {
             $('#content-mtrees-table').css({ width: View.getWidth() - $('#wrapper-tablemenu').outerWidth() });
-            $('#wrapper-main').css({ height: View.getHeight() - 60 });
-            $('#wrapper-mtrees').css({ height: View.getHeight() - 60 });
             $('.collapsible-list').css({ height: View.getHeight() - 60 - 34 * 4 - 20 });
         }
 
@@ -343,12 +341,8 @@ module FoodParent {
         public resize(): any {
             Controller.checkAdmin(function (data) {
                 if (data.result == true || data.result == 'true') {   // Already logged in
-                    $('#wrapper-main').css({ height: View.getHeight() - 60 });
-                    $('#wrapper-mtrees').css({ height: View.getHeight() - 60 });
                     $('.collapsible-list').css({ height: View.getHeight() - 60 - 34 * 4 - 20 });
                 } else if (data.result == false || data.result == 'false') {   // Not logged in
-                    $('#wrapper-main').css({ height: View.getHeight() - 60 });
-                    $('#wrapper-mtrees').css({ height: View.getHeight() - 60 });
                     $('.collapsible-list').css({ height: View.getHeight() - 60 - 34 * 2 - 20 });
                 }
             }, function () {
@@ -372,8 +366,6 @@ module FoodParent {
 
                     }));
                     self.setElement(self.$('#wrapper-mtrees'));
-                    $('#wrapper-main').css({ height: View.getHeight() - 60 });
-                    $('#wrapper-mtrees').css({ height: View.getHeight() - 60 });
                     $('.collapsible-list').css({ height: View.getHeight() - 60 - 34 * 4 - 20 });
                     //self.resize();
                 } else if (data.result == false || data.result == 'false') {   // Not logged in
@@ -383,8 +375,6 @@ module FoodParent {
 
                     }));
                     self.setElement(self.$('#wrapper-mtrees'));
-                    $('#wrapper-main').css({ height: View.getHeight() - 60 });
-                    $('#wrapper-mtrees').css({ height: View.getHeight() - 60 });
                     $('.collapsible-list').css({ height: View.getHeight() - 60 - 34 * 2 - 20 });
                     //self.resize();
                 }
