@@ -13,9 +13,9 @@
 			callReq;	//last callData execution
 
 		opts = $.extend({
-			delay: 300,
+			delay: 250,
 			minLength: 1,
-			initial: true,
+			initial: false,
 			casesensitive: false,
 			eventKey: 'keyup',
 			resetOnBlur: true,

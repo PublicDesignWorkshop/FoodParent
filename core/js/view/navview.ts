@@ -26,6 +26,7 @@
             //$(window).resize(_.debounce(that.customResize, Setting.getInstance().getResizeTimeout()));
             self.events = <any>{
                 "click .item-nav": "_mouseClick",
+
             };
             self.delegateEvents();
         }
@@ -41,7 +42,7 @@
             var template = _.template(Template.getNavViewTemplate());
             self.$el.html(template({}));
             self.setElement(Setting.getNavWrapperElement());
-            self.renderNavManageItems();
+            self.renderNavManageItems(); //decides which view is shown
             self.resize();
             return self;
         }
@@ -53,6 +54,7 @@
             }
             //////////////// Execute ////////////////
             var self: NavView = this;
+            self.renderNavManageItems(); //which view
             if (self.bDebug) console.log(NavView.TAG + "update()");
             self.setActiveNavItem(args.viewStatus);
             self.resize();

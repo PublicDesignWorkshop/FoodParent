@@ -25044,9 +25044,9 @@ if (typeof jQuery === 'undefined') {
 			callReq;	//last callData execution
 
 		opts = $.extend({
-			delay: 300,
+			delay: 250,
 			minLength: 1,
-			initial: true,
+			initial: false,
 			casesensitive: false,
 			eventKey: 'keyup',
 			resetOnBlur: true,
@@ -43799,6 +43799,17 @@ var FoodParent;
                         });
                     }
                 }
+                else if (el.hasClass('loggedin')) {
+                    if (FoodParent.View.getViewStatus() != VIEW_STATUS.LOGIN) {
+                        FoodParent.Controller.checkLogin(function (data) {
+                            if (data.result == true || data.result == 'true') {
+                                new FoodParent.RenderLoggedInViewCommand({ el: FoodParent.Setting.getPopWrapperElement() }).execute();
+                            }
+                        }, function () {
+                            EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
+                        });
+                    }
+                }
                 else if (el.hasClass('signup')) {
                     if (FoodParent.View.getViewStatus() != VIEW_STATUS.SIGNUP) {
                         new FoodParent.RenderSignUpViewCommand({ el: FoodParent.Setting.getPopWrapperElement() }).execute();
@@ -51508,7 +51519,7 @@ var FoodParent;
             var template = _.template(FoodParent.Template.getNavViewTemplate());
             self.$el.html(template({}));
             self.setElement(FoodParent.Setting.getNavWrapperElement());
-            self.renderNavManageItems();
+            self.renderNavManageItems(); //decides which view is shown
             self.resize();
             return self;
         };
@@ -51519,6 +51530,7 @@ var FoodParent;
             }
             //////////////// Execute ////////////////
             var self = this;
+            self.renderNavManageItems(); //which view
             if (self.bDebug)
                 console.log(NavView.TAG + "update()");
             self.setActiveNavItem(args.viewStatus);
@@ -52693,19 +52705,19 @@ var FoodParent;
                         }));
                     }
                     else if (data.result == false || data.result == 'false') {
-                        var template = _.template(FoodParent.Template.getFoodItemTemplate());
-                        self.$('#list-food').html(template({
-                            foods: FoodParent.Model.getFoods(),
-                        }));
-                        $('#list-food').btsListFilter('#search-food', {
-                            itemChild: 'span',
-                            //sourceTmpl: '<div class="food-item">{title}</div>',
-                            itemEl: '.food-item',
-                            emptyNode: function (data) {
-                                return '<div class="user-item-none">No Result</div><div class="clear" />';
-                            },
-                        });
                     }
+                    var template = _.template(FoodParent.Template.getFoodItemTemplate());
+                    self.$('#list-food').html(template({
+                        foods: FoodParent.Model.getFoods(),
+                    }));
+                    $('#list-food').btsListFilter('#search-food', {
+                        itemChild: 'span',
+                        //sourceTmpl: '<div class="food-item">{title}</div>',
+                        itemEl: '.food-item',
+                        emptyNode: function (data) {
+                            return '<div class="user-item-none">No Result</div><div class="clear" />';
+                        },
+                    });
                 }, function () {
                     FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
                 });
@@ -53568,7 +53580,7 @@ var FoodParent;
         };
         ManageTreesMapView.prototype._searchKeyDown = function (event) {
             var self = this;
-            //console.log($(event.currentTarget));
+            console.log($(event.currentTarget));
             setTimeout(function () {
                 if (self.$('#search-food').val().trim() != "") {
                     setTimeout(function () {
@@ -53578,7 +53590,7 @@ var FoodParent;
                 else {
                     self.$('#wrapper-list-food').addClass('hidden');
                 }
-            }, 1);
+            }, 10);
         };
         ManageTreesMapView.prototype._applySearch = function (event) {
             var self = this;

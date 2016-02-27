@@ -163,6 +163,17 @@
                         });
                     }
                     //new NavigateCommand({ hash: 'mdonations', viewMode: VIEW_MODE.TABLE, id: 0 }).execute();
+                } else if (el.hasClass('loggedin')) {
+                    if (View.getViewStatus() != VIEW_STATUS.LOGIN) {
+                        Controller.checkLogin(function (data) {
+                            if (data.result == true || data.result == 'true') {   // Already logged in
+                                new RenderLoggedInViewCommand({ el: Setting.getPopWrapperElement() }).execute();
+                            }
+                        }, function () {
+                            EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
+                        });
+                    }
+                    //new NavigateCommand({ hash: 'mdonations', viewMode: VIEW_MODE.TABLE, id: 0 }).execute();
                 } else if (el.hasClass('signup')) {
                     if (View.getViewStatus() != VIEW_STATUS.SIGNUP) {
                         new RenderSignUpViewCommand({ el: Setting.getPopWrapperElement() }).execute();

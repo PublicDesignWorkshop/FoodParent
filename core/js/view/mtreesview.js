@@ -306,19 +306,19 @@ var FoodParent;
                         }));
                     }
                     else if (data.result == false || data.result == 'false') {
-                        var template = _.template(FoodParent.Template.getFoodItemTemplate());
-                        self.$('#list-food').html(template({
-                            foods: FoodParent.Model.getFoods(),
-                        }));
-                        $('#list-food').btsListFilter('#search-food', {
-                            itemChild: 'span',
-                            //sourceTmpl: '<div class="food-item">{title}</div>',
-                            itemEl: '.food-item',
-                            emptyNode: function (data) {
-                                return '<div class="user-item-none">No Result</div><div class="clear" />';
-                            },
-                        });
                     }
+                    var template = _.template(FoodParent.Template.getFoodItemTemplate());
+                    self.$('#list-food').html(template({
+                        foods: FoodParent.Model.getFoods(),
+                    }));
+                    $('#list-food').btsListFilter('#search-food', {
+                        itemChild: 'span',
+                        //sourceTmpl: '<div class="food-item">{title}</div>',
+                        itemEl: '.food-item',
+                        emptyNode: function (data) {
+                            return '<div class="user-item-none">No Result</div><div class="clear" />';
+                        },
+                    });
                 }, function () {
                     FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
                 });
@@ -1181,7 +1181,7 @@ var FoodParent;
         };
         ManageTreesMapView.prototype._searchKeyDown = function (event) {
             var self = this;
-            //console.log($(event.currentTarget));
+            console.log($(event.currentTarget));
             setTimeout(function () {
                 if (self.$('#search-food').val().trim() != "") {
                     setTimeout(function () {
@@ -1191,7 +1191,7 @@ var FoodParent;
                 else {
                     self.$('#wrapper-list-food').addClass('hidden');
                 }
-            }, 1);
+            }, 10);
         };
         ManageTreesMapView.prototype._applySearch = function (event) {
             var self = this;

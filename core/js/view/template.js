@@ -148,7 +148,7 @@ var FoodParent;
             template += '<div class="item-nav trees">TREES</div>';
             template += '<div class="item-nav people">PARENTS</div>';
             template += '<div class="item-nav donations">DONATIONS</div>';
-            template += '<div class="item-nav login"><div class="login-decoration"><div></div></div><div class="login-text loggedinas">you are logged in as: </div><div><%= contact %></div></div>';
+            template += '<div class="item-nav login"><div class="login-decoration"><div></div></div><div class="login-text loggedinas">you are logged in as: <br /> <%= contact %></div>';
             return template;
         };
         Template.getNavViewManageItemsTemplate3 = function () {

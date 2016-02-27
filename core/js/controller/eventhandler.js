@@ -217,6 +217,17 @@ var FoodParent;
                         });
                     }
                 }
+                else if (el.hasClass('loggedin')) {
+                    if (FoodParent.View.getViewStatus() != VIEW_STATUS.LOGIN) {
+                        FoodParent.Controller.checkLogin(function (data) {
+                            if (data.result == true || data.result == 'true') {
+                                new FoodParent.RenderLoggedInViewCommand({ el: FoodParent.Setting.getPopWrapperElement() }).execute();
+                            }
+                        }, function () {
+                            EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
+                        });
+                    }
+                }
                 else if (el.hasClass('signup')) {
                     if (FoodParent.View.getViewStatus() != VIEW_STATUS.SIGNUP) {
                         new FoodParent.RenderSignUpViewCommand({ el: FoodParent.Setting.getPopWrapperElement() }).execute();

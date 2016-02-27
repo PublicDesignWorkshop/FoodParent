@@ -81,7 +81,7 @@
         display: flex;
     }
 
-    #list-nav .login .login-text {
+    #list-nav .login-text {
         width: 100%;
         padding-top: 14px;
         color: #5e4e51;
@@ -89,18 +89,19 @@
         background-color: #84a756;
     }
 
-    #list-nav .login .login-decoration {
+    #list-nav .login-decoration {
         width: 16px;
         height: 100%;
         background-color: #84a756;
     }
 
-    #list-nav .login .login-decoration div {
+    #list-nav .login-decoration div {
         width: 100%;
         height: 100%;
         border-top-right-radius: 12px;
         background-color: #5e4e51;
     }
+    
 
     #list-nav .login .login-text:hover {
         color: #fefefe;

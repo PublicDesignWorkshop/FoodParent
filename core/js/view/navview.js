@@ -48,7 +48,7 @@ var FoodParent;
             var template = _.template(FoodParent.Template.getNavViewTemplate());
             self.$el.html(template({}));
             self.setElement(FoodParent.Setting.getNavWrapperElement());
-            self.renderNavManageItems();
+            self.renderNavManageItems(); //decides which view is shown
             self.resize();
             return self;
         };
@@ -59,6 +59,7 @@ var FoodParent;
             }
             //////////////// Execute ////////////////
             var self = this;
+            self.renderNavManageItems(); //which view
             if (self.bDebug)
                 console.log(NavView.TAG + "update()");
             self.setActiveNavItem(args.viewStatus);

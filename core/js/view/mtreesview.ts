@@ -362,7 +362,7 @@ module FoodParent {
             var self: ManageTreesMapView = this;
 
             Controller.checkAdmin(function (data) {
-                if (data.result == true || data.result == 'true') {   // Already logged in
+                if (data.result == true || data.result == 'true') {   // Already logged in as admin
                     if (self.bDebug) console.log(ManageTreesMapView.TAG + "render()");
                     var template = _.template(Template.getManageTreesMapViewTemplate());
                     self.$el.html(template({
@@ -371,7 +371,7 @@ module FoodParent {
                     self.setElement(self.$('#wrapper-mtrees'));
                     $('.collapsible-list').css({ height: View.getHeight() - 60 - 34 * 4 - 20 });
                     //self.resize();
-                } else if (data.result == false || data.result == 'false') {   // Not logged in
+                } else if (data.result == false || data.result == 'false') {   // Not admin but logged in
                     if (self.bDebug) console.log(ManageTreesMapView.TAG + "render()");
                     var template = _.template(Template.getManageTreesMapViewTemplate2());
                     self.$el.html(template({
@@ -411,22 +411,22 @@ module FoodParent {
                         userid: parseInt(data.id),
                     }));
                 } else if (data.result == false || data.result == 'false') {   // Not logged in
-                    
-                    var template = _.template(Template.getFoodItemTemplate());
-                    self.$('#list-food').html(template({
-                        foods: Model.getFoods(),
-                    }));
-
-                    $('#list-food').btsListFilter('#search-food', {
-                        itemChild: 'span',
-                        //sourceTmpl: '<div class="food-item">{title}</div>',
-                        itemEl: '.food-item',
-                        emptyNode: function (data) {
-                            return '<div class="user-item-none">No Result</div><div class="clear" />';
-                        },
-                    });
-                    
                 }
+                var template = _.template(Template.getFoodItemTemplate());
+                self.$('#list-food').html(template({
+                    foods: Model.getFoods(),
+                }));
+
+                $('#list-food').btsListFilter('#search-food', {
+                    itemChild: 'span',
+                    //sourceTmpl: '<div class="food-item">{title}</div>',
+                    itemEl: '.food-item',
+                    emptyNode: function (data) {
+                        return '<div class="user-item-none">No Result</div><div class="clear" />';
+                    },
+                });
+                    
+                
             }, function () {
                 FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
             });
@@ -1240,7 +1240,7 @@ module FoodParent {
 
         private _searchKeyDown(event: Event): void {
             var self: ManageTreesMapView = this;
-            //console.log($(event.currentTarget));
+            console.log($(event.currentTarget));
 
             setTimeout(function () {
                 if (self.$('#search-food').val().trim() != "") {
@@ -1250,7 +1250,7 @@ module FoodParent {
                 } else {
                     self.$('#wrapper-list-food').addClass('hidden');
                 }
-            }, 1);
+            }, 10);
         }
 
         private _applySearch(event: Event): void {
