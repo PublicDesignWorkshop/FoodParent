@@ -179,7 +179,8 @@
             var template = '';
             template += '<div class="item-nav title">FoodParent</div>';
             template += '<div class="item-nav trees">TREES</div>';
-            template += '<div class="item-nav loggedin"><div class="login-decoration"><div></div></div><div class="login-text loggedinas">you are logged in as: </div><div><%= contact %></div></div>';
+
+            template += '<div class="item-nav loggedin"><div class="login-decoration"><div></div></div><div class="login-text loggedinas">you are logged in as: <br/><span class="loggedin-contact"><%= contact %></span></div></div>';
             return template;
         }
 

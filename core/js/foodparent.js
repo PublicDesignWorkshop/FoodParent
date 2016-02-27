@@ -49745,7 +49745,7 @@ var FoodParent;
             var template = '';
             template += '<div class="item-nav title">FoodParent</div>';
             template += '<div class="item-nav trees">TREES</div>';
-            template += '<div class="item-nav loggedin"><div class="login-decoration"><div></div></div><div class="login-text loggedinas">you are logged in as: </div><div><%= contact %></div></div>';
+            template += '<div class="item-nav loggedin"><div class="login-decoration"><div></div></div><div class="login-text loggedinas">you are logged in as: <br/><%= contact %></div></div>';
             return template;
         };
         Template.getAlertViewTemplate = function () {
@@ -51533,6 +51533,7 @@ var FoodParent;
             self.renderNavManageItems(); //which view
             if (self.bDebug)
                 console.log(NavView.TAG + "update()");
+            self.renderNavManageItems();
             self.setActiveNavItem(args.viewStatus);
             self.resize();
             return self;
