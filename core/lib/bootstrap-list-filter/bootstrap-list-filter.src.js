@@ -74,8 +74,8 @@
 			inputEl$.after( cancelEl$ );
 			inputEl$.parents('.form-group').addClass('has-feedback');
 			
-			if(!inputEl$.prev().is('.control-label'))
-				cancelEl$.css({top: 0})
+			//if(!inputEl$.prev().is('.control-label'))
+			//	cancelEl$.css({top: 0})
 
 			cancelEl$.on('click', self.reset);
 		}

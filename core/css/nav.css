@@ -11,7 +11,7 @@
     #list-nav {
         position: absolute;
         width: 100%;
-        height: 56px;
+        height: 56 px;
         z-index: 5000;
         display: -webkit-flex;
         display: flex;
@@ -34,7 +34,7 @@
     }
 
     #list-nav .item-nav {
-        padding-top: 8px;
+        margin-bottom: 4px;
         font-size: large;
         color: #fefefe;
         letter-spacing: 1px;
@@ -43,13 +43,14 @@
         cursor: pointer;
     }
 
-    #list-nav .item-nav:active, #list-nav .item-nav.active {
-        color: #84a756;
+
+    #list-nav .item-nav:active .login-text:hover, #list-nav .item-nav.active .login-text:hover{
+        color: #fefefe;
         text-shadow: -1px -1px 1px #28331b;
     }
 
     #list-nav .item-nav:hover {
-        color: #84a756;
+        color: #fefefe;
         text-shadow: -1px -1px 1px #28331b;
     }
 
@@ -71,8 +72,8 @@
 
     
 
-    #list-nav .login {
-        height: 48px;
+    #list-nav .login, #list-nav .loggedin {
+        height: 56px;
         padding-top: 0;
         
         cursor: pointer;
@@ -81,12 +82,36 @@
         display: flex;
     }
 
-    #list-nav .login-text {
+    #list-nav .login .login-text {
         width: 100%;
-        padding-top: 14px;
+        height: 100%;
+        padding-top: 18px;
         color: #5e4e51;
         border-bottom-left-radius: 12px;
         background-color: #84a756;
+    }
+
+    #list-nav .loggedin .login-text {
+        width: 100%;
+        height: 100%;
+        padding-top: 10px;
+        color: #5e4e51;
+        border-bottom-left-radius: 10px;
+        background-color: #84a756;
+    }
+
+    #list-nav .item-nav.active .loggedin .login-text {
+        color: #fefefe;
+    }
+
+    #list-nav .loggedin-contact {
+    font-size: large;
+    font-weight: bold;
+    }
+
+    #list-nav .loggedin:hover, #list-nav .loggedin:active, #list-nav .loggedin.active {
+        color: #fefefe;
+        text-shadow: none;
     }
 
     #list-nav .login-decoration {
@@ -117,6 +142,7 @@
         color: rgba(255,255,255,0.75);
     }
     #list-nav .item-manage-login:active {
+        color: #fefefe;
         text-shadow: -1px -1px 1px #403537;
     }
 

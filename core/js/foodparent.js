@@ -25105,8 +25105,8 @@ if (typeof jQuery === 'undefined') {
 			inputEl$.after( cancelEl$ );
 			inputEl$.parents('.form-group').addClass('has-feedback');
 			
-			if(!inputEl$.prev().is('.control-label'))
-				cancelEl$.css({top: 0})
+			//if(!inputEl$.prev().is('.control-label'))
+			//	cancelEl$.css({top: 0})
 
 			cancelEl$.on('click', self.reset);
 		}
@@ -49691,8 +49691,11 @@ var FoodParent;
             template += '<div id="list-food" class="">';
             template += '</div>';
             template += '</div>';
-            template += '<div class="form-group">';
+            template += '<div class="bottom-filters">';
+            template += '<input id="mytrees-toggle" type="checkbox" checked data-toggle="toggle">';
+            template += '<div class="search-box form-group">';
             template += '<input type="text" class="form-control" id="search-food" type="search" placeholder="Food Name" value=""/>';
+            template += '</div>'; // end of .form-group
             template += '</div>';
             template += '</div>';
             template += '</div>';
@@ -49738,14 +49741,14 @@ var FoodParent;
             template += '<div class="item-nav trees">TREES</div>';
             template += '<div class="item-nav people">PARENTS</div>';
             template += '<div class="item-nav donations">DONATIONS</div>';
-            template += '<div class="item-nav login"><div class="login-decoration"><div></div></div><div class="login-text loggedinas">you are logged in as: </div><div><%= contact %></div></div>';
+            template += '<div class="item-nav login"><div class="login-decoration"><div></div></div><div class="login-text loggedinas">you are logged in as: <br /> <%= contact %></div>';
             return template;
         };
         Template.getNavViewManageItemsTemplate3 = function () {
             var template = '';
             template += '<div class="item-nav title">FoodParent</div>';
             template += '<div class="item-nav trees">TREES</div>';
-            template += '<div class="item-nav loggedin"><div class="login-decoration"><div></div></div><div class="login-text loggedinas">you are logged in as: <br/><%= contact %></div></div>';
+            template += '<div class="item-nav loggedin"><div class="login-decoration"><div></div></div><div class="login-text loggedinas">you are logged in as: <br/><span class="loggedin-contact"><%= contact %></span></div></div>';
             return template;
         };
         Template.getAlertViewTemplate = function () {
@@ -53197,6 +53200,7 @@ var FoodParent;
                     self.$el.html(template({}));
                     self.setElement(self.$('#wrapper-mtrees'));
                     $('.collapsible-list').css({ height: FoodParent.View.getHeight() - 60 - 34 * 2 - 20 });
+                    $('#mytrees-toggle').bootstrapToggle();
                 }
                 FoodParent.Controller.updateGeoLocation(self.renderMap, self.renderMapError);
             }, function () {

@@ -797,6 +797,7 @@ var FoodParent;
                     self.$el.html(template({}));
                     self.setElement(self.$('#wrapper-mtrees'));
                     $('.collapsible-list').css({ height: FoodParent.View.getHeight() - 60 - 34 * 2 - 20 });
+                    $('#mytrees-toggle').bootstrapToggle();
                 }
                 FoodParent.Controller.updateGeoLocation(self.renderMap, self.renderMapError);
             }, function () {

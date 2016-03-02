@@ -379,6 +379,7 @@ module FoodParent {
                     }));
                     self.setElement(self.$('#wrapper-mtrees'));
                     $('.collapsible-list').css({ height: View.getHeight() - 60 - 34 * 2 - 20 });
+                    $('#mytrees-toggle').bootstrapToggle();
                     //self.resize();
                 }
                 Controller.updateGeoLocation(self.renderMap, self.renderMapError);
@@ -425,6 +426,8 @@ module FoodParent {
                         return '<div class="user-item-none">No Result</div><div class="clear" />';
                     },
                 });
+
+                
                     
                 
             }, function () {

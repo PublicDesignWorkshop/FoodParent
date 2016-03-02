@@ -115,8 +115,11 @@
             template +=                 '<div id="list-food" class="">';
             template +=                 '</div>';
             template +=             '</div>';
-            template +=             '<div class="form-group">';
-            template +=                 '<input type="text" class="form-control" id="search-food" type="search" placeholder="Food Name" value=""/>';
+            template +=             '<div class="bottom-filters">';
+            template +=                 '<input id="mytrees-toggle" type="checkbox" checked data-toggle="toggle">';
+            template +=                 '<div class="search-box form-group">';
+            template +=                     '<input type="text" class="form-control" id="search-food" type="search" placeholder="Food Name" value=""/>';
+            template +=                 '</div>';   // end of .form-group
             template +=             '</div>';
             template +=         '</div>';
             template +=     '</div>';

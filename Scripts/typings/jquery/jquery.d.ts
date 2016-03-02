@@ -3929,6 +3929,7 @@ interface JQuery {
 
     selectpicker(name?: any, value?: any): any;
     btsListFilter(input: any, args?: any): any;
+    bootstrapToggle(args?: any);
     jQueryTween(args?: any): any;
 }
 declare module "jquery" {

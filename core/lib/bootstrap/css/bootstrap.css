@@ -2624,7 +2624,7 @@ input[type="search"] {
   }
 }
 .form-group {
-  margin-bottom: 15px;
+  /*margin-bottom: 15px;*/
 }
 .radio,
 .checkbox {
@@ -2996,6 +2996,7 @@ select[multiple].input-lg {
   }
 }
 .btn {
+  pointer-events: all;
   display: inline-block;
   padding: 6px 12px;
   margin-bottom: 0;
