@@ -50193,6 +50193,17 @@ var FoodParent;
             template += '</div>'; // end of #wrapper-mapmenu
             template += '<div id="wrapper-treeinfo" class="hidden">';
             template += '</div>'; // end of #wrapper-treeinfo
+            template += '<div id="wrapper-mapfilter">';
+            template += '<div id="content-mapfilter">';
+            template += '</div>';
+            template += '<div id="wrapper-btn-mapfilter">';
+            template += '<div class="btn-mapfilter">';
+            template += '<i class="fa fa-filter"></i>';
+            template += '</div>';
+            template += '<div class="deco-mapfilter">';
+            template += '</div>';
+            template += '</div>'; // end of #wrapper-treeinfo
+            template += '</div>'; // end of #wrapper-mapfilter
             return template;
         };
         Template.getTreesMapViewTemplateForGuest = function () {
@@ -50222,7 +50233,7 @@ var FoodParent;
             template += '</div>';
             template += '<div class="deco-mapfilter">';
             template += '</div>';
-            template += '</div>';
+            template += '</div>'; // end of #wrapper-treeinfo
             template += '</div>'; // end of #wrapper-mapfilter
             return template;
         };
@@ -54386,6 +54397,24 @@ var FoodParent;
             _super.call(this, options);
             this.renderFilterList = function () {
                 var self = _this;
+                FoodParent.Controller.checkIsLoggedIn(function (response) {
+                    var template = _.template(FoodParent.Template.getTreesFilterListTemplateForGuest());
+                    self.$('#content-mapfilter').html(template({
+                        header: 'Filter List',
+                        flags: FoodParent.Model.getFlags(),
+                        ownerships: FoodParent.Model.getOwnerships(),
+                        userid: parseInt(response.id),
+                    }));
+                }, function () {
+                    var template = _.template(FoodParent.Template.getTreesFilterListTemplateForGuest());
+                    self.$('#content-mapfilter').html(template({
+                        header: 'Filter List',
+                        flags: FoodParent.Model.getFlags(),
+                        ownerships: FoodParent.Model.getOwnerships(),
+                    }));
+                }, function () {
+                    FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+                });
                 var template = _.template(FoodParent.Template.getFoodItemTemplate());
                 self.$('#list-food').html(template({
                     foods: FoodParent.Model.getFoods(),
@@ -54436,9 +54465,11 @@ var FoodParent;
             var self = this;
             self.events = {
                 "click .evt-close": "removeTreeInfo",
+                "click .btn-mapfilter": "_toggleMapFilter",
                 "keydown #wrapper-food-search": "_searchFood",
                 "click #wrapper-food-search .form-control-feedback": "_resetSearchFood",
                 "click .item-food": "_applySearch",
+                "click .btn-filter": "_clickFilter",
             };
             self.delegateEvents();
         }
@@ -54510,6 +54541,84 @@ var FoodParent;
             trees = trees.filterByFoodIds([parseInt($(event.currentTarget).attr('data-id'))]);
             // Update markers
             self.updateMarkers(trees);
+        };
+        TreesMapViewForParent.prototype._clickFilter = function (event) {
+            var self = this;
+            // Ownership filter
+            if ($(event.currentTarget).hasClass('filter-owner-item')) {
+                if ($(event.currentTarget).hasClass('active')) {
+                    $(event.currentTarget).removeClass('active');
+                }
+                else {
+                    $(event.currentTarget).addClass('active');
+                }
+                if (self.$('.filter-owner-item').length == self.$('.filter-owner-item.active').length) {
+                    self.$('.filter-owner-all').addClass('active');
+                }
+                else {
+                    self.$('.filter-owner-all').removeClass('active');
+                }
+            }
+            if ($(event.currentTarget).hasClass('filter-owner-all')) {
+                if ($(event.currentTarget).hasClass('active')) {
+                    $(event.currentTarget).removeClass('active');
+                    self.$('.filter-owner-item').removeClass('active');
+                }
+                else {
+                    $(event.currentTarget).addClass('active');
+                    self.$('.filter-owner-item').addClass('active');
+                }
+            }
+            // Adoption filter
+            if ($(event.currentTarget).hasClass('filter-adopt-item')) {
+                if ($(event.currentTarget).hasClass('active')) {
+                    $(event.currentTarget).removeClass('active');
+                }
+                else {
+                    $(event.currentTarget).addClass('active');
+                }
+                if (self.$('.filter-adopt-item').length == self.$('.filter-adopt-item.active').length) {
+                    self.$('.filter-adopt-all').addClass('active');
+                }
+                else {
+                    self.$('.filter-adopt-all').removeClass('active');
+                }
+            }
+            if ($(event.currentTarget).hasClass('filter-adopt-all')) {
+                if ($(event.currentTarget).hasClass('active')) {
+                    $(event.currentTarget).removeClass('active');
+                    self.$('.filter-adopt-item').removeClass('active');
+                }
+                else {
+                    $(event.currentTarget).addClass('active');
+                    self.$('.filter-adopt-item').addClass('active');
+                }
+            }
+            // Status filter
+            if ($(event.currentTarget).hasClass('filter-flag-item')) {
+                if ($(event.currentTarget).hasClass('active')) {
+                    $(event.currentTarget).removeClass('active');
+                }
+                else {
+                    $(event.currentTarget).addClass('active');
+                }
+                if (self.$('.filter-flag-item').length == self.$('.filter-flag-item.active').length) {
+                    self.$('.filter-flag-all').addClass('active');
+                }
+                else {
+                    self.$('.filter-flag-all').removeClass('active');
+                }
+            }
+            if ($(event.currentTarget).hasClass('filter-flag-all')) {
+                if ($(event.currentTarget).hasClass('active')) {
+                    $(event.currentTarget).removeClass('active');
+                    self.$('.filter-flag-item').removeClass('active');
+                }
+                else {
+                    $(event.currentTarget).addClass('active');
+                    self.$('.filter-flag-item').addClass('active');
+                }
+            }
         };
         TreesMapViewForParent.TAG = "TreesMapViewForParent - ";
         return TreesMapViewForParent;

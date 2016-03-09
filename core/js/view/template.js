@@ -115,6 +115,17 @@ var FoodParent;
             template += '</div>'; // end of #wrapper-mapmenu
             template += '<div id="wrapper-treeinfo" class="hidden">';
             template += '</div>'; // end of #wrapper-treeinfo
+            template += '<div id="wrapper-mapfilter">';
+            template += '<div id="content-mapfilter">';
+            template += '</div>';
+            template += '<div id="wrapper-btn-mapfilter">';
+            template += '<div class="btn-mapfilter">';
+            template += '<i class="fa fa-filter"></i>';
+            template += '</div>';
+            template += '<div class="deco-mapfilter">';
+            template += '</div>';
+            template += '</div>'; // end of #wrapper-treeinfo
+            template += '</div>'; // end of #wrapper-mapfilter
             return template;
         };
         Template.getTreesMapViewTemplateForGuest = function () {
@@ -144,7 +155,7 @@ var FoodParent;
             template += '</div>';
             template += '<div class="deco-mapfilter">';
             template += '</div>';
-            template += '</div>';
+            template += '</div>'; // end of #wrapper-treeinfo
             template += '</div>'; // end of #wrapper-mapfilter
             return template;
         };

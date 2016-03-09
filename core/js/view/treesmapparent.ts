@@ -8,9 +8,11 @@
             var self: TreesMapViewForParent = this;
             self.events = <any>{
                 "click .evt-close": "removeTreeInfo",
+                "click .btn-mapfilter": "_toggleMapFilter",
                 "keydown #wrapper-food-search": "_searchFood",
                 "click #wrapper-food-search .form-control-feedback": "_resetSearchFood",
                 "click .item-food": "_applySearch",
+                "click .btn-filter": "_clickFilter",
             };
             self.delegateEvents();
         }
@@ -43,6 +45,25 @@
 
         public renderFilterList = () => {
             var self: TreesMapViewForParent = this;
+            Controller.checkIsLoggedIn(function (response) {
+                var template = _.template(Template.getTreesFilterListTemplateForGuest());
+                self.$('#content-mapfilter').html(template({
+                    header: 'Filter List',
+                    flags: Model.getFlags(),
+                    ownerships: Model.getOwnerships(),
+                    userid: parseInt(response.id),
+                }));
+            }, function () {
+                var template = _.template(Template.getTreesFilterListTemplateForGuest());
+                self.$('#content-mapfilter').html(template({
+                    header: 'Filter List',
+                    flags: Model.getFlags(),
+                    ownerships: Model.getOwnerships(),
+                }));
+            }, function () {
+                EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
+            });
+
             var template = _.template(Template.getFoodItemTemplate());
             self.$('#list-food').html(template({
                 foods: Model.getFoods(),
@@ -101,6 +122,79 @@
             trees = trees.filterByFoodIds([parseInt($(event.currentTarget).attr('data-id'))]);
             // Update markers
             self.updateMarkers(trees);
+        }
+
+        private _clickFilter(event: Event): void {
+            var self: TreesMapViewForParent = this;
+            // Ownership filter
+            if ($(event.currentTarget).hasClass('filter-owner-item')) {
+                if ($(event.currentTarget).hasClass('active')) {
+                    $(event.currentTarget).removeClass('active');
+                } else {
+                    $(event.currentTarget).addClass('active');
+                }
+                if (self.$('.filter-owner-item').length == self.$('.filter-owner-item.active').length) {
+                    self.$('.filter-owner-all').addClass('active');
+                } else {
+                    self.$('.filter-owner-all').removeClass('active');
+                }
+            }
+            if ($(event.currentTarget).hasClass('filter-owner-all')) {
+                if ($(event.currentTarget).hasClass('active')) {
+                    $(event.currentTarget).removeClass('active');
+                    self.$('.filter-owner-item').removeClass('active');
+                } else {
+                    $(event.currentTarget).addClass('active');
+                    self.$('.filter-owner-item').addClass('active');
+                }
+            }
+            
+            // Adoption filter
+            if ($(event.currentTarget).hasClass('filter-adopt-item')) {
+                if ($(event.currentTarget).hasClass('active')) {
+                    $(event.currentTarget).removeClass('active');
+                } else {
+                    $(event.currentTarget).addClass('active');
+                }
+                if (self.$('.filter-adopt-item').length == self.$('.filter-adopt-item.active').length) {
+                    self.$('.filter-adopt-all').addClass('active');
+                } else {
+                    self.$('.filter-adopt-all').removeClass('active');
+                }
+            }
+            if ($(event.currentTarget).hasClass('filter-adopt-all')) {
+                if ($(event.currentTarget).hasClass('active')) {
+                    $(event.currentTarget).removeClass('active');
+                    self.$('.filter-adopt-item').removeClass('active');
+                } else {
+                    $(event.currentTarget).addClass('active');
+                    self.$('.filter-adopt-item').addClass('active');
+                }
+            }
+
+            // Status filter
+            if ($(event.currentTarget).hasClass('filter-flag-item')) {
+                if ($(event.currentTarget).hasClass('active')) {
+                    $(event.currentTarget).removeClass('active');
+                } else {
+                    $(event.currentTarget).addClass('active');
+                }
+
+                if (self.$('.filter-flag-item').length == self.$('.filter-flag-item.active').length) {
+                    self.$('.filter-flag-all').addClass('active');
+                } else {
+                    self.$('.filter-flag-all').removeClass('active');
+                }
+            }
+            if ($(event.currentTarget).hasClass('filter-flag-all')) {
+                if ($(event.currentTarget).hasClass('active')) {
+                    $(event.currentTarget).removeClass('active');
+                    self.$('.filter-flag-item').removeClass('active');
+                } else {
+                    $(event.currentTarget).addClass('active');
+                    self.$('.filter-flag-item').addClass('active');
+                }
+            }
         }
 
         public renderTreeInfo = (tree: Tree) => {

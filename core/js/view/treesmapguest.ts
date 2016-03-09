@@ -191,7 +191,6 @@
                     self.$('.filter-flag-item').addClass('active');
                 }
             }
-            
         }
 
         public renderTreeInfo = (tree: Tree) => {
