@@ -793,8 +793,9 @@ var FoodParent;
                 else if (data.result == false || data.result == 'false') {
                     if (self.bDebug)
                         console.log(ManageTreesMapView.TAG + "render()");
-                    var template = _.template(FoodParent.Template.getManageTreesMapViewTemplate2());
-                    self.$el.html(template({}));
+                    //var template = _.template(Template.getManageTreesMapViewTemplate2());
+                    //self.$el.html(template({
+                    //}));
                     self.setElement(self.$('#wrapper-mtrees'));
                     $('.collapsible-list').css({ height: FoodParent.View.getHeight() - 60 - 34 * 2 - 20 });
                     $('#mytrees-toggle').bootstrapToggle();

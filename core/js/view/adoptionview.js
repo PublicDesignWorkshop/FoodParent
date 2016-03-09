@@ -102,10 +102,10 @@ var FoodParent;
                     var person = FoodParent.Model.getPersons().findWhere({ id: parseInt(response.id) });
                     FoodParent.EventHandler.handleAdoptionData(self._tree, person, FoodParent.DATA_MODE.CREATE, {}, function () {
                         FoodParent.EventHandler.handleDataChange("<strong><i>" + person.getName() + "</i></strong> has adopted <strong><i>" + food.getName() + " " + self._tree.getName() + "</i></strong> successfully.", false);
-                        if (FoodParent.View.getManageTreesView()) {
-                            FoodParent.View.getManageTreesView().renderTreeInfo(self._tree);
-                            FoodParent.View.getManageTreesView()._applyFilter();
-                        }
+                        //if (View.getManageTreesView()) {
+                        //    (<ManageTreesView>View.getManageTreesView()).renderTreeInfo(self._tree);
+                        //    (<ManageTreesView>View.getManageTreesView())._applyFilter();
+                        //}
                         if (FoodParent.View.getDetailTreeView()) {
                             FoodParent.View.getDetailTreeView().renderMenu();
                         }
@@ -114,10 +114,10 @@ var FoodParent;
                         FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
                     }, function () {
                         FoodParent.EventHandler.handleDataChange("<strong><i>" + person.getName() + "</i></strong> has unadopted <strong><i>" + food.getName() + " " + self._tree.getName() + "</i></strong> successfully.", false);
-                        if (FoodParent.View.getManageTreesView()) {
-                            FoodParent.View.getManageTreesView().renderTreeInfo(self._tree);
-                            FoodParent.View.getManageTreesView()._applyFilter();
-                        }
+                        //if (View.getManageTreesView()) {
+                        //    (<ManageTreesView>View.getManageTreesView()).renderTreeInfo(self._tree);
+                        //    (<ManageTreesView>View.getManageTreesView())._applyFilter();
+                        //}
                         if (FoodParent.View.getDetailTreeView()) {
                             FoodParent.View.getDetailTreeView().renderMenu();
                         }
@@ -231,10 +231,10 @@ var FoodParent;
                     var person = FoodParent.Model.getPersons().findWhere({ id: parseInt(response.id) });
                     FoodParent.EventHandler.handleAdoptionData(self._tree, person, FoodParent.DATA_MODE.DELETE, {}, function () {
                         FoodParent.EventHandler.handleDataChange("<strong><i>" + person.getName() + "</i></strong> has unadopted <strong><i>" + food.getName() + " " + self._tree.getName() + "</i></strong> successfully.", false);
-                        if (FoodParent.View.getManageTreesView()) {
-                            FoodParent.View.getManageTreesView().renderTreeInfo(self._tree);
-                            FoodParent.View.getManageTreesView()._applyFilter();
-                        }
+                        //if (View.getManageTreesView()) {
+                        //    (<ManageTreesView>View.getManageTreesView()).renderTreeInfo(self._tree);
+                        //    (<ManageTreesView>View.getManageTreesView())._applyFilter();
+                        //}
                         if (FoodParent.View.getDetailTreeView()) {
                             FoodParent.View.getDetailTreeView().renderMenu();
                         }
@@ -243,10 +243,10 @@ var FoodParent;
                         FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
                     }, function () {
                         FoodParent.EventHandler.handleDataChange("<strong><i>" + person.getName() + "</i></strong> has adopted <strong><i>" + food.getName() + " " + self._tree.getName() + "</i></strong> successfully.", false);
-                        if (FoodParent.View.getManageTreesView()) {
-                            FoodParent.View.getManageTreesView().renderTreeInfo(self._tree);
-                            FoodParent.View.getManageTreesView()._applyFilter();
-                        }
+                        //if (View.getManageTreesView()) {
+                        //    (<ManageTreesView>View.getManageTreesView()).renderTreeInfo(self._tree);
+                        //    (<ManageTreesView>View.getManageTreesView())._applyFilter();
+                        //}
                         if (FoodParent.View.getDetailTreeView()) {
                             FoodParent.View.getDetailTreeView().renderMenu();
                         }

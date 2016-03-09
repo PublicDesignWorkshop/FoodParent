@@ -16,8 +16,20 @@ var FoodParent;
             var self = View._instance;
             self.bDebug = true;
             self._viewStatus = new Array();
-            //$(window).resize(_.debounce(that.customResize, Setting.getInstance().getResizeTimeout()));
+            $(window).resize(_.debounce(self.resize, FoodParent.Setting.getResizeTimeout()));
+            $(document).bind("keydown", function (event) {
+                FoodParent.EventHandler.handleKeyCode(event.keyCode);
+            });
         }
+        View.prototype.resize = function () {
+            var self = View._instance;
+            if (View.getNavView()) {
+                View.getNavView().resize();
+            }
+            $.each(self.children, function (index, view) {
+                view.resize();
+            });
+        };
         View.getInstance = function () {
             return View._instance;
         };
@@ -72,7 +84,7 @@ var FoodParent;
                     }
                 });
             }
-            View._instance._manageTreesView = null;
+            View._instance._treesView = null;
             View._instance._managePeopleView = null;
             View._instance._detailTreeView = null;
             View._instance._manageDonationsView = null;
@@ -108,11 +120,11 @@ var FoodParent;
         View.getDetailDonationView = function () {
             return View._instance._detailDonationView;
         };
-        View.setManageTreesView = function (view) {
-            View._instance._manageTreesView = view;
+        View.setTreesView = function (view) {
+            View._instance._treesView = view;
         };
-        View.getManageTreesView = function () {
-            return View._instance._manageTreesView;
+        View.getTreesView = function () {
+            return View._instance._treesView;
         };
         View.setManagePeopleView = function (view) {
             View._instance._managePeopleView = view;

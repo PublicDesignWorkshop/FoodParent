@@ -43,7 +43,7 @@ module FoodParent {
         }
         public render(args?: any): any {
             if (this.bRendered) {
-                this.update();
+                this.update(args);
                 return this;
             }
             this.bRendered = true;
@@ -51,7 +51,7 @@ module FoodParent {
         
         public update(args?: any): any {
             if (!this.bRendered) {
-                this.render();
+                this.render(args);
                 return this;
             }
         }

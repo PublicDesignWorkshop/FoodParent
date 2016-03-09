@@ -29,56 +29,37 @@ var FoodParent;
             _super.call(this, options);
             var self = this;
             self.bDebug = true;
-            //$(window).resize(_.debounce(that.customResize, Setting.getInstance().getResizeTimeout()));
             self.events = {
-                "click .alert-confirm": "_mouseClick",
-                "click .filter-manager": "_managerLogIn",
-                "click .top-right-button": "_mouseClick",
-                "click .login-cancel": "_mouseClick",
-                "click .login-submit": "_loginSubmit",
+                "click .evt-manager": "_toggleManagerLogIn",
+                "click .evt-close": "_mouseClick",
+                "click .evt-submit": "_loginSubmit",
+                "keydown .input-contact": "_keyDown",
             };
             self.delegateEvents();
         }
         LogInView.prototype.render = function (args) {
-            if (this.bRendered) {
-                this.update(args);
-                return;
-            }
-            this.bRendered = true;
-            /////
+            _super.prototype.render.call(this, args);
             var self = this;
             if (self.bDebug)
                 console.log(LogInView.TAG + "render()");
             var template = _.template(FoodParent.Template.getLogInViewTemplate());
-            var data = {};
-            $('#wrapper-pop').html(template(data));
+            self.$el.html(template({
+                header: 'Parent Sign-In',
+            }));
             self.setElement($('#wrapper-login'));
-            /*
-            var place: Place = Model.getPlaces().findWhere({ id: self._donation.getPlaceId() });
-            
-            self.renderDonationInfo();
-            */
             self.setVisible();
             self.resize();
             return self;
         };
-        LogInView.prototype.setVisible = function () {
-            var self = this;
-            FoodParent.Setting.getPopWrapperElement().removeClass('hidden');
-        };
-        LogInView.prototype.setInvisible = function () {
-            var self = this;
-            FoodParent.Setting.getPopWrapperElement().addClass('hidden');
-        };
-        LogInView.prototype._managerLogIn = function (event) {
+        LogInView.prototype._toggleManagerLogIn = function (event) {
             var self = this;
             if ($(event.target).find('input').prop('name') == 'manager') {
                 setTimeout(function () {
                     if ($(event.target).find('input').prop('checked') == true) {
-                        self.$('.input-password').closest('.info-group').removeClass('hidden');
+                        self.$('.input-password').closest('.info-group').removeClass('invisible');
                     }
                     else {
-                        self.$('.input-password').closest('.info-group').addClass('hidden');
+                        self.$('.input-password').closest('.info-group').addClass('invisible');
                         self.$('.input-password').val("");
                     }
                 }, 1);
@@ -87,6 +68,12 @@ var FoodParent;
         LogInView.prototype._mouseClick = function (event) {
             var self = this;
             FoodParent.EventHandler.handleMouseClick($(event.currentTarget), self);
+        };
+        LogInView.prototype._keyDown = function (event) {
+            var self = this;
+            if (event.keyCode == 13) {
+                self._loginSubmit();
+            }
         };
         LogInView.prototype._loginSubmit = function (event) {
             var self = this;
@@ -98,7 +85,7 @@ var FoodParent;
                     new FoodParent.RenderMessageViewCommand({ el: FoodParent.Setting.getMessageWrapperElement(), message: "Please put a <strong>password</strong>, or uncheck <strong>manager option</strong>.", undoable: false }).execute();
                 }
                 else {
-                    FoodParent.EventHandler.handleMouseClick($(event.currentTarget), self, { contact: $('.input-contact').val().trim(), password: $('.input-password').val().trim() });
+                    FoodParent.EventHandler.handleMouseClick(self.$('.evt-submit'), self, { contact: $('.input-contact').val().trim(), password: $('.input-password').val().trim() });
                 }
             }
             else {
@@ -106,7 +93,7 @@ var FoodParent;
                     new FoodParent.RenderMessageViewCommand({ el: FoodParent.Setting.getMessageWrapperElement(), message: "Please put a valid <strong><i>e-mail address.", undoable: false }).execute();
                 }
                 else {
-                    FoodParent.EventHandler.handleMouseClick($(event.currentTarget), self, { contact: $('.input-contact').val().trim(), password: $('.input-contact').val().trim() });
+                    FoodParent.EventHandler.handleMouseClick(self.$('.evt-submit'), self, { contact: $('.input-contact').val().trim(), password: $('.input-contact').val().trim() });
                 }
             }
         };
@@ -114,122 +101,78 @@ var FoodParent;
         return LogInView;
     })(FoodParent.PopupView);
     FoodParent.LogInView = LogInView;
-    var LoggedInViewFactory = (function () {
-        function LoggedInViewFactory(args) {
-            if (LoggedInViewFactory._instance) {
-                throw new Error("Error: Instantiation failed: Use LoggedInViewFactory.getInstance() instead of new.");
+    var AccountViewFactory = (function () {
+        function AccountViewFactory(args) {
+            if (AccountViewFactory._instance) {
+                throw new Error("Error: Instantiation failed: Use AccountViewFactory.getInstance() instead of new.");
             }
-            LoggedInViewFactory._instance = this;
+            AccountViewFactory._instance = this;
         }
-        LoggedInViewFactory.getInstance = function () {
-            return LoggedInViewFactory._instance;
+        AccountViewFactory.getInstance = function () {
+            return AccountViewFactory._instance;
         };
-        LoggedInViewFactory.create = function (el) {
-            var view = new LoggedInView({ el: el });
+        AccountViewFactory.create = function (el) {
+            var view = new AccountView({ el: el });
             return view;
         };
-        LoggedInViewFactory._instance = new LoggedInViewFactory();
-        return LoggedInViewFactory;
+        AccountViewFactory._instance = new AccountViewFactory();
+        return AccountViewFactory;
     })();
-    FoodParent.LoggedInViewFactory = LoggedInViewFactory;
-    var LoggedInView = (function (_super) {
-        __extends(LoggedInView, _super);
-        function LoggedInView(options) {
+    FoodParent.AccountViewFactory = AccountViewFactory;
+    var AccountView = (function (_super) {
+        __extends(AccountView, _super);
+        function AccountView(options) {
             _super.call(this, options);
             var self = this;
             self.bDebug = true;
             //$(window).resize(_.debounce(that.customResize, Setting.getInstance().getResizeTimeout()));
             self.events = {
-                "click .logged-logout": "_mouseClick",
-                "click .top-right-button": "_mouseClick",
-                "click .logged-cancel": "_mouseClick",
-                "click .logged-submit": "_loggedSubmit",
+                "click .evt-close": "_mouseClick",
+                "click .evt-logout": "_mouseClick",
             };
             self.delegateEvents();
         }
-        LoggedInView.prototype.render = function (args) {
-            if (this.bRendered) {
-                this.update(args);
-                return;
-            }
-            this.bRendered = true;
-            /////
+        AccountView.prototype.render = function (args) {
+            _super.prototype.render.call(this, args);
             var self = this;
             if (self.bDebug)
-                console.log(LoggedInView.TAG + "render()");
-            FoodParent.Controller.checkLogin(function (data) {
-                if (data.result == true || data.result == 'true') {
-                    var template = _.template(FoodParent.Template.getLoggedInViewTemplate());
-                    $('#wrapper-pop').html(template({
-                        'contact': data.contact,
-                        'auth': parseInt(data.auth),
+                console.log(AccountView.TAG + "render()");
+            FoodParent.Controller.checkIsLoggedIn(function (response) {
+                FoodParent.Controller.checkIsAdmin(function () {
+                }, function () {
+                    var template = _.template(FoodParent.Template.getAcountViewTemplateForParent());
+                    FoodParent.Setting.getPopWrapperElement().html(template({
+                        header: 'Parent Info',
+                        contact: response.contact,
                     }));
                     self.setElement($('#wrapper-login'));
-                }
+                    FoodParent.Controller.fetchAllPersons(function () {
+                        var person = FoodParent.Model.getPersons().findWhere({ id: parseInt(response.id) });
+                        self.$('.input-name').val(person.getRealName());
+                        self.$('.input-neighborhood').val(person.getNeighboorhood());
+                    }, function () {
+                        FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+                    });
+                }, function () {
+                    FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+                });
             }, function () {
+                Backbone.history.loadUrl(Backbone.history.fragment);
+            }, function () {
+                FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
             });
-            /*
-            var place: Place = Model.getPlaces().findWhere({ id: self._donation.getPlaceId() });
-            
-            self.renderDonationInfo();
-            */
             self.setVisible();
             self.resize();
             return self;
         };
-        LoggedInView.prototype.setVisible = function () {
-            var self = this;
-            FoodParent.Setting.getPopWrapperElement().removeClass('hidden');
-        };
-        LoggedInView.prototype.setInvisible = function () {
-            var self = this;
-            FoodParent.Setting.getPopWrapperElement().addClass('hidden');
-        };
-        LoggedInView.prototype._managerLogIn = function (event) {
-            var self = this;
-            if ($(event.target).find('input').prop('name') == 'manager') {
-                setTimeout(function () {
-                    if ($(event.target).find('input').prop('checked') == true) {
-                        self.$('.input-password').closest('.info-group').removeClass('hidden');
-                    }
-                    else {
-                        self.$('.input-password').closest('.info-group').addClass('hidden');
-                        self.$('.input-password').val("");
-                    }
-                }, 1);
-            }
-        };
-        LoggedInView.prototype._mouseClick = function (event) {
+        AccountView.prototype._mouseClick = function (event) {
             var self = this;
             FoodParent.EventHandler.handleMouseClick($(event.currentTarget), self);
         };
-        LoggedInView.prototype._loginSubmit = function (event) {
-            var self = this;
-            if ($('input[type="checkbox"][name="manager"]').prop('checked') == true) {
-                if (!isValidEmailAddress($('.input-contact').val())) {
-                    new FoodParent.RenderMessageViewCommand({ el: FoodParent.Setting.getMessageWrapperElement(), message: "Please put a valid <strong><i>e-mail address.", undoable: false }).execute();
-                }
-                else if (self.$('.input-password').val().trim() == '') {
-                    new FoodParent.RenderMessageViewCommand({ el: FoodParent.Setting.getMessageWrapperElement(), message: "Please put a <strong>password</strong>, or uncheck <strong>manager option</strong>.", undoable: false }).execute();
-                }
-                else {
-                    FoodParent.EventHandler.handleMouseClick($(event.currentTarget), self, { contact: $('.input-contact').val().trim(), password: $('.input-password').val().trim() });
-                }
-            }
-            else {
-                if (!isValidEmailAddress($('.input-contact').val())) {
-                    new FoodParent.RenderMessageViewCommand({ el: FoodParent.Setting.getMessageWrapperElement(), message: "Please put a valid <strong><i>e-mail address.", undoable: false }).execute();
-                }
-                else {
-                    FoodParent.EventHandler.handleMouseClick($(event.currentTarget), self, { contact: $('.input-contact').val().trim(), password: $('.input-contact').val().trim() });
-                }
-            }
-            //
-        };
-        LoggedInView.TAG = "LoggedInView - ";
-        return LoggedInView;
+        AccountView.TAG = "AccountView - ";
+        return AccountView;
     })(FoodParent.PopupView);
-    FoodParent.LoggedInView = LoggedInView;
+    FoodParent.AccountView = AccountView;
     var SignUpViewFactory = (function () {
         function SignUpViewFactory(args) {
             if (SignUpViewFactory._instance) {

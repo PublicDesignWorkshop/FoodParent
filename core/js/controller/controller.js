@@ -131,6 +131,21 @@ var FoodParent;
                 }
             });
         };
+        Controller.fetchAllPersons = function (success, error) {
+            var xhr1 = FoodParent.Model.fetchAllPersons();
+            Controller.pushXHR(xhr1);
+            $.when(xhr1).then(function () {
+                Controller.removeXHR(xhr1);
+                if (success) {
+                    success();
+                }
+            }, function () {
+                Controller.removeXHR(xhr1);
+                if (error) {
+                    error(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+                }
+            });
+        };
         Controller.fetchImageNotesOfTreesDuringPeriod = function (trees, startDate, endDate, size, offset, success, error) {
             var ids = new Array();
             $.each(trees, function (index, tree) {
@@ -262,6 +277,75 @@ var FoodParent;
                 }
             });
         };
+        Controller.checkIsAdmin = function (success, fail, error) {
+            var xhr1 = $.ajax({
+                url: FoodParent.Setting.getPhpDir() + "admincheck.php",
+                type: "POST",
+                data: {},
+                cache: false,
+                dataType: "json",
+                processData: false,
+                contentType: false,
+                success: function (response, textStatus, jqXHR) {
+                    Controller.removeXHR(xhr1);
+                    if (typeof response.error === "undefined") {
+                        if (response.result == true || response.result == 'true') {
+                            if (success) {
+                                success(response);
+                            }
+                        }
+                        else if (response.result == false || response.result == 'false') {
+                            if (fail) {
+                                fail(response);
+                            }
+                        }
+                    }
+                    else {
+                        if (error) {
+                            error(response); // TODO: need to pass error code if error happens
+                        }
+                    }
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    Controller.removeXHR(xhr1);
+                    if (error) {
+                        error(jqXHR); // TODO: handle error message from php retrn code
+                    }
+                }
+            });
+            Controller.pushXHR(xhr1);
+        };
+        Controller.checkIsLoggedIn = function (success, fail, error) {
+            var xhr1 = $.ajax({
+                url: FoodParent.Setting.getPhpDir() + "logincheck.php",
+                type: "POST",
+                data: {},
+                cache: false,
+                dataType: "json",
+                processData: false,
+                contentType: false,
+                success: function (response, textStatus, jqXHR) {
+                    Controller.removeXHR(xhr1);
+                    if (parseInt(response.code) == 400) {
+                        if (success) {
+                            success(response);
+                        }
+                    }
+                    else {
+                        if (fail) {
+                            fail(response);
+                        }
+                    }
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    Controller.removeXHR(xhr1);
+                    if (error) {
+                        error(jqXHR); // TODO: handle error message from php retrn code
+                    }
+                }
+            });
+            Controller.pushXHR(xhr1);
+        };
         Controller.checkLogin = function (success, error) {
             var xhr1 = $.ajax({
                 url: FoodParent.Setting.getPhpDir() + "logincheck.php",
@@ -324,7 +408,7 @@ var FoodParent;
             });
             Controller.pushXHR(xhr1);
         };
-        Controller.processLogin = function (contact, password, success, error) {
+        Controller.processLogin = function (contact, password, success, fail, error) {
             var xhr1 = $.ajax({
                 url: FoodParent.Setting.getPhpDir() + "login.php",
                 type: "POST",
@@ -334,23 +418,23 @@ var FoodParent;
                 },
                 cache: false,
                 dataType: "json",
-                success: function (data, textStatus, jqXHR) {
+                success: function (response, textStatus, jqXHR) {
                     Controller.removeXHR(xhr1);
-                    if (typeof data.error === "undefined") {
+                    if (parseInt(response.code) == 400) {
                         if (success) {
-                            success(data);
+                            success(response);
                         }
                     }
                     else {
-                        if (error) {
-                            error();
+                        if (fail) {
+                            fail(response);
                         }
                     }
                 },
                 error: function (jqXHR, textStatus, errorThrown) {
                     Controller.removeXHR(xhr1);
                     if (error) {
-                        error();
+                        error(jqXHR);
                     }
                 }
             });
@@ -363,23 +447,23 @@ var FoodParent;
                 data: {},
                 cache: false,
                 dataType: "json",
-                success: function (data, textStatus, jqXHR) {
+                success: function (response, textStatus, jqXHR) {
                     Controller.removeXHR(xhr1);
-                    if (typeof data.error === "undefined") {
+                    if (parseInt(response.code) == 400) {
                         if (success) {
-                            success(data);
+                            success(response);
                         }
                     }
                     else {
                         if (error) {
-                            error();
+                            error(response);
                         }
                     }
                 },
                 error: function (jqXHR, textStatus, errorThrown) {
                     Controller.removeXHR(xhr1);
                     if (error) {
-                        error();
+                        error(jqXHR);
                     }
                 }
             });
@@ -467,7 +551,7 @@ var FoodParent;
             // Setup Router parameters
             this.routes = {
                 "": "home",
-                "mtrees/:viewMode/:id": "manageTrees",
+                "trees/:viewMode/:id": "trees",
                 "mtree/:viewMode/:id": "manageTree",
                 "mpeople/:viewMode/:id": "managePeople",
                 "mdonations/:viewMode/:id": "manageDonations",
@@ -482,8 +566,8 @@ var FoodParent;
         Router.prototype.home = function () {
             FoodParent.EventHandler.handleNavigate(FoodParent.VIEW_STATUS.HOME);
         };
-        Router.prototype.manageTrees = function (viewMode, id) {
-            FoodParent.EventHandler.handleNavigate(FoodParent.VIEW_STATUS.MANAGE_TREES, { viewMode: viewMode, id: id });
+        Router.prototype.trees = function (viewMode, id) {
+            FoodParent.EventHandler.handleNavigate(FoodParent.VIEW_STATUS.TREES, { viewMode: viewMode, id: id });
         };
         Router.prototype.manageTree = function (viewMode, id) {
             FoodParent.EventHandler.handleNavigate(FoodParent.VIEW_STATUS.DETAIL_TREE, { viewMode: viewMode, id: id });

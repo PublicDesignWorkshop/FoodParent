@@ -11,11 +11,14 @@
         ADD_DONATION_TREE, REMOVE_DONATION_TREE, UPDATE_DONATION_AMOUNT,
     }
     export enum VIEW_STATUS {
-        NONE, HOME, MANAGE_TREES, PARENT_TREES, GEO_ERROR, NETWORK_ERROR, CONFIRM, MANAGE_PEOPLE, MANAGE_ADOPTION, DETAIL_TREE, IMAGENOTE_TREE, POST_NOTE, MANAGE_DONATIONS, ADD_DONATION, DETAIL_DONATION, EDIT_DONATION, LOGIN, SERVER_RESPONSE_ERROR, SIGNUP, ADOPT_TREE,
+        NONE, HOME, TREES, PARENT_TREES, GEO_ERROR, NETWORK_ERROR, CONFIRM, MANAGE_PEOPLE, MANAGE_ADOPTION, DETAIL_TREE, IMAGENOTE_TREE, POST_NOTE, MANAGE_DONATIONS, ADD_DONATION, DETAIL_DONATION, EDIT_DONATION, LOGIN, SERVER_RESPONSE_ERROR, SIGNUP, ADOPT_TREE,
         CHANGE_PASSWORD
     }
     export enum VIEW_MODE {
         NONE, MAP, GRAPHIC, TABLE
+    }
+    export enum CREDENTIAL_MODE {
+        NONE, GUEST, PARENT, ADMIN
     }
     export enum ERROR_MODE {
         NONE, GEO_PERMISSION_ERROR, SEVER_CONNECTION_ERROR, SEVER_RESPONSE_ERROR
@@ -43,23 +46,65 @@
             }
         }
 
+        public static handleKeyCode(code: number): void {
+            var self: EventHandler = EventHandler._instance;
+            switch (View.getViewStatus()) {
+                case VIEW_STATUS.TREES:
+                    switch (code) {
+                        case 27:    // esc
+                            View.getTreesView().removeTreeInfo();
+                            View.getTreesView().closeMapFilter();
+                            break;
+                    }
+                    break;
+            }
+        }
+
         public static handleNavigate(viewStatus: VIEW_STATUS, option?: any): void {
+            var self: EventHandler = EventHandler._instance;
             Controller.abortAllXHR();
             Pace.restart();
             new RemoveAlertViewCommand().execute();
             //if (View.getViewStatus() != viewStatus) {
                 new RemoveChildViewCommand({ parent: View }).execute();
             //}
-            
             new RenderNavViewCommand({ el: Setting.getNavWrapperElement(), viewStatus: viewStatus }).execute();
+            switch (viewStatus) {
+                case VIEW_STATUS.HOME:
+                    new RenderHomeViewCommand({ el: Setting.getMainWrapperElement() }).execute();
+                    break;
+                case VIEW_STATUS.TREES:
+                    Controller.checkIsLoggedIn(function () {
+                        Controller.checkIsAdmin(function () {
+                            if (self.bDebug) console.log(EventHandler.TAG + "Logged in as admin");
+                            if (option.viewMode == VIEW_MODE.TABLE) {
+                                new NavigateCommand({ hash: 'trees', viewMode: VIEW_MODE.MAP, id: 0 }).execute();
+                            } else {
+                                new RenderTreesViewCommand({ el: Setting.getMainWrapperElement(), viewMode: option.viewMode, id: option.id, credential: CREDENTIAL_MODE.ADMIN }).execute();
+                            }
+                        }, function () {
+                            if (self.bDebug) console.log(EventHandler.TAG + "Logged in as parent");
+                            new RenderTreesViewCommand({ el: Setting.getMainWrapperElement(), viewMode: option.viewMode, id: option.id, credential: CREDENTIAL_MODE.PARENT }).execute();
+                        }, function () {
+                            if (self.bDebug) console.log(EventHandler.TAG + "Error occured");
+                        });
+                    }, function () {
+                        if (self.bDebug) console.log(EventHandler.TAG + "Not logged in");
+                        new RenderTreesViewCommand({ el: Setting.getMainWrapperElement(), viewMode: option.viewMode, id: option.id, credential: CREDENTIAL_MODE.GUEST }).execute();
+                    }, function () {
+                        if (self.bDebug) console.log(EventHandler.TAG + "Error occured");
+                    });
+                    break;
+            }
+            /*
             if (viewStatus == VIEW_STATUS.HOME) {
                 //new MovePaceBarToTop().execute();
-                new RenderHomeViewCommand({ el: Setting.getMainWrapperElement() }).execute();
-            } else if (viewStatus == VIEW_STATUS.MANAGE_TREES) {
+               
+            } else if (viewStatus == VIEW_STATUS.TREES) {
                 Controller.checkAdmin(function (response) {
                     if (response.result == false || response.result == 'false') {   // Not admin && in table view
                         if (option.viewMode == VIEW_MODE.TABLE) {
-                            new NavigateCommand({ hash: 'mtrees', viewMode: VIEW_MODE.MAP, id: 0 }).execute();
+                            new NavigateCommand({ hash: 'trees', viewMode: VIEW_MODE.MAP, id: 0 }).execute();
                         } else {
                             //new MovePaceBarToUnderNav().execute();
                             new RenderManageTreesViewCommand({ el: Setting.getMainWrapperElement(), viewMode: option.viewMode, id: option.id }).execute();
@@ -108,12 +153,14 @@
                     EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
                 });
             }
+            */
 
-            View.getNavView().update(viewStatus);
+            //View.getNavView().update(viewStatus);
             View.setViewStatus(viewStatus);
         }
 
         public static handleMouseClick(el: JQuery, view: BaseView, options?: any): void {
+            var self: EventHandler = EventHandler._instance;
             // Execute undo command.
             if (el.hasClass('undo')) {
                 EventHandler.undoLastCommand();
@@ -122,12 +169,16 @@
             if (View.getMessageView()) {
                 View.getMessageView().setInvisible();
             }
-            // Handle NavView
+            // Handle navigation view mouse click event
             if (view instanceof NavView) {
-                if (el.hasClass('title')) {
-                    new NavigateCommand({ hash: 'mtrees', viewMode: VIEW_MODE.MAP, id: 0 }).execute();
-                } else if (el.hasClass('trees')) {
-                    new NavigateCommand({ hash: 'mtrees', viewMode: VIEW_MODE.MAP, id: 0 }).execute();
+                if (el.hasClass('evt-title')) {
+                    new NavigateCommand({ hash: 'trees', viewMode: VIEW_MODE.MAP, id: 0 }).execute();
+                    Backbone.history.loadUrl(Backbone.history.fragment);
+                } else if (el.hasClass('evt-trees')) {
+                    new NavigateCommand({ hash: 'trees', viewMode: VIEW_MODE.MAP, id: 0 }).execute();
+                    if (View.getViewStatus() != VIEW_STATUS.TREES) {
+                        new RemovePopupViewCommand({ delay: Setting.getRemovePopupDuration() }).execute();
+                    }
                 } else if (el.hasClass('people')) {
                     Controller.checkAdmin(function (response) {
                         if (response.result == true || response.result == 'true') {   // Admin
@@ -149,31 +200,25 @@
                     }, function () {
                         EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
                     });
+                } else if (el.hasClass('evt-login')) {
+                    if (View.getViewStatus() != VIEW_STATUS.LOGIN) {
+                        Controller.checkIsLoggedIn(function (response) {
+                            Controller.checkIsAdmin(function () {
+                                
+                            }, function () {
+                                new RenderAccountViewCommand({ el: Setting.getPopWrapperElement() }).execute();
+                            }, function () {
+                                EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
+                            });
+                        }, function () {
+                            new RenderLogInViewCommand({ el: Setting.getPopWrapperElement() }).execute();
+                        }, function () {
+                            EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
+                        });
+                    }
+                    //new NavigateCommand({ hash: 'mdonations', viewMode: VIEW_MODE.TABLE, id: 0 }).execute();
+                } else if (el.hasClass('evt-logout')) {
                     
-                } else if (el.hasClass('login')) {
-                    if (View.getViewStatus() != VIEW_STATUS.LOGIN) {
-                        Controller.checkLogin(function (data) {
-                            if (data.result == true || data.result == 'true') {   // Already logged in
-                                new RenderLoggedInViewCommand({ el: Setting.getPopWrapperElement() }).execute();
-                            } else {    // Not logged in
-                                new RenderLogInViewCommand({ el: Setting.getPopWrapperElement() }).execute();
-                            }
-                        }, function () {
-                            EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
-                        });
-                    }
-                    //new NavigateCommand({ hash: 'mdonations', viewMode: VIEW_MODE.TABLE, id: 0 }).execute();
-                } else if (el.hasClass('loggedin')) {
-                    if (View.getViewStatus() != VIEW_STATUS.LOGIN) {
-                        Controller.checkLogin(function (data) {
-                            if (data.result == true || data.result == 'true') {   // Already logged in
-                                new RenderLoggedInViewCommand({ el: Setting.getPopWrapperElement() }).execute();
-                            }
-                        }, function () {
-                            EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
-                        });
-                    }
-                    //new NavigateCommand({ hash: 'mdonations', viewMode: VIEW_MODE.TABLE, id: 0 }).execute();
                 } else if (el.hasClass('signup')) {
                     if (View.getViewStatus() != VIEW_STATUS.SIGNUP) {
                         new RenderSignUpViewCommand({ el: Setting.getPopWrapperElement() }).execute();
@@ -187,7 +232,7 @@
                     break;
                 case VIEW_STATUS.HOME:
                     if (el.hasClass('button-logo')) {
-                        new NavigateCommand({ hash: 'mtrees', viewMode: VIEW_MODE.MAP, id: 0 }).execute();
+                        new NavigateCommand({ hash: 'trees', viewMode: VIEW_MODE.MAP, id: 0 }).execute();
                     }
                     break;
                 case VIEW_STATUS.GEO_ERROR:
@@ -201,7 +246,7 @@
                         new RemoveAlertViewCommand({ delay: Setting.getRemovePopupDuration() }).execute();
                     }
                     break;
-                case VIEW_STATUS.MANAGE_TREES:
+                case VIEW_STATUS.TREES:
                     if (el.hasClass('marker-control-lock')) {
                         if (!options.marker.options.draggable) {
                             options.marker.options.draggable = true;
@@ -353,45 +398,21 @@
                     }
                     break;
                 case VIEW_STATUS.LOGIN:
-                    if (el.hasClass('button-close') || el.hasClass('login-cancel') || el.hasClass('logged-cancel') || el.hasClass('signup-cancel')) {
-                        new RemoveAlertViewCommand({ delay: Setting.getRemovePopupDuration() }).execute();
-                    } else if (el.hasClass('login-submit')) {
+                    if (el.hasClass('evt-close')) {
+                        new RemovePopupViewCommand({ delay: Setting.getRemovePopupDuration() }).execute();
+                    } else if (el.hasClass('evt-submit')) {
                         if (options.contact != undefined && options.password != undefined) {
-                            Controller.processLogin(options.contact, options.password, function (data) {
-                                if (data.result == true || data.result == 'true') {
-                                    //new RemoveAlertViewCommand({ delay: 0 }).execute();
-                                    //new RenderNavViewCommand({ el: Setting.getNavWrapperElement(), viewStatus: View.getViewStatus() }).execute();
-                                    Backbone.history.loadUrl(Backbone.history.fragment);
-                                }
-                                /*
-                                switch (View.getViewStatus()) {
-                                    case VIEW_STATUS.MANAGE_TREES:
-                                        if (View.getManageTreesView()) {
-                                            View.getManageTreesView().renderFilterList();
-                                        }
-                                        break;
-                                }
-                                */
-                            }, function () {
+                            Controller.processLogin(options.contact, options.password, function (response) {
+                                Backbone.history.loadUrl(Backbone.history.fragment);
+                            }, function (response) {
+                                new RenderMessageViewCommand({ el: Setting.getMessageWrapperElement(), message: Setting.getErrorMessage(response.code), undoable: false }).execute();
+                                }, function (response) {
                                 EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
                             });
                         }
-                    } else if (el.hasClass('logged-logout')) {
-                        Controller.processLogout(function (data) {
-                            if (data.result == true || data.result == 'true') {
-                                //new RemoveAlertViewCommand({ delay: 0 }).execute();
-                                //new RenderNavViewCommand({ el: Setting.getNavWrapperElement(), viewStatus: View.getViewStatus() }).execute();
-                                Backbone.history.loadUrl(Backbone.history.fragment);
-                            }
-                            /*
-                            switch (View.getViewStatus()) {
-                                case VIEW_STATUS.MANAGE_TREES:
-                                    if (View.getManageTreesView()) {
-                                        View.getManageTreesView().renderFilterList();
-                                    }
-                                    break;
-                            }
-                            */
+                    } else if (el.hasClass('evt-logout')) {
+                        Controller.processLogout(function () {
+                            Backbone.history.loadUrl(Backbone.history.fragment);
                         }, function () {
                             EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
                         });

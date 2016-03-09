@@ -3931,6 +3931,7 @@ interface JQuery {
     btsListFilter(input: any, args?: any): any;
     bootstrapToggle(args?: any);
     jQueryTween(args?: any): any;
+    textfill(args?: any): any;
 }
 declare module "jquery" {
     export = $;

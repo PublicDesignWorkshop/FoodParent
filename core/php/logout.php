@@ -12,7 +12,7 @@
     session_regenerate_id(true);    // regenerated the session, delete the old one.
     
     $params = array(
-        "result" => "true",
+        "code" => 400
     );
     echo json_encode($params);
 ?>

@@ -25,12 +25,15 @@
       "core/lib/pickdatejs/js/picker.js",
       "core/lib/pickdatejs/js/picker.date.js",
       "core/lib/pickdatejs/js/legacy.js",
+      // text-fill
+      "core/lib/jquery-textfill/jquery.textfill.js",
 
       "core/lib/pace/pace.js",
       "core/lib/howler/howler.js",
       // Leaflet
       "core/lib/leaflet/leaflet-src.js",
       "core/lib/leaflet-label/leaflet.label-src.js",
+
       // App
       "core/js/app.js",
       // Controller
@@ -53,24 +56,48 @@
       "core/js/view/gridformat/adoptiongridformat.js",
       "core/js/view/gridformat/locationgridformat.js",
       "core/js/view/gridformat/donationgridformat.js",
+      
       // View
       "core/js/view/template.js",
       "core/js/view/baseview.js",
       "core/js/view/view.js",
+
+      // View - Home
       "core/js/view/homeview.js",
+
+      // View - Nav
       "core/js/view/navview.js",
+
+      // View - Message
+      "core/js/view/messageview.js",
+
+      // View - Popup
+      "core/js/view/popupview.js",
       "core/js/view/alertview.js",
+      "core/js/view/loginview.js",
+      "core/js/view/postview.js",
+
+      // View - Trees
+      "core/js/view/treesbase.js",
+      "core/js/view/treesmap.js",
+      "core/js/view/treesmapguest.js",
+      "core/js/view/treesmapparent.js",
+
+
+
       "core/js/view/mtreesview.js",
       "core/js/view/mtreeview.js",
       "core/js/view/markerview.js",
-      "core/js/view/messageview.js",
+
       "core/js/view/mpeopleview.js",
-      "core/js/view/postview.js",
+
       "core/js/view/mdonationsview.js",
       "core/js/view/mdonationview.js",
-      "core/js/view/loginview.js",
+
       "core/js/view/adoptionview.js",
       "core/js/view/passwordview.js",
+
+
       // Model
       "core/js/model/model.js",
       "core/js/model/adopt.js",
@@ -109,6 +136,7 @@
       // App
       "core/css/app.css",
       "core/css/base.css",
+      "core/css/frame.css",
       "core/css/pace.css",
       "core/css/home.css",
       "core/css/nav.css",
@@ -127,6 +155,9 @@
       "core/css/login.css",
       "core/css/adopt.css",
       "core/css/password.css",
+
+      // View - Trees
+      "core/css/trees.css",
 
       // Print (not working for safari)
       "core/css/print.css",

@@ -103,10 +103,10 @@
                     var person: Person = Model.getPersons().findWhere({ id: parseInt(response.id) });
                     EventHandler.handleAdoptionData(self._tree, person, DATA_MODE.CREATE, {}, function () {
                         EventHandler.handleDataChange("<strong><i>" + person.getName() + "</i></strong> has adopted <strong><i>" + food.getName() + " " + self._tree.getName() + "</i></strong> successfully.", false);
-                        if (View.getManageTreesView()) {
-                            (<ManageTreesView>View.getManageTreesView()).renderTreeInfo(self._tree);
-                            (<ManageTreesView>View.getManageTreesView())._applyFilter();
-                        }
+                        //if (View.getManageTreesView()) {
+                        //    (<ManageTreesView>View.getManageTreesView()).renderTreeInfo(self._tree);
+                        //    (<ManageTreesView>View.getManageTreesView())._applyFilter();
+                        //}
                         if (View.getDetailTreeView()) {
                             (<DetailTreeView>View.getDetailTreeView()).renderMenu();
                         }
@@ -115,10 +115,10 @@
                         EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
                     }, function () {
                         EventHandler.handleDataChange("<strong><i>" + person.getName() + "</i></strong> has unadopted <strong><i>" + food.getName() + " " + self._tree.getName() + "</i></strong> successfully.", false);
-                        if (View.getManageTreesView()) {
-                            (<ManageTreesView>View.getManageTreesView()).renderTreeInfo(self._tree);
-                            (<ManageTreesView>View.getManageTreesView())._applyFilter();
-                        }
+                        //if (View.getManageTreesView()) {
+                        //    (<ManageTreesView>View.getManageTreesView()).renderTreeInfo(self._tree);
+                        //    (<ManageTreesView>View.getManageTreesView())._applyFilter();
+                        //}
                         if (View.getDetailTreeView()) {
                             (<DetailTreeView>View.getDetailTreeView()).renderMenu();
                         }
@@ -236,10 +236,10 @@
                     var person: Person = Model.getPersons().findWhere({ id: parseInt(response.id) });
                     EventHandler.handleAdoptionData(self._tree, person, DATA_MODE.DELETE, {}, function () {
                         EventHandler.handleDataChange("<strong><i>" + person.getName() + "</i></strong> has unadopted <strong><i>" + food.getName() + " " + self._tree.getName() + "</i></strong> successfully.", false);
-                        if (View.getManageTreesView()) {
-                            (<ManageTreesView>View.getManageTreesView()).renderTreeInfo(self._tree);
-                            (<ManageTreesView>View.getManageTreesView())._applyFilter();
-                        }
+                        //if (View.getManageTreesView()) {
+                        //    (<ManageTreesView>View.getManageTreesView()).renderTreeInfo(self._tree);
+                        //    (<ManageTreesView>View.getManageTreesView())._applyFilter();
+                        //}
                         if (View.getDetailTreeView()) {
                             (<DetailTreeView>View.getDetailTreeView()).renderMenu();
                         }
@@ -248,10 +248,10 @@
                         EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
                     }, function () {
                         EventHandler.handleDataChange("<strong><i>" + person.getName() + "</i></strong> has adopted <strong><i>" + food.getName() + " " + self._tree.getName() + "</i></strong> successfully.", false);
-                        if (View.getManageTreesView()) {
-                            (<ManageTreesView>View.getManageTreesView()).renderTreeInfo(self._tree);
-                            (<ManageTreesView>View.getManageTreesView())._applyFilter();
-                        }
+                        //if (View.getManageTreesView()) {
+                        //    (<ManageTreesView>View.getManageTreesView()).renderTreeInfo(self._tree);
+                        //    (<ManageTreesView>View.getManageTreesView())._applyFilter();
+                        //}
                         if (View.getDetailTreeView()) {
                             (<DetailTreeView>View.getDetailTreeView()).renderMenu();
                         }

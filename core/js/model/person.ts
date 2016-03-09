@@ -54,6 +54,13 @@
             }
             return this.get('name');
         }
+        public getRealName(): string {
+            var that: Person = this;
+            if (this.get('name') === undefined) {
+                return "";
+            }
+            return this.get('name');
+        }
         public getAddress(): string {
             var that: Person = this;
             return this.get('address');

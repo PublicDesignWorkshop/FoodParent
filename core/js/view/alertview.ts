@@ -101,9 +101,7 @@ module FoodParent {
         }
     }
 
-    export class PopupView extends BaseView {
-
-    }
+    
 
     export class ImageNoteView extends PopupView {
         private static TAG: string = "ImageNoteView - ";

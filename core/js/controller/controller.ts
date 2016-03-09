@@ -140,6 +140,24 @@
             });
         }
 
+        public static fetchAllPersons(success?: any, error?: any) {
+            var xhr1: JQueryXHR = Model.fetchAllPersons();
+            Controller.pushXHR(xhr1);
+            $.when(
+                xhr1
+            ).then(function () {
+                Controller.removeXHR(xhr1);
+                if (success) {
+                    success();
+                }
+            }, function () {
+                Controller.removeXHR(xhr1);
+                if (error) {
+                    error(ERROR_MODE.SEVER_CONNECTION_ERROR);
+                }
+            });
+        }
+
         public static fetchImageNotesOfTreesDuringPeriod(trees: Array<Tree>, startDate: string, endDate: string, size: number, offset: number, success?: any, error?: any) {
             var ids: Array<number> = new Array<number>();
             $.each(trees, function (index: number, tree: Tree) {
@@ -287,6 +305,74 @@
             });
         }
 
+        public static checkIsAdmin(success?: any, fail?: any, error?: any) {
+            var xhr1: JQueryXHR = $.ajax({
+                url: Setting.getPhpDir() + "admincheck.php",
+                type: "POST",
+                data: {},
+                cache: false,
+                dataType: "json",
+                processData: false, // Don't process the files
+                contentType: false, // Set content type to false as jQuery will tell the server its a query string request
+                success: function (response, textStatus, jqXHR) {
+                    Controller.removeXHR(xhr1);
+                    if (typeof response.error === "undefined") {
+                        if (response.result == true || response.result == 'true') {   // Logged in
+                            if (success) {
+                                success(response);
+                            }
+                        } else if (response.result == false || response.result == 'false') {   // Not Logged in
+                            if (fail) {
+                                fail(response);
+                            }
+                        }
+                    } else {
+                        if (error) {
+                            error(response);    // TODO: need to pass error code if error happens
+                        }
+                    }
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    Controller.removeXHR(xhr1);
+                    if (error) {
+                        error(jqXHR);       // TODO: handle error message from php retrn code
+                    }
+                }
+            });
+            Controller.pushXHR(xhr1);
+        }
+
+        public static checkIsLoggedIn(success?: any, fail?: any, error?: any) {
+            var xhr1: JQueryXHR = $.ajax({
+                url: Setting.getPhpDir() + "logincheck.php",
+                type: "POST",
+                data: {},
+                cache: false,
+                dataType: "json",
+                processData: false, // Don't process the files
+                contentType: false, // Set content type to false as jQuery will tell the server its a query string request
+                success: function (response, textStatus, jqXHR) {
+                    Controller.removeXHR(xhr1);
+                    if (parseInt(response.code) == 400) {   // Logged in
+                        if (success) {
+                            success(response);
+                        }
+                    } else {   // Not logged in
+                        if (fail) {
+                            fail(response);
+                        }
+                    }
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    Controller.removeXHR(xhr1);
+                    if (error) {
+                        error(jqXHR);       // TODO: handle error message from php retrn code
+                    }
+                }
+            });
+            Controller.pushXHR(xhr1);
+        }
+
         public static checkLogin(success?: any, error?: any) {
             var xhr1: JQueryXHR = $.ajax({
                 url: Setting.getPhpDir() + "logincheck.php",
@@ -351,7 +437,7 @@
             Controller.pushXHR(xhr1);
         }
 
-        public static processLogin(contact: string, password: string, success?: any, error?: any) {
+        public static processLogin(contact: string, password: string, success?: any, fail?: any, error?: any) {
             var xhr1: JQueryXHR = $.ajax({
                 url: Setting.getPhpDir() + "login.php",
                 type: "POST",
@@ -361,23 +447,22 @@
                 },
                 cache: false,
                 dataType: "json",
-                success: function (data, textStatus, jqXHR) {
+                success: function (response, textStatus, jqXHR) {
                     Controller.removeXHR(xhr1);
-                    if (typeof data.error === "undefined") {
+                    if (parseInt(response.code) == 400) {
                         if (success) {
-                            success(data);
-                            //success(data.files[0].replace(Setting.getRelativeFileUploadPath(), ""));
+                            success(response);
                         }
                     } else {
-                        if (error) {
-                            error();
+                        if (fail) {
+                            fail(response);
                         }
                     }
                 },
                 error: function (jqXHR, textStatus, errorThrown) {
                     Controller.removeXHR(xhr1);
                     if (error) {
-                        error();
+                        error(jqXHR);
                     }
                 }
             });
@@ -391,22 +476,22 @@
                 data: {},
                 cache: false,
                 dataType: "json",
-                success: function (data, textStatus, jqXHR) {
+                success: function (response, textStatus, jqXHR) {
                     Controller.removeXHR(xhr1);
-                    if (typeof data.error === "undefined") {
+                    if (parseInt(response.code) == 400) {
                         if (success) {
-                            success(data);
+                            success(response);
                         }
                     } else {
                         if (error) {
-                            error();
+                            error(response);
                         }
                     }
                 },
                 error: function (jqXHR, textStatus, errorThrown) {
                     Controller.removeXHR(xhr1);
                     if (error) {
-                        error();
+                        error(jqXHR);
                     }
                 }
             });
@@ -494,7 +579,7 @@
             // Setup Router parameters
             this.routes = {
                 "": "home",
-                "mtrees/:viewMode/:id": "manageTrees",
+                "trees/:viewMode/:id": "trees",
                 "mtree/:viewMode/:id": "manageTree",
                 "mpeople/:viewMode/:id": "managePeople",
                 "mdonations/:viewMode/:id": "manageDonations",
@@ -509,8 +594,8 @@
         home() {
             EventHandler.handleNavigate(VIEW_STATUS.HOME);
         }
-        manageTrees(viewMode: VIEW_MODE, id: number) {
-            EventHandler.handleNavigate(VIEW_STATUS.MANAGE_TREES, { viewMode: viewMode, id: id });
+        trees(viewMode: VIEW_MODE, id: number) {
+            EventHandler.handleNavigate(VIEW_STATUS.TREES, { viewMode: viewMode, id: id });
         }
         manageTree(viewMode: VIEW_MODE, id: number) {
             EventHandler.handleNavigate(VIEW_STATUS.DETAIL_TREE, { viewMode: viewMode, id: id });

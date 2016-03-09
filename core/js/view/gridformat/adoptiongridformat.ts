@@ -58,13 +58,13 @@ var AdoptionAddCell = Backgrid.Cell.extend({
         FoodParent.EventHandler.handleAdoptionData(tree, person, FoodParent.DATA_MODE.CREATE, {}, function () {
             FoodParent.EventHandler.handleDataChange("<strong><i>" + person.getName() + "</i></strong> has adopted <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> successfully.", false);
             (<FoodParent.AdoptionManageView>FoodParent.View.getPopupView())._applyFilter();
-            (<FoodParent.ManageTreesView>FoodParent.View.getManageTreesView()).renderTreeInfo(tree);
+            //(<FoodParent.ManageTreesView>FoodParent.View.getManageTreesView()).renderTreeInfo(tree);
         }, function () {
             FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
         }, function () {
             FoodParent.EventHandler.handleDataChange("<strong><i>" + person.getName() + "</i></strong> has unadopted <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> successfully.", false);
             (<FoodParent.AdoptionManageView>FoodParent.View.getPopupView())._applyFilter();
-            (<FoodParent.ManageTreesView>FoodParent.View.getManageTreesView()).renderTreeInfo(tree);
+            //(<FoodParent.ManageTreesView>FoodParent.View.getManageTreesView()).renderTreeInfo(tree);
         });
     },
     render: function () {
@@ -95,9 +95,9 @@ var AdoptionDeleteCell = Backgrid.Cell.extend({
             if (FoodParent.View.getPopupView()) {
                 (<FoodParent.AdoptionManageView>FoodParent.View.getPopupView())._applyFilter();
             }
-            if (FoodParent.View.getManageTreesView()) {
-                (<FoodParent.ManageTreesView>FoodParent.View.getManageTreesView()).renderTreeInfo(tree);
-            }
+            //if (FoodParent.View.getManageTreesView()) {
+            //    (<FoodParent.ManageTreesView>FoodParent.View.getManageTreesView()).renderTreeInfo(tree);
+            //}
         }, function () {
             FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
         }, function () {
@@ -105,9 +105,9 @@ var AdoptionDeleteCell = Backgrid.Cell.extend({
             if (FoodParent.View.getPopupView()) {
                 (<FoodParent.AdoptionManageView>FoodParent.View.getPopupView())._applyFilter();
             }
-            if (FoodParent.View.getManageTreesView()) {
-                (<FoodParent.ManageTreesView>FoodParent.View.getManageTreesView()).renderTreeInfo(tree);
-            }
+            //if (FoodParent.View.getManageTreesView()) {
+            //    (<FoodParent.ManageTreesView>FoodParent.View.getManageTreesView()).renderTreeInfo(tree);
+            //}
         });
     },
     render: function () {

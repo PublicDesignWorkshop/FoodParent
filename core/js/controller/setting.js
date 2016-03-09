@@ -65,8 +65,11 @@ var FoodParent;
         Setting.getNavAnimDuration = function () {
             return 100;
         };
-        Setting.getRemovePopupDuration = function () {
+        Setting.getFilterAnimDuration = function () {
             return 250;
+        };
+        Setting.getRemovePopupDuration = function () {
+            return 100;
         };
         Setting.getDefaultMapZoomLevel = function () {
             return 12;
@@ -121,6 +124,9 @@ var FoodParent;
         Setting.getMaxRating = function () {
             return 10;
         };
+        Setting.getResizeTimeout = function () {
+            return 50;
+        };
         Setting.getLogoSplashDefaultImage = function () {
             return Setting.getCoreImageDir() + "logo-splash-default.png";
         };
@@ -149,6 +155,9 @@ var FoodParent;
         */
         Setting.getErrorMessage = function (code) {
             switch (parseInt(code)) {
+                case 400:
+                    return "No error occured.";
+                    break;
                 case 404:
                     return "Server connection error occured.";
                     break;

@@ -19,10 +19,12 @@
 
     export class NavView extends BaseView {
         private static TAG: string = "NavView - ";
+        private _contact: string;
         constructor(options?: Backbone.ViewOptions<Backbone.Model>) {
             super(options);
             var self: NavView = this;
             self.bDebug = true;
+            self._contact = "";
             //$(window).resize(_.debounce(that.customResize, Setting.getInstance().getResizeTimeout()));
             self.events = <any>{
                 "click .item-nav": "_mouseClick",
@@ -31,44 +33,72 @@
             self.delegateEvents();
         }
         public render(args?: any): any {
-            if (this.bRendered) {
-                this.update(args);
-                return;
-            }
-            this.bRendered = true;
-            //////////////// Execute ////////////////
+            super.render(args);
             var self: NavView = this;
             if (self.bDebug) console.log(NavView.TAG + "render()");
             var template = _.template(Template.getNavViewTemplate());
             self.$el.html(template({}));
             self.setElement(Setting.getNavWrapperElement());
-            self.renderNavManageItems(); //decides which view is shown
-            self.resize();
+            self.renderNavManageItems();
             return self;
         }
 
         public update(args?: any): any {
-            if (!this.bRendered) {
-                this.render(args);
-                return;
-            }
-            //////////////// Execute ////////////////
+            super.update(args);
             var self: NavView = this;
-            self.renderNavManageItems(); //which view
             if (self.bDebug) console.log(NavView.TAG + "update()");
             self.renderNavManageItems();
-            self.setActiveNavItem(args.viewStatus);
-            self.resize();
             return self;
         }
 
         public resize(): any {
             var self: NavView = this;
+            if (self.bDebug) console.log(NavView.TAG + "resize()");
+            self.$('.text-contact').html('');
+            $.each(self.$('#content-nav .item-nav'), function () {
+                $(this).removeAttr('style');
+            });
+            $.each(self.$('#content-nav .item-nav'), function () {
+                $(this).css({
+                    width: $(this).outerWidth(),
+                });
+            });
+            self.$('.text-contact').html('<span>' + self._contact + '</span>');
+            self.$('.text-contact').textfill({ maxFontPixels: 16 });
         }
 
+        /**
+         * Render navigation menu items based on login / admin status
+         */
         public renderNavManageItems(): void {
             var self: NavView = this;
             var template: any;
+            Controller.checkIsLoggedIn(function (response) {
+                self._contact = response.contact;
+                Controller.checkIsAdmin(function () {
+                    if (self.bDebug) console.log(NavView.TAG + "Logged in as admin");
+                }, function () {
+                    if (self.bDebug) console.log(NavView.TAG + "Logged in as parent");
+                    template = _.template(Template.getNavViewTemplateForParent());
+                    self.$('#content-nav').html(template({
+                        contact: "",
+                    }));
+                    self.resize();
+                    self.setActiveNavItem(View.getViewStatus());
+                }, function () {
+                    if (self.bDebug) console.log(NavView.TAG + "Error occured");
+                });
+            }, function () {
+                if (self.bDebug) console.log(NavView.TAG + "Not logged in");
+                template = _.template(Template.getNavViewTemplateForGuest());
+                self.$('#content-nav').html(template({}));
+                self.setActiveNavItem(View.getViewStatus());
+            }, function () {
+                if (self.bDebug) console.log(NavView.TAG + "Error occured");
+            });
+
+
+            /*
             Controller.checkLogin(function (data) {
                 if (data.result == true || data.result == 'true') {   // Is signed in
                     Controller.checkAdmin(function (data2) {
@@ -95,12 +125,12 @@
             }, function () {
 
             });
-            
+            */
         }
 
         public setActiveNavItem(viewStatus: VIEW_STATUS) {
             var self: NavView = this;
-            
+            if (self.bDebug) console.log(NavView.TAG + "setActiveNavItem()");
             if (viewStatus) {
                 var _viewStatus = viewStatus;
             } else {
@@ -110,16 +140,21 @@
                 case VIEW_STATUS.HOME:
                     self.$el.addClass('hidden');
                     break;
-                case VIEW_STATUS.MANAGE_TREES:
+                case VIEW_STATUS.TREES:
                 case VIEW_STATUS.DETAIL_TREE:
                     self.$el.removeClass('hidden');
                     self.$('.item-nav').removeClass('active');
-                    self.$('.trees').addClass('active');
+                    self.$('.evt-trees').addClass('active');
                     break;
                 case VIEW_STATUS.MANAGE_PEOPLE:
                     self.$el.removeClass('hidden');
                     self.$('.item-nav').removeClass('active');
                     self.$('.people').addClass('active');
+                    break;
+                case VIEW_STATUS.LOGIN:
+                    self.$el.removeClass('hidden');
+                    self.$('.item-nav').removeClass('active');
+                    self.$('.evt-login').addClass('active');
                     break;
             }
         }

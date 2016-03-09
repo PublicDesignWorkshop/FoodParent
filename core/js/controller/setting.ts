@@ -66,8 +66,11 @@
         public static getNavAnimDuration(): number {
             return 100;
         }
-        public static getRemovePopupDuration(): number {
+        public static getFilterAnimDuration(): number {
             return 250;
+        }
+        public static getRemovePopupDuration(): number {
+            return 100;
         }
         public static getDefaultMapZoomLevel(): number {
             return 12;
@@ -123,6 +126,10 @@
             return 10
         }
 
+        public static getResizeTimeout(): number {
+            return 50;
+        }
+
         public static getLogoSplashDefaultImage(): string {
             return Setting.getCoreImageDir() + "logo-splash-default.png";
         }
@@ -153,6 +160,9 @@
 
         public static getErrorMessage(code: any): string {
             switch (parseInt(code)) {
+                case 400:
+                    return "No error occured.";
+                    break;
                 case 404:
                     return "Server connection error occured.";
                     break;

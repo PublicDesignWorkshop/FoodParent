@@ -7,7 +7,7 @@
         private _navView: NavView;
         private _popupView: PopupView;
         private _messageView: MessageView;
-        private _manageTreesView: ManageTreesView;
+        private _treesView: TreesView;
         private _managePeopleView: ManagePeopleView;
         private _detailTreeView: DetailTreeView;
         private _manageDonationsView: ManageDonationsView;
@@ -22,8 +22,22 @@
             var self: View = View._instance;
             self.bDebug = true;
             self._viewStatus = new Array<VIEW_STATUS>();
-            //$(window).resize(_.debounce(that.customResize, Setting.getInstance().getResizeTimeout()));
+            $(window).resize(_.debounce(self.resize, Setting.getResizeTimeout()));
+            $(document).bind("keydown", function (event) {
+                EventHandler.handleKeyCode(event.keyCode);
+            });
         }
+
+        public resize(): any {
+            var self: View = View._instance;
+            if (View.getNavView()) {
+                View.getNavView().resize();
+            }
+            $.each(self.children, function (index: number, view: BaseView) {
+                view.resize();
+            });
+        }
+
         public static getInstance(): View {
             return View._instance;
         }
@@ -78,7 +92,7 @@
                     }
                 });
             }
-            View._instance._manageTreesView = null;
+            View._instance._treesView = null;
             View._instance._managePeopleView = null;
             View._instance._detailTreeView = null;
             View._instance._manageDonationsView = null;
@@ -115,11 +129,11 @@
         public static getDetailDonationView(): DetailDonationView {
             return View._instance._detailDonationView;
         }
-        public static setManageTreesView(view: ManageTreesView): void {
-            View._instance._manageTreesView = view;
+        public static setTreesView(view: TreesView): void {
+            View._instance._treesView = view;
         }
-        public static getManageTreesView(): ManageTreesView {
-            return View._instance._manageTreesView;
+        public static getTreesView(): TreesView {
+            return View._instance._treesView;
         }
         public static setManagePeopleView(view: ManagePeopleView): void {
             View._instance._managePeopleView = view;

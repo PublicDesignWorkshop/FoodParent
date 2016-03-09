@@ -105,14 +105,6 @@ var FoodParent;
         return AlertViewFractory;
     })();
     FoodParent.AlertViewFractory = AlertViewFractory;
-    var PopupView = (function (_super) {
-        __extends(PopupView, _super);
-        function PopupView() {
-            _super.apply(this, arguments);
-        }
-        return PopupView;
-    })(FoodParent.BaseView);
-    FoodParent.PopupView = PopupView;
     var ImageNoteView = (function (_super) {
         __extends(ImageNoteView, _super);
         function ImageNoteView(options) {
@@ -453,7 +445,7 @@ var FoodParent;
         };
         ImageNoteView.TAG = "ImageNoteView - ";
         return ImageNoteView;
-    })(PopupView);
+    })(FoodParent.PopupView);
     FoodParent.ImageNoteView = ImageNoteView;
     var AlertView = (function (_super) {
         __extends(AlertView, _super);
@@ -542,7 +534,7 @@ var FoodParent;
         };
         AlertView.TAG = "AlertView - ";
         return AlertView;
-    })(PopupView);
+    })(FoodParent.PopupView);
     FoodParent.AlertView = AlertView;
     var ConfirmView = (function (_super) {
         __extends(ConfirmView, _super);
@@ -624,7 +616,7 @@ var FoodParent;
         };
         ConfirmView.TAG = "ConfirmView - ";
         return ConfirmView;
-    })(PopupView);
+    })(FoodParent.PopupView);
     FoodParent.ConfirmView = ConfirmView;
     var AdoptionManageView = (function (_super) {
         __extends(AdoptionManageView, _super);
@@ -786,6 +778,6 @@ var FoodParent;
         };
         AdoptionManageView.TAG = "AdoptionManageView - ";
         return AdoptionManageView;
-    })(PopupView);
+    })(FoodParent.PopupView);
     FoodParent.AdoptionManageView = AdoptionManageView;
 })(FoodParent || (FoodParent = {}));

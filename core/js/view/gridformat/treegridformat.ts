@@ -411,7 +411,7 @@ var TreeCreateCell = Backgrid.Cell.extend({
             var food: FoodParent.Food = FoodParent.Model.getFoods().findWhere({ id: tree.getFoodId() });
             FoodParent.EventHandler.handleDataChange("<strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has been created successfully.", true);
             $('#wrapper-mtrees .new-tree').addClass('hidden');
-            (<FoodParent.ManageTreesTableView>FoodParent.View.getManageTreesView())._applyFilter();
+            //(<FoodParent.ManageTreesTableView>FoodParent.View.getManageTreesView())._applyFilter();
             //(<FoodParent.ManageTreesTableView>FoodParent.View.getManageTreesView()).renderTreeList(FoodParent.Model.getTrees());
         }, function () {
             FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);

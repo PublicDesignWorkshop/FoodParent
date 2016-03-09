@@ -58,28 +58,50 @@ var FoodParent;
         return RenderNavViewCommand;
     })();
     FoodParent.RenderNavViewCommand = RenderNavViewCommand;
-    var RenderManageTreesViewCommand = (function () {
-        function RenderManageTreesViewCommand(args) {
+    var SetActiveNavItemCommand = (function () {
+        function SetActiveNavItemCommand(args) {
+            var self = this;
+            self._el = args.el;
+            self._viewStatus = args.viewStatus;
+        }
+        SetActiveNavItemCommand.prototype.execute = function () {
+            var self = this;
+            if (FoodParent.View.getNavView()) {
+                FoodParent.View.getNavView().setActiveNavItem(self._viewStatus);
+            }
+            else {
+                FoodParent.View.setNavView(FoodParent.NavViewFractory.create(self._el).render({ viewStatus: self._viewStatus }));
+            }
+        };
+        SetActiveNavItemCommand.prototype.undo = function () {
+        };
+        return SetActiveNavItemCommand;
+    })();
+    FoodParent.SetActiveNavItemCommand = SetActiveNavItemCommand;
+    var RenderTreesViewCommand = (function () {
+        function RenderTreesViewCommand(args) {
             var self = this;
             self._el = args.el;
             self._viewMode = args.viewMode;
             self._id = args.id;
+            self._credential = args.credential;
         }
-        RenderManageTreesViewCommand.prototype.execute = function () {
+        RenderTreesViewCommand.prototype.execute = function () {
             var self = this;
-            if (FoodParent.View.getManageTreesView()) {
+            if (FoodParent.View.getTreesView()) {
+                FoodParent.View.getTreesView().render();
             }
             else {
-                var view = FoodParent.ManageTreesViewFractory.create(self._el, self._viewMode, self._id).render();
+                var view = FoodParent.TreesViewFractory.create(self._el, self._viewMode, self._id, self._credential).render();
                 FoodParent.View.addChild(view);
-                FoodParent.View.setManageTreesView(view);
+                FoodParent.View.setTreesView(view);
             }
         };
-        RenderManageTreesViewCommand.prototype.undo = function () {
+        RenderTreesViewCommand.prototype.undo = function () {
         };
-        return RenderManageTreesViewCommand;
+        return RenderTreesViewCommand;
     })();
-    FoodParent.RenderManageTreesViewCommand = RenderManageTreesViewCommand;
+    FoodParent.RenderTreesViewCommand = RenderTreesViewCommand;
     var RenderManagePeopleViewCommand = (function () {
         function RenderManagePeopleViewCommand(args) {
             var self = this;
@@ -282,6 +304,32 @@ var FoodParent;
         return RemoveAlertViewCommand;
     })();
     FoodParent.RemoveAlertViewCommand = RemoveAlertViewCommand;
+    var RemovePopupViewCommand = (function () {
+        function RemovePopupViewCommand(args) {
+            var self = this;
+            if (args != undefined && args.delay != undefined) {
+                self._delay = args.delay;
+            }
+            else {
+                self._delay = 0;
+            }
+        }
+        RemovePopupViewCommand.prototype.execute = function () {
+            var self = this;
+            if (FoodParent.View.getPopupView()) {
+                setTimeout(function () {
+                    FoodParent.View.getPopupView().setInvisible();
+                    FoodParent.Setting.getPopWrapperElement().html("");
+                }, self._delay);
+            }
+            FoodParent.View.popViewStatus();
+            new SetActiveNavItemCommand({ el: FoodParent.Setting.getNavWrapperElement(), viewStatus: FoodParent.View.getViewStatus() }).execute();
+        };
+        RemovePopupViewCommand.prototype.undo = function () {
+        };
+        return RemovePopupViewCommand;
+    })();
+    FoodParent.RemovePopupViewCommand = RemovePopupViewCommand;
     var NavigateCommand = (function () {
         function NavigateCommand(args) {
             var self = this;
@@ -441,6 +489,23 @@ var FoodParent;
         return RenderEditDonationViewCommand;
     })();
     FoodParent.RenderEditDonationViewCommand = RenderEditDonationViewCommand;
+    var RenderAccountViewCommand = (function () {
+        function RenderAccountViewCommand(args) {
+            var self = this;
+            self._el = args.el;
+        }
+        RenderAccountViewCommand.prototype.execute = function () {
+            var self = this;
+            var view = FoodParent.AccountViewFactory.create(self._el).render();
+            FoodParent.View.setPopupView(view);
+            FoodParent.View.setViewStatus(FoodParent.VIEW_STATUS.LOGIN);
+            new SetActiveNavItemCommand({ el: FoodParent.Setting.getNavWrapperElement(), viewStatus: FoodParent.VIEW_STATUS.LOGIN }).execute();
+        };
+        RenderAccountViewCommand.prototype.undo = function () {
+        };
+        return RenderAccountViewCommand;
+    })();
+    FoodParent.RenderAccountViewCommand = RenderAccountViewCommand;
     var RenderLogInViewCommand = (function () {
         function RenderLogInViewCommand(args) {
             var self = this;
@@ -451,28 +516,13 @@ var FoodParent;
             var view = FoodParent.LogInViewFactory.create(self._el).render();
             FoodParent.View.setPopupView(view);
             FoodParent.View.setViewStatus(FoodParent.VIEW_STATUS.LOGIN);
+            new SetActiveNavItemCommand({ el: FoodParent.Setting.getNavWrapperElement(), viewStatus: FoodParent.VIEW_STATUS.LOGIN }).execute();
         };
         RenderLogInViewCommand.prototype.undo = function () {
         };
         return RenderLogInViewCommand;
     })();
     FoodParent.RenderLogInViewCommand = RenderLogInViewCommand;
-    var RenderLoggedInViewCommand = (function () {
-        function RenderLoggedInViewCommand(args) {
-            var self = this;
-            self._el = args.el;
-        }
-        RenderLoggedInViewCommand.prototype.execute = function () {
-            var self = this;
-            var view = FoodParent.LoggedInViewFactory.create(self._el).render();
-            FoodParent.View.setPopupView(view);
-            FoodParent.View.setViewStatus(FoodParent.VIEW_STATUS.LOGIN);
-        };
-        RenderLoggedInViewCommand.prototype.undo = function () {
-        };
-        return RenderLoggedInViewCommand;
-    })();
-    FoodParent.RenderLoggedInViewCommand = RenderLoggedInViewCommand;
     var RenderSignUpViewCommand = (function () {
         function RenderSignUpViewCommand(args) {
             var self = this;

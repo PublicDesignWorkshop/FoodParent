@@ -56,24 +56,47 @@
         }
     }
 
-    export class RenderManageTreesViewCommand implements Command {
+    export class SetActiveNavItemCommand implements Command {
+        private _el: JQuery;
+        private _viewStatus: VIEW_STATUS;
+        constructor(args?: any) {
+            var self: SetActiveNavItemCommand = this;
+            self._el = args.el;
+            self._viewStatus = args.viewStatus;
+        }
+        public execute(): any {
+            var self: SetActiveNavItemCommand = this;
+            if (View.getNavView()) {
+                View.getNavView().setActiveNavItem(self._viewStatus);
+            } else {
+                View.setNavView(NavViewFractory.create(self._el).render({ viewStatus: self._viewStatus }));
+            }
+        }
+        public undo(): any {
+
+        }
+    }
+
+    export class RenderTreesViewCommand implements Command {
         private _el: JQuery;
         private _viewMode: VIEW_MODE;
         private _id: number;
+        private _credential: CREDENTIAL_MODE;
         constructor(args?: any) {
-            var self: RenderManageTreesViewCommand = this;
+            var self: RenderTreesViewCommand = this;
             self._el = args.el;
             self._viewMode = args.viewMode;
             self._id = args.id;
+            self._credential = args.credential;
         }
         public execute(): any {
-            var self: RenderManageTreesViewCommand = this;
-            if (View.getManageTreesView()) {
-                
+            var self: RenderTreesViewCommand = this;
+            if (View.getTreesView()) {
+                View.getTreesView().render();
             } else {
-                var view: ManageTreesView = ManageTreesViewFractory.create(self._el, self._viewMode, self._id).render();
+                var view: TreesView = TreesViewFractory.create(self._el, self._viewMode, self._id, self._credential).render();
                 View.addChild(view);
-                View.setManageTreesView(view);
+                View.setTreesView(view);
             }
         }
         public undo(): any {
@@ -305,6 +328,32 @@
 
         }
     }
+
+    export class RemovePopupViewCommand implements Command {
+        private _delay: number;
+        constructor(args?: any) {
+            var self: RemovePopupViewCommand = this;
+            if (args != undefined && args.delay != undefined) {
+                self._delay = args.delay;
+            } else {
+                self._delay = 0;
+            }
+        }
+        public execute(): any {
+            var self: RemovePopupViewCommand = this;
+            if (View.getPopupView()) {
+                setTimeout(function () {
+                    View.getPopupView().setInvisible();
+                    Setting.getPopWrapperElement().html("");
+                }, self._delay);
+            }
+            View.popViewStatus();
+            new SetActiveNavItemCommand({ el: Setting.getNavWrapperElement(), viewStatus: View.getViewStatus() }).execute();
+        }
+        public undo(): any {
+
+        }
+    }
     
     export class NavigateCommand implements Command {
         private _hash: string;
@@ -479,6 +528,24 @@
         }
     }
 
+    export class RenderAccountViewCommand implements Command {
+        private _el: JQuery;
+        constructor(args?: any) {
+            var self: RenderAccountViewCommand = this;
+            self._el = args.el;
+        }
+        public execute(): any {
+            var self: RenderAccountViewCommand = this;
+            var view: PopupView = AccountViewFactory.create(self._el).render();
+            View.setPopupView(view);
+            View.setViewStatus(VIEW_STATUS.LOGIN);
+            new SetActiveNavItemCommand({ el: Setting.getNavWrapperElement(), viewStatus: VIEW_STATUS.LOGIN }).execute();
+        }
+        public undo(): any {
+
+        }
+    }
+
     export class RenderLogInViewCommand implements Command {
         private _el: JQuery;
         constructor(args?: any) {
@@ -487,26 +554,10 @@
         }
         public execute(): any {
             var self: RenderLogInViewCommand = this;
-            var view: AlertView = LogInViewFactory.create(self._el).render();
+            var view: PopupView = LogInViewFactory.create(self._el).render();
             View.setPopupView(view);
             View.setViewStatus(VIEW_STATUS.LOGIN);
-        }
-        public undo(): any {
-
-        }
-    }
-
-    export class RenderLoggedInViewCommand implements Command {
-        private _el: JQuery;
-        constructor(args?: any) {
-            var self: RenderLoggedInViewCommand = this;
-            self._el = args.el;
-        }
-        public execute(): any {
-            var self: RenderLoggedInViewCommand = this;
-            var view: AlertView = LoggedInViewFactory.create(self._el).render();
-            View.setPopupView(view);
-            View.setViewStatus(VIEW_STATUS.LOGIN);
+            new SetActiveNavItemCommand({ el: Setting.getNavWrapperElement(), viewStatus: VIEW_STATUS.LOGIN }).execute();
         }
         public undo(): any {
 

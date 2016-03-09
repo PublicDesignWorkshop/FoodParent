@@ -63,14 +63,6 @@
         padding: 8px 4px;
     }
 
-    #wrapper-pop .top-right-button {
-        position: absolute;
-        top: 32px;
-        right: 36px;
-        color: rgba(94, 78, 81, 0.9);
-        cursor: pointer;
-    }
-
     .view-description {
         margin: 4px 0;
     }

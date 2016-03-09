@@ -7,19 +7,19 @@
         
         if (login($contact, $password) == true) {
             $params = array(
-                "result" => "true",
+                "code" => 400,
             );
         echo json_encode($params);
         } else {
             $params = array(
-                "result" => "false",
+                "code" => 805,
             );
             echo json_encode($params);
         }
     } else {
         // The correct POST variables were not sent to this page.
         $params = array(
-            "result" => "false",
+            "code" => 805,
         );
         echo json_encode($params);
     }

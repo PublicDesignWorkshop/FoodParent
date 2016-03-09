@@ -60,6 +60,13 @@ var FoodParent;
             }
             return this.get('name');
         };
+        Person.prototype.getRealName = function () {
+            var that = this;
+            if (this.get('name') === undefined) {
+                return "";
+            }
+            return this.get('name');
+        };
         Person.prototype.getAddress = function () {
             var that = this;
             return this.get('address');

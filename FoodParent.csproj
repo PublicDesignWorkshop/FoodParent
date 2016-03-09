@@ -41,6 +41,7 @@
       <DependentUpon>foodparent.css</DependentUpon>
     </Content>
     <Content Include="core\css\device.css" />
+    <Content Include="core\css\frame.css" />
     <Content Include="core\css\home.css" />
     <Content Include="core\css\input.css" />
     <Content Include="core\css\login.css" />
@@ -56,6 +57,7 @@
     <Content Include="core\css\pop.css" />
     <Content Include="core\css\leaflet.css" />
     <Content Include="core\css\print.css" />
+    <Content Include="core\css\trees.css" />
     <Content Include="core\image\logo-green-32x32.png" />
     <Content Include="core\image\logo-splash-default.png" />
     <Content Include="core\image\logo-splash-mouseover.png" />
@@ -106,6 +108,7 @@
     <Content Include="core\lib\font-awesome\HELP-US-OUT.txt" />
     <Content Include="core\lib\howler\howler.js" />
     <Content Include="core\lib\jquery-easing\jquery.easing.1.3.js" />
+    <Content Include="core\lib\jquery-textfill\jquery.textfill.js" />
     <Content Include="core\lib\jquery\jquery-2.1.4.js" />
     <Content Include="core\lib\leaflet-label\images\death.png" />
     <Content Include="core\lib\leaflet-label\leaflet.label-src.js" />
@@ -267,8 +270,14 @@
     <TypeScriptCompile Include="core\js\view\mtreeview.ts" />
     <TypeScriptCompile Include="core\js\view\navview.ts" />
     <TypeScriptCompile Include="core\js\view\passwordview.ts" />
+    <TypeScriptCompile Include="core\js\view\popupview.ts" />
     <TypeScriptCompile Include="core\js\view\postview.ts" />
     <TypeScriptCompile Include="core\js\view\template.ts" />
+    <TypeScriptCompile Include="core\js\view\treesmapadmin.ts" />
+    <TypeScriptCompile Include="core\js\view\treesbase.ts" />
+    <TypeScriptCompile Include="core\js\view\treesmapguest.ts" />
+    <TypeScriptCompile Include="core\js\view\treesmap.ts" />
+    <TypeScriptCompile Include="core\js\view\treesmapparent.ts" />
     <TypeScriptCompile Include="core\js\view\view.ts" />
     <TypeScriptCompile Include="Scripts\typings\backbone.paginator\backbone.paginator.d.ts" />
     <TypeScriptCompile Include="Scripts\typings\backbone\backbone.d.ts" />

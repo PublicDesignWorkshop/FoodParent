@@ -32,7 +32,7 @@ var FoodParent;
     (function (VIEW_STATUS) {
         VIEW_STATUS[VIEW_STATUS["NONE"] = 0] = "NONE";
         VIEW_STATUS[VIEW_STATUS["HOME"] = 1] = "HOME";
-        VIEW_STATUS[VIEW_STATUS["MANAGE_TREES"] = 2] = "MANAGE_TREES";
+        VIEW_STATUS[VIEW_STATUS["TREES"] = 2] = "TREES";
         VIEW_STATUS[VIEW_STATUS["PARENT_TREES"] = 3] = "PARENT_TREES";
         VIEW_STATUS[VIEW_STATUS["GEO_ERROR"] = 4] = "GEO_ERROR";
         VIEW_STATUS[VIEW_STATUS["NETWORK_ERROR"] = 5] = "NETWORK_ERROR";
@@ -60,6 +60,13 @@ var FoodParent;
         VIEW_MODE[VIEW_MODE["TABLE"] = 3] = "TABLE";
     })(FoodParent.VIEW_MODE || (FoodParent.VIEW_MODE = {}));
     var VIEW_MODE = FoodParent.VIEW_MODE;
+    (function (CREDENTIAL_MODE) {
+        CREDENTIAL_MODE[CREDENTIAL_MODE["NONE"] = 0] = "NONE";
+        CREDENTIAL_MODE[CREDENTIAL_MODE["GUEST"] = 1] = "GUEST";
+        CREDENTIAL_MODE[CREDENTIAL_MODE["PARENT"] = 2] = "PARENT";
+        CREDENTIAL_MODE[CREDENTIAL_MODE["ADMIN"] = 3] = "ADMIN";
+    })(FoodParent.CREDENTIAL_MODE || (FoodParent.CREDENTIAL_MODE = {}));
+    var CREDENTIAL_MODE = FoodParent.CREDENTIAL_MODE;
     (function (ERROR_MODE) {
         ERROR_MODE[ERROR_MODE["NONE"] = 0] = "NONE";
         ERROR_MODE[ERROR_MODE["GEO_PERMISSION_ERROR"] = 1] = "GEO_PERMISSION_ERROR";
@@ -85,7 +92,21 @@ var FoodParent;
                 self._lastCommand = null;
             }
         };
+        EventHandler.handleKeyCode = function (code) {
+            var self = EventHandler._instance;
+            switch (FoodParent.View.getViewStatus()) {
+                case VIEW_STATUS.TREES:
+                    switch (code) {
+                        case 27:
+                            FoodParent.View.getTreesView().removeTreeInfo();
+                            FoodParent.View.getTreesView().closeMapFilter();
+                            break;
+                    }
+                    break;
+            }
+        };
         EventHandler.handleNavigate = function (viewStatus, option) {
+            var self = EventHandler._instance;
             FoodParent.Controller.abortAllXHR();
             Pace.restart();
             new FoodParent.RemoveAlertViewCommand().execute();
@@ -93,76 +114,102 @@ var FoodParent;
             new FoodParent.RemoveChildViewCommand({ parent: FoodParent.View }).execute();
             //}
             new FoodParent.RenderNavViewCommand({ el: FoodParent.Setting.getNavWrapperElement(), viewStatus: viewStatus }).execute();
+            switch (viewStatus) {
+                case VIEW_STATUS.HOME:
+                    new FoodParent.RenderHomeViewCommand({ el: FoodParent.Setting.getMainWrapperElement() }).execute();
+                    break;
+                case VIEW_STATUS.TREES:
+                    FoodParent.Controller.checkIsLoggedIn(function () {
+                        FoodParent.Controller.checkIsAdmin(function () {
+                            if (self.bDebug)
+                                console.log(EventHandler.TAG + "Logged in as admin");
+                            if (option.viewMode == VIEW_MODE.TABLE) {
+                                new FoodParent.NavigateCommand({ hash: 'trees', viewMode: VIEW_MODE.MAP, id: 0 }).execute();
+                            }
+                            else {
+                                new FoodParent.RenderTreesViewCommand({ el: FoodParent.Setting.getMainWrapperElement(), viewMode: option.viewMode, id: option.id, credential: CREDENTIAL_MODE.ADMIN }).execute();
+                            }
+                        }, function () {
+                            if (self.bDebug)
+                                console.log(EventHandler.TAG + "Logged in as parent");
+                            new FoodParent.RenderTreesViewCommand({ el: FoodParent.Setting.getMainWrapperElement(), viewMode: option.viewMode, id: option.id, credential: CREDENTIAL_MODE.PARENT }).execute();
+                        }, function () {
+                            if (self.bDebug)
+                                console.log(EventHandler.TAG + "Error occured");
+                        });
+                    }, function () {
+                        if (self.bDebug)
+                            console.log(EventHandler.TAG + "Not logged in");
+                        new FoodParent.RenderTreesViewCommand({ el: FoodParent.Setting.getMainWrapperElement(), viewMode: option.viewMode, id: option.id, credential: CREDENTIAL_MODE.GUEST }).execute();
+                    }, function () {
+                        if (self.bDebug)
+                            console.log(EventHandler.TAG + "Error occured");
+                    });
+                    break;
+            }
+            /*
             if (viewStatus == VIEW_STATUS.HOME) {
                 //new MovePaceBarToTop().execute();
-                new FoodParent.RenderHomeViewCommand({ el: FoodParent.Setting.getMainWrapperElement() }).execute();
-            }
-            else if (viewStatus == VIEW_STATUS.MANAGE_TREES) {
-                FoodParent.Controller.checkAdmin(function (response) {
-                    if (response.result == false || response.result == 'false') {
+               
+            } else if (viewStatus == VIEW_STATUS.TREES) {
+                Controller.checkAdmin(function (response) {
+                    if (response.result == false || response.result == 'false') {   // Not admin && in table view
                         if (option.viewMode == VIEW_MODE.TABLE) {
-                            new FoodParent.NavigateCommand({ hash: 'mtrees', viewMode: VIEW_MODE.MAP, id: 0 }).execute();
-                        }
-                        else {
+                            new NavigateCommand({ hash: 'trees', viewMode: VIEW_MODE.MAP, id: 0 }).execute();
+                        } else {
                             //new MovePaceBarToUnderNav().execute();
-                            new FoodParent.RenderManageTreesViewCommand({ el: FoodParent.Setting.getMainWrapperElement(), viewMode: option.viewMode, id: option.id }).execute();
+                            new RenderManageTreesViewCommand({ el: Setting.getMainWrapperElement(), viewMode: option.viewMode, id: option.id }).execute();
                         }
-                    }
-                    else {
+                    } else {
                         //new MovePaceBarToUnderNav().execute();
-                        new FoodParent.RenderManageTreesViewCommand({ el: FoodParent.Setting.getMainWrapperElement(), viewMode: option.viewMode, id: option.id }).execute();
+                        new RenderManageTreesViewCommand({ el: Setting.getMainWrapperElement(), viewMode: option.viewMode, id: option.id }).execute();
                     }
                 }, function () {
                     EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
                 });
-            }
-            else if (viewStatus == VIEW_STATUS.MANAGE_PEOPLE) {
-                FoodParent.Controller.checkAdmin(function (response) {
-                    if (response.result == true || response.result == 'true') {
+            } else if (viewStatus == VIEW_STATUS.MANAGE_PEOPLE) {
+                Controller.checkAdmin(function (response) {
+                    if (response.result == true || response.result == 'true') {   // Admin
                         //new MovePaceBarToUnderNav().execute();
-                        new FoodParent.RenderManagePeopleViewCommand({ el: FoodParent.Setting.getMainWrapperElement(), viewMode: option.viewMode, id: option.id }).execute();
-                    }
-                    else if (response.result == false || response.result == 'false') {
-                        new FoodParent.NavigateCommand({ hash: 'mtrees', viewMode: VIEW_MODE.MAP, id: 0 }).execute();
+                        new RenderManagePeopleViewCommand({ el: Setting.getMainWrapperElement(), viewMode: option.viewMode, id: option.id }).execute();
+                    } else if (response.result == false || response.result == 'false') {   // Not admin
+                        new NavigateCommand({ hash: 'mtrees', viewMode: VIEW_MODE.MAP, id: 0 }).execute();
                     }
                 }, function () {
                     EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
                 });
-            }
-            else if (viewStatus == VIEW_STATUS.DETAIL_TREE) {
+            } else if (viewStatus == VIEW_STATUS.DETAIL_TREE) {
                 //new MovePaceBarToUnderNav().execute();
-                new FoodParent.RenderDetailTreeViewCommand({ el: FoodParent.Setting.getMainWrapperElement(), viewMode: option.viewMode, id: option.id }).execute();
-            }
-            else if (viewStatus == VIEW_STATUS.MANAGE_DONATIONS) {
-                FoodParent.Controller.checkAdmin(function (response) {
-                    if (response.result == true || response.result == 'true') {
+                new RenderDetailTreeViewCommand({ el: Setting.getMainWrapperElement(), viewMode: option.viewMode, id: option.id }).execute();
+            } else if (viewStatus == VIEW_STATUS.MANAGE_DONATIONS) {
+                Controller.checkAdmin(function (response) {
+                    if (response.result == true || response.result == 'true') {   // Admin
                         //new MovePaceBarToUnderNav().execute();
-                        new FoodParent.RenderManageDonationsViewCommand({ el: FoodParent.Setting.getMainWrapperElement(), viewMode: option.viewMode, id: option.id }).execute();
+                        new RenderManageDonationsViewCommand({ el: Setting.getMainWrapperElement(), viewMode: option.viewMode, id: option.id }).execute();
+                    } else if (response.result == false || response.result == 'false') {   // Not admin
+                        new NavigateCommand({ hash: 'mtrees', viewMode: VIEW_MODE.MAP, id: 0 }).execute();
                     }
-                    else if (response.result == false || response.result == 'false') {
-                        new FoodParent.NavigateCommand({ hash: 'mtrees', viewMode: VIEW_MODE.MAP, id: 0 }).execute();
+                }, function () {
+                    EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
+                });
+            } else if (viewStatus == VIEW_STATUS.DETAIL_DONATION) {
+                Controller.checkAdmin(function (response) {
+                    if (response.result == true || response.result == 'true') {   // Admin
+                        //new MovePaceBarToUnderNav().execute();
+                        new RenderDetailDonationViewCommand({ el: Setting.getMainWrapperElement(), viewMode: option.viewMode, id: option.id }).execute();
+                    } else if (response.result == false || response.result == 'false') {   // Not admin
+                        new NavigateCommand({ hash: 'mtrees', viewMode: VIEW_MODE.MAP, id: 0 }).execute();
                     }
                 }, function () {
                     EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
                 });
             }
-            else if (viewStatus == VIEW_STATUS.DETAIL_DONATION) {
-                FoodParent.Controller.checkAdmin(function (response) {
-                    if (response.result == true || response.result == 'true') {
-                        //new MovePaceBarToUnderNav().execute();
-                        new FoodParent.RenderDetailDonationViewCommand({ el: FoodParent.Setting.getMainWrapperElement(), viewMode: option.viewMode, id: option.id }).execute();
-                    }
-                    else if (response.result == false || response.result == 'false') {
-                        new FoodParent.NavigateCommand({ hash: 'mtrees', viewMode: VIEW_MODE.MAP, id: 0 }).execute();
-                    }
-                }, function () {
-                    EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
-                });
-            }
-            FoodParent.View.getNavView().update(viewStatus);
+            */
+            //View.getNavView().update(viewStatus);
             FoodParent.View.setViewStatus(viewStatus);
         };
         EventHandler.handleMouseClick = function (el, view, options) {
+            var self = EventHandler._instance;
             // Execute undo command.
             if (el.hasClass('undo')) {
                 EventHandler.undoLastCommand();
@@ -171,13 +218,17 @@ var FoodParent;
             if (FoodParent.View.getMessageView()) {
                 FoodParent.View.getMessageView().setInvisible();
             }
-            // Handle NavView
+            // Handle navigation view mouse click event
             if (view instanceof FoodParent.NavView) {
-                if (el.hasClass('title')) {
-                    new FoodParent.NavigateCommand({ hash: 'mtrees', viewMode: VIEW_MODE.MAP, id: 0 }).execute();
+                if (el.hasClass('evt-title')) {
+                    new FoodParent.NavigateCommand({ hash: 'trees', viewMode: VIEW_MODE.MAP, id: 0 }).execute();
+                    Backbone.history.loadUrl(Backbone.history.fragment);
                 }
-                else if (el.hasClass('trees')) {
-                    new FoodParent.NavigateCommand({ hash: 'mtrees', viewMode: VIEW_MODE.MAP, id: 0 }).execute();
+                else if (el.hasClass('evt-trees')) {
+                    new FoodParent.NavigateCommand({ hash: 'trees', viewMode: VIEW_MODE.MAP, id: 0 }).execute();
+                    if (FoodParent.View.getViewStatus() != VIEW_STATUS.TREES) {
+                        new FoodParent.RemovePopupViewCommand({ delay: FoodParent.Setting.getRemovePopupDuration() }).execute();
+                    }
                 }
                 else if (el.hasClass('people')) {
                     FoodParent.Controller.checkAdmin(function (response) {
@@ -203,30 +254,23 @@ var FoodParent;
                         EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
                     });
                 }
-                else if (el.hasClass('login')) {
+                else if (el.hasClass('evt-login')) {
                     if (FoodParent.View.getViewStatus() != VIEW_STATUS.LOGIN) {
-                        FoodParent.Controller.checkLogin(function (data) {
-                            if (data.result == true || data.result == 'true') {
-                                new FoodParent.RenderLoggedInViewCommand({ el: FoodParent.Setting.getPopWrapperElement() }).execute();
-                            }
-                            else {
-                                new FoodParent.RenderLogInViewCommand({ el: FoodParent.Setting.getPopWrapperElement() }).execute();
-                            }
+                        FoodParent.Controller.checkIsLoggedIn(function (response) {
+                            FoodParent.Controller.checkIsAdmin(function () {
+                            }, function () {
+                                new FoodParent.RenderAccountViewCommand({ el: FoodParent.Setting.getPopWrapperElement() }).execute();
+                            }, function () {
+                                EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
+                            });
+                        }, function () {
+                            new FoodParent.RenderLogInViewCommand({ el: FoodParent.Setting.getPopWrapperElement() }).execute();
                         }, function () {
                             EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
                         });
                     }
                 }
-                else if (el.hasClass('loggedin')) {
-                    if (FoodParent.View.getViewStatus() != VIEW_STATUS.LOGIN) {
-                        FoodParent.Controller.checkLogin(function (data) {
-                            if (data.result == true || data.result == 'true') {
-                                new FoodParent.RenderLoggedInViewCommand({ el: FoodParent.Setting.getPopWrapperElement() }).execute();
-                            }
-                        }, function () {
-                            EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
-                        });
-                    }
+                else if (el.hasClass('evt-logout')) {
                 }
                 else if (el.hasClass('signup')) {
                     if (FoodParent.View.getViewStatus() != VIEW_STATUS.SIGNUP) {
@@ -240,7 +284,7 @@ var FoodParent;
                     break;
                 case VIEW_STATUS.HOME:
                     if (el.hasClass('button-logo')) {
-                        new FoodParent.NavigateCommand({ hash: 'mtrees', viewMode: VIEW_MODE.MAP, id: 0 }).execute();
+                        new FoodParent.NavigateCommand({ hash: 'trees', viewMode: VIEW_MODE.MAP, id: 0 }).execute();
                     }
                     break;
                 case VIEW_STATUS.GEO_ERROR:
@@ -254,7 +298,7 @@ var FoodParent;
                         new FoodParent.RemoveAlertViewCommand({ delay: FoodParent.Setting.getRemovePopupDuration() }).execute();
                     }
                     break;
-                case VIEW_STATUS.MANAGE_TREES:
+                case VIEW_STATUS.TREES:
                     if (el.hasClass('marker-control-lock')) {
                         if (!options.marker.options.draggable) {
                             options.marker.options.draggable = true;
@@ -427,47 +471,23 @@ var FoodParent;
                     }
                     break;
                 case VIEW_STATUS.LOGIN:
-                    if (el.hasClass('button-close') || el.hasClass('login-cancel') || el.hasClass('logged-cancel') || el.hasClass('signup-cancel')) {
-                        new FoodParent.RemoveAlertViewCommand({ delay: FoodParent.Setting.getRemovePopupDuration() }).execute();
+                    if (el.hasClass('evt-close')) {
+                        new FoodParent.RemovePopupViewCommand({ delay: FoodParent.Setting.getRemovePopupDuration() }).execute();
                     }
-                    else if (el.hasClass('login-submit')) {
+                    else if (el.hasClass('evt-submit')) {
                         if (options.contact != undefined && options.password != undefined) {
-                            FoodParent.Controller.processLogin(options.contact, options.password, function (data) {
-                                if (data.result == true || data.result == 'true') {
-                                    //new RemoveAlertViewCommand({ delay: 0 }).execute();
-                                    //new RenderNavViewCommand({ el: Setting.getNavWrapperElement(), viewStatus: View.getViewStatus() }).execute();
-                                    Backbone.history.loadUrl(Backbone.history.fragment);
-                                }
-                                /*
-                                switch (View.getViewStatus()) {
-                                    case VIEW_STATUS.MANAGE_TREES:
-                                        if (View.getManageTreesView()) {
-                                            View.getManageTreesView().renderFilterList();
-                                        }
-                                        break;
-                                }
-                                */
-                            }, function () {
+                            FoodParent.Controller.processLogin(options.contact, options.password, function (response) {
+                                Backbone.history.loadUrl(Backbone.history.fragment);
+                            }, function (response) {
+                                new FoodParent.RenderMessageViewCommand({ el: FoodParent.Setting.getMessageWrapperElement(), message: FoodParent.Setting.getErrorMessage(response.code), undoable: false }).execute();
+                            }, function (response) {
                                 EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
                             });
                         }
                     }
-                    else if (el.hasClass('logged-logout')) {
-                        FoodParent.Controller.processLogout(function (data) {
-                            if (data.result == true || data.result == 'true') {
-                                //new RemoveAlertViewCommand({ delay: 0 }).execute();
-                                //new RenderNavViewCommand({ el: Setting.getNavWrapperElement(), viewStatus: View.getViewStatus() }).execute();
-                                Backbone.history.loadUrl(Backbone.history.fragment);
-                            }
-                            /*
-                            switch (View.getViewStatus()) {
-                                case VIEW_STATUS.MANAGE_TREES:
-                                    if (View.getManageTreesView()) {
-                                        View.getManageTreesView().renderFilterList();
-                                    }
-                                    break;
-                            }
-                            */
+                    else if (el.hasClass('evt-logout')) {
+                        FoodParent.Controller.processLogout(function () {
+                            Backbone.history.loadUrl(Backbone.history.fragment);
                         }, function () {
                             EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
                         });

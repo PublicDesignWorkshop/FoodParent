@@ -373,10 +373,10 @@ module FoodParent {
                     //self.resize();
                 } else if (data.result == false || data.result == 'false') {   // Not admin but logged in
                     if (self.bDebug) console.log(ManageTreesMapView.TAG + "render()");
-                    var template = _.template(Template.getManageTreesMapViewTemplate2());
-                    self.$el.html(template({
+                    //var template = _.template(Template.getManageTreesMapViewTemplate2());
+                    //self.$el.html(template({
 
-                    }));
+                    //}));
                     self.setElement(self.$('#wrapper-mtrees'));
                     $('.collapsible-list').css({ height: View.getHeight() - 60 - 34 * 2 - 20 });
                     $('#mytrees-toggle').bootstrapToggle();

@@ -41,7 +41,7 @@
 				return regSearch.test( text );
 			},
 			cancelNode: function() {
-				return '<span class="btn glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>';
+				return '<span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>';
 			}
 		}, opts);	
 
@@ -74,8 +74,8 @@
 			inputEl$.after( cancelEl$ );
 			inputEl$.parents('.form-group').addClass('has-feedback');
 			
-			//if(!inputEl$.prev().is('.control-label'))
-			//	cancelEl$.css({top: 0})
+			if(!inputEl$.prev().is('.control-label'))
+				cancelEl$.css({top: 0})
 
 			cancelEl$.on('click', self.reset);
 		}
