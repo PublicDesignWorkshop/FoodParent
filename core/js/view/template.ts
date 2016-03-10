@@ -2013,6 +2013,10 @@
             */
         }
 
+        public static getAccountViewTemplateForAdmin(): string {
+            return Template.getAccountViewTemplateForParent();
+        }
+
 
         public static getLoggedInViewTemplate(): string {
             var template = '';

@@ -1627,6 +1627,9 @@ var FoodParent;
             template += '<% } %>';
             */
         };
+        Template.getAccountViewTemplateForAdmin = function () {
+            return Template.getAccountViewTemplateForParent();
+        };
         Template.getLoggedInViewTemplate = function () {
             var template = '';
             template += '<div id="wrapper-login">';

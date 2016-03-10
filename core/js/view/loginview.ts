@@ -129,7 +129,19 @@
 
             Controller.checkIsLoggedIn(function (response) {
                 Controller.checkIsAdmin(function () {
-                    
+                    var template = _.template(Template.getAccountViewTemplateForAdmin());
+                    Setting.getPopWrapperElement().html(template({
+                        header: 'Admin Info',
+                        contact: response.contact,
+                    }));
+                    self.setElement($('#wrapper-login'));
+                    Controller.fetchAllPersons(function () {
+                        var person: Person = Model.getPersons().findWhere({ id: parseInt(response.id) });
+                        self.$('.input-name').val(person.getRealName());
+                        self.$('.input-neighborhood').val(person.getNeighboorhood());
+                    }, function () {
+                        EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
+                    });
                 }, function () {
                     var template = _.template(Template.getAccountViewTemplateForParent());
                     Setting.getPopWrapperElement().html(template({

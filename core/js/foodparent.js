@@ -50367,6 +50367,9 @@ var FoodParent;
             template += '<% } %>';
             */
         };
+        Template.getAccountViewTemplateForAdmin = function () {
+            return Template.getAccountViewTemplateForParent();
+        };
         Template.getLoggedInViewTemplate = function () {
             var template = '';
             template += '<div id="wrapper-login">';
@@ -52197,6 +52200,19 @@ var FoodParent;
                 console.log(AccountView.TAG + "render()");
             FoodParent.Controller.checkIsLoggedIn(function (response) {
                 FoodParent.Controller.checkIsAdmin(function () {
+                    var template = _.template(FoodParent.Template.getAccountViewTemplateForAdmin());
+                    FoodParent.Setting.getPopWrapperElement().html(template({
+                        header: 'Admin Info',
+                        contact: response.contact,
+                    }));
+                    self.setElement($('#wrapper-login'));
+                    FoodParent.Controller.fetchAllPersons(function () {
+                        var person = FoodParent.Model.getPersons().findWhere({ id: parseInt(response.id) });
+                        self.$('.input-name').val(person.getRealName());
+                        self.$('.input-neighborhood').val(person.getNeighboorhood());
+                    }, function () {
+                        FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+                    });
                 }, function () {
                     var template = _.template(FoodParent.Template.getAccountViewTemplateForParent());
                     FoodParent.Setting.getPopWrapperElement().html(template({
