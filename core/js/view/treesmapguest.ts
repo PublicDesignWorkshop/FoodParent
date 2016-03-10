@@ -12,6 +12,7 @@
                 "click #input-search-food": "_searchFood",
                 "click #wrapper-food-search .form-control-feedback": "_resetSearchFood",
                 "click .item-food": "_applySearch",
+                "click .evt-reset-filter": "_resetFilter",
             };
             self.delegateEvents();
         }

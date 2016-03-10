@@ -92,6 +92,7 @@ var FoodParent;
                 "click #wrapper-food-search .form-control-feedback": "_resetSearchFood",
                 "click .item-food": "_applySearch",
                 "change #checkbox-mytrees": "_toggleMyTrees",
+                "click .evt-reset-filter": "_resetFilter",
             };
             self.delegateEvents();
         }

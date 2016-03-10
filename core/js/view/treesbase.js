@@ -25,7 +25,7 @@ var FoodParent;
                     view = new FoodParent.TreesMapViewForParent({ el: el });
                 }
                 else if (credential == FoodParent.CREDENTIAL_MODE.ADMIN) {
-                    view = new FoodParent.TreesMapViewForParent({ el: el });
+                    view = new FoodParent.TreesMapViewForAdmin({ el: el });
                 }
                 view.setTreeId(id);
             }

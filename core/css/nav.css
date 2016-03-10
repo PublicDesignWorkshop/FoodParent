@@ -287,6 +287,12 @@
     #content-nav .evt-trees {
         display: none;
     }
+    #content-nav .evt-parents {
+        display: none;
+    }
+    #content-nav .evt-donations {
+        display: none;
+    }
     #content-nav .text-parent {
         padding-top: 8px;
         font-size: x-small;

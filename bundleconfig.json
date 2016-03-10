@@ -82,6 +82,7 @@
       "core/js/view/treesmap.js",
       "core/js/view/treesmapguest.js",
       "core/js/view/treesmapparent.js",
+      "core/js/view/treesmapadmin.js",
 
 
 

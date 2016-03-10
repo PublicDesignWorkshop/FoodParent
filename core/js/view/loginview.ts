@@ -131,7 +131,7 @@
                 Controller.checkIsAdmin(function () {
                     
                 }, function () {
-                    var template = _.template(Template.getAcountViewTemplateForParent());
+                    var template = _.template(Template.getAccountViewTemplateForParent());
                     Setting.getPopWrapperElement().html(template({
                         header: 'Parent Info',
                         contact: response.contact,

@@ -140,7 +140,7 @@ var FoodParent;
             FoodParent.Controller.checkIsLoggedIn(function (response) {
                 FoodParent.Controller.checkIsAdmin(function () {
                 }, function () {
-                    var template = _.template(FoodParent.Template.getAcountViewTemplateForParent());
+                    var template = _.template(FoodParent.Template.getAccountViewTemplateForParent());
                     FoodParent.Setting.getPopWrapperElement().html(template({
                         header: 'Parent Info',
                         contact: response.contact,

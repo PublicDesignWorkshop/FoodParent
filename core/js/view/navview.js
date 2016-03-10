@@ -44,7 +44,7 @@ var FoodParent;
             var template = _.template(FoodParent.Template.getNavViewTemplate());
             self.$el.html(template({}));
             self.setElement(FoodParent.Setting.getNavWrapperElement());
-            self.renderNavManageItems();
+            self.renderNavItems();
             return self;
         };
         NavView.prototype.update = function (args) {
@@ -52,7 +52,7 @@ var FoodParent;
             var self = this;
             if (self.bDebug)
                 console.log(NavView.TAG + "update()");
-            self.renderNavManageItems();
+            self.renderNavItems();
             return self;
         };
         NavView.prototype.resize = function () {
@@ -74,7 +74,7 @@ var FoodParent;
         /**
          * Render navigation menu items based on login / admin status
          */
-        NavView.prototype.renderNavManageItems = function () {
+        NavView.prototype.renderNavItems = function () {
             var self = this;
             var template;
             FoodParent.Controller.checkIsLoggedIn(function (response) {
@@ -82,6 +82,12 @@ var FoodParent;
                 FoodParent.Controller.checkIsAdmin(function () {
                     if (self.bDebug)
                         console.log(NavView.TAG + "Logged in as admin");
+                    template = _.template(FoodParent.Template.getNavViewTemplateForAdmin());
+                    self.$('#content-nav').html(template({
+                        contact: "",
+                    }));
+                    self.resize();
+                    self.setActiveNavItem(FoodParent.View.getViewStatus());
                 }, function () {
                     if (self.bDebug)
                         console.log(NavView.TAG + "Logged in as parent");
@@ -100,6 +106,7 @@ var FoodParent;
                     console.log(NavView.TAG + "Not logged in");
                 template = _.template(FoodParent.Template.getNavViewTemplateForGuest());
                 self.$('#content-nav').html(template({}));
+                self.resize();
                 self.setActiveNavItem(FoodParent.View.getViewStatus());
             }, function () {
                 if (self.bDebug)

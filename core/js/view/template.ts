@@ -119,7 +119,8 @@
             template +=     '</div>';
             template +=     '<div id="wrapper-btn-mapfilter">';
             template +=         '<div class="btn-mapfilter">';
-            template +=             '<i class="fa fa-filter"></i>';
+            template +=             '<div class="icon-mapfilter-status"><i class="fa fa-filter"></i></div>';
+            template +=             '<div class="text-mapfilter-status">off</div>';
             template +=         '</div>';
             template +=         '<div class="deco-mapfilter">';
             template +=         '</div>';
@@ -160,7 +161,8 @@
             template +=     '</div>';
             template +=     '<div id="wrapper-btn-mapfilter">';
             template +=         '<div class="btn-mapfilter">';
-            template +=             '<i class="fa fa-filter"></i>';
+            template +=             '<div class="icon-mapfilter-status"><i class="fa fa-filter"></i></div>';
+            template +=             '<div class="text-mapfilter-status">off</div>';
             template +=         '</div>';
             template +=         '<div class="deco-mapfilter">';
             template +=         '</div>';
@@ -216,6 +218,17 @@
             var template = '';
             template += '<div class="item-nav text-title evt-title">FoodParent</div>';
             template += '<div class="item-nav evt-trees">TREES</div>';
+            template += '<div class="deco-login"><div></div></div>';
+            template += '<div class="item-nav text-parent evt-login"><div>you are logged in as:</div><div class="text-contact"><span><%= contact %></span></div></div>';
+            return template;
+        }
+
+        public static getNavViewTemplateForAdmin(): string {
+            var template = '';
+            template += '<div class="item-nav text-title evt-title">FoodParent</div>';
+            template += '<div class="item-nav evt-trees">TREES</div>';
+            template += '<div class="item-nav evt-parents">PARENTS</div>';
+            template += '<div class="item-nav evt-donations">DONATIONS</div>';
             template += '<div class="deco-login"><div></div></div>';
             template += '<div class="item-nav text-parent evt-login"><div>you are logged in as:</div><div class="text-contact"><span><%= contact %></span></div></div>';
             return template;
@@ -353,6 +366,82 @@
             template += '</optgroup>';
             template += '</select>';
 
+            return template;
+        }
+
+        public static getTreeInfoTemplateForAdmin(): string {
+            var template = '';
+            template += '<div id="content-header">';
+            template +=     '<div class="tree-info-name"><div class="input-food"><%= foodname %></div>&nbsp;<%= treename %></div>';
+            template +=     '<div class="btn-close evt-close">';
+            template +=         '<i class="fa fa-remove"></i>';
+            template +=     '</div>';   // end of top-right-button button-close
+            template += '</div>';   // end of #wrapper-header
+
+            template += '<div class="tree-info-coordinate"><div>@&nbsp;</div><div class="input-lat"><%= lat %></div>,&nbsp;<div class="input-lng"><%= lng %></div></div>';
+
+            template += '<div class="info-group">';
+            template +=     '<div class="input-address">&nbsp;</div>';
+            template += '</div>';
+
+            template += '<div class="hr"><hr /></div>';
+            template += '<div class="info-header"><i class="fa fa-sticky-note fa-1x"></i> Description</div>';
+            template += '<div class="info-group">';
+            template +=     '<div class="input-description"><%= description %></div>';
+            template += '</div>';
+
+            template += '<div class="hr"><hr /></div>';
+            template += '<div class="info-header"><i class="fa fa-user fa-1x"></i> Parents</div>';
+            template += '<div class="info-group info-group-flex">';
+            template += '<% _.each(persons.models, function (person, index) { %>';
+            template +=     '<% if (index < persons.models.length - 1) { %>';
+            template +=         '<div><%= person.getName() %>,&nbsp;</div>';
+            template +=     '<% } else { %>';
+            template +=         '<div><%= person.getName() %></div>';
+            template +=     '<% } %>';
+            template += '<% }); %>';
+            template += '</div>';
+
+            template += '<div class="hr"><hr /></div>';
+            template += '<div class="info-header"><i class="fa fa-tag fa-1x"></i> Status</div>';
+            template += '<div class="info-group">';
+            template +=     '<div data-toggle="buttons">';
+            template +=     '<% _.each(flags.models, function (flag) { %>';
+            template +=         '<label class="btn flag-radio" data-target="<%= flag.getId() %>">';
+            template +=         '<input type="checkbox" name="flag">';
+            template +=         '<i class="fa fa-square-o fa-1x"></i>';
+            template +=         '<i class="fa fa-check-square-o fa-1x"></i>';
+            template +=         ' <%= flag.getName() %></label>';
+            template +=     '<% }); %>';
+            template +=     '</div>';
+            template += '</div>';
+
+            template += '<div class="hr"><hr /></div>';
+            template += '<div class="info-header"><i class="fa fa-home fa-1x"></i> Ownership</div>';
+            template += '<div class="info-group">';
+            template +=     '<div data-toggle="buttons">';
+            template +=     '<% _.each(ownerships.models, function (ownership) { %>';
+            template +=         '<label class="btn ownership-radio" data-target="<%= ownership.getId() %>">';
+            template +=         '<input type="radio" name="ownership">';
+            template +=         '<i class="fa fa-circle-o fa-1x"></i>';
+            template +=         '<i class="fa fa-check-circle-o fa-1x"></i>';
+            template +=         ' <%= ownership.getName() %></label>';
+            template +=     '<% }); %>';
+            template +=     '</div>';
+            template += '</div>';
+
+            template += '<div class="hr"><hr /></div>';
+            template += '<div class="info-header"><i class="fa fa-leaf fa-1x"></i> Recent Comments</div>';
+            template += '<div id="list-comments" class="info-group">';
+            template +=     '<div>&nbsp;</div>';
+            template += '</div>';
+
+            template += '<div class="hr"><hr /></div>';
+            template += '<div class="info-button">';
+            template +=     '<div class="btn-white btn-small btn-action evt-detail"><i class="fa fa-heartbeat"></i> See Detail</div>';
+            template +=     '<div class="btn-white btn-small btn-action evt-adopt"><i class="fa  fa-user-plus"></i> Adopt Tree</div>';
+            template +=     '<div class="btn-white btn-small btn-action evt-post"><i class="fa fa-sticky-note-o"></i> Post Note</div>';
+            template += '</div>';
             return template;
         }
 
@@ -530,7 +619,6 @@
 
         public static getTreeInfoTemplateForGuest(): string {
             var template = '';
-
             template += '<div id="content-header">';
             template +=     '<div class="tree-info-name"><div class="input-food"><%= foodname %></div>&nbsp;<%= treename %></div>';
             template +=     '<div class="btn-close evt-close">';
@@ -542,72 +630,63 @@
             //template += '<div class="tree-info-coordinate"><div>@&nbsp;</div><div class="input-lat"><%= lat %></div>,&nbsp;<div class="input-lng"><%= lng %></div></div>';
 
             template += '<div class="info-group">';
-            template += '<div class="input-address">&nbsp;</div>';
+            template +=     '<div class="input-address">&nbsp;</div>';
             template += '</div>';
 
             template += '<div class="hr"><hr /></div>';
             template += '<div class="info-header"><i class="fa fa-sticky-note fa-1x"></i> Description</div>';
             template += '<div class="info-group">';
-            template += '<div class="input-description"><%= description %></div>';
+            template +=     '<div class="input-description"><%= description %></div>';
             template += '</div>';
 
             template += '<div class="hr"><hr /></div>';
             template += '<div class="info-header"><i class="fa fa-leaf fa-1x"></i> Recent Comments</div>';
             template += '<div id="list-comments" class="info-group">';
-            template += '<div>&nbsp;</div>';
+            template +=     '<div>&nbsp;</div>';
             template += '</div>';
 
             template += '<div class="hr"><hr /></div>';
             template += '<div class="info-button">';
-
-            template += '<div class="btn-white btn-small btn-action evt-detail"><i class="fa fa-heartbeat"></i> See Detail</div>';
-            template += '<div class="btn-white btn-small btn-action evt-post"><i class="fa fa-sticky-note-o"></i> Post Note</div>';
-
+            template +=     '<div class="btn-white btn-small btn-action evt-detail"><i class="fa fa-heartbeat"></i> See Detail</div>';
+            template +=     '<div class="btn-white btn-small btn-action evt-post"><i class="fa fa-sticky-note-o"></i> Post Note</div>';
             template += '</div>';
-
-
             return template;
         }
 
         public static getTreeInfoTemplateForParent(): string {
             var template = '';
-
             template += '<div id="content-header">';
-            template += '<div class="tree-info-name"><div class="input-food"><%= foodname %></div>&nbsp;<%= treename %></div>';
-            template += '<div class="btn-close evt-close">';
-            template += '<i class="fa fa-remove"></i>';
-            template += '</div>';   // end of top-right-button button-close
+            template +=     '<div class="tree-info-name"><div class="input-food"><%= foodname %></div>&nbsp;<%= treename %></div>';
+            template +=     '<div class="btn-close evt-close">';
+            template +=         '<i class="fa fa-remove"></i>';
+            template +=     '</div>';   // end of top-right-button button-close
             template += '</div>';   // end of #wrapper-header
 
             //template += '<div class="tree-info-name"><div class="input-food"><%= foodname %></div>&nbsp;<%= treename %></div>';
             //template += '<div class="tree-info-coordinate"><div>@&nbsp;</div><div class="input-lat"><%= lat %></div>,&nbsp;<div class="input-lng"><%= lng %></div></div>';
 
             template += '<div class="info-group">';
-            template += '<div class="input-address">&nbsp;</div>';
+            template +=     '<div class="input-address">&nbsp;</div>';
             template += '</div>';
 
             template += '<div class="hr"><hr /></div>';
             template += '<div class="info-header"><i class="fa fa-sticky-note fa-1x"></i> Description</div>';
             template += '<div class="info-group">';
-            template += '<div class="input-description"><%= description %></div>';
+            template +=     '<div class="input-description"><%= description %></div>';
             template += '</div>';
 
             template += '<div class="hr"><hr /></div>';
             template += '<div class="info-header"><i class="fa fa-leaf fa-1x"></i> Recent Comments</div>';
             template += '<div id="list-comments" class="info-group">';
-            template += '<div>&nbsp;</div>';
+            template +=     '<div>&nbsp;</div>';
             template += '</div>';
 
             template += '<div class="hr"><hr /></div>';
             template += '<div class="info-button">';
-
-            template += '<div class="btn-white btn-small btn-action evt-detail"><i class="fa fa-heartbeat"></i> See Detail</div>';
-            template += '<div class="btn-white btn-small btn-action evt-adopt"><i class="fa  fa-user-plus"></i> Adopt Tree</div>';
-            template += '<div class="btn-white btn-small btn-action evt-post"><i class="fa fa-sticky-note-o"></i> Post Note</div>';
-
+            template +=     '<div class="btn-white btn-small btn-action evt-detail"><i class="fa fa-heartbeat"></i> See Detail</div>';
+            template +=     '<div class="btn-white btn-small btn-action evt-adopt"><i class="fa  fa-user-plus"></i> Adopt Tree</div>';
+            template +=     '<div class="btn-white btn-small btn-action evt-post"><i class="fa fa-sticky-note-o"></i> Post Note</div>';
             template += '</div>';
-
-
             return template;
         }
 
@@ -724,7 +803,7 @@
         public static getTreesFilterListTemplateForGuest(): string {
             var template = '';
             template += '<div class="frame-inner">';
-            template += '<div class="text-header"><%= header %></div>';
+            template += '<div class="text-header"><%= header %> <span class="icon-header evt-reset-filter"><i class="fa fa-refresh"></i></span></div>';
             template += '<div id="content-filter-list">';
             template +=     '<div class="text-label"><i class="fa fa-caret-right"></i> Owndership</div>';
             template +=     '<div class="btn-green btn-small btn-filter filter-owner-all active">Public & Private</div>';
@@ -1867,7 +1946,7 @@
         }
 
 
-        public static getAcountViewTemplateForParent(): string {
+        public static getAccountViewTemplateForParent(): string {
             var template = '';
             template += '<div id="wrapper-login">';
 
@@ -1882,7 +1961,7 @@
 
             template +=     '<div id="content-login">';
             template +=         '<div class="info-group">';
-            template +=             '<div class="text-label"><i class="fa fa-caret-right"></i> <i>You are logged in as </i><strong><%= contact %></strong>.</div>';
+            template +=             '<div class="text-label"><i class="fa fa-caret-right"></i> <i>Account: </i><strong><%= contact %></strong></div>';
             template +=         '</div>';   // end of .info-group
 
             template +=         '<hr />';

@@ -13161,6 +13161,12 @@ button.close {
     #content-nav .evt-trees {
         display: none;
     }
+    #content-nav .evt-parents {
+        display: none;
+    }
+    #content-nav .evt-donations {
+        display: none;
+    }
     #content-nav .text-parent {
         padding-top: 8px;
         font-size: x-small;
@@ -15186,7 +15192,7 @@ button.close {
         height: 100%;
         pointer-events: none;
         padding: 60px 8px 8px 8px;
-        overflow-y: hidden;
+        overflow-y: auto;
         color: #ffffff;
     }
     #wrapper-treeinfo div {
@@ -15364,6 +15370,13 @@ button.close {
         color: rgba(255, 255, 255, 1);
         padding: 2px 0 4px 0;
     }
+    #content-mapfilter .icon-header {
+        position: relative;
+        top: -6px;
+        left: 4px;
+        font-size: medium;
+        cursor: pointer;
+    }
     #content-mapfilter hr {
         border-top: 1px solid rgba(255, 255, 255, 0.75);
         margin: 4px 0;
@@ -15377,16 +15390,30 @@ button.close {
     #wrapper-mapfilter .btn-mapfilter {
         width: 48px;
         height: 48px;
-        padding-top: 4px;
+        padding-top: 2px;
         background-color: rgba(94, 78, 81, 0.95);
         pointer-events: all;
         border-color: rgba(255, 255, 255, 1);
         border-right: 2px solid rgba(255, 255, 255, 1);
         border-top: 2px solid rgba(255, 255, 255, 1);
         border-bottom: 2px solid rgba(255, 255, 255, 1);
-        color: rgba(255, 255, 255, 1);
-        font-size: x-large;
         cursor: pointer;
+    }
+    #wrapper-mapfilter .btn-mapfilter .icon-mapfilter-status {
+        font-size: large;
+        color: rgba(255, 255, 255, 1);
+    }
+    #wrapper-mapfilter .btn-mapfilter .text-mapfilter-status {
+        line-height: 12px;
+        font-size: small;
+        font-weight: 700;
+        color: rgba(255, 255, 255, 1);
+    }
+    #wrapper-mapfilter .btn-mapfilter .icon-mapfilter-status.active {
+        color: #84a756;
+    }
+    #wrapper-mapfilter .btn-mapfilter .text-mapfilter-status.active {
+        color: #84a756;
     }
     #wrapper-mapfilter .deco-mapfilter {
         width: 40px;
@@ -15401,6 +15428,9 @@ button.close {
 @media only screen and (orientation: portrait) {
     #wrapper-mapmenu {
         width: 100%;
+    }
+    #wrapper-treeinfo {
+        max-height: 75%;
     }
 }
 
@@ -15429,7 +15459,7 @@ button.close {
         max-width: 320px;
     }
     #wrapper-treeinfo #list-comments {
-        height: 6%;
+        height: 12%;
     }
 }
 @media only screen and (min-width: 481px) and (max-width: 568px) and (orientation: landscape) {
@@ -15440,7 +15470,7 @@ button.close {
         max-width: 320px;
     }
     #wrapper-treeinfo #list-comments {
-        height: 6%;
+        height: 12%;
     }
 }
     
@@ -15452,7 +15482,7 @@ button.close {
         max-width: 360px;
     }
     #wrapper-treeinfo #list-comments {
-        height: 26%;
+        height: 28%;
     }
 }
 
@@ -15464,7 +15494,7 @@ button.close {
         max-width: 420px;
     }
     #wrapper-treeinfo #list-comments {
-        height: 32%;
+        height: 36%;
     }
 }
 

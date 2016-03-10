@@ -39,7 +39,7 @@
             var template = _.template(Template.getNavViewTemplate());
             self.$el.html(template({}));
             self.setElement(Setting.getNavWrapperElement());
-            self.renderNavManageItems();
+            self.renderNavItems();
             return self;
         }
 
@@ -47,7 +47,7 @@
             super.update(args);
             var self: NavView = this;
             if (self.bDebug) console.log(NavView.TAG + "update()");
-            self.renderNavManageItems();
+            self.renderNavItems();
             return self;
         }
 
@@ -70,13 +70,19 @@
         /**
          * Render navigation menu items based on login / admin status
          */
-        public renderNavManageItems(): void {
+        public renderNavItems(): void {
             var self: NavView = this;
             var template: any;
             Controller.checkIsLoggedIn(function (response) {
                 self._contact = response.contact;
                 Controller.checkIsAdmin(function () {
                     if (self.bDebug) console.log(NavView.TAG + "Logged in as admin");
+                    template = _.template(Template.getNavViewTemplateForAdmin());
+                    self.$('#content-nav').html(template({
+                        contact: "",
+                    }));
+                    self.resize();
+                    self.setActiveNavItem(View.getViewStatus());
                 }, function () {
                     if (self.bDebug) console.log(NavView.TAG + "Logged in as parent");
                     template = _.template(Template.getNavViewTemplateForParent());
@@ -92,6 +98,7 @@
                 if (self.bDebug) console.log(NavView.TAG + "Not logged in");
                 template = _.template(Template.getNavViewTemplateForGuest());
                 self.$('#content-nav').html(template({}));
+                self.resize();
                 self.setActiveNavItem(View.getViewStatus());
             }, function () {
                 if (self.bDebug) console.log(NavView.TAG + "Error occured");

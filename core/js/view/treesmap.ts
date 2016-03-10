@@ -357,6 +357,33 @@
             self._applyFilter();
         }
 
+        private _resetFilter(event: Event): void {
+            var self: TreesMapViewForGuest = this;
+            // Set the status of right corner button based on filter on / off status
+            self.$('.filter-owner-all').addClass('active');
+            self.$('.filter-adopt-all').addClass('active');
+            self.$('.filter-flag-all').addClass('active');
+            self.$('.filter-rating-all').addClass('active');
+            self.$('.filter-last-all').addClass('active');
+            self.$('.filter-owner-item').removeClass('active');
+            self.$('.filter-adopt-item').removeClass('active');
+            self.$('.filter-flag-item').removeClass('active');
+            self.$('.filter-rating-item').removeClass('active');
+            self.$('.filter-last-item').removeClass('active');
+
+            if (self.$('.filter-owner-all').hasClass('active') && self.$('.filter-adopt-all').hasClass('active') && self.$('.filter-flag-all').hasClass('active') && self.$('.filter-rating-all').hasClass('active') && self.$('.filter-last-all').hasClass('active')) {
+                self.$('.icon-mapfilter-status').removeClass('active');
+                self.$('.text-mapfilter-status').removeClass('active');
+                self.$('.text-mapfilter-status').html('off');
+            } else {
+                self.$('.icon-mapfilter-status').addClass('active');
+                self.$('.text-mapfilter-status').addClass('active');
+                self.$('.text-mapfilter-status').html('on');
+            }
+
+            self._applyFilter();
+        }
+
         protected _clickFilter(event: Event): void {
             var self: TreesMapViewForGuest = this;
             // Ownership filter
@@ -475,6 +502,17 @@
                     $(event.currentTarget).addClass('active');
                     self.$('.filter-last-item').addClass('active');
                 }
+            }
+
+            // Set the status of right corner button based on filter on / off status
+            if (self.$('.filter-owner-all').hasClass('active') && self.$('.filter-adopt-all').hasClass('active') && self.$('.filter-flag-all').hasClass('active') && self.$('.filter-rating-all').hasClass('active') && self.$('.filter-last-all').hasClass('active')) {
+                self.$('.icon-mapfilter-status').removeClass('active');
+                self.$('.text-mapfilter-status').removeClass('active');
+                self.$('.text-mapfilter-status').html('off');
+            } else {
+                self.$('.icon-mapfilter-status').addClass('active');
+                self.$('.text-mapfilter-status').addClass('active');
+                self.$('.text-mapfilter-status').html('on');
             }
 
             // Apply filter

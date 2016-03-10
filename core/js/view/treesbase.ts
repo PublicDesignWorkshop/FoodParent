@@ -19,7 +19,7 @@
                 } else if (credential == CREDENTIAL_MODE.PARENT) {
                     view = new TreesMapViewForParent({ el: el });
                 } else if (credential == CREDENTIAL_MODE.ADMIN) {
-                    view = new TreesMapViewForParent({ el: el });
+                    view = new TreesMapViewForAdmin({ el: el });
                 }
                 view.setTreeId(id);
             } else if (viewMode == VIEW_MODE.TABLE) {
