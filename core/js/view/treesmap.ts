@@ -30,9 +30,9 @@
                 // Move the map slight off from the center using CRS projection
                 var point: L.Point = L.CRS.EPSG3857.latLngToPoint(self._selectedMarker.getLatLng(), self._map.getZoom());
                 if (View.getWidth() > View.getHeight()) {
-                    point.x += self._map.getSize().x * 0.25;
+                    point.x += self._map.getSize().x * 0.225;
                 } else {
-                    point.y -= self._map.getSize().y * 0.25;
+                    point.y -= self._map.getSize().y * 0.225;
                 }
                 self._map.panTo(L.CRS.EPSG3857.pointToLatLng(point, self._map.getZoom()));
             }
@@ -129,9 +129,9 @@
                     // Move the map slight off from the center using CRS projection
                     var point: L.Point = L.CRS.EPSG3857.latLngToPoint(self._selectedMarker.getLatLng(), self._map.getZoom());
                     if (View.getWidth() > View.getHeight()) {
-                        point.x += self._map.getSize().x * 0.25;
+                        point.x += self._map.getSize().x * 0.225;
                     } else {
-                        point.y -= self._map.getSize().y * 0.25;
+                        point.y -= self._map.getSize().y * 0.225;
                     }
                     self._map.panTo(L.CRS.EPSG3857.pointToLatLng(point, self._map.getZoom()));
                     // Close map filter for mobile portrait view

@@ -132,10 +132,43 @@ var FoodParent;
             return template;
         };
         Template.getTreesMapViewTemplateForParent = function () {
-            return Template.getTreesMapViewTemplateForGuest();
+            var template = '';
+            template += '<div id="content-map">';
+            template += '</div>'; // end of #content-map
+            template += '<div id="wrapper-mapfilter">';
+            template += '<div id="content-mapfilter">';
+            template += '</div>';
+            template += '<div id="wrapper-btn-mapfilter">';
+            template += '<div class="btn-mapfilter">';
+            template += '<div class="icon-mapfilter-status"><i class="fa fa-filter"></i></div>';
+            template += '<div class="text-mapfilter-status">off</div>';
+            template += '</div>';
+            template += '<div class="btn-location btn-action evt-location">';
+            template += '<div class="icon-location"><i class="fa fa-location-arrow"></i></div>';
+            template += '</div>';
+            template += '<div class="deco-mapfilter">';
+            template += '</div>';
+            template += '</div>'; // end of #wrapper-treeinfo
+            template += '</div>'; // end of #wrapper-mapfilter
+            template += '<div id="wrapper-treeinfo" class="hidden">';
+            template += '</div>'; // end of #wrapper-treeinfo
+            template += '<div id="wrapper-mapmenu">';
+            template += '<div id="wrapper-food-search">';
+            template += '<div id="wrapper-list-food" class="hidden">';
+            template += '<div id="list-food" class=""></div>';
+            template += '</div>'; // end of #wrapper-list-food
+            template += '<div class="bottom-filters">';
+            template += '<input id="checkbox-mytrees" type="checkbox" data-toggle="toggle" />';
+            template += '<div class="search-box form-group">';
+            template += '<input type="text" class="form-control" id="input-search-food" type="search" placeholder="Search by Food Name" value=""/>';
+            template += '</div>'; // end of .form-group
+            template += '</div>'; // end of .bottom-filters
+            template += '</div>'; // end of #wrapper-food-search
+            template += '</div>'; // end of #wrapper-mapmenu
+            return template;
         };
         Template.getTreesMapViewTemplateForAdmin = function () {
-            return Template.getTreesMapViewTemplateForGuest();
+            return Template.getTreesMapViewTemplateForParent();
         };
         Template.getFoodItemTemplate = function () {
             var template = "";
