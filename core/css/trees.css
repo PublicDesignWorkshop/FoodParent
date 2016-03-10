@@ -92,10 +92,10 @@
         right: 0;
         width: 100%;
         height: 100%;
-        pointer-events: none;
         padding: 60px 8px 8px 8px;
         overflow-y: auto;
         color: #ffffff;
+        pointer-events: none;
     }
     #wrapper-treeinfo div {
         pointer-events: all;
@@ -161,12 +161,12 @@
         -webkit-flex-grow: 1;
         flex-grow: 1;
     }
-    #wrapper-treeinfo .input-address {
-        height: 36px;
+    #wrapper-treeinfo .input-address, #wrapper-treeinfo .input-description {
+        max-height: 36px;
         overflow-y: auto;
     }
     #wrapper-treeinfo #list-comments {
-        height: 25%;
+        height: 30%;
         overflow-y: auto;
     }
     #wrapper-treeinfo .hr {
@@ -209,18 +209,34 @@
         -o-text-overflow: ellipsis;
         text-overflow: ellipsis;
     }
+    #wrapper-treeinfo label:hover input[type="checkbox"] ~ i.fa {
+        color: #5e4e51;
+    }
+    #wrapper-treeinfo label:hover {
+        color: #5e4e51;
+    }
+    #wrapper-treeinfo label.active:hover {
+        color: #5e4e51;
+    }
+    #wrapper-treeinfo .btn {
+        padding: 4px 8px;
+        margin: 4px;
+    }
+    #wrapper-treeinfo .btn.active {
+        background-color: rgba(0, 0, 0, 0.05);
+    }
 
     #wrapper-trees #wrapper-mapfilter {
         position: absolute;
-        top: 48px;
+        top: 0;
         left: -260px;
         width: 308px;
         height: 100%;
-        padding: 12px 0 116px 0;
+        padding: 60px 0 64px 0;
         pointer-events: none;
         display: -webkit-flex;
         display: flex;
-        opacity: 0.9;
+        opacity: 0.925;
         -moz-user-select: none;
         -ms-user-select: none;
         -webkit-user-select: none;
@@ -298,8 +314,27 @@
         border-color: rgba(255, 255, 255, 1);
         border-right: 2px solid rgba(255, 255, 255, 1);
         border-top: 2px solid rgba(255, 255, 255, 1);
+        cursor: pointer;
+    }
+    #wrapper-mapfilter .btn-location {
+        width: 48px;
+        height: 48px;
+        padding-top: 2px;
+        background-color: rgba(94, 78, 81, 0.95);
+        pointer-events: all;
+        border-color: rgba(255, 255, 255, 1);
+        border-right: 2px solid rgba(255, 255, 255, 1);
         border-bottom: 2px solid rgba(255, 255, 255, 1);
         cursor: pointer;
+    }
+    #wrapper-mapfilter .btn-location .icon-location {
+        padding-top: 2px;
+        font-size: x-large;
+        color: rgba(255, 255, 255, 1);
+    }
+    #wrapper-mapfilter .btn-location .icon-location:hover {
+        color: #84a756;
+        text-shadow: -1px -1px 1px rgba(0, 0, 0, 0.25);
     }
     #wrapper-mapfilter .btn-mapfilter .icon-mapfilter-status {
         font-size: large;
@@ -313,19 +348,22 @@
     }
     #wrapper-mapfilter .btn-mapfilter .icon-mapfilter-status.active {
         color: #84a756;
+        text-shadow: -1px -1px 1px rgba(0, 0, 0, 0.25);
     }
     #wrapper-mapfilter .btn-mapfilter .text-mapfilter-status.active {
         color: #84a756;
+        text-shadow: -1px -1px 1px rgba(0, 0, 0, 0.25);
     }
     #wrapper-mapfilter .deco-mapfilter {
         width: 40px;
         height: 100%;
         border-left: 2px solid rgba(255, 255, 255, 1);
     }
-    
-
-    
 }
+
+
+
+
 
 @media only screen and (orientation: portrait) {
     #wrapper-mapmenu {
@@ -333,6 +371,29 @@
     }
     #wrapper-treeinfo {
         max-height: 75%;
+    }
+}
+@media only screen and (max-height: 480px) and (orientation: portrait) {
+    #wrapper-treeinfo #list-comments {
+        height: 16%;
+    }
+    #wrapper-treeinfo .content-status {
+        display: none;
+    }
+}
+@media only screen and (min-height: 481px) and (max-height: 568px) and (orientation: portrait) {
+    #wrapper-treeinfo #list-comments {
+        height: 16%;
+    }
+}
+@media only screen and (min-height: 481px) and (max-height: 627px) and (orientation: portrait) {
+    #wrapper-treeinfo #list-comments {
+        height: 24%;
+    }
+}
+@media only screen and (min-height: 628px) and (max-height: 736px) and (orientation: portrait) {
+    #wrapper-treeinfo #list-comments {
+        height: 30%;
     }
 }
 
@@ -360,9 +421,6 @@
     #wrapper-treeinfo {
         max-width: 320px;
     }
-    #wrapper-treeinfo #list-comments {
-        height: 12%;
-    }
 }
 @media only screen and (min-width: 481px) and (max-width: 568px) and (orientation: landscape) {
     #wrapper-mapmenu {
@@ -370,9 +428,6 @@
     }
     #wrapper-treeinfo {
         max-width: 320px;
-    }
-    #wrapper-treeinfo #list-comments {
-        height: 12%;
     }
 }
     
@@ -383,9 +438,6 @@
     #wrapper-treeinfo {
         max-width: 360px;
     }
-    #wrapper-treeinfo #list-comments {
-        height: 28%;
-    }
 }
 
 @media only screen and (min-width: 668px) and (max-width: 736px) and (orientation: landscape) {
@@ -394,9 +446,6 @@
     }
     #wrapper-treeinfo {
         max-width: 420px;
-    }
-    #wrapper-treeinfo #list-comments {
-        height: 36%;
     }
 }
 

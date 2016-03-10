@@ -47,6 +47,7 @@ var FoodParent;
             this.removeTreeInfo = function () { };
             this.renderFilterList = function () { };
             this.closeMapFilter = function () { };
+            this.panToCurrentLocation = function () { };
         }
         TreesView.prototype.render = function (args) {
             _super.prototype.render.call(this, args);

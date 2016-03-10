@@ -49,10 +49,11 @@
         public setTreeId(id: number) {
             this._id = id;
         }
-        public renderTreeInfo = (tree: Tree) => {}
+        public renderTreeInfo = (tree?: Tree) => { }
         public removeTreeInfo = () => { }
-        public renderFilterList = () => {}
-        public _applyFilter(event?: Event) {}
-        public closeMapFilter = () => {}
+        public renderFilterList = () => { }
+        public _applyFilter(event?: Event) { }
+        public closeMapFilter = () => { }
+        public panToCurrentLocation = () => { }
     }
 }

@@ -323,7 +323,7 @@
             var trees: Trees = new Trees();
             $.each(Model.getAdopts().models, function (index: number, adopt: Adopt) {
                 if (adopt.getParentId() == parentid) {
-                    var tree: Tree = Model.getTrees().findWhere({ id: adopt.getTreeId() });
+                    var tree: Tree = self.findWhere({ id: adopt.getTreeId() });
                     trees.add(tree);
                 }
             });

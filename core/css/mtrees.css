@@ -42,21 +42,7 @@
         overflow: auto;
     }
 
-    #wrapper-treeinfo label:hover input[type="checkbox"] ~ i.fa {
-        color: #5e4e51;
-    }
-    #wrapper-treeinfo label:hover {
-        color: #5e4e51;
-    }
-    #wrapper-treeinfo label.active:hover {
-        color: #5e4e51;
-    }
-    #wrapper-treeinfo .flag-radio.active {
-        background-color: rgba(0, 0, 0, 0.05);
-    }
-    #wrapper-treeinfo .ownership-radio.active {
-        background-color: rgba(0, 0, 0, 0.05);
-    }
+    
 
     #wrapper-treeinfo .item-activity i {
         padding: 2px 2px 0 0;

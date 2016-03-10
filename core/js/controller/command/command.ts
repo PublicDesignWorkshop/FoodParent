@@ -204,13 +204,11 @@
         }
         public execute(): any {
             var self: RenderAdoptTreeViewCommand = this;
-            var view: AlertView = AdoptTreeViewFactory.create(self._el, self._tree).render();
+            var view: PopupView = AdoptTreeViewFactory.create(self._el, self._tree).render();
             View.setPopupView(view);
             View.setViewStatus(VIEW_STATUS.ADOPT_TREE);
         }
-        public undo(): any {
-
-        }
+        public undo(): any {}
     }
 
     export class RenderUnadoptTreeViewCommand implements Command {
@@ -223,13 +221,11 @@
         }
         public execute(): any {
             var self: RenderUnadoptTreeViewCommand = this;
-            var view: AlertView = UnadoptTreeViewFactory.create(self._el, self._tree).render();
+            var view: PopupView = UnadoptTreeViewFactory.create(self._el, self._tree).render();
             View.setPopupView(view);
-            View.setViewStatus(VIEW_STATUS.ADOPT_TREE);
+            View.setViewStatus(VIEW_STATUS.UNADOPT_TREE);
         }
-        public undo(): any {
-
-        }
+        public undo(): any {}
     }
 
     export class RenderImageNoteViewCommand implements Command {
@@ -348,11 +344,44 @@
                 }, self._delay);
             }
             View.popViewStatus();
+        }
+        public undo(): any {}
+    }
+
+    export class RefreshCurrentViewCommand implements Command {
+        constructor(args?: any) {
+            var self: RefreshCurrentViewCommand = this;
+        }
+        public execute(): any {
+            var self: RefreshCurrentViewCommand = this;
+            if (View.getViewStatus() == VIEW_STATUS.TREES) {
+                if (View.getTreesView()) {
+                    View.getTreesView()._applyFilter();
+                    View.getTreesView().renderTreeInfo();
+                }
+            } else if (View.getViewStatus() == VIEW_STATUS.DETAIL_TREE) {
+                if (View.getDetailTreeView()) {
+                    View.getDetailTreeView().renderMenu();
+                }
+            }
             new SetActiveNavItemCommand({ el: Setting.getNavWrapperElement(), viewStatus: View.getViewStatus() }).execute();
         }
-        public undo(): any {
+        public undo(): any { }
+    }
 
+    export class UpdateCurrentPositionCommand implements Command {
+        constructor(args?: any) {
+            var self: UpdateCurrentPositionCommand = this;
         }
+        public execute(): any {
+            var self: UpdateCurrentPositionCommand = this;
+            if (View.getViewStatus() == VIEW_STATUS.TREES) {
+                if (View.getTreesView()) {
+                    View.getTreesView().panToCurrentLocation();
+                }
+            }
+        }
+        public undo(): any { }
     }
     
     export class NavigateCommand implements Command {

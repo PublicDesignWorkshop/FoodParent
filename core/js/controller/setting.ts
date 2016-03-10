@@ -183,6 +183,9 @@
                 case 901:
                     return "You need to sign in first by selecting <strong>'PARENT IN'</strong> menu.";
                     break;
+                case 902:
+                    return "You need to sign in as <strong>admin</strong> to perform this action.";
+                    break;
             }
             return "";
         }

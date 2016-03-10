@@ -50,7 +50,8 @@ var FoodParent;
         VIEW_STATUS[VIEW_STATUS["SERVER_RESPONSE_ERROR"] = 17] = "SERVER_RESPONSE_ERROR";
         VIEW_STATUS[VIEW_STATUS["SIGNUP"] = 18] = "SIGNUP";
         VIEW_STATUS[VIEW_STATUS["ADOPT_TREE"] = 19] = "ADOPT_TREE";
-        VIEW_STATUS[VIEW_STATUS["CHANGE_PASSWORD"] = 20] = "CHANGE_PASSWORD";
+        VIEW_STATUS[VIEW_STATUS["UNADOPT_TREE"] = 20] = "UNADOPT_TREE";
+        VIEW_STATUS[VIEW_STATUS["CHANGE_PASSWORD"] = 21] = "CHANGE_PASSWORD";
     })(FoodParent.VIEW_STATUS || (FoodParent.VIEW_STATUS = {}));
     var VIEW_STATUS = FoodParent.VIEW_STATUS;
     (function (VIEW_MODE) {
@@ -228,6 +229,7 @@ var FoodParent;
                     if (FoodParent.View.getViewStatus() != VIEW_STATUS.TREES) {
                         new FoodParent.NavigateCommand({ hash: 'trees', viewMode: VIEW_MODE.MAP, id: 0 }).execute();
                         new FoodParent.RemovePopupViewCommand({ delay: FoodParent.Setting.getRemovePopupDuration() }).execute();
+                        new FoodParent.RefreshCurrentViewCommand().execute();
                     }
                 }
                 else if (el.hasClass('people')) {
@@ -339,29 +341,26 @@ var FoodParent;
                     else if (el.hasClass('tree-detail')) {
                         new FoodParent.NavigateCommand({ hash: 'mtree', viewMode: VIEW_MODE.GRAPHIC, id: options.tree }).execute();
                     }
-                    else if (el.hasClass('button-tree-adopt')) {
-                        FoodParent.Controller.checkLogin(function (response) {
-                            if (response.result == true || response.result == 'true') {
-                                new FoodParent.RenderAdoptTreeViewCommand({ el: FoodParent.Setting.getPopWrapperElement(), tree: options.tree }).execute();
-                            }
-                            else {
-                                new FoodParent.RenderMessageViewCommand({ el: FoodParent.Setting.getMessageWrapperElement(), message: FoodParent.Setting.getErrorMessage(response.code), undoable: false }).execute();
-                            }
+                    else if (el.hasClass('evt-adopt')) {
+                        FoodParent.Controller.checkIsLoggedIn(function (response) {
+                            new FoodParent.RenderAdoptTreeViewCommand({ el: FoodParent.Setting.getPopWrapperElement(), tree: options.tree }).execute();
                         }, function (response) {
+                            new FoodParent.RenderMessageViewCommand({ el: FoodParent.Setting.getMessageWrapperElement(), message: FoodParent.Setting.getErrorMessage(response.code), undoable: false }).execute();
+                        }, function () {
                             EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
                         });
                     }
-                    else if (el.hasClass('button-tree-unadopt')) {
-                        FoodParent.Controller.checkLogin(function (response) {
-                            if (response.result == true || response.result == 'true') {
-                                new FoodParent.RenderUnadoptTreeViewCommand({ el: FoodParent.Setting.getPopWrapperElement(), tree: options.tree }).execute();
-                            }
-                            else {
-                                new FoodParent.RenderMessageViewCommand({ el: FoodParent.Setting.getMessageWrapperElement(), message: FoodParent.Setting.getErrorMessage(response.code), undoable: false }).execute();
-                            }
+                    else if (el.hasClass('evt-unadopt')) {
+                        FoodParent.Controller.checkIsLoggedIn(function (response) {
+                            new FoodParent.RenderUnadoptTreeViewCommand({ el: FoodParent.Setting.getPopWrapperElement(), tree: options.tree }).execute();
                         }, function (response) {
+                            new FoodParent.RenderMessageViewCommand({ el: FoodParent.Setting.getMessageWrapperElement(), message: FoodParent.Setting.getErrorMessage(response.code), undoable: false }).execute();
+                        }, function () {
                             EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
                         });
+                    }
+                    else if (el.hasClass('evt-location')) {
+                        new FoodParent.UpdateCurrentPositionCommand().execute();
                     }
                     else if (el.hasClass('button-new-note')) {
                         var tree = FoodParent.Model.getTrees().findWhere({ id: parseInt(options.tree) });
@@ -474,6 +473,7 @@ var FoodParent;
                 case VIEW_STATUS.LOGIN:
                     if (el.hasClass('evt-close')) {
                         new FoodParent.RemovePopupViewCommand({ delay: FoodParent.Setting.getRemovePopupDuration() }).execute();
+                        new FoodParent.RefreshCurrentViewCommand().execute();
                     }
                     else if (el.hasClass('evt-submit')) {
                         if (options.contact != undefined && options.password != undefined) {
@@ -500,8 +500,56 @@ var FoodParent;
                     }
                     break;
                 case VIEW_STATUS.ADOPT_TREE:
-                    if (el.hasClass('adopt-cancel') || el.hasClass('button-close')) {
+                    if (el.hasClass('evt-close')) {
                         new FoodParent.RemoveAlertViewCommand({ delay: FoodParent.Setting.getRemovePopupDuration() }).execute();
+                    }
+                    else if (el.hasClass('evt-submit')) {
+                        if (options.tree) {
+                            FoodParent.Controller.checkIsLoggedIn(function (response) {
+                                var food = FoodParent.Model.getFoods().findWhere({ id: options.tree.getFoodId() });
+                                var person = FoodParent.Model.getPersons().findWhere({ id: parseInt(response.id) });
+                                EventHandler.handleAdoptionData(options.tree, person, DATA_MODE.CREATE, {}, function () {
+                                    EventHandler.handleDataChange("<strong><i>" + person.getName() + "</i></strong> has adopted <strong><i>" + food.getName() + " " + options.tree.getName() + "</i></strong> successfully.", false);
+                                    new FoodParent.RemovePopupViewCommand({ delay: FoodParent.Setting.getRemovePopupDuration() }).execute();
+                                    new FoodParent.RefreshCurrentViewCommand().execute();
+                                }, function () {
+                                    EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
+                                }, function () {
+                                    EventHandler.handleDataChange("<strong><i>" + person.getName() + "</i></strong> has unadopted <strong><i>" + food.getName() + " " + options.tree.getName() + "</i></strong> successfully.", false);
+                                });
+                            }, function (response) {
+                                new FoodParent.RenderMessageViewCommand({ el: FoodParent.Setting.getMessageWrapperElement(), message: FoodParent.Setting.getErrorMessage(response.code), undoable: false }).execute();
+                            }, function () {
+                                EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
+                            });
+                        }
+                    }
+                    break;
+                case VIEW_STATUS.UNADOPT_TREE:
+                    if (el.hasClass('evt-close')) {
+                        new FoodParent.RemoveAlertViewCommand({ delay: FoodParent.Setting.getRemovePopupDuration() }).execute();
+                    }
+                    else if (el.hasClass('evt-submit')) {
+                        if (options.tree) {
+                            FoodParent.Controller.checkIsLoggedIn(function (response) {
+                                var food = FoodParent.Model.getFoods().findWhere({ id: options.tree.getFoodId() });
+                                var person = FoodParent.Model.getPersons().findWhere({ id: parseInt(response.id) });
+                                EventHandler.handleAdoptionData(options.tree, person, DATA_MODE.DELETE, {}, function () {
+                                    EventHandler.handleDataChange("<strong><i>" + person.getName() + "</i></strong> has unadopted <strong><i>" + food.getName() + " " + options.tree.getName() + "</i></strong> successfully.", false);
+                                    new FoodParent.RemovePopupViewCommand({ delay: FoodParent.Setting.getRemovePopupDuration() }).execute();
+                                    new FoodParent.RefreshCurrentViewCommand().execute();
+                                }, function () {
+                                    EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
+                                }, function () {
+                                    EventHandler.handleDataChange("<strong><i>" + person.getName() + "</i></strong> has adopted <strong><i>" + food.getName() + " " + options.tree.getName() + "</i></strong> successfully.", false);
+                                    new FoodParent.RefreshCurrentViewCommand().execute();
+                                });
+                            }, function (response) {
+                                new FoodParent.RenderMessageViewCommand({ el: FoodParent.Setting.getMessageWrapperElement(), message: FoodParent.Setting.getErrorMessage(response.code), undoable: false }).execute();
+                            }, function () {
+                                EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
+                            });
+                        }
                     }
                     break;
                 case VIEW_STATUS.MANAGE_PEOPLE:
@@ -643,15 +691,15 @@ var FoodParent;
                 self._lastCommand.execute();
             }
         };
-        EventHandler.handleAdoptionData = function (tree, person, dataMode, args, success, error, undoSuccess) {
+        EventHandler.handleAdoptionData = function (tree, person, dataMode, args, success, error, undo) {
             var self = EventHandler._instance;
             self._lastCommand = null;
             switch (dataMode) {
                 case DATA_MODE.CREATE:
-                    self._lastCommand = new FoodParent.CreateAdoption({ tree: tree, person: person }, success, error, undoSuccess);
+                    self._lastCommand = new FoodParent.CreateAdoption({ tree: tree, person: person }, success, error, undo);
                     break;
                 case DATA_MODE.DELETE:
-                    self._lastCommand = new FoodParent.DeleteAdoption({ tree: tree, person: person }, success, error, undoSuccess);
+                    self._lastCommand = new FoodParent.DeleteAdoption({ tree: tree, person: person }, success, error, undo);
                     break;
             }
             if (self._lastCommand != undefined) {

@@ -249,7 +249,7 @@
     <TypeScriptCompile Include="core\js\model\ownership.ts" />
     <TypeScriptCompile Include="core\js\model\person.ts" />
     <TypeScriptCompile Include="core\js\model\tree.ts" />
-    <TypeScriptCompile Include="core\js\view\adoptionview.ts" />
+    <TypeScriptCompile Include="core\js\view\adoptview.ts" />
     <TypeScriptCompile Include="core\js\view\alertview.ts" />
     <TypeScriptCompile Include="core\js\view\gridformat\donationgridformat.ts" />
     <TypeScriptCompile Include="core\js\view\gridformat\locationgridformat.ts" />

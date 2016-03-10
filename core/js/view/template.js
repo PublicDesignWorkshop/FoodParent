@@ -96,39 +96,6 @@ var FoodParent;
             template += '</div>'; // end of #wrapper-trees
             return template;
         };
-        Template.getTreesMapViewTemplateForParent = function () {
-            var template = '';
-            template += '<div id="content-map">';
-            template += '</div>'; // end of #content-map
-            template += '<div id="wrapper-mapfilter">';
-            template += '<div id="content-mapfilter">';
-            template += '</div>';
-            template += '<div id="wrapper-btn-mapfilter">';
-            template += '<div class="btn-mapfilter">';
-            template += '<div class="icon-mapfilter-status"><i class="fa fa-filter"></i></div>';
-            template += '<div class="text-mapfilter-status">off</div>';
-            template += '</div>';
-            template += '<div class="deco-mapfilter">';
-            template += '</div>';
-            template += '</div>'; // end of #wrapper-treeinfo
-            template += '</div>'; // end of #wrapper-mapfilter
-            template += '<div id="wrapper-treeinfo" class="hidden">';
-            template += '</div>'; // end of #wrapper-treeinfo
-            template += '<div id="wrapper-mapmenu">';
-            template += '<div id="wrapper-food-search">';
-            template += '<div id="wrapper-list-food" class="hidden">';
-            template += '<div id="list-food" class=""></div>';
-            template += '</div>'; // end of #wrapper-list-food
-            template += '<div class="bottom-filters">';
-            template += '<input id="checkbox-mytrees" type="checkbox" data-toggle="toggle" />';
-            template += '<div class="search-box form-group">';
-            template += '<input type="text" class="form-control" id="input-search-food" type="search" placeholder="Search by Food Name" value=""/>';
-            template += '</div>'; // end of .form-group
-            template += '</div>'; // end of .bottom-filters
-            template += '</div>'; // end of #wrapper-food-search
-            template += '</div>'; // end of #wrapper-mapmenu
-            return template;
-        };
         Template.getTreesMapViewTemplateForGuest = function () {
             var template = '';
             template += '<div id="content-map">';
@@ -141,6 +108,9 @@ var FoodParent;
             template += '<div class="icon-mapfilter-status"><i class="fa fa-filter"></i></div>';
             template += '<div class="text-mapfilter-status">off</div>';
             template += '</div>';
+            template += '<div class="btn-location btn-action evt-location">';
+            template += '<div class="icon-location"><i class="fa fa-location-arrow"></i></div>';
+            template += '</div>';
             template += '<div class="deco-mapfilter">';
             template += '</div>';
             template += '</div>'; // end of #wrapper-treeinfo
@@ -160,6 +130,12 @@ var FoodParent;
             template += '</div>'; // end of #wrapper-food-search
             template += '</div>'; // end of #wrapper-mapmenu
             return template;
+        };
+        Template.getTreesMapViewTemplateForParent = function () {
+            return Template.getTreesMapViewTemplateForGuest();
+        };
+        Template.getTreesMapViewTemplateForAdmin = function () {
+            return Template.getTreesMapViewTemplateForGuest();
         };
         Template.getFoodItemTemplate = function () {
             var template = "";
@@ -315,73 +291,6 @@ var FoodParent;
             template += '<% }); %>';
             template += '</optgroup>';
             template += '</select>';
-            return template;
-        };
-        Template.getTreeInfoTemplateForAdmin = function () {
-            var template = '';
-            template += '<div id="content-header">';
-            template += '<div class="tree-info-name"><div class="input-food"><%= foodname %></div>&nbsp;<%= treename %></div>';
-            template += '<div class="btn-close evt-close">';
-            template += '<i class="fa fa-remove"></i>';
-            template += '</div>'; // end of top-right-button button-close
-            template += '</div>'; // end of #wrapper-header
-            template += '<div class="tree-info-coordinate"><div>@&nbsp;</div><div class="input-lat"><%= lat %></div>,&nbsp;<div class="input-lng"><%= lng %></div></div>';
-            template += '<div class="info-group">';
-            template += '<div class="input-address">&nbsp;</div>';
-            template += '</div>';
-            template += '<div class="hr"><hr /></div>';
-            template += '<div class="info-header"><i class="fa fa-sticky-note fa-1x"></i> Description</div>';
-            template += '<div class="info-group">';
-            template += '<div class="input-description"><%= description %></div>';
-            template += '</div>';
-            template += '<div class="hr"><hr /></div>';
-            template += '<div class="info-header"><i class="fa fa-user fa-1x"></i> Parents</div>';
-            template += '<div class="info-group info-group-flex">';
-            template += '<% _.each(persons.models, function (person, index) { %>';
-            template += '<% if (index < persons.models.length - 1) { %>';
-            template += '<div><%= person.getName() %>,&nbsp;</div>';
-            template += '<% } else { %>';
-            template += '<div><%= person.getName() %></div>';
-            template += '<% } %>';
-            template += '<% }); %>';
-            template += '</div>';
-            template += '<div class="hr"><hr /></div>';
-            template += '<div class="info-header"><i class="fa fa-tag fa-1x"></i> Status</div>';
-            template += '<div class="info-group">';
-            template += '<div data-toggle="buttons">';
-            template += '<% _.each(flags.models, function (flag) { %>';
-            template += '<label class="btn flag-radio" data-target="<%= flag.getId() %>">';
-            template += '<input type="checkbox" name="flag">';
-            template += '<i class="fa fa-square-o fa-1x"></i>';
-            template += '<i class="fa fa-check-square-o fa-1x"></i>';
-            template += ' <%= flag.getName() %></label>';
-            template += '<% }); %>';
-            template += '</div>';
-            template += '</div>';
-            template += '<div class="hr"><hr /></div>';
-            template += '<div class="info-header"><i class="fa fa-home fa-1x"></i> Ownership</div>';
-            template += '<div class="info-group">';
-            template += '<div data-toggle="buttons">';
-            template += '<% _.each(ownerships.models, function (ownership) { %>';
-            template += '<label class="btn ownership-radio" data-target="<%= ownership.getId() %>">';
-            template += '<input type="radio" name="ownership">';
-            template += '<i class="fa fa-circle-o fa-1x"></i>';
-            template += '<i class="fa fa-check-circle-o fa-1x"></i>';
-            template += ' <%= ownership.getName() %></label>';
-            template += '<% }); %>';
-            template += '</div>';
-            template += '</div>';
-            template += '<div class="hr"><hr /></div>';
-            template += '<div class="info-header"><i class="fa fa-leaf fa-1x"></i> Recent Comments</div>';
-            template += '<div id="list-comments" class="info-group">';
-            template += '<div>&nbsp;</div>';
-            template += '</div>';
-            template += '<div class="hr"><hr /></div>';
-            template += '<div class="info-button">';
-            template += '<div class="btn-white btn-small btn-action evt-detail"><i class="fa fa-heartbeat"></i> See Detail</div>';
-            template += '<div class="btn-white btn-small btn-action evt-adopt"><i class="fa  fa-user-plus"></i> Adopt Tree</div>';
-            template += '<div class="btn-white btn-small btn-action evt-post"><i class="fa fa-sticky-note-o"></i> Post Note</div>';
-            template += '</div>';
             return template;
         };
         Template.getTreeInfoTemplate = function () {
@@ -546,6 +455,21 @@ var FoodParent;
             template += '<div class="info-group">';
             template += '<div class="input-description"><%= description %></div>';
             template += '</div>';
+            template += '<div class="content-status">';
+            template += '<div class="hr"><hr /></div>';
+            template += '<div class="info-header"><i class="fa fa-tag fa-1x"></i> Status</div>';
+            template += '<div class="info-group">';
+            template += '<div data-toggle="buttons">';
+            template += '<% _.each(flags.models, function (flag) { %>';
+            template += '<label class="btn flag-radio" data-target="<%= flag.getId() %>">';
+            template += '<input type="checkbox" name="flag">';
+            template += '<i class="fa fa-square-o fa-1x"></i>';
+            template += '<i class="fa fa-check-square-o fa-1x"></i>';
+            template += ' <%= flag.getName() %></label>';
+            template += '<% }); %>';
+            template += '</div>';
+            template += '</div>';
+            template += '</div>';
             template += '<div class="hr"><hr /></div>';
             template += '<div class="info-header"><i class="fa fa-leaf fa-1x"></i> Recent Comments</div>';
             template += '<div id="list-comments" class="info-group">';
@@ -558,7 +482,7 @@ var FoodParent;
             template += '</div>';
             return template;
         };
-        Template.getTreeInfoTemplateForParent = function () {
+        Template.getUnadoptedTreeInfoTemplateForParent = function () {
             var template = '';
             template += '<div id="content-header">';
             template += '<div class="tree-info-name"><div class="input-food"><%= foodname %></div>&nbsp;<%= treename %></div>';
@@ -566,8 +490,6 @@ var FoodParent;
             template += '<i class="fa fa-remove"></i>';
             template += '</div>'; // end of top-right-button button-close
             template += '</div>'; // end of #wrapper-header
-            //template += '<div class="tree-info-name"><div class="input-food"><%= foodname %></div>&nbsp;<%= treename %></div>';
-            //template += '<div class="tree-info-coordinate"><div>@&nbsp;</div><div class="input-lat"><%= lat %></div>,&nbsp;<div class="input-lng"><%= lng %></div></div>';
             template += '<div class="info-group">';
             template += '<div class="input-address">&nbsp;</div>';
             template += '</div>';
@@ -575,6 +497,21 @@ var FoodParent;
             template += '<div class="info-header"><i class="fa fa-sticky-note fa-1x"></i> Description</div>';
             template += '<div class="info-group">';
             template += '<div class="input-description"><%= description %></div>';
+            template += '</div>';
+            template += '<div class="content-status">';
+            template += '<div class="hr"><hr /></div>';
+            template += '<div class="info-header"><i class="fa fa-tag fa-1x"></i> Status</div>';
+            template += '<div class="info-group">';
+            template += '<div data-toggle="buttons">';
+            template += '<% _.each(flags.models, function (flag) { %>';
+            template += '<label class="btn flag-radio" data-target="<%= flag.getId() %>">';
+            template += '<input type="checkbox" name="flag">';
+            template += '<i class="fa fa-square-o fa-1x"></i>';
+            template += '<i class="fa fa-check-square-o fa-1x"></i>';
+            template += ' <%= flag.getName() %></label>';
+            template += '<% }); %>';
+            template += '</div>';
+            template += '</div>';
             template += '</div>';
             template += '<div class="hr"><hr /></div>';
             template += '<div class="info-header"><i class="fa fa-leaf fa-1x"></i> Recent Comments</div>';
@@ -584,7 +521,187 @@ var FoodParent;
             template += '<div class="hr"><hr /></div>';
             template += '<div class="info-button">';
             template += '<div class="btn-white btn-small btn-action evt-detail"><i class="fa fa-heartbeat"></i> See Detail</div>';
-            template += '<div class="btn-white btn-small btn-action evt-adopt"><i class="fa  fa-user-plus"></i> Adopt Tree</div>';
+            template += '<div class="btn-white btn-small btn-action evt-adopt"><i class="fa fa-user-plus"></i> Adopt Tree</div>';
+            template += '<div class="btn-white btn-small btn-action evt-post"><i class="fa fa-sticky-note-o"></i> Post Note</div>';
+            template += '</div>';
+            return template;
+        };
+        Template.getAdoptedTreeInfoTemplateForParent = function () {
+            var template = '';
+            template += '<div id="content-header">';
+            template += '<div class="tree-info-name"><div class="input-food"><%= foodname %></div>&nbsp;<%= treename %></div>';
+            template += '<div class="btn-close evt-close">';
+            template += '<i class="fa fa-remove"></i>';
+            template += '</div>'; // end of top-right-button button-close
+            template += '</div>'; // end of #wrapper-header
+            template += '<div class="info-group">';
+            template += '<div class="input-address">&nbsp;</div>';
+            template += '</div>';
+            template += '<div class="hr"><hr /></div>';
+            template += '<div class="info-header"><i class="fa fa-sticky-note fa-1x"></i> Description</div>';
+            template += '<div class="info-group">';
+            template += '<div class="input-description"><%= description %></div>';
+            template += '</div>';
+            template += '<div class="content-status">';
+            template += '<div class="hr"><hr /></div>';
+            template += '<div class="info-header"><i class="fa fa-tag fa-1x"></i> Status</div>';
+            template += '<div class="info-group">';
+            template += '<div data-toggle="buttons">';
+            template += '<% _.each(flags.models, function (flag) { %>';
+            template += '<label class="btn flag-radio" data-target="<%= flag.getId() %>">';
+            template += '<input type="checkbox" name="flag">';
+            template += '<i class="fa fa-square-o fa-1x"></i>';
+            template += '<i class="fa fa-check-square-o fa-1x"></i>';
+            template += ' <%= flag.getName() %></label>';
+            template += '<% }); %>';
+            template += '</div>';
+            template += '</div>';
+            template += '</div>';
+            template += '<div class="hr"><hr /></div>';
+            template += '<div class="info-header"><i class="fa fa-leaf fa-1x"></i> Recent Comments</div>';
+            template += '<div id="list-comments" class="info-group">';
+            template += '<div>&nbsp;</div>';
+            template += '</div>';
+            template += '<div class="hr"><hr /></div>';
+            template += '<div class="info-button">';
+            template += '<div class="btn-white btn-small btn-action evt-detail"><i class="fa fa-heartbeat"></i> See Detail</div>';
+            template += '<div class="btn-white btn-small btn-action evt-unadopt"><i class="fa fa-user-times"></i> Unadopt Tree</div>';
+            template += '<div class="btn-white btn-small btn-action evt-post"><i class="fa fa-sticky-note-o"></i> Post Note</div>';
+            template += '</div>';
+            return template;
+        };
+        Template.getAdoptedTreeInfoTemplateForAdmin = function () {
+            var template = '';
+            template += '<div id="content-header">';
+            template += '<div class="tree-info-name"><div class="input-food"><%= foodname %></div>&nbsp;<%= treename %></div>';
+            template += '<div class="btn-close evt-close">';
+            template += '<i class="fa fa-remove"></i>';
+            template += '</div>'; // end of top-right-button button-close
+            template += '</div>'; // end of #wrapper-header
+            template += '<div class="tree-info-coordinate"><div>@&nbsp;</div><div class="input-lat"><%= lat %></div>,&nbsp;<div class="input-lng"><%= lng %></div></div>';
+            template += '<div class="info-group">';
+            template += '<div class="input-address">&nbsp;</div>';
+            template += '</div>';
+            template += '<div class="hr"><hr /></div>';
+            template += '<div class="info-header"><i class="fa fa-sticky-note fa-1x"></i> Description</div>';
+            template += '<div class="info-group">';
+            template += '<div class="input-description"><%= description %></div>';
+            template += '</div>';
+            template += '<div class="hr"><hr /></div>';
+            template += '<div class="info-header"><i class="fa fa-user fa-1x"></i> Parents</div>';
+            template += '<div class="info-group info-group-flex">';
+            template += '<% _.each(persons.models, function (person, index) { %>';
+            template += '<% if (index < persons.models.length - 1) { %>';
+            template += '<div><%= person.getName() %>,&nbsp;</div>';
+            template += '<% } else { %>';
+            template += '<div><%= person.getName() %></div>';
+            template += '<% } %>';
+            template += '<% }); %>';
+            template += '</div>';
+            template += '<div class="content-status">';
+            template += '<div class="hr"><hr /></div>';
+            template += '<div class="info-header"><i class="fa fa-tag fa-1x"></i> Status</div>';
+            template += '<div class="info-group">';
+            template += '<div data-toggle="buttons">';
+            template += '<% _.each(flags.models, function (flag) { %>';
+            template += '<label class="btn flag-radio" data-target="<%= flag.getId() %>">';
+            template += '<input type="checkbox" name="flag">';
+            template += '<i class="fa fa-square-o fa-1x"></i>';
+            template += '<i class="fa fa-check-square-o fa-1x"></i>';
+            template += ' <%= flag.getName() %></label>';
+            template += '<% }); %>';
+            template += '</div>';
+            template += '</div>';
+            template += '</div>';
+            template += '<div class="hr"><hr /></div>';
+            template += '<div class="info-header"><i class="fa fa-home fa-1x"></i> Ownership</div>';
+            template += '<div class="info-group">';
+            template += '<div data-toggle="buttons">';
+            template += '<% _.each(ownerships.models, function (ownership) { %>';
+            template += '<label class="btn ownership-radio" data-target="<%= ownership.getId() %>">';
+            template += '<input type="radio" name="ownership">';
+            template += '<i class="fa fa-circle-o fa-1x"></i>';
+            template += '<i class="fa fa-check-circle-o fa-1x"></i>';
+            template += ' <%= ownership.getName() %></label>';
+            template += '<% }); %>';
+            template += '</div>';
+            template += '</div>';
+            template += '<div class="hr"><hr /></div>';
+            template += '<div class="info-header"><i class="fa fa-leaf fa-1x"></i> Recent Comments</div>';
+            template += '<div id="list-comments" class="info-group">';
+            template += '<div>&nbsp;</div>';
+            template += '</div>';
+            template += '<div class="hr"><hr /></div>';
+            template += '<div class="info-button">';
+            template += '<div class="btn-white btn-small btn-action evt-detail"><i class="fa fa-heartbeat"></i> See Detail</div>';
+            template += '<div class="btn-white btn-small btn-action evt-unadopt"><i class="fa fa-user-times"></i> Unadopt Tree</div>';
+            template += '<div class="btn-white btn-small btn-action evt-post"><i class="fa fa-sticky-note-o"></i> Post Note</div>';
+            template += '</div>';
+            return template;
+        };
+        Template.getUnadoptedTreeInfoTemplateForAdmin = function () {
+            var template = '';
+            template += '<div id="content-header">';
+            template += '<div class="tree-info-name"><div class="input-food"><%= foodname %></div>&nbsp;<%= treename %></div>';
+            template += '<div class="btn-close evt-close">';
+            template += '<i class="fa fa-remove"></i>';
+            template += '</div>'; // end of top-right-button button-close
+            template += '</div>'; // end of #wrapper-header
+            template += '<div class="tree-info-coordinate"><div>@&nbsp;</div><div class="input-lat"><%= lat %></div>,&nbsp;<div class="input-lng"><%= lng %></div></div>';
+            template += '<div class="info-group">';
+            template += '<div class="input-address">&nbsp;</div>';
+            template += '</div>';
+            template += '<div class="hr"><hr /></div>';
+            template += '<div class="info-header"><i class="fa fa-sticky-note fa-1x"></i> Description</div>';
+            template += '<div class="info-group">';
+            template += '<div class="input-description"><%= description %></div>';
+            template += '</div>';
+            template += '<div class="hr"><hr /></div>';
+            template += '<div class="info-header"><i class="fa fa-user fa-1x"></i> Parents</div>';
+            template += '<div class="info-group info-group-flex">';
+            template += '<% _.each(persons.models, function (person, index) { %>';
+            template += '<% if (index < persons.models.length - 1) { %>';
+            template += '<div><%= person.getName() %>,&nbsp;</div>';
+            template += '<% } else { %>';
+            template += '<div><%= person.getName() %></div>';
+            template += '<% } %>';
+            template += '<% }); %>';
+            template += '</div>';
+            template += '<div class="hr"><hr /></div>';
+            template += '<div class="info-header"><i class="fa fa-tag fa-1x"></i> Status</div>';
+            template += '<div class="info-group">';
+            template += '<div data-toggle="buttons">';
+            template += '<% _.each(flags.models, function (flag) { %>';
+            template += '<label class="btn flag-radio" data-target="<%= flag.getId() %>">';
+            template += '<input type="checkbox" name="flag">';
+            template += '<i class="fa fa-square-o fa-1x"></i>';
+            template += '<i class="fa fa-check-square-o fa-1x"></i>';
+            template += ' <%= flag.getName() %></label>';
+            template += '<% }); %>';
+            template += '</div>';
+            template += '</div>';
+            template += '<div class="hr"><hr /></div>';
+            template += '<div class="info-header"><i class="fa fa-home fa-1x"></i> Ownership</div>';
+            template += '<div class="info-group">';
+            template += '<div data-toggle="buttons">';
+            template += '<% _.each(ownerships.models, function (ownership) { %>';
+            template += '<label class="btn ownership-radio" data-target="<%= ownership.getId() %>">';
+            template += '<input type="radio" name="ownership">';
+            template += '<i class="fa fa-circle-o fa-1x"></i>';
+            template += '<i class="fa fa-check-circle-o fa-1x"></i>';
+            template += ' <%= ownership.getName() %></label>';
+            template += '<% }); %>';
+            template += '</div>';
+            template += '</div>';
+            template += '<div class="hr"><hr /></div>';
+            template += '<div class="info-header"><i class="fa fa-leaf fa-1x"></i> Recent Comments</div>';
+            template += '<div id="list-comments" class="info-group">';
+            template += '<div>&nbsp;</div>';
+            template += '</div>';
+            template += '<div class="hr"><hr /></div>';
+            template += '<div class="info-button">';
+            template += '<div class="btn-white btn-small btn-action evt-detail"><i class="fa fa-heartbeat"></i> See Detail</div>';
+            template += '<div class="btn-white btn-small btn-action evt-adopt"><i class="fa fa-user-plus"></i> Adopt Tree</div>';
             template += '<div class="btn-white btn-small btn-action evt-post"><i class="fa fa-sticky-note-o"></i> Post Note</div>';
             template += '</div>';
             return template;
@@ -726,6 +843,9 @@ var FoodParent;
             return template;
         };
         Template.getTreesFilterListTemplateForParent = function () {
+            return Template.getTreesFilterListTemplateForGuest();
+        };
+        Template.getTreesFilterListTemplateForAdmin = function () {
             return Template.getTreesFilterListTemplateForGuest();
         };
         Template.getTreeFilterListTemplate = function () {
@@ -1749,49 +1869,51 @@ var FoodParent;
         Template.getAdoptTreeViewTemplate = function () {
             var template = '';
             template += '<div id="wrapper-tree-adopt">';
-            template += '<div class="outer-frame">';
-            template += '<div class="inner-frame">';
-            template += '<div class="wrapper-tree-adopt-content">';
-            template += '<div class="info-group">';
-            template += '<div class="name">Do you want to adopt <i><strong><%= treename %></strong></i>?</div>';
-            template += '</div>';
-            template += '<div class="info-button-group">';
-            template += '<div class="button-outer-frame2 button3"><div class="button-inner-frame2 adopt-submit">Adopt Tree</div></div>';
-            template += '</div>';
-            template += '<div class="info-button-group">';
-            template += '<div class="button-outer-frame2 button3"><div class="button-inner-frame2 adopt-cancel">Cancel</div></div>';
-            template += '</div>';
-            template += '</div>'; // end of .wrapper-login-content
-            template += '</div>'; // end of .inner-frame
-            template += '<div class="top-right-button button-close">';
-            template += '<i class="fa fa-remove fa-2x"></i>';
+            template += '<div id="content-header">';
+            template += '<div class="text-header"><%= header %></div>';
+            template += '<div class="btn-close evt-close">';
+            template += '<i class="fa fa-remove"></i>';
             template += '</div>'; // end of top-right-button button-close
-            template += '</div>'; // end of .outer-frame
-            template += '</div>'; // end of #wrapper-note
+            template += '</div>'; // end of #wrapper-header
+            template += '<hr />';
+            template += '<div id="content-login">';
+            template += '<div class="info-group">';
+            template += '<div class="text-label">Do you want to adopt <i><strong>\'<%= treename %>\'</strong></i> ?</div>';
+            template += '</div>'; // end of .info-group
+            template += '<hr />';
+            template += '<div class="info-button-group">';
+            template += '<div class="btn-brown btn-medium evt-submit">Adopt</div>';
+            template += '</div>'; // end of .info-button-group
+            template += '<div class="info-button-group">';
+            template += '<div class="btn-brown btn-medium evt-close">Cancel</div>';
+            template += '</div>'; // end of .info-button-group
+            template += '</div>'; // end of .content-login
+            template += '</div>'; // end of #wrapper-tree-adopt
             return template;
         };
         Template.getUnadoptTreeViewTemplate = function () {
             var template = '';
             template += '<div id="wrapper-tree-adopt">';
-            template += '<div class="outer-frame">';
-            template += '<div class="inner-frame">';
-            template += '<div class="wrapper-tree-adopt-content">';
-            template += '<div class="info-group">';
-            template += '<div class="name">Do you want to unadopt <i><strong><%= treename %></strong></i>?</div>';
-            template += '</div>';
-            template += '<div class="info-button-group">';
-            template += '<div class="button-outer-frame2 button3"><div class="button-inner-frame2 adopt-submit">Unadopt Tree</div></div>';
-            template += '</div>';
-            template += '<div class="info-button-group">';
-            template += '<div class="button-outer-frame2 button3"><div class="button-inner-frame2 adopt-cancel">Cancel</div></div>';
-            template += '</div>';
-            template += '</div>'; // end of .wrapper-login-content
-            template += '</div>'; // end of .inner-frame
-            template += '<div class="top-right-button button-close">';
-            template += '<i class="fa fa-remove fa-2x"></i>';
+            template += '<div id="content-header">';
+            template += '<div class="text-header"><%= header %></div>';
+            template += '<div class="btn-close evt-close">';
+            template += '<i class="fa fa-remove"></i>';
             template += '</div>'; // end of top-right-button button-close
-            template += '</div>'; // end of .outer-frame
-            template += '</div>'; // end of #wrapper-note
+            template += '</div>'; // end of #wrapper-header
+            template += '<hr />';
+            template += '<div id="content-login">';
+            template += '<div class="info-group">';
+            template += '<div class="text-label">Do you want to unadopt <i><strong>\'<%= treename %>\'</strong></i> ?</div>';
+            template += '</div>'; // end of .info-group
+            template += '<hr />';
+            template += '<div class="info-button-group">';
+            template += '<div class="btn-brown btn-medium evt-submit">Unadopt</div>';
+            template += '</div>'; // end of .info-button-group
+            template += '<div class="info-button-group">';
+            template += '<div class="btn-brown btn-medium evt-close">Cancel</div>';
+            template += '</div>'; // end of .info-button-group
+            template += '</div>'; // end of .content-login
+            template += '</div>'; // end of #wrapper-tree-adopt
             return template;
         };
         Template.getChangePasswordViewTemplate = function () {

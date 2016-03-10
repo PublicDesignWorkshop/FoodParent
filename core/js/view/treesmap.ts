@@ -27,11 +27,14 @@
             var self: TreesMapView = this;
             self._map.invalidateSize(false)
             if (self._selectedMarker) {
+                // Move the map slight off from the center using CRS projection
+                var point: L.Point = L.CRS.EPSG3857.latLngToPoint(self._selectedMarker.getLatLng(), self._map.getZoom());
                 if (View.getWidth() > View.getHeight()) {
-                    self._map.panTo(new L.LatLng(self._selectedMarker.getLatLng().lat, self._selectedMarker.getLatLng().lng + self._map.getSize().x * 0.0001));
+                    point.x += self._map.getSize().x * 0.25;
                 } else {
-                    self._map.panTo(new L.LatLng(self._selectedMarker.getLatLng().lat + self._map.getSize().y * 0.000075, self._selectedMarker.getLatLng().lng));
+                    point.y -= self._map.getSize().y * 0.25;
                 }
+                self._map.panTo(L.CRS.EPSG3857.pointToLatLng(point, self._map.getZoom()));
             }
         }
 
@@ -123,12 +126,15 @@
                     if (View.getMessageView()) {
                         View.getMessageView().setInvisible();
                     }
-                    
+                    // Move the map slight off from the center using CRS projection
+                    var point: L.Point = L.CRS.EPSG3857.latLngToPoint(self._selectedMarker.getLatLng(), self._map.getZoom());
                     if (View.getWidth() > View.getHeight()) {
-                        self._map.panTo(new L.LatLng(marker.getLatLng().lat, marker.getLatLng().lng + self._map.getSize().x * 0.00005));
+                        point.x += self._map.getSize().x * 0.25;
                     } else {
-                        self._map.panTo(new L.LatLng(marker.getLatLng().lat + self._map.getSize().y * 0.000075, marker.getLatLng().lng));
+                        point.y -= self._map.getSize().y * 0.25;
                     }
+                    self._map.panTo(L.CRS.EPSG3857.pointToLatLng(point, self._map.getZoom()));
+                    // Close map filter for mobile portrait view
                     if (View.getWidth() < View.getHeight()) {
                         self.closeMapFilter();
                     }
@@ -358,7 +364,7 @@
         }
 
         private _resetFilter(event: Event): void {
-            var self: TreesMapViewForGuest = this;
+            var self: TreesMapView = this;
             // Set the status of right corner button based on filter on / off status
             self.$('.filter-owner-all').addClass('active');
             self.$('.filter-adopt-all').addClass('active');
@@ -385,7 +391,7 @@
         }
 
         protected _clickFilter(event: Event): void {
-            var self: TreesMapViewForGuest = this;
+            var self: TreesMapView = this;
             // Ownership filter
             if ($(event.currentTarget).hasClass('filter-owner-item')) {
                 if ($(event.currentTarget).hasClass('active')) {
@@ -572,6 +578,80 @@
 
             // Update markers
             self.updateMarkers(trees);
+        }
+
+        protected _mouseClick(event: Event): void {
+            var self: TreesMapView = this;
+            if (self._selectedMarker != undefined) {
+                EventHandler.handleMouseClick($(event.currentTarget), self, { marker: self._selectedMarker, tree: self._selectedMarker.options.id });
+            } else {
+                EventHandler.handleMouseClick($(event.currentTarget), self, { marker: self._selectedMarker });
+            }
+        }
+
+        protected renderFlagInfo(flags: Array<number>): void {
+            var self: TreesMapView = this;
+            Controller.checkIsAdmin(function (response) {
+                $.each(self.$('.flag-radio'), function (index: number, item: JQuery) {
+                    var bFound: boolean = false;
+                    $.each(flags, function (index2: number, flag: number) {
+                        if (parseInt($(item).attr('data-target')) == flag) {
+                            bFound = true;
+                        }
+                    });
+                    if (bFound) {
+                        $(item).addClass('active');
+                        $(item).find('input').prop({ 'checked': 'checked' });
+                    } else {
+                        $(item).removeClass('active');
+                        $(item).find('input').prop({ 'checked': '' });
+                    }
+                    if (parseInt($(item).attr('data-target')) == 0) {
+                        $(this).attr('disabled', 'disabled');
+                        $(item).addClass('disabled');
+                    }
+                });
+            }, function (response) {
+                $.each(self.$('.flag-radio'), function (index: number, item: JQuery) {
+                    var bFound: boolean = false;
+                    $.each(flags, function (index2: number, flag: number) {
+                        if (parseInt($(item).attr('data-target')) == flag) {
+                            bFound = true;
+                        }
+                    });
+                    if (bFound) {
+                        $(item).addClass('active');
+                        $(item).find('input').prop({ 'checked': 'checked' });
+                        $(item).removeClass('hidden');
+                    } else {
+                        $(item).removeClass('active');
+                        $(item).find('input').prop({ 'checked': '' });
+                        $(item).addClass('hidden');
+                    }
+                    if (parseInt($(item).attr('data-target')) == 0) {
+                        $(this).attr('disabled', 'disabled');
+                        $(item).addClass('disabled');
+                    }
+                    $(item).css({ 'pointer-events': 'none' });
+                });
+            }, function () {
+                EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
+            });
+        }
+
+        public panToCurrentLocation = () => {
+            var self: TreesMapView = this;
+            Controller.updateGeoLocation(function (position: Position) {
+                self._location = new L.LatLng(position.coords.latitude, position.coords.longitude);
+                // Move the map slight off from the center using CRS projection
+                var point: L.Point = L.CRS.EPSG3857.latLngToPoint(self._location, self._map.getZoom());
+                if (View.getWidth() > View.getHeight()) {
+                    point.x += self._map.getSize().x * 0.2;
+                } else {
+                    point.y -= self._map.getSize().y * 0.2;
+                }
+                self._map.panTo(L.CRS.EPSG3857.pointToLatLng(point, self._map.getZoom()));
+            }, self.renderMapError);
         }
     }
 }

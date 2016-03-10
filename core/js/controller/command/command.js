@@ -193,8 +193,7 @@ var FoodParent;
             FoodParent.View.setPopupView(view);
             FoodParent.View.setViewStatus(FoodParent.VIEW_STATUS.ADOPT_TREE);
         };
-        RenderAdoptTreeViewCommand.prototype.undo = function () {
-        };
+        RenderAdoptTreeViewCommand.prototype.undo = function () { };
         return RenderAdoptTreeViewCommand;
     })();
     FoodParent.RenderAdoptTreeViewCommand = RenderAdoptTreeViewCommand;
@@ -208,10 +207,9 @@ var FoodParent;
             var self = this;
             var view = FoodParent.UnadoptTreeViewFactory.create(self._el, self._tree).render();
             FoodParent.View.setPopupView(view);
-            FoodParent.View.setViewStatus(FoodParent.VIEW_STATUS.ADOPT_TREE);
+            FoodParent.View.setViewStatus(FoodParent.VIEW_STATUS.UNADOPT_TREE);
         };
-        RenderUnadoptTreeViewCommand.prototype.undo = function () {
-        };
+        RenderUnadoptTreeViewCommand.prototype.undo = function () { };
         return RenderUnadoptTreeViewCommand;
     })();
     FoodParent.RenderUnadoptTreeViewCommand = RenderUnadoptTreeViewCommand;
@@ -323,13 +321,50 @@ var FoodParent;
                 }, self._delay);
             }
             FoodParent.View.popViewStatus();
-            new SetActiveNavItemCommand({ el: FoodParent.Setting.getNavWrapperElement(), viewStatus: FoodParent.View.getViewStatus() }).execute();
         };
-        RemovePopupViewCommand.prototype.undo = function () {
-        };
+        RemovePopupViewCommand.prototype.undo = function () { };
         return RemovePopupViewCommand;
     })();
     FoodParent.RemovePopupViewCommand = RemovePopupViewCommand;
+    var RefreshCurrentViewCommand = (function () {
+        function RefreshCurrentViewCommand(args) {
+            var self = this;
+        }
+        RefreshCurrentViewCommand.prototype.execute = function () {
+            var self = this;
+            if (FoodParent.View.getViewStatus() == FoodParent.VIEW_STATUS.TREES) {
+                if (FoodParent.View.getTreesView()) {
+                    FoodParent.View.getTreesView()._applyFilter();
+                    FoodParent.View.getTreesView().renderTreeInfo();
+                }
+            }
+            else if (FoodParent.View.getViewStatus() == FoodParent.VIEW_STATUS.DETAIL_TREE) {
+                if (FoodParent.View.getDetailTreeView()) {
+                    FoodParent.View.getDetailTreeView().renderMenu();
+                }
+            }
+            new SetActiveNavItemCommand({ el: FoodParent.Setting.getNavWrapperElement(), viewStatus: FoodParent.View.getViewStatus() }).execute();
+        };
+        RefreshCurrentViewCommand.prototype.undo = function () { };
+        return RefreshCurrentViewCommand;
+    })();
+    FoodParent.RefreshCurrentViewCommand = RefreshCurrentViewCommand;
+    var UpdateCurrentPositionCommand = (function () {
+        function UpdateCurrentPositionCommand(args) {
+            var self = this;
+        }
+        UpdateCurrentPositionCommand.prototype.execute = function () {
+            var self = this;
+            if (FoodParent.View.getViewStatus() == FoodParent.VIEW_STATUS.TREES) {
+                if (FoodParent.View.getTreesView()) {
+                    FoodParent.View.getTreesView().panToCurrentLocation();
+                }
+            }
+        };
+        UpdateCurrentPositionCommand.prototype.undo = function () { };
+        return UpdateCurrentPositionCommand;
+    })();
+    FoodParent.UpdateCurrentPositionCommand = UpdateCurrentPositionCommand;
     var NavigateCommand = (function () {
         function NavigateCommand(args) {
             var self = this;

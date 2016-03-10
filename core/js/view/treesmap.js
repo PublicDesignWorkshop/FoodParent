@@ -75,12 +75,16 @@ var FoodParent;
                         if (FoodParent.View.getMessageView()) {
                             FoodParent.View.getMessageView().setInvisible();
                         }
+                        // Move the map slight off from the center using CRS projection
+                        var point = L.CRS.EPSG3857.latLngToPoint(self._selectedMarker.getLatLng(), self._map.getZoom());
                         if (FoodParent.View.getWidth() > FoodParent.View.getHeight()) {
-                            self._map.panTo(new L.LatLng(marker.getLatLng().lat, marker.getLatLng().lng + self._map.getSize().x * 0.00005));
+                            point.x += self._map.getSize().x * 0.25;
                         }
                         else {
-                            self._map.panTo(new L.LatLng(marker.getLatLng().lat + self._map.getSize().y * 0.000075, marker.getLatLng().lng));
+                            point.y -= self._map.getSize().y * 0.25;
                         }
+                        self._map.panTo(L.CRS.EPSG3857.pointToLatLng(point, self._map.getZoom()));
+                        // Close map filter for mobile portrait view
                         if (FoodParent.View.getWidth() < FoodParent.View.getHeight()) {
                             self.closeMapFilter();
                         }
@@ -184,6 +188,21 @@ var FoodParent;
                 var self = _this;
                 self.$('#wrapper-mapfilter').animate({ left: 0 }, FoodParent.Setting.getFilterAnimDuration());
             };
+            this.panToCurrentLocation = function () {
+                var self = _this;
+                FoodParent.Controller.updateGeoLocation(function (position) {
+                    self._location = new L.LatLng(position.coords.latitude, position.coords.longitude);
+                    // Move the map slight off from the center using CRS projection
+                    var point = L.CRS.EPSG3857.latLngToPoint(self._location, self._map.getZoom());
+                    if (FoodParent.View.getWidth() > FoodParent.View.getHeight()) {
+                        point.x += self._map.getSize().x * 0.2;
+                    }
+                    else {
+                        point.y -= self._map.getSize().y * 0.2;
+                    }
+                    self._map.panTo(L.CRS.EPSG3857.pointToLatLng(point, self._map.getZoom()));
+                }, self.renderMapError);
+            };
             var self = this;
             self.bDebug = true;
             self._zoom = FoodParent.Setting.getDefaultMapZoomLevel();
@@ -198,12 +217,15 @@ var FoodParent;
             var self = this;
             self._map.invalidateSize(false);
             if (self._selectedMarker) {
+                // Move the map slight off from the center using CRS projection
+                var point = L.CRS.EPSG3857.latLngToPoint(self._selectedMarker.getLatLng(), self._map.getZoom());
                 if (FoodParent.View.getWidth() > FoodParent.View.getHeight()) {
-                    self._map.panTo(new L.LatLng(self._selectedMarker.getLatLng().lat, self._selectedMarker.getLatLng().lng + self._map.getSize().x * 0.0001));
+                    point.x += self._map.getSize().x * 0.25;
                 }
                 else {
-                    self._map.panTo(new L.LatLng(self._selectedMarker.getLatLng().lat + self._map.getSize().y * 0.000075, self._selectedMarker.getLatLng().lng));
+                    point.y -= self._map.getSize().y * 0.25;
                 }
+                self._map.panTo(L.CRS.EPSG3857.pointToLatLng(point, self._map.getZoom()));
             }
         };
         TreesMapView.prototype.render = function (args) {
@@ -560,6 +582,66 @@ var FoodParent;
             trees = trees.filterByFlagIds(flagIds);
             // Update markers
             self.updateMarkers(trees);
+        };
+        TreesMapView.prototype._mouseClick = function (event) {
+            var self = this;
+            if (self._selectedMarker != undefined) {
+                FoodParent.EventHandler.handleMouseClick($(event.currentTarget), self, { marker: self._selectedMarker, tree: self._selectedMarker.options.id });
+            }
+            else {
+                FoodParent.EventHandler.handleMouseClick($(event.currentTarget), self, { marker: self._selectedMarker });
+            }
+        };
+        TreesMapView.prototype.renderFlagInfo = function (flags) {
+            var self = this;
+            FoodParent.Controller.checkIsAdmin(function (response) {
+                $.each(self.$('.flag-radio'), function (index, item) {
+                    var bFound = false;
+                    $.each(flags, function (index2, flag) {
+                        if (parseInt($(item).attr('data-target')) == flag) {
+                            bFound = true;
+                        }
+                    });
+                    if (bFound) {
+                        $(item).addClass('active');
+                        $(item).find('input').prop({ 'checked': 'checked' });
+                    }
+                    else {
+                        $(item).removeClass('active');
+                        $(item).find('input').prop({ 'checked': '' });
+                    }
+                    if (parseInt($(item).attr('data-target')) == 0) {
+                        $(this).attr('disabled', 'disabled');
+                        $(item).addClass('disabled');
+                    }
+                });
+            }, function (response) {
+                $.each(self.$('.flag-radio'), function (index, item) {
+                    var bFound = false;
+                    $.each(flags, function (index2, flag) {
+                        if (parseInt($(item).attr('data-target')) == flag) {
+                            bFound = true;
+                        }
+                    });
+                    if (bFound) {
+                        $(item).addClass('active');
+                        $(item).find('input').prop({ 'checked': 'checked' });
+                        $(item).removeClass('hidden');
+                    }
+                    else {
+                        $(item).removeClass('active');
+                        $(item).find('input').prop({ 'checked': '' });
+                        $(item).addClass('hidden');
+                    }
+                    if (parseInt($(item).attr('data-target')) == 0) {
+                        $(this).attr('disabled', 'disabled');
+                        $(item).addClass('disabled');
+                    }
+                    $(item).css({ 'pointer-events': 'none' });
+                });
+            }, function () {
+                FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+            });
         };
         TreesMapView.TAG = "TreesMapView - ";
         return TreesMapView;

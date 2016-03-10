@@ -43,6 +43,9 @@ var FoodParent;
             };
             this.renderTreeInfo = function (tree) {
                 var self = _this;
+                if (tree == undefined && self._selectedMarker != undefined) {
+                    var tree = FoodParent.Model.getTrees().findWhere({ id: parseInt(self._selectedMarker.options.id) });
+                }
                 FoodParent.Controller.fetchAllFlagsAndOwners(function () {
                     var food = FoodParent.Model.getFoods().findWhere({ id: tree.getFoodId() });
                     var ownership = FoodParent.Model.getOwnerships().findWhere({ id: tree.getOwnershipId() });
@@ -50,15 +53,14 @@ var FoodParent;
                     var data = {
                         foodname: food.getName(),
                         treename: tree.getName(),
-                        //lat: tree.getLat().toFixed(4),
-                        //lng: tree.getLng().toFixed(4),
-                        //flags: Model.getFlags(),
-                        //ownerships: Model.getOwnerships(),
                         description: tree.getDescription(),
+                        flags: FoodParent.Model.getFlags(),
                     };
                     self.$('#wrapper-treeinfo').html(template(data));
                     self.$('#wrapper-treeinfo').removeClass('hidden');
+                    self.renderFlagInfo(tree.getFlags());
                     self.renderRecentComments(tree);
+                    // Render address either from the reverse geo-coding server or stored address
                     self.$('.input-address').replaceWith('<div class="input-address"></div>');
                     if (tree.getAddress().trim() == '') {
                         FoodParent.GeoLocation.reverseGeocoding(tree.getLocation(), function (data) {
@@ -84,6 +86,7 @@ var FoodParent;
                 "click #wrapper-food-search .form-control-feedback": "_resetSearchFood",
                 "click .item-food": "_applySearch",
                 "click .evt-reset-filter": "_resetFilter",
+                "click .btn-action": "_mouseClick",
             };
             self.delegateEvents();
         }

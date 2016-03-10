@@ -334,19 +334,13 @@
                 contentType: false, // Set content type to false as jQuery will tell the server its a query string request
                 success: function (response, textStatus, jqXHR) {
                     Controller.removeXHR(xhr1);
-                    if (typeof response.error === "undefined") {
-                        if (response.result == true || response.result == 'true') {   // Logged in
-                            if (success) {
-                                success(response);
-                            }
-                        } else if (response.result == false || response.result == 'false') {   // Not Logged in
-                            if (fail) {
-                                fail(response);
-                            }
+                    if (parseInt(response.code) == 400) {   // Is admin
+                        if (success) {
+                            success(response);
                         }
-                    } else {
-                        if (error) {
-                            error(response);    // TODO: need to pass error code if error happens
+                    } else {   // Is not admin
+                        if (fail) {
+                            fail(response);
                         }
                     }
                 },

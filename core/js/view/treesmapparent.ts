@@ -14,6 +14,7 @@
                 "click .item-food": "_applySearch",
                 "change #checkbox-mytrees": "_toggleMyTrees",
                 "click .evt-reset-filter": "_resetFilter",
+                "click .btn-action": "_mouseClick",
             };
             self.delegateEvents();
         }
@@ -78,45 +79,58 @@
 
             Controller.checkIsLoggedIn(function (response) {
                 self.$('#checkbox-mytrees').attr({ 'data-id': response.id });
-            }, function () {
+            }, function (response) {
                 // Handled as refreshing the page if it's not logged in
-                Backbone.history.loadUrl(Backbone.history.fragment);
+                new RenderMessageViewCommand({ el: Setting.getMessageWrapperElement(), message: Setting.getErrorMessage(response.code), undoable: false }).execute();
             }, function () {
                 EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
             });
         }
 
-        public renderTreeInfo = (tree: Tree) => {
+        public renderTreeInfo = (tree?: Tree) => {
             var self: TreesMapViewForParent = this;
+            if (tree == undefined && self._selectedMarker != undefined) {
+                var tree: Tree = Model.getTrees().findWhere({ id: parseInt(self._selectedMarker.options.id) });
+            }
             Controller.fetchAllFlagsAndOwners(function () {
-                var food: Food = Model.getFoods().findWhere({ id: tree.getFoodId() });
-                var ownership: Ownership = Model.getOwnerships().findWhere({ id: tree.getOwnershipId() });
-                var template = _.template(Template.getTreeInfoTemplateForParent());
-                var data = {
-                    foodname: food.getName(),
-                    treename: tree.getName(),
-                    //lat: tree.getLat().toFixed(4),
-                    //lng: tree.getLng().toFixed(4),
-                    //flags: Model.getFlags(),
-                    //ownerships: Model.getOwnerships(),
-                    description: tree.getDescription(),
-                    //persons: tree.getParents(),
-                }
-                self.$('#wrapper-treeinfo').html(template(data));
-                self.$('#wrapper-treeinfo').removeClass('hidden');
+                Controller.checkIsLoggedIn(function (response) {
+                    if (self._selectedMarker) {
+                        var adopt: Adopt = Model.getAdopts().findWhere({ tree: self._selectedMarker.options.id, parent: parseInt(response.id) });
+                        var food: Food = Model.getFoods().findWhere({ id: tree.getFoodId() });
+                        var ownership: Ownership = Model.getOwnerships().findWhere({ id: tree.getOwnershipId() });
+                        if (adopt) {
+                            var template = _.template(Template.getAdoptedTreeInfoTemplateForParent());
+                        } else {
+                            var template = _.template(Template.getUnadoptedTreeInfoTemplateForParent());
+                        }
+                        self.$('#wrapper-treeinfo').html(template({
+                            foodname: food.getName(),
+                            treename: tree.getName(),
+                            description: tree.getDescription(),
+                            flags: Model.getFlags(),
+                        }));
+                        self.$('#wrapper-treeinfo').removeClass('hidden');
 
-                self.renderRecentComments(tree);
-
-                self.$('.input-address').replaceWith('<div class="input-address"></div>');
-                if (tree.getAddress().trim() == '') {
-                    GeoLocation.reverseGeocoding(tree.getLocation(), function (data: ReverseGeoLocation) {
-                        self.$(".input-address").html(data.road + ", " + data.county + ", " + data.state + ", " + data.country + ", " + data.postcode);
-                    }, function () {
-                        EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
-                    });
-                } else {
-                    self.$(".input-address").html(tree.getAddress());
-                }
+                        self.renderFlagInfo(tree.getFlags());
+                        self.renderRecentComments(tree);
+                        // Render address either from the reverse geo-coding server or stored address
+                        self.$('.input-address').replaceWith('<div class="input-address"></div>');
+                        if (tree.getAddress().trim() == '') {
+                            GeoLocation.reverseGeocoding(tree.getLocation(), function (data: ReverseGeoLocation) {
+                                self.$(".input-address").html(data.road + ", " + data.county + ", " + data.state + ", " + data.country + ", " + data.postcode);
+                            }, function () {
+                                EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
+                            });
+                        } else {
+                            self.$(".input-address").html(tree.getAddress());
+                        }
+                    }
+                }, function (response) {
+                    // Handled as refreshing the page if it's not logged in
+                    new RenderMessageViewCommand({ el: Setting.getMessageWrapperElement(), message: Setting.getErrorMessage(response.code), undoable: false }).execute();
+                }, function () {
+                    EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
+                });
             }, function () {
                 EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
             });
@@ -186,5 +200,7 @@
             // Update markers
             self.updateMarkers(trees);
         }
+
+        
     }
 }

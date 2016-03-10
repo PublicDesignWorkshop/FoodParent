@@ -11,7 +11,7 @@
         ADD_DONATION_TREE, REMOVE_DONATION_TREE, UPDATE_DONATION_AMOUNT,
     }
     export enum VIEW_STATUS {
-        NONE, HOME, TREES, PARENT_TREES, GEO_ERROR, NETWORK_ERROR, CONFIRM, MANAGE_PEOPLE, MANAGE_ADOPTION, DETAIL_TREE, IMAGENOTE_TREE, POST_NOTE, MANAGE_DONATIONS, ADD_DONATION, DETAIL_DONATION, EDIT_DONATION, LOGIN, SERVER_RESPONSE_ERROR, SIGNUP, ADOPT_TREE,
+        NONE, HOME, TREES, PARENT_TREES, GEO_ERROR, NETWORK_ERROR, CONFIRM, MANAGE_PEOPLE, MANAGE_ADOPTION, DETAIL_TREE, IMAGENOTE_TREE, POST_NOTE, MANAGE_DONATIONS, ADD_DONATION, DETAIL_DONATION, EDIT_DONATION, LOGIN, SERVER_RESPONSE_ERROR, SIGNUP, ADOPT_TREE, UNADOPT_TREE,
         CHANGE_PASSWORD
     }
     export enum VIEW_MODE {
@@ -178,6 +178,7 @@
                     if (View.getViewStatus() != VIEW_STATUS.TREES) {
                         new NavigateCommand({ hash: 'trees', viewMode: VIEW_MODE.MAP, id: 0 }).execute();
                         new RemovePopupViewCommand({ delay: Setting.getRemovePopupDuration() }).execute();
+                        new RefreshCurrentViewCommand().execute();
                     }
                 } else if (el.hasClass('people')) {
                     Controller.checkAdmin(function (response) {
@@ -276,26 +277,24 @@
                         new RenderManageAdoptionViewCommand({ el: Setting.getPopWrapperElement(), tree: options.tree }).execute();
                     } else if (el.hasClass('tree-detail')) {
                         new NavigateCommand({ hash: 'mtree', viewMode: VIEW_MODE.GRAPHIC, id: options.tree }).execute();
-                    } else if (el.hasClass('button-tree-adopt')) {
-                        Controller.checkLogin(function (response) {
-                            if (response.result == true || response.result == 'true') {   // Already logged in
-                                new RenderAdoptTreeViewCommand({ el: Setting.getPopWrapperElement(), tree: options.tree }).execute();
-                            } else {
-                                new RenderMessageViewCommand({ el: Setting.getMessageWrapperElement(), message: Setting.getErrorMessage(response.code), undoable: false }).execute();
-                            }
+                    } else if (el.hasClass('evt-adopt')) {
+                        Controller.checkIsLoggedIn(function (response) {
+                            new RenderAdoptTreeViewCommand({ el: Setting.getPopWrapperElement(), tree: options.tree }).execute();
                         }, function (response) {
+                            new RenderMessageViewCommand({ el: Setting.getMessageWrapperElement(), message: Setting.getErrorMessage(response.code), undoable: false }).execute();
+                        }, function () {
                             EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
                         });
-                    } else if (el.hasClass('button-tree-unadopt')) {
-                        Controller.checkLogin(function (response) {
-                            if (response.result == true || response.result == 'true') {   // Already logged in
-                                new RenderUnadoptTreeViewCommand({ el: Setting.getPopWrapperElement(), tree: options.tree }).execute();
-                            } else {
-                                new RenderMessageViewCommand({ el: Setting.getMessageWrapperElement(), message: Setting.getErrorMessage(response.code), undoable: false }).execute();
-                            }
+                    } else if (el.hasClass('evt-unadopt')) {
+                        Controller.checkIsLoggedIn(function (response) {
+                            new RenderUnadoptTreeViewCommand({ el: Setting.getPopWrapperElement(), tree: options.tree }).execute();
                         }, function (response) {
+                            new RenderMessageViewCommand({ el: Setting.getMessageWrapperElement(), message: Setting.getErrorMessage(response.code), undoable: false }).execute();
+                        }, function () {
                             EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
                         });
+                    } else if (el.hasClass('evt-location')) {
+                        new UpdateCurrentPositionCommand().execute();
                     } else if (el.hasClass('button-new-note')) {
                         var tree: Tree = Model.getTrees().findWhere({ id: parseInt(options.tree) });
                         new RenderPostNoteViewCommand({ el: Setting.getPopWrapperElement(), tree: tree }).execute();
@@ -400,6 +399,7 @@
                 case VIEW_STATUS.LOGIN:
                     if (el.hasClass('evt-close')) {
                         new RemovePopupViewCommand({ delay: Setting.getRemovePopupDuration() }).execute();
+                        new RefreshCurrentViewCommand().execute();
                     } else if (el.hasClass('evt-submit')) {
                         if (options.contact != undefined && options.password != undefined) {
                             Controller.processLogin(options.contact, options.password, function (response) {
@@ -424,8 +424,54 @@
                     }
                     break;
                 case VIEW_STATUS.ADOPT_TREE:
-                    if (el.hasClass('adopt-cancel') || el.hasClass('button-close')) {
+                    if (el.hasClass('evt-close')) {
                         new RemoveAlertViewCommand({ delay: Setting.getRemovePopupDuration() }).execute();
+                    } else if (el.hasClass('evt-submit')) {
+                        if (options.tree) {
+                            Controller.checkIsLoggedIn(function (response) {
+                                var food: Food = Model.getFoods().findWhere({ id: options.tree.getFoodId() });
+                                var person: Person = Model.getPersons().findWhere({ id: parseInt(response.id) });
+                                EventHandler.handleAdoptionData(options.tree, person, DATA_MODE.CREATE, {}, function () {
+                                    EventHandler.handleDataChange("<strong><i>" + person.getName() + "</i></strong> has adopted <strong><i>" + food.getName() + " " + options.tree.getName() + "</i></strong> successfully.", false);
+                                    new RemovePopupViewCommand({ delay: Setting.getRemovePopupDuration() }).execute();
+                                    new RefreshCurrentViewCommand().execute();
+                                }, function () {
+                                    EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
+                                }, function () {
+                                    EventHandler.handleDataChange("<strong><i>" + person.getName() + "</i></strong> has unadopted <strong><i>" + food.getName() + " " + options.tree.getName() + "</i></strong> successfully.", false);
+                                });
+                            }, function (response) {
+                                new RenderMessageViewCommand({ el: Setting.getMessageWrapperElement(), message: Setting.getErrorMessage(response.code), undoable: false }).execute();
+                            }, function () {
+                                EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
+                            });
+                        }
+                    }
+                    break;
+                case VIEW_STATUS.UNADOPT_TREE:
+                    if (el.hasClass('evt-close')) {
+                        new RemoveAlertViewCommand({ delay: Setting.getRemovePopupDuration() }).execute();
+                    } else if (el.hasClass('evt-submit')) {
+                        if (options.tree) {
+                            Controller.checkIsLoggedIn(function (response) {
+                                var food: Food = Model.getFoods().findWhere({ id: options.tree.getFoodId() });
+                                var person: Person = Model.getPersons().findWhere({ id: parseInt(response.id) });
+                                EventHandler.handleAdoptionData(options.tree, person, DATA_MODE.DELETE, {}, function () {
+                                    EventHandler.handleDataChange("<strong><i>" + person.getName() + "</i></strong> has unadopted <strong><i>" + food.getName() + " " + options.tree.getName() + "</i></strong> successfully.", false);
+                                    new RemovePopupViewCommand({ delay: Setting.getRemovePopupDuration() }).execute();
+                                    new RefreshCurrentViewCommand().execute();
+                                }, function () {
+                                    EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
+                                }, function () {
+                                    EventHandler.handleDataChange("<strong><i>" + person.getName() + "</i></strong> has adopted <strong><i>" + food.getName() + " " + options.tree.getName() + "</i></strong> successfully.", false);
+                                    new RefreshCurrentViewCommand().execute();
+                                });
+                            }, function (response) {
+                                new RenderMessageViewCommand({ el: Setting.getMessageWrapperElement(), message: Setting.getErrorMessage(response.code), undoable: false }).execute();
+                            }, function () {
+                                EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
+                            });
+                        }
                     }
                     break;
                 case VIEW_STATUS.MANAGE_PEOPLE:
@@ -573,15 +619,15 @@
             }
         }
 
-        public static handleAdoptionData(tree: Tree, person: Person, dataMode: DATA_MODE, args: any, success?: Function, error?: Function, undoSuccess?: Function): void {
+        public static handleAdoptionData(tree: Tree, person: Person, dataMode: DATA_MODE, args: any, success?: Function, error?: Function, undo?: Function): void {
             var self: EventHandler = EventHandler._instance;
             self._lastCommand = null;
             switch (dataMode) {
                 case DATA_MODE.CREATE:
-                    self._lastCommand = new CreateAdoption({ tree: tree, person: person }, success, error, undoSuccess);
+                    self._lastCommand = new CreateAdoption({ tree: tree, person: person }, success, error, undo);
                     break;
                 case DATA_MODE.DELETE:
-                    self._lastCommand = new DeleteAdoption({ tree: tree, person: person }, success, error, undoSuccess);
+                    self._lastCommand = new DeleteAdoption({ tree: tree, person: person }, success, error, undo);
                     break;
 
             }

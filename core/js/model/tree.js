@@ -314,7 +314,7 @@ var FoodParent;
             var trees = new Trees();
             $.each(FoodParent.Model.getAdopts().models, function (index, adopt) {
                 if (adopt.getParentId() == parentid) {
-                    var tree = FoodParent.Model.getTrees().findWhere({ id: adopt.getTreeId() });
+                    var tree = self.findWhere({ id: adopt.getTreeId() });
                     trees.add(tree);
                 }
             });

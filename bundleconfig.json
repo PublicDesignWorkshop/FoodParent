@@ -95,7 +95,7 @@
       "core/js/view/mdonationsview.js",
       "core/js/view/mdonationview.js",
 
-      "core/js/view/adoptionview.js",
+      "core/js/view/adoptview.js",
       "core/js/view/passwordview.js",
 
 

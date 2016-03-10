@@ -3332,7 +3332,7 @@ select[multiple].input-lg {
           user-select: none;
   background-image: none;
   border: 1px solid transparent;
-  border-radius: 4px;
+  border-radius: 1px;
 }
 .btn:focus,
 .btn:active:focus,
@@ -3353,8 +3353,9 @@ select[multiple].input-lg {
 .btn.active {
   background-image: none;
   outline: 0;
-  -webkit-box-shadow: inset 0 3px 5px rgba(0, 0, 0, .125);
+  /*-webkit-box-shadow: inset 0 3px 5px rgba(0, 0, 0, .125);
           box-shadow: inset 0 3px 5px rgba(0, 0, 0, .125);
+  */
 }
 .btn.disabled,
 .btn[disabled],
@@ -13837,21 +13838,7 @@ button.close {
         overflow: auto;
     }
 
-    #wrapper-treeinfo label:hover input[type="checkbox"] ~ i.fa {
-        color: #5e4e51;
-    }
-    #wrapper-treeinfo label:hover {
-        color: #5e4e51;
-    }
-    #wrapper-treeinfo label.active:hover {
-        color: #5e4e51;
-    }
-    #wrapper-treeinfo .flag-radio.active {
-        background-color: rgba(0, 0, 0, 0.05);
-    }
-    #wrapper-treeinfo .ownership-radio.active {
-        background-color: rgba(0, 0, 0, 0.05);
-    }
+    
 
     #wrapper-treeinfo .item-activity i {
         padding: 2px 2px 0 0;
@@ -14995,83 +14982,55 @@ button.close {
     #wrapper-login .text-label {
         padding: 2px 8px;
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-    .wrapper-login-content {
-        padding: 4px;
-        height: 100%;
-    }
-
-    .wrapper-login-content .info-header {
-        text-align: left;
-        font-size: medium;
-        font-weight: 700;
-    }
-
-    .wrapper-login-content .info-group {
-        text-align: left;
-        padding: 8px 0;
-    }
-
-    .wrapper-login-content .info-button-group {
-        padding: 2px 0;
-    }
-
-    .wrapper-signup-content {
-        padding: 4px;
-        height: 100%;
-    }
-
-    .wrapper-signup-content input {
-        min-width: 320px;
-    }
-
-    .wrapper-signup-content .info-header {
-        text-align: left;
-        font-size: medium;
-        font-weight: 700;
-    }
-
-    .wrapper-signup-content .info-group {
-        text-align: left;
-        padding: 8px 0;
-    }
-
-    .wrapper-signup-content .info-button-group {
-        padding: 2px 0;
-    }
-
 }
 @media all {
-    .wrapper-tree-adopt-content {
-        padding: 4px;
-        height: 100%;
+    #wrapper-tree-adopt {
+        float: right;
+        max-width: 480px;
+    }
+    #wrapper-tree-adopt #content-header {
+        display: -webkit-flex;
+        display: flex;
+        margin: 0 0 8px 0;
+        color: #5e4e51;
+        font-size: xx-large;
+    }
+    #wrapper-tree-adopt hr {
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        margin: 2px 0;
+    }
+    #content-header .text-header {
+        -webkit-flex-grow: 1;
+        flex-grow: 1;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        -webkit-user-select: none;
+        user-select: none;
+        font-weight: 700;
+    }
+    #content-header .btn-close {
+        cursor: pointer;
     }
 
-    .wrapper-tree-adopt-content .info-header {
+    #wrapper-tree-adopt .info-group, #wrapper-tree-adopt label {
+        width: 100%;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        -webkit-user-select: none;
+        user-select: none;
+        color: #5e4e51;
+        margin: 4px 0;
         text-align: left;
         font-size: medium;
         font-weight: 700;
     }
 
-    .wrapper-tree-adopt-content .info-group {
-        text-align: left;
-        padding: 8px 0;
+    #wrapper-tree-adopt .info-button-group {
+        margin: 4px 0;
     }
 
-    .wrapper-tree-adopt-content .info-button-group {
-        padding: 2px 0;
+    #wrapper-tree-adopt .text-label {
+        padding: 2px 8px;
     }
 }
 @media all {
@@ -15190,10 +15149,10 @@ button.close {
         right: 0;
         width: 100%;
         height: 100%;
-        pointer-events: none;
         padding: 60px 8px 8px 8px;
         overflow-y: auto;
         color: #ffffff;
+        pointer-events: none;
     }
     #wrapper-treeinfo div {
         pointer-events: all;
@@ -15259,12 +15218,12 @@ button.close {
         -webkit-flex-grow: 1;
         flex-grow: 1;
     }
-    #wrapper-treeinfo .input-address {
-        height: 36px;
+    #wrapper-treeinfo .input-address, #wrapper-treeinfo .input-description {
+        max-height: 36px;
         overflow-y: auto;
     }
     #wrapper-treeinfo #list-comments {
-        height: 25%;
+        height: 30%;
         overflow-y: auto;
     }
     #wrapper-treeinfo .hr {
@@ -15307,18 +15266,34 @@ button.close {
         -o-text-overflow: ellipsis;
         text-overflow: ellipsis;
     }
+    #wrapper-treeinfo label:hover input[type="checkbox"] ~ i.fa {
+        color: #5e4e51;
+    }
+    #wrapper-treeinfo label:hover {
+        color: #5e4e51;
+    }
+    #wrapper-treeinfo label.active:hover {
+        color: #5e4e51;
+    }
+    #wrapper-treeinfo .btn {
+        padding: 4px 8px;
+        margin: 4px;
+    }
+    #wrapper-treeinfo .btn.active {
+        background-color: rgba(0, 0, 0, 0.05);
+    }
 
     #wrapper-trees #wrapper-mapfilter {
         position: absolute;
-        top: 48px;
+        top: 0;
         left: -260px;
         width: 308px;
         height: 100%;
-        padding: 12px 0 116px 0;
+        padding: 60px 0 64px 0;
         pointer-events: none;
         display: -webkit-flex;
         display: flex;
-        opacity: 0.9;
+        opacity: 0.925;
         -moz-user-select: none;
         -ms-user-select: none;
         -webkit-user-select: none;
@@ -15396,8 +15371,27 @@ button.close {
         border-color: rgba(255, 255, 255, 1);
         border-right: 2px solid rgba(255, 255, 255, 1);
         border-top: 2px solid rgba(255, 255, 255, 1);
+        cursor: pointer;
+    }
+    #wrapper-mapfilter .btn-location {
+        width: 48px;
+        height: 48px;
+        padding-top: 2px;
+        background-color: rgba(94, 78, 81, 0.95);
+        pointer-events: all;
+        border-color: rgba(255, 255, 255, 1);
+        border-right: 2px solid rgba(255, 255, 255, 1);
         border-bottom: 2px solid rgba(255, 255, 255, 1);
         cursor: pointer;
+    }
+    #wrapper-mapfilter .btn-location .icon-location {
+        padding-top: 2px;
+        font-size: x-large;
+        color: rgba(255, 255, 255, 1);
+    }
+    #wrapper-mapfilter .btn-location .icon-location:hover {
+        color: #84a756;
+        text-shadow: -1px -1px 1px rgba(0, 0, 0, 0.25);
     }
     #wrapper-mapfilter .btn-mapfilter .icon-mapfilter-status {
         font-size: large;
@@ -15411,19 +15405,22 @@ button.close {
     }
     #wrapper-mapfilter .btn-mapfilter .icon-mapfilter-status.active {
         color: #84a756;
+        text-shadow: -1px -1px 1px rgba(0, 0, 0, 0.25);
     }
     #wrapper-mapfilter .btn-mapfilter .text-mapfilter-status.active {
         color: #84a756;
+        text-shadow: -1px -1px 1px rgba(0, 0, 0, 0.25);
     }
     #wrapper-mapfilter .deco-mapfilter {
         width: 40px;
         height: 100%;
         border-left: 2px solid rgba(255, 255, 255, 1);
     }
-    
-
-    
 }
+
+
+
+
 
 @media only screen and (orientation: portrait) {
     #wrapper-mapmenu {
@@ -15431,6 +15428,29 @@ button.close {
     }
     #wrapper-treeinfo {
         max-height: 75%;
+    }
+}
+@media only screen and (max-height: 480px) and (orientation: portrait) {
+    #wrapper-treeinfo #list-comments {
+        height: 16%;
+    }
+    #wrapper-treeinfo .content-status {
+        display: none;
+    }
+}
+@media only screen and (min-height: 481px) and (max-height: 568px) and (orientation: portrait) {
+    #wrapper-treeinfo #list-comments {
+        height: 16%;
+    }
+}
+@media only screen and (min-height: 481px) and (max-height: 627px) and (orientation: portrait) {
+    #wrapper-treeinfo #list-comments {
+        height: 24%;
+    }
+}
+@media only screen and (min-height: 628px) and (max-height: 736px) and (orientation: portrait) {
+    #wrapper-treeinfo #list-comments {
+        height: 30%;
     }
 }
 
@@ -15458,9 +15478,6 @@ button.close {
     #wrapper-treeinfo {
         max-width: 320px;
     }
-    #wrapper-treeinfo #list-comments {
-        height: 12%;
-    }
 }
 @media only screen and (min-width: 481px) and (max-width: 568px) and (orientation: landscape) {
     #wrapper-mapmenu {
@@ -15468,9 +15485,6 @@ button.close {
     }
     #wrapper-treeinfo {
         max-width: 320px;
-    }
-    #wrapper-treeinfo #list-comments {
-        height: 12%;
     }
 }
     
@@ -15481,9 +15495,6 @@ button.close {
     #wrapper-treeinfo {
         max-width: 360px;
     }
-    #wrapper-treeinfo #list-comments {
-        height: 28%;
-    }
 }
 
 @media only screen and (min-width: 668px) and (max-width: 736px) and (orientation: landscape) {
@@ -15492,9 +15503,6 @@ button.close {
     }
     #wrapper-treeinfo {
         max-width: 420px;
-    }
-    #wrapper-treeinfo #list-comments {
-        height: 36%;
     }
 }
 

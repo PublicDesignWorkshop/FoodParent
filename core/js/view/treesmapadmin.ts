@@ -14,6 +14,7 @@
                 "click .item-food": "_applySearch",
                 "change #checkbox-mytrees": "_toggleMyTrees",
                 "click .evt-reset-filter": "_resetFilter",
+                "click .btn-action": "_mouseClick",
             };
             self.delegateEvents();
         }
@@ -27,7 +28,7 @@
             super.render(args);
             var self: TreesMapViewForAdmin = this;
             if (self.bDebug) console.log(TreesMapViewForAdmin.TAG + "render()");
-            var template = _.template(Template.getTreesMapViewTemplateForParent());
+            var template = _.template(Template.getTreesMapViewTemplateForAdmin());
             self.$el.html(template({}));
             self.$('#checkbox-mytrees').bootstrapToggle({
                 on: 'My Trees (On)',
@@ -47,7 +48,7 @@
         public renderFilterList = () => {
             var self: TreesMapViewForAdmin = this;
             // Render filter the left side filter panel
-            var template = _.template(Template.getTreesFilterListTemplateForParent());
+            var template = _.template(Template.getTreesFilterListTemplateForAdmin());
             Controller.fetchAllFlagsAndOwners(function () {
                 self.$('#content-mapfilter').html(template({
                     header: 'Filter List',
@@ -86,37 +87,55 @@
             });
         }
 
-        public renderTreeInfo = (tree: Tree) => {
+        public renderTreeInfo = (tree?: Tree) => {
             var self: TreesMapViewForAdmin = this;
+            if (tree == undefined && self._selectedMarker != undefined) {
+                var tree: Tree = Model.getTrees().findWhere({ id: parseInt(self._selectedMarker.options.id) });
+            }
             Controller.fetchAllFlagsAndOwners(function () {
-                var food: Food = Model.getFoods().findWhere({ id: tree.getFoodId() });
-                var ownership: Ownership = Model.getOwnerships().findWhere({ id: tree.getOwnershipId() });
-                var template = _.template(Template.getTreeInfoTemplateForAdmin());
-                var data = {
-                    foodname: food.getName(),
-                    treename: tree.getName(),
-                    lat: tree.getLat().toFixed(4),
-                    lng: tree.getLng().toFixed(4),
-                    flags: Model.getFlags(),
-                    ownerships: Model.getOwnerships(),
-                    description: tree.getDescription(),
-                    persons: tree.getParents(),
-                }
-                self.$('#wrapper-treeinfo').html(template(data));
-                self.$('#wrapper-treeinfo').removeClass('hidden');
+                Controller.checkIsLoggedIn(function (response) {
+                    if (self._selectedMarker) {
+                        var adopt: Adopt = Model.getAdopts().findWhere({ tree: self._selectedMarker.options.id, parent: parseInt(response.id) });
+                        var food: Food = Model.getFoods().findWhere({ id: tree.getFoodId() });
+                        var ownership: Ownership = Model.getOwnerships().findWhere({ id: tree.getOwnershipId() });
+                        if (adopt) {
+                            var template = _.template(Template.getAdoptedTreeInfoTemplateForAdmin());
+                        } else {
+                            var template = _.template(Template.getUnadoptedTreeInfoTemplateForAdmin());
+                        }
+                        self.$('#wrapper-treeinfo').html(template({
+                            foodname: food.getName(),
+                            treename: tree.getName(),
+                            lat: tree.getLat().toFixed(4),
+                            lng: tree.getLng().toFixed(4),
+                            flags: Model.getFlags(),
+                            ownerships: Model.getOwnerships(),
+                            description: tree.getDescription(),
+                            persons: tree.getParents(),
+                        }));
+                        self.$('#wrapper-treeinfo').removeClass('hidden');
 
-                self.renderRecentComments(tree);
-
-                self.$('.input-address').replaceWith('<div class="input-address"></div>');
-                if (tree.getAddress().trim() == '') {
-                    GeoLocation.reverseGeocoding(tree.getLocation(), function (data: ReverseGeoLocation) {
-                        self.$(".input-address").html(data.road + ", " + data.county + ", " + data.state + ", " + data.country + ", " + data.postcode);
-                    }, function () {
-                        EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
-                    });
-                } else {
-                    self.$(".input-address").html(tree.getAddress());
-                }
+                        self.renderFlagInfo(tree.getFlags());
+                        //self.renderOwnershipInfo(ownership);
+                        self.renderRecentComments(tree);
+                        // Render address either from the reverse geo-coding server or stored address
+                        self.$('.input-address').replaceWith('<div class="input-address"></div>');
+                        if (tree.getAddress().trim() == '') {
+                            GeoLocation.reverseGeocoding(tree.getLocation(), function (data: ReverseGeoLocation) {
+                                self.$(".input-address").html(data.road + ", " + data.county + ", " + data.state + ", " + data.country + ", " + data.postcode);
+                            }, function () {
+                                EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
+                            });
+                        } else {
+                            self.$(".input-address").html(tree.getAddress());
+                        }
+                    }
+                }, function (response) {
+                    // Handled as refreshing the page if it's not logged in
+                    new RenderMessageViewCommand({ el: Setting.getMessageWrapperElement(), message: Setting.getErrorMessage(response.code), undoable: false }).execute();
+                }, function () {
+                    EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
+                });
             }, function () {
                 EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
             });
@@ -135,6 +154,7 @@
             if (self._selectedFood != null) {
                 trees = trees.filterByFoodIds([self._selectedFood.getId()]);
             }
+
             // Apply ownership filtering
             var ownershipIds = new Array<number>();
             if (self.$('.filter-owner-all').hasClass('active')) {
@@ -149,6 +169,7 @@
                 });
             }
             trees = trees.filterByOwnershipIds(ownershipIds);
+
             // Apply adoption flitering
             var adoptIds = new Array<number>();
             if (self.$('.filter-adopt-all').hasClass('active')) {
@@ -163,6 +184,7 @@
                 });
             }
             trees = trees.filterByAdoptStatus(adoptIds);
+
             // Apply flag / status flitering
             var flagIds = new Array<number>();
             if (self.$('.filter-flag-all').hasClass('active')) {
@@ -182,7 +204,6 @@
             if (self.$('#checkbox-mytrees').prop('checked')) {   // When the toggle is on
                 trees = trees.filterByParent(parseInt(self.$('#checkbox-mytrees').attr('data-id')));
             }
-
             // Update markers
             self.updateMarkers(trees);
         }

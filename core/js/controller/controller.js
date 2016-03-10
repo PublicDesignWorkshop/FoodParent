@@ -303,21 +303,14 @@ var FoodParent;
                 contentType: false,
                 success: function (response, textStatus, jqXHR) {
                     Controller.removeXHR(xhr1);
-                    if (typeof response.error === "undefined") {
-                        if (response.result == true || response.result == 'true') {
-                            if (success) {
-                                success(response);
-                            }
-                        }
-                        else if (response.result == false || response.result == 'false') {
-                            if (fail) {
-                                fail(response);
-                            }
+                    if (parseInt(response.code) == 400) {
+                        if (success) {
+                            success(response);
                         }
                     }
                     else {
-                        if (error) {
-                            error(response); // TODO: need to pass error code if error happens
+                        if (fail) {
+                            fail(response);
                         }
                     }
                 },

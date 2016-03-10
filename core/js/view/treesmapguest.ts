@@ -13,6 +13,7 @@
                 "click #wrapper-food-search .form-control-feedback": "_resetSearchFood",
                 "click .item-food": "_applySearch",
                 "click .evt-reset-filter": "_resetFilter",
+                "click .btn-action": "_mouseClick",
             };
             self.delegateEvents();
         }
@@ -73,8 +74,11 @@
             
         }
 
-        public renderTreeInfo = (tree: Tree) => {
+        public renderTreeInfo = (tree?: Tree) => {
             var self: TreesMapViewForGuest = this;
+            if (tree == undefined && self._selectedMarker != undefined) {
+                var tree: Tree = Model.getTrees().findWhere({ id: parseInt(self._selectedMarker.options.id) });
+            }
             Controller.fetchAllFlagsAndOwners(function () {
                 var food: Food = Model.getFoods().findWhere({ id: tree.getFoodId() });
                 var ownership: Ownership = Model.getOwnerships().findWhere({ id: tree.getOwnershipId() });
@@ -82,18 +86,15 @@
                 var data = {
                     foodname: food.getName(),
                     treename: tree.getName(),
-                    //lat: tree.getLat().toFixed(4),
-                    //lng: tree.getLng().toFixed(4),
-                    //flags: Model.getFlags(),
-                    //ownerships: Model.getOwnerships(),
                     description: tree.getDescription(),
-                    //persons: tree.getParents(),
+                    flags: Model.getFlags(),
                 }
                 self.$('#wrapper-treeinfo').html(template(data));
                 self.$('#wrapper-treeinfo').removeClass('hidden');
 
+                self.renderFlagInfo(tree.getFlags());
                 self.renderRecentComments(tree);
-
+                // Render address either from the reverse geo-coding server or stored address
                 self.$('.input-address').replaceWith('<div class="input-address"></div>');
                 if (tree.getAddress().trim() == '') {
                     GeoLocation.reverseGeocoding(tree.getLocation(), function (data: ReverseGeoLocation) {
