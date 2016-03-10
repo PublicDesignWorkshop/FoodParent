@@ -12,16 +12,9 @@ var FoodParent;
             _super.call(this, options);
             this.renderFilterList = function () {
                 var self = _this;
-                FoodParent.Controller.checkIsLoggedIn(function (response) {
-                    var template = _.template(FoodParent.Template.getTreesFilterListTemplateForGuest());
-                    self.$('#content-mapfilter').html(template({
-                        header: 'Filter List',
-                        flags: FoodParent.Model.getFlags(),
-                        ownerships: FoodParent.Model.getOwnerships(),
-                        userid: parseInt(response.id),
-                    }));
-                }, function () {
-                    var template = _.template(FoodParent.Template.getTreesFilterListTemplateForGuest());
+                // Render filter the left side filter panel
+                var template = _.template(FoodParent.Template.getTreesFilterListTemplateForParent());
+                FoodParent.Controller.fetchAllFlagsAndOwners(function () {
                     self.$('#content-mapfilter').html(template({
                         header: 'Filter List',
                         flags: FoodParent.Model.getFlags(),
@@ -30,17 +23,30 @@ var FoodParent;
                 }, function () {
                     FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
                 });
-                var template = _.template(FoodParent.Template.getFoodItemTemplate());
-                self.$('#list-food').html(template({
-                    foods: FoodParent.Model.getFoods(),
-                }));
-                $('#list-food').btsListFilter('#input-search-food', {
-                    itemChild: 'span',
-                    //sourceTmpl: '<div class="food-item">{title}</div>',
-                    itemEl: '.item-food',
-                    emptyNode: function (data) {
-                        return '';
-                    },
+                // Render a bootstrap list-filter for the food list
+                FoodParent.Controller.fetchAllFoods(function () {
+                    var template = _.template(FoodParent.Template.getFoodItemTemplate());
+                    self.$('#list-food').html(template({
+                        foods: FoodParent.Model.getFoods(),
+                    }));
+                    $('#list-food').btsListFilter('#input-search-food', {
+                        itemChild: 'span',
+                        //sourceTmpl: '<div class="food-item">{title}</div>',
+                        itemEl: '.item-food',
+                        emptyNode: function (data) {
+                            return '';
+                        },
+                    });
+                }, function () {
+                    FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+                });
+                FoodParent.Controller.checkIsLoggedIn(function (response) {
+                    self.$('#checkbox-mytrees').attr({ 'data-id': response.id });
+                }, function () {
+                    // Handled as refreshing the page if it's not logged in
+                    Backbone.history.loadUrl(Backbone.history.fragment);
+                }, function () {
+                    FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
                 });
             };
             this.renderTreeInfo = function (tree) {
@@ -48,16 +54,15 @@ var FoodParent;
                 FoodParent.Controller.fetchAllFlagsAndOwners(function () {
                     var food = FoodParent.Model.getFoods().findWhere({ id: tree.getFoodId() });
                     var ownership = FoodParent.Model.getOwnerships().findWhere({ id: tree.getOwnershipId() });
-                    var template = _.template(FoodParent.Template.getTreeInfoTemplateForGuest());
+                    var template = _.template(FoodParent.Template.getTreeInfoTemplateForParent());
                     var data = {
                         foodname: food.getName(),
                         treename: tree.getName(),
-                        lat: tree.getLat().toFixed(4),
-                        lng: tree.getLng().toFixed(4),
-                        flags: FoodParent.Model.getFlags(),
-                        ownerships: FoodParent.Model.getOwnerships(),
+                        //lat: tree.getLat().toFixed(4),
+                        //lng: tree.getLng().toFixed(4),
+                        //flags: Model.getFlags(),
+                        //ownerships: Model.getOwnerships(),
                         description: tree.getDescription(),
-                        persons: tree.getParents(),
                     };
                     self.$('#wrapper-treeinfo').html(template(data));
                     self.$('#wrapper-treeinfo').removeClass('hidden');
@@ -81,10 +86,12 @@ var FoodParent;
             self.events = {
                 "click .evt-close": "removeTreeInfo",
                 "click .btn-mapfilter": "_toggleMapFilter",
+                "click .btn-filter": "_clickFilter",
                 "keydown #wrapper-food-search": "_searchFood",
+                "click #input-search-food": "_searchFood",
                 "click #wrapper-food-search .form-control-feedback": "_resetSearchFood",
                 "click .item-food": "_applySearch",
-                "click .btn-filter": "_clickFilter",
+                "change #checkbox-mytrees": "_toggleMyTrees",
             };
             self.delegateEvents();
         }
@@ -113,127 +120,69 @@ var FoodParent;
                 console.log(TreesMapViewForParent.TAG + "update()");
             return self;
         };
-        TreesMapViewForParent.prototype._searchFood = function (event) {
+        TreesMapViewForParent.prototype._toggleMyTrees = function (event) {
             var self = this;
-            if (self._timeout1) {
-                clearTimeout(self._timeout1);
-            }
-            if (self._timeout2) {
-                clearTimeout(self._timeout2);
-            }
-            self._timeout1 = setTimeout(function () {
-                if (event.keyCode == 27) {
-                    self.$('#input-search-food').val("");
-                    self._resetSearchFood();
-                }
-                else if (self.$('#input-search-food').val().trim() != "") {
-                    self._timeout2 = setTimeout(function () {
-                        self.$('#wrapper-list-food').removeClass('hidden');
-                    }, 500);
-                }
-                else {
-                    self.$('#wrapper-list-food').addClass('hidden');
-                    self._resetSearchFood();
-                }
-            }, 10);
+            self._applyFilter();
         };
-        TreesMapViewForParent.prototype._resetSearchFood = function (event) {
+        TreesMapViewForParent.prototype._applyFilter = function (event) {
             var self = this;
-            self.$('#input-search-food').val("");
-            var trees = FoodParent.Model.getTrees();
-            self.updateMarkers(trees);
-            self.$('#wrapper-list-food').addClass('hidden');
-        };
-        TreesMapViewForParent.prototype._applySearch = function (event) {
-            var self = this;
-            var food = FoodParent.Model.getFoods().findWhere({
-                'id': parseInt($(event.currentTarget).attr('data-id'))
-            });
-            self.$('#search-food').val(food.getName());
             // Find all trees
             var trees = FoodParent.Model.getTrees();
             // Apply food filtering
-            trees = trees.filterByFoodIds([parseInt($(event.currentTarget).attr('data-id'))]);
+            if (self._selectedFood != null) {
+                trees = trees.filterByFoodIds([self._selectedFood.getId()]);
+            }
+            // Apply ownership filtering
+            var ownershipIds = new Array();
+            if (self.$('.filter-owner-all').hasClass('active')) {
+                $.each(self.$('.filter-owner-item'), function (index, element) {
+                    ownershipIds.push(parseInt($(element).attr('data-id')));
+                });
+            }
+            else {
+                $.each(self.$('.filter-owner-item'), function (index, element) {
+                    if ($(element).hasClass('active')) {
+                        ownershipIds.push(parseInt($(element).attr('data-id')));
+                    }
+                });
+            }
+            trees = trees.filterByOwnershipIds(ownershipIds);
+            // Apply adoption flitering
+            var adoptIds = new Array();
+            if (self.$('.filter-adopt-all').hasClass('active')) {
+                $.each(self.$('.filter-adopt-item'), function (index, element) {
+                    adoptIds.push(parseInt($(element).attr('data-id')));
+                });
+            }
+            else {
+                $.each(self.$('.filter-adopt-item'), function (index, element) {
+                    if ($(element).hasClass('active')) {
+                        adoptIds.push(parseInt($(element).attr('data-id')));
+                    }
+                });
+            }
+            trees = trees.filterByAdoptStatus(adoptIds);
+            // Apply flag / status flitering
+            var flagIds = new Array();
+            if (self.$('.filter-flag-all').hasClass('active')) {
+                $.each(self.$('.filter-flag-item'), function (index, element) {
+                    flagIds.push(parseInt($(element).attr('data-id')));
+                });
+            }
+            else {
+                $.each(self.$('.filter-flag-item'), function (index, element) {
+                    if ($(element).hasClass('active')) {
+                        flagIds.push(parseInt($(element).attr('data-id')));
+                    }
+                });
+            }
+            trees = trees.filterByFlagIds(flagIds);
+            // Apply mytrees filtering (for parent / admin mode)
+            if (self.$('#checkbox-mytrees').prop('checked')) {
+                trees = trees.filterByParent(parseInt(self.$('#checkbox-mytrees').attr('data-id')));
+            }
             // Update markers
             self.updateMarkers(trees);
-        };
-        TreesMapViewForParent.prototype._clickFilter = function (event) {
-            var self = this;
-            // Ownership filter
-            if ($(event.currentTarget).hasClass('filter-owner-item')) {
-                if ($(event.currentTarget).hasClass('active')) {
-                    $(event.currentTarget).removeClass('active');
-                }
-                else {
-                    $(event.currentTarget).addClass('active');
-                }
-                if (self.$('.filter-owner-item').length == self.$('.filter-owner-item.active').length) {
-                    self.$('.filter-owner-all').addClass('active');
-                }
-                else {
-                    self.$('.filter-owner-all').removeClass('active');
-                }
-            }
-            if ($(event.currentTarget).hasClass('filter-owner-all')) {
-                if ($(event.currentTarget).hasClass('active')) {
-                    $(event.currentTarget).removeClass('active');
-                    self.$('.filter-owner-item').removeClass('active');
-                }
-                else {
-                    $(event.currentTarget).addClass('active');
-                    self.$('.filter-owner-item').addClass('active');
-                }
-            }
-            // Adoption filter
-            if ($(event.currentTarget).hasClass('filter-adopt-item')) {
-                if ($(event.currentTarget).hasClass('active')) {
-                    $(event.currentTarget).removeClass('active');
-                }
-                else {
-                    $(event.currentTarget).addClass('active');
-                }
-                if (self.$('.filter-adopt-item').length == self.$('.filter-adopt-item.active').length) {
-                    self.$('.filter-adopt-all').addClass('active');
-                }
-                else {
-                    self.$('.filter-adopt-all').removeClass('active');
-                }
-            }
-            if ($(event.currentTarget).hasClass('filter-adopt-all')) {
-                if ($(event.currentTarget).hasClass('active')) {
-                    $(event.currentTarget).removeClass('active');
-                    self.$('.filter-adopt-item').removeClass('active');
-                }
-                else {
-                    $(event.currentTarget).addClass('active');
-                    self.$('.filter-adopt-item').addClass('active');
-                }
-            }
-            // Status filter
-            if ($(event.currentTarget).hasClass('filter-flag-item')) {
-                if ($(event.currentTarget).hasClass('active')) {
-                    $(event.currentTarget).removeClass('active');
-                }
-                else {
-                    $(event.currentTarget).addClass('active');
-                }
-                if (self.$('.filter-flag-item').length == self.$('.filter-flag-item.active').length) {
-                    self.$('.filter-flag-all').addClass('active');
-                }
-                else {
-                    self.$('.filter-flag-all').removeClass('active');
-                }
-            }
-            if ($(event.currentTarget).hasClass('filter-flag-all')) {
-                if ($(event.currentTarget).hasClass('active')) {
-                    $(event.currentTarget).removeClass('active');
-                    self.$('.filter-flag-item').removeClass('active');
-                }
-                else {
-                    $(event.currentTarget).addClass('active');
-                    self.$('.filter-flag-item').addClass('active');
-                }
-            }
         };
         TreesMapViewForParent.TAG = "TreesMapViewForParent - ";
         return TreesMapViewForParent;

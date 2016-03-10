@@ -6,6 +6,9 @@
         protected _bClosePopupOnClick: boolean = true;
         protected _markers: Array<L.Marker>;
         protected _selectedMarker: L.Marker;
+        protected _selectedFood: Food;
+        private _timeout1: any;
+        private _timeout2: any;
         protected static TAG: string = "TreesMapView - ";
         constructor(options?: Backbone.ViewOptions<Backbone.Model>) {
             super(options);
@@ -126,7 +129,10 @@
                     } else {
                         self._map.panTo(new L.LatLng(marker.getLatLng().lat + self._map.getSize().y * 0.000075, marker.getLatLng().lng));
                     }
-                    //self.closeMapFilter();
+                    if (View.getWidth() < View.getHeight()) {
+                        self.closeMapFilter();
+                    }
+                    
                     Router.getInstance().navigate("trees/" + VIEW_MODE.MAP + "/" + tree.getId(), { trigger: false, replace: true });
                 });
                 self._map.on('popupclose', function (event: any) {
@@ -300,6 +306,234 @@
         public openMapFilter = () => {
             var self: TreesMapView = this;
             self.$('#wrapper-mapfilter').animate({ left: 0 }, Setting.getFilterAnimDuration());
+        }
+
+        private _searchFood(event: any): void {
+            var self: TreesMapView = this;
+            if (self._timeout1) {
+                clearTimeout(self._timeout1);
+            }
+            if (self._timeout2) {
+                clearTimeout(self._timeout2);
+            }
+            self._timeout1 = setTimeout(function () {
+                if (event.keyCode == 27) {  // esc
+                    self.$('#input-search-food').val("");
+                    self._resetSearchFood();
+                } else if (self.$('#input-search-food').val().trim() != "") {
+                    self._timeout2 = setTimeout(function () {
+                        self.$('#wrapper-list-food').removeClass('hidden');
+                        self.$('#wrapper-list-food').scrollTop(0);
+                    }, 500);
+                } else {
+                    self.$('#wrapper-list-food').addClass('hidden');
+                    self._resetSearchFood();
+                }
+            }, 10);
+        }
+
+        private _resetSearchFood(event?: Event): void {
+            var self: TreesMapView = this;
+            self._selectedFood = null;
+            self.$('#input-search-food').val("");
+            self.$('#wrapper-list-food').addClass('hidden');
+            // Apply filter
+            self._applyFilter();
+        }
+
+        private _applySearch(event: Event): void {
+            var self: TreesMapView = this;
+            var food: Food = Model.getFoods().findWhere({
+                'id': parseInt($(event.currentTarget).attr('data-id'))
+            });
+            if (food != null) {
+                self._selectedFood = food;
+                self.$('#search-food').val(food.getName());
+            }
+            // Hide search list
+            self.$('#input-search-food').val(food.getName());
+            self.$('#wrapper-list-food').addClass('hidden');
+            // Apply filter
+            self._applyFilter();
+        }
+
+        protected _clickFilter(event: Event): void {
+            var self: TreesMapViewForGuest = this;
+            // Ownership filter
+            if ($(event.currentTarget).hasClass('filter-owner-item')) {
+                if ($(event.currentTarget).hasClass('active')) {
+                    $(event.currentTarget).removeClass('active');
+                } else {
+                    $(event.currentTarget).addClass('active');
+                }
+                if (self.$('.filter-owner-item').length == self.$('.filter-owner-item.active').length) {
+                    self.$('.filter-owner-all').addClass('active');
+                } else {
+                    self.$('.filter-owner-all').removeClass('active');
+                }
+            }
+            if ($(event.currentTarget).hasClass('filter-owner-all')) {
+                if ($(event.currentTarget).hasClass('active')) {
+                    $(event.currentTarget).removeClass('active');
+                    self.$('.filter-owner-item').removeClass('active');
+                } else {
+                    $(event.currentTarget).addClass('active');
+                    self.$('.filter-owner-item').addClass('active');
+                }
+            }
+            
+            // Adoption filter
+            if ($(event.currentTarget).hasClass('filter-adopt-item')) {
+                if ($(event.currentTarget).hasClass('active')) {
+                    $(event.currentTarget).removeClass('active');
+                } else {
+                    $(event.currentTarget).addClass('active');
+                }
+                if (self.$('.filter-adopt-item').length == self.$('.filter-adopt-item.active').length) {
+                    self.$('.filter-adopt-all').addClass('active');
+                } else {
+                    self.$('.filter-adopt-all').removeClass('active');
+                }
+            }
+            if ($(event.currentTarget).hasClass('filter-adopt-all')) {
+                if ($(event.currentTarget).hasClass('active')) {
+                    $(event.currentTarget).removeClass('active');
+                    self.$('.filter-adopt-item').removeClass('active');
+                } else {
+                    $(event.currentTarget).addClass('active');
+                    self.$('.filter-adopt-item').addClass('active');
+                }
+            }
+
+            // Status filter
+            if ($(event.currentTarget).hasClass('filter-flag-item')) {
+                if ($(event.currentTarget).hasClass('active')) {
+                    $(event.currentTarget).removeClass('active');
+                } else {
+                    $(event.currentTarget).addClass('active');
+                }
+
+                if (self.$('.filter-flag-item').length == self.$('.filter-flag-item.active').length) {
+                    self.$('.filter-flag-all').addClass('active');
+                } else {
+                    self.$('.filter-flag-all').removeClass('active');
+                }
+            }
+            if ($(event.currentTarget).hasClass('filter-flag-all')) {
+                if ($(event.currentTarget).hasClass('active')) {
+                    $(event.currentTarget).removeClass('active');
+                    self.$('.filter-flag-item').removeClass('active');
+                } else {
+                    $(event.currentTarget).addClass('active');
+                    self.$('.filter-flag-item').addClass('active');
+                }
+            }
+
+            // Rating filter
+            if ($(event.currentTarget).hasClass('filter-rating-item')) {
+                if ($(event.currentTarget).hasClass('active')) {
+                    $(event.currentTarget).removeClass('active');
+                } else {
+                    $(event.currentTarget).addClass('active');
+                }
+
+                if (self.$('.filter-rating-item').length == self.$('.filter-rating-item.active').length) {
+                    self.$('.filter-rating-all').addClass('active');
+                } else {
+                    self.$('.filter-rating-all').removeClass('active');
+                }
+            }
+            if ($(event.currentTarget).hasClass('filter-rating-all')) {
+                if ($(event.currentTarget).hasClass('active')) {
+                    $(event.currentTarget).removeClass('active');
+                    self.$('.filter-rating-item').removeClass('active');
+                } else {
+                    $(event.currentTarget).addClass('active');
+                    self.$('.filter-rating-item').addClass('active');
+                }
+            }
+
+            // Last updated filter
+            if ($(event.currentTarget).hasClass('filter-last-item')) {
+                if ($(event.currentTarget).hasClass('active')) {
+                    $(event.currentTarget).removeClass('active');
+                } else {
+                    $(event.currentTarget).addClass('active');
+                }
+
+                if (self.$('.filter-last-item').length == self.$('.filter-last-item.active').length) {
+                    self.$('.filter-last-all').addClass('active');
+                } else {
+                    self.$('.filter-last-all').removeClass('active');
+                }
+            }
+            if ($(event.currentTarget).hasClass('filter-last-all')) {
+                if ($(event.currentTarget).hasClass('active')) {
+                    $(event.currentTarget).removeClass('active');
+                    self.$('.filter-last-item').removeClass('active');
+                } else {
+                    $(event.currentTarget).addClass('active');
+                    self.$('.filter-last-item').addClass('active');
+                }
+            }
+
+            // Apply filter
+            self._applyFilter();
+        }
+
+        public _applyFilter(event?: any): void {
+            var self: TreesMapView = this;
+            // Find all trees
+            var trees: Trees = Model.getTrees();
+            // Apply food filtering
+            if (self._selectedFood != null) {
+                trees = trees.filterByFoodIds([self._selectedFood.getId()]);
+            }
+            // Apply ownership filtering
+            var ownershipIds = new Array<number>();
+            if (self.$('.filter-owner-all').hasClass('active')) {
+                $.each(self.$('.filter-owner-item'), function (index: number, element: JQuery) {
+                    ownershipIds.push(parseInt($(element).attr('data-id')));
+                });
+            } else {
+                $.each(self.$('.filter-owner-item'), function (index: number, element: JQuery) {
+                    if ($(element).hasClass('active')) {
+                        ownershipIds.push(parseInt($(element).attr('data-id')));
+                    }
+                });
+            }
+            trees = trees.filterByOwnershipIds(ownershipIds);
+            // Apply adoption flitering
+            var adoptIds = new Array<number>();
+            if (self.$('.filter-adopt-all').hasClass('active')) {
+                $.each(self.$('.filter-adopt-item'), function (index: number, element: JQuery) {
+                    adoptIds.push(parseInt($(element).attr('data-id')));
+                });
+            } else {
+                $.each(self.$('.filter-adopt-item'), function (index: number, element: JQuery) {
+                    if ($(element).hasClass('active')) {
+                        adoptIds.push(parseInt($(element).attr('data-id')));
+                    }
+                });
+            }
+            trees = trees.filterByAdoptStatus(adoptIds);
+            // Apply flag / status flitering
+            var flagIds = new Array<number>();
+            if (self.$('.filter-flag-all').hasClass('active')) {
+                $.each(self.$('.filter-flag-item'), function (index: number, element: JQuery) {
+                    flagIds.push(parseInt($(element).attr('data-id')));
+                });
+            } else {
+                $.each(self.$('.filter-flag-item'), function (index: number, element: JQuery) {
+                    if ($(element).hasClass('active')) {
+                        flagIds.push(parseInt($(element).attr('data-id')));
+                    }
+                });
+            }
+            trees = trees.filterByFlagIds(flagIds);
+
+            // Update markers
+            self.updateMarkers(trees);
         }
     }
 }

@@ -100,6 +100,19 @@ var FoodParent;
             var template = '';
             template += '<div id="content-map">';
             template += '</div>'; // end of #content-map
+            template += '<div id="wrapper-mapfilter">';
+            template += '<div id="content-mapfilter">';
+            template += '</div>';
+            template += '<div id="wrapper-btn-mapfilter">';
+            template += '<div class="btn-mapfilter">';
+            template += '<i class="fa fa-filter"></i>';
+            template += '</div>';
+            template += '<div class="deco-mapfilter">';
+            template += '</div>';
+            template += '</div>'; // end of #wrapper-treeinfo
+            template += '</div>'; // end of #wrapper-mapfilter
+            template += '<div id="wrapper-treeinfo" class="hidden">';
+            template += '</div>'; // end of #wrapper-treeinfo
             template += '<div id="wrapper-mapmenu">';
             template += '<div id="wrapper-food-search">';
             template += '<div id="wrapper-list-food" class="hidden">';
@@ -113,8 +126,12 @@ var FoodParent;
             template += '</div>'; // end of .bottom-filters
             template += '</div>'; // end of #wrapper-food-search
             template += '</div>'; // end of #wrapper-mapmenu
-            template += '<div id="wrapper-treeinfo" class="hidden">';
-            template += '</div>'; // end of #wrapper-treeinfo
+            return template;
+        };
+        Template.getTreesMapViewTemplateForGuest = function () {
+            var template = '';
+            template += '<div id="content-map">';
+            template += '</div>'; // end of #content-map
             template += '<div id="wrapper-mapfilter">';
             template += '<div id="content-mapfilter">';
             template += '</div>';
@@ -126,12 +143,8 @@ var FoodParent;
             template += '</div>';
             template += '</div>'; // end of #wrapper-treeinfo
             template += '</div>'; // end of #wrapper-mapfilter
-            return template;
-        };
-        Template.getTreesMapViewTemplateForGuest = function () {
-            var template = '';
-            template += '<div id="content-map">';
-            template += '</div>'; // end of #content-map
+            template += '<div id="wrapper-treeinfo" class="hidden">';
+            template += '</div>'; // end of #wrapper-treeinfo
             template += '<div id="wrapper-mapmenu">';
             template += '<div id="wrapper-food-search">';
             template += '<div id="wrapper-list-food" class="hidden">';
@@ -144,19 +157,6 @@ var FoodParent;
             template += '</div>'; // end of .bottom-filters
             template += '</div>'; // end of #wrapper-food-search
             template += '</div>'; // end of #wrapper-mapmenu
-            template += '<div id="wrapper-treeinfo" class="hidden">';
-            template += '</div>'; // end of #wrapper-treeinfo
-            template += '<div id="wrapper-mapfilter">';
-            template += '<div id="content-mapfilter">';
-            template += '</div>';
-            template += '<div id="wrapper-btn-mapfilter">';
-            template += '<div class="btn-mapfilter">';
-            template += '<i class="fa fa-filter"></i>';
-            template += '</div>';
-            template += '<div class="deco-mapfilter">';
-            template += '</div>';
-            template += '</div>'; // end of #wrapper-treeinfo
-            template += '</div>'; // end of #wrapper-mapfilter
             return template;
         };
         Template.getFoodItemTemplate = function () {
@@ -474,12 +474,39 @@ var FoodParent;
             template += '</div>';
             template += '<div class="hr"><hr /></div>';
             template += '<div class="info-button">';
-            template += '<div class="btn-white btn-small btn-action evt-detail"><i class="fa fa-heartbeat"></i> See Tree Detail</div>';
+            template += '<div class="btn-white btn-small btn-action evt-detail"><i class="fa fa-heartbeat"></i> See Detail</div>';
+            template += '<div class="btn-white btn-small btn-action evt-post"><i class="fa fa-sticky-note-o"></i> Post Note</div>';
+            template += '</div>';
+            return template;
+        };
+        Template.getTreeInfoTemplateForParent = function () {
+            var template = '';
+            template += '<div id="content-header">';
+            template += '<div class="tree-info-name"><div class="input-food"><%= foodname %></div>&nbsp;<%= treename %></div>';
+            template += '<div class="btn-close evt-close">';
+            template += '<i class="fa fa-remove"></i>';
+            template += '</div>'; // end of top-right-button button-close
+            template += '</div>'; // end of #wrapper-header
+            //template += '<div class="tree-info-name"><div class="input-food"><%= foodname %></div>&nbsp;<%= treename %></div>';
+            //template += '<div class="tree-info-coordinate"><div>@&nbsp;</div><div class="input-lat"><%= lat %></div>,&nbsp;<div class="input-lng"><%= lng %></div></div>';
+            template += '<div class="info-group">';
+            template += '<div class="input-address">&nbsp;</div>';
+            template += '</div>';
+            template += '<div class="hr"><hr /></div>';
+            template += '<div class="info-header"><i class="fa fa-sticky-note fa-1x"></i> Description</div>';
+            template += '<div class="info-group">';
+            template += '<div class="input-description"><%= description %></div>';
+            template += '</div>';
+            template += '<div class="hr"><hr /></div>';
+            template += '<div class="info-header"><i class="fa fa-leaf fa-1x"></i> Recent Comments</div>';
+            template += '<div id="list-comments" class="info-group">';
+            template += '<div>&nbsp;</div>';
+            template += '</div>';
+            template += '<div class="hr"><hr /></div>';
+            template += '<div class="info-button">';
+            template += '<div class="btn-white btn-small btn-action evt-detail"><i class="fa fa-heartbeat"></i> See Detail</div>';
             template += '<div class="btn-white btn-small btn-action evt-adopt"><i class="fa  fa-user-plus"></i> Adopt Tree</div>';
             template += '<div class="btn-white btn-small btn-action evt-post"><i class="fa fa-sticky-note-o"></i> Post Note</div>';
-            //template += '<div class="button-outer-frame2 button5"><div class="button-inner-frame2 button-tree-detail"><i class="fa fa-heartbeat"></i> See Tree Detail</div></div>';
-            //template += '<div class="button-outer-frame2 button5"><div class="button-inner-frame2 button-tree-adopt"><i class="fa  fa-user-plus"></i> Adopt Tree</div></div>';
-            //template += '<div class="button-outer-frame2 button5"><div class="button-inner-frame2 button-new-note"><i class="fa fa-sticky-note-o"></i> Post Note</div></div>';
             template += '</div>';
             return template;
         };
@@ -571,32 +598,56 @@ var FoodParent;
         };
         Template.getTreesFilterListTemplateForGuest = function () {
             var template = '';
+            template += '<div class="frame-inner">';
             template += '<div class="text-header"><%= header %></div>';
-            template += '<hr />';
             template += '<div id="content-filter-list">';
             template += '<div class="text-label"><i class="fa fa-caret-right"></i> Owndership</div>';
             template += '<div class="btn-green btn-small btn-filter filter-owner-all active">Public & Private</div>';
             template += '<div class="info-button-group">';
-            template += '<div class="btn-green btn-small btn-filter filter-owner-item filter-owner-public">Public</div>';
-            template += '<div class="btn-green btn-small btn-filter filter-owner-item filter-owner-private">Private</div>';
+            template += '<% _.each(ownerships.models, function (ownership) { %>';
+            template += '<div class="btn-green btn-small btn-filter filter-owner-item" data-id="<%= ownership.getId() %>"><%= ownership.getName() %></div>';
+            template += '<% }); %>';
             template += '</div>';
             template += '<hr />';
             template += '<div class="text-label"><i class="fa fa-caret-right"></i> Adoption</div>';
             template += '<div class="btn-green btn-small btn-filter filter-adopt-all active">Adopted & Waiting</div>';
             template += '<div class="info-button-group">';
-            template += '<div class="btn-green btn-small btn-filter filter-adopt-item filter-adopt-adopted">Adopted</div>';
-            template += '<div class="btn-green btn-small btn-filter filter-adopt-item filter-adopt-waiting">Waiting</div>';
+            template += '<div class="btn-green btn-small btn-filter filter-adopt-item" data-id="1">Adopted</div>';
+            template += '<div class="btn-green btn-small btn-filter filter-adopt-item" data-id="0">Waiting</div>';
             template += '</div>';
             template += '<hr />';
             template += '<div class="text-label"><i class="fa fa-caret-right"></i> Status</div>';
             template += '<div class="btn-green btn-small btn-filter filter-flag-all active">All Status</div>';
             template += '<div class="info-button-group">';
+            template += '<div class="btn-green btn-small btn-filter filter-flag-item" data-id="0">*Unknown</div>';
             template += '<% _.each(flags.models, function (flag) { %>';
             template += '<div class="btn-green btn-small btn-filter filter-flag-item" data-id="<%= flag.getId() %>"><%= flag.getName() %></div>';
             template += '<% }); %>';
             template += '</div>';
+            template += '<hr />';
+            template += '<div class="text-label"><i class="fa fa-caret-right"></i> Rating</div>';
+            template += '<div class="btn-green btn-small btn-filter filter-rating-all active">All Ratings</div>';
+            template += '<div class="info-button-group">';
+            template += '<% for (var i=0; i<=10; i++) { %>';
+            template += '<div class="btn-green btn-small btn-filter filter-rating-item" data-id="<%= i %>"><i class="fa fa-star"></i> x <%= i %></div>';
+            template += '<% }; %>';
+            template += '</div>';
+            template += '<hr />';
+            template += '<div class="text-label"><i class="fa fa-caret-right"></i> Last Updated</div>';
+            template += '<div class="btn-green btn-small btn-filter filter-last-all active">All Dates</div>';
+            template += '<div class="info-button-group">';
+            template += '<div class="btn-green btn-small btn-filter filter-last-item" data-id="0">~1 week</div>';
+            template += '<div class="btn-green btn-small btn-filter filter-last-item" data-id="1">~2 weeks</div>';
+            template += '<div class="btn-green btn-small btn-filter filter-last-item" data-id="2">~1 month</div>';
+            template += '<div class="btn-green btn-small btn-filter filter-last-item" data-id="3">~3 months</div>';
+            template += '<div class="btn-green btn-small btn-filter filter-last-item" data-id="4">~6 months</div>';
+            template += '</div>';
+            template += '</div>';
             template += '</div>';
             return template;
+        };
+        Template.getTreesFilterListTemplateForParent = function () {
+            return Template.getTreesFilterListTemplateForGuest();
         };
         Template.getTreeFilterListTemplate = function () {
             var template = '';

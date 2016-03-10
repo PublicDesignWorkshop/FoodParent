@@ -175,8 +175,8 @@
                     new NavigateCommand({ hash: 'trees', viewMode: VIEW_MODE.MAP, id: 0 }).execute();
                     Backbone.history.loadUrl(Backbone.history.fragment);
                 } else if (el.hasClass('evt-trees')) {
-                    new NavigateCommand({ hash: 'trees', viewMode: VIEW_MODE.MAP, id: 0 }).execute();
                     if (View.getViewStatus() != VIEW_STATUS.TREES) {
+                        new NavigateCommand({ hash: 'trees', viewMode: VIEW_MODE.MAP, id: 0 }).execute();
                         new RemovePopupViewCommand({ delay: Setting.getRemovePopupDuration() }).execute();
                     }
                 } else if (el.hasClass('people')) {

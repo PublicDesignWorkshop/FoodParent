@@ -30,7 +30,7 @@
 
     #content-nav .item-nav {
         height: 100%;
-        flex-grow: 1;
+        flex-grow: 4;
         padding: 14px 0 0 0;
         color: #fefefe;
         font-size: large;
@@ -46,6 +46,7 @@
     #content-nav .text-title {
         padding-top: 2px;
         font-size: x-large;
+        flex-grow: 1;
     }
     #content-nav .text-title:hover {
         color: #83a656;

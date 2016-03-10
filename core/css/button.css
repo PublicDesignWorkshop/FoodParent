@@ -66,9 +66,9 @@
     .btn-green {
         margin: 2px;
         border-radius: 1px;
-        color: rgba(255, 255, 255, 0.8);
+        color: rgba(255, 255, 255, 0.75);
         border-style: solid;
-        border-color: rgba(255, 255, 255, 0.8);
+        border-color: rgba(255, 255, 255, 0.5);
         font-weight: 700;
         cursor: pointer;
         -moz-user-select: none;
@@ -77,6 +77,7 @@
         user-select: none;
         pointer-events: fill;
         text-align: center;
+        background-color: rgba(94, 78, 81, 1);
     }
     .btn-green.active {
         color: rgba(94, 78, 81, 1);

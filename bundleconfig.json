@@ -29,7 +29,7 @@
       "core/lib/jquery-textfill/jquery.textfill.js",
 
       "core/lib/pace/pace.js",
-      "core/lib/howler/howler.js",
+      //"core/lib/howler/howler.js",
       // Leaflet
       "core/lib/leaflet/leaflet-src.js",
       "core/lib/leaflet-label/leaflet.label-src.js",

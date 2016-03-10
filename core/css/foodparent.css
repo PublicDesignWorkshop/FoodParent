@@ -12904,7 +12904,7 @@ button.close {
 
     #content-nav .item-nav {
         height: 100%;
-        flex-grow: 1;
+        flex-grow: 4;
         padding: 14px 0 0 0;
         color: #fefefe;
         font-size: large;
@@ -12920,6 +12920,7 @@ button.close {
     #content-nav .text-title {
         padding-top: 2px;
         font-size: x-large;
+        flex-grow: 1;
     }
     #content-nav .text-title:hover {
         color: #83a656;
@@ -13186,7 +13187,8 @@ button.close {
         height: 100%;
         margin: 52px 0 0 0;
         padding: 20px 32px 104px 32px;
-        background-color: rgba(255, 255, 255, 0.75);
+        background-color: rgba(255, 255, 255, 0.9);
+        overflow-y: auto;
     }
 }
 @media all {
@@ -13290,9 +13292,9 @@ button.close {
     .btn-green {
         margin: 2px;
         border-radius: 1px;
-        color: rgba(255, 255, 255, 0.8);
+        color: rgba(255, 255, 255, 0.75);
         border-style: solid;
-        border-color: rgba(255, 255, 255, 0.8);
+        border-color: rgba(255, 255, 255, 0.5);
         font-weight: 700;
         cursor: pointer;
         -moz-user-select: none;
@@ -13301,6 +13303,7 @@ button.close {
         user-select: none;
         pointer-events: fill;
         text-align: center;
+        background-color: rgba(94, 78, 81, 1);
     }
     .btn-green.active {
         color: rgba(94, 78, 81, 1);
@@ -15111,8 +15114,7 @@ button.close {
         pointer-events: none;
         padding: 12px 16px 20px 16px;
         overflow-y: hidden;
-        opacity: 0.85;
-        z-index: 7000;
+        
     }
 
     #wrapper-trees .toggle, #wrapper-trees .toggle-handle {
@@ -15153,32 +15155,37 @@ button.close {
         pointer-events: all;
         width: 100%;
         border-radius: 1px;
+        font-weight: 700;
     }
     #wrapper-trees .toggle {
         font-size: small;
         margin-right: 8px;
     }
 
+    #wrapper-list-food {
+        max-height: 150px;
+        overflow-y: auto;
+    }
     #wrapper-list-food .text-food {
         font-size: medium;
         font-weight: 700;
         color: #5e4e51;
         text-align: left;
         padding: 4px 8px;
-        background-color: rgba(255, 255, 255, 0.9);
+        background-color: rgba(255, 255, 255, 1);
         pointer-events: all;
         cursor: pointer;
-        border-bottom: 2px solid rgba(255, 255, 255, 1);
+        border-radius: 1px;
     }
-    
+
     #wrapper-treeinfo {
         position: absolute;
-        top: 48px;
+        top: 0;
         right: 0;
         width: 100%;
         height: 100%;
         pointer-events: none;
-        padding: 12px 8px 8px 8px;
+        padding: 60px 8px 8px 8px;
         overflow-y: hidden;
         color: #ffffff;
     }
@@ -15218,6 +15225,7 @@ button.close {
     #wrapper-treeinfo #content-header .btn-close {
         padding-top: 4px;
         cursor: pointer;
+        font-size: x-large;
     }
     #wrapper-treeinfo .tree-info-name {
         -webkit-flex-grow: 1;
@@ -15250,7 +15258,7 @@ button.close {
         overflow-y: auto;
     }
     #wrapper-treeinfo #list-comments {
-        height: 30%;
+        height: 25%;
         overflow-y: auto;
     }
     #wrapper-treeinfo .hr {
@@ -15293,17 +15301,22 @@ button.close {
         -o-text-overflow: ellipsis;
         text-overflow: ellipsis;
     }
-    
+
     #wrapper-trees #wrapper-mapfilter {
         position: absolute;
         top: 48px;
         left: -260px;
-        width: 300px;
+        width: 308px;
         height: 100%;
         padding: 12px 0 116px 0;
         pointer-events: none;
         display: -webkit-flex;
         display: flex;
+        opacity: 0.9;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        -webkit-user-select: none;
+        user-select: none;
     }
     #wrapper-mapfilter #content-mapfilter {
         width: 260px;
@@ -15313,7 +15326,12 @@ button.close {
         border-color: rgba(255, 255, 255, 1);
         border-top: 2px solid rgba(255, 255, 255, 1);
         border-bottom: 2px solid rgba(255, 255, 255, 1);
-        padding: 4px 4px 4px 4px;
+        padding: 4px 4px 10px 8px;
+        overflow: hidden;
+    }
+    #wrapper-mapfilter #content-mapfilter .frame-inner {
+        width: 100%;
+        height: 100%;
         overflow: hidden;
     }
     #content-filter-list {
@@ -15342,9 +15360,9 @@ button.close {
         -webkit-user-select: none;
         user-select: none;
         font-weight: 700;
-        font-size: large;
-        color: rgba(255, 255, 255, 0.9);
-        padding: 3px 0 0 0;
+        font-size: x-large;
+        color: rgba(255, 255, 255, 1);
+        padding: 2px 0 4px 0;
     }
     #content-mapfilter hr {
         border-top: 1px solid rgba(255, 255, 255, 0.75);
@@ -15357,8 +15375,9 @@ button.close {
         padding: 2px 4px;
     }
     #wrapper-mapfilter .btn-mapfilter {
-        width: 40px;
-        height: 40px;
+        width: 48px;
+        height: 48px;
+        padding-top: 4px;
         background-color: rgba(94, 78, 81, 0.95);
         pointer-events: all;
         border-color: rgba(255, 255, 255, 1);
@@ -15368,9 +15387,6 @@ button.close {
         color: rgba(255, 255, 255, 1);
         font-size: x-large;
         cursor: pointer;
-    }
-    #wrapper-mapfilter .btn-mapfilter:active, #wrapper-mapfilter .btn-mapfilter:hover {
-        color: #83a656;
     }
     #wrapper-mapfilter .deco-mapfilter {
         width: 40px;

@@ -17,7 +17,7 @@
 			minLength: 1,
 			initial: false,
 			casesensitive: false,
-			eventKey: 'keyup',
+			eventKey: 'keyup click',
 			resetOnBlur: true,
 			sourceData: null,
 			sourceTmpl: '<a class="list-group-item" href="#"><span>{title}</span></a>',

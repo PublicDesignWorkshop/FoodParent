@@ -158,6 +158,24 @@
             });
         }
 
+        public static fetchAllFoods(success?: any, error?: any) {
+            var xhr1: JQueryXHR = Model.fetchAllFoods();
+            Controller.pushXHR(xhr1);
+            $.when(
+                xhr1
+            ).then(function () {
+                Controller.removeXHR(xhr1);
+                if (success) {
+                    success();
+                }
+            }, function () {
+                Controller.removeXHR(xhr1);
+                if (error) {
+                    error(ERROR_MODE.SEVER_CONNECTION_ERROR);
+                }
+            });
+        }
+
         public static fetchImageNotesOfTreesDuringPeriod(trees: Array<Tree>, startDate: string, endDate: string, size: number, offset: number, success?: any, error?: any) {
             var ids: Array<number> = new Array<number>();
             $.each(trees, function (index: number, tree: Tree) {

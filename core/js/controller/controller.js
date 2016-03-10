@@ -146,6 +146,21 @@ var FoodParent;
                 }
             });
         };
+        Controller.fetchAllFoods = function (success, error) {
+            var xhr1 = FoodParent.Model.fetchAllFoods();
+            Controller.pushXHR(xhr1);
+            $.when(xhr1).then(function () {
+                Controller.removeXHR(xhr1);
+                if (success) {
+                    success();
+                }
+            }, function () {
+                Controller.removeXHR(xhr1);
+                if (error) {
+                    error(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+                }
+            });
+        };
         Controller.fetchImageNotesOfTreesDuringPeriod = function (trees, startDate, endDate, size, offset, success, error) {
             var ids = new Array();
             $.each(trees, function (index, tree) {
