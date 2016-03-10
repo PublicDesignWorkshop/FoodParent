@@ -32,7 +32,7 @@
                 if (View.getWidth() > View.getHeight()) {
                     point.x += self._map.getSize().x * 0.225;
                 } else {
-                    point.y -= self._map.getSize().y * 0.225;
+                    point.y -= self._map.getSize().y * 0.25;
                 }
                 self._map.panTo(L.CRS.EPSG3857.pointToLatLng(point, self._map.getZoom()));
             }
@@ -131,7 +131,7 @@
                     if (View.getWidth() > View.getHeight()) {
                         point.x += self._map.getSize().x * 0.225;
                     } else {
-                        point.y -= self._map.getSize().y * 0.225;
+                        point.y -= self._map.getSize().y * 0.25;
                     }
                     self._map.panTo(L.CRS.EPSG3857.pointToLatLng(point, self._map.getZoom()));
                     // Close map filter for mobile portrait view
