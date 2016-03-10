@@ -28,17 +28,28 @@ var FoodParent;
             self._tree.save({}, {
                 wait: true,
                 success: function (tree, response) {
-                    self._note = new FoodParent.Note({
-                        type: FoodParent.NoteType.INFO,
-                        tree: self._tree.getId(),
-                        person: 0,
-                        //comment: "Status has changed from '" + Model.getFlags().findWhere({ id: self._previousFlag }).getName()
-                        //+ "' to '" + Model.getFlags().findWhere({ id: self._flag }).getName() + "'",
-                        comment: "Status has changed as '" + FoodParent.Model.getFlags().findWhere({ id: self._flag }).getName() + "'",
-                        picture: "",
-                        rate: -1,
-                        date: moment(new Date()).format(FoodParent.Setting.getDateTimeFormat()),
-                    });
+                    if (self._addmode) {
+                        self._note = new FoodParent.Note({
+                            type: FoodParent.NoteType.INFO,
+                            tree: self._tree.getId(),
+                            person: 0,
+                            comment: "Status '" + FoodParent.Model.getFlags().findWhere({ id: self._flag }).getName() + "' has added.",
+                            picture: "",
+                            rate: -1,
+                            date: moment(new Date()).format(FoodParent.Setting.getDateTimeFormat()),
+                        });
+                    }
+                    else {
+                        self._note = new FoodParent.Note({
+                            type: FoodParent.NoteType.INFO,
+                            tree: self._tree.getId(),
+                            person: 0,
+                            comment: "Status '" + FoodParent.Model.getFlags().findWhere({ id: self._flag }).getName() + "' has removed.",
+                            picture: "",
+                            rate: -1,
+                            date: moment(new Date()).format(FoodParent.Setting.getDateTimeFormat()),
+                        });
+                    }
                     self._note.save({}, {
                         wait: true,
                         success: function (note, response) {

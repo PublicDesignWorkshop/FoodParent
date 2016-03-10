@@ -49,6 +49,31 @@ var FoodParent;
                     FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
                 });
             };
+            this.renderMarkers = function () {
+                var self = _this;
+                console.log(FoodParent.TreesMapView.TAG + "renderMarkers()");
+                // Iterate all trees and add markers for trees in database but not being rendered in the map
+                $.each(FoodParent.Model.getTrees().models, function (index, tree) {
+                    var bFound = false;
+                    for (var j = 0; j < self._markers.length && !bFound; j++) {
+                        if (tree.getId() == self._markers[j].options.id) {
+                            bFound = true;
+                        }
+                    }
+                    if (!bFound) {
+                        self.addMarker(tree, true);
+                    }
+                });
+                // Open tree info popup if the hash address has an existing tree id
+                if (self._id != undefined && self._id != 0) {
+                    for (var j = 0; j < self._markers.length; j++) {
+                        if (self._markers[j].options.id == self._id) {
+                            self._markers[j].openPopup();
+                            break;
+                        }
+                    }
+                }
+            };
             this.renderTreeInfo = function (tree) {
                 var self = _this;
                 if (tree == undefined && self._selectedMarker != undefined) {
@@ -78,7 +103,7 @@ var FoodParent;
                             }));
                             self.$('#wrapper-treeinfo').removeClass('hidden');
                             self.renderFlagInfo(tree.getFlags());
-                            //self.renderOwnershipInfo(ownership);
+                            self.renderOwnershipInfo(ownership);
                             self.renderRecentComments(tree);
                             // Render address either from the reverse geo-coding server or stored address
                             self.$('.input-address').replaceWith('<div class="input-address"></div>');
@@ -92,6 +117,93 @@ var FoodParent;
                             else {
                                 self.$(".input-address").html(tree.getAddress());
                             }
+                            // Event listner for changing address
+                            self.$('.input-address').on('click', function (event) {
+                                $(this).replaceWith("<input type='text' class='input-address form-control' value='" + htmlEncode($(this).text()) + "' />");
+                                self.$('.input-address').focus();
+                                self.$('.input-address').on('focusout', function (event) {
+                                    self.updateTreeAddress(tree, self.$('.input-address').val());
+                                });
+                                self.$('.input-address').on('keydown', function (event) {
+                                    if (event.keyCode == 13) {
+                                        self.updateTreeAddress(tree, self.$('.input-address').val());
+                                    }
+                                    else if (event.keyCode == 27) {
+                                        self.renderTreeInfo(tree);
+                                    }
+                                });
+                            });
+                            // Event listner for changing description
+                            self.$('.input-description').on('click', function (event) {
+                                $(this).replaceWith("<input type='text' class='input-description form-control' value='" + htmlEncode($(this).text()) + "' />");
+                                self.$('.input-description').focus();
+                                self.$('.input-description').on('focusout', function (event) {
+                                    self.updateTreeDescription(tree, self.$('.input-description').val());
+                                });
+                                self.$('.input-description').on('keydown', function (event) {
+                                    if (event.keyCode == 13) {
+                                        self.updateTreeDescription(tree, self.$('.input-description').val());
+                                    }
+                                    else if (event.keyCode == 27) {
+                                        self.renderTreeInfo(tree);
+                                    }
+                                });
+                            });
+                            // Event listner for changing food type
+                            self.$('.input-food').on('click', function (event) {
+                                var template = _.template(FoodParent.Template.FoodSelectTemplate());
+                                var data = {
+                                    foods: FoodParent.Model.getFoods(),
+                                };
+                                $(this).replaceWith(template(data));
+                                self.$('.input-food').selectpicker();
+                                self.$('.input-food').selectpicker("val", food.getId());
+                                self.$('.input-food').on('hide.bs.dropdown', function (event) {
+                                    self.updateTreeFoodType(tree, parseInt($(this).find("option:selected").val()));
+                                });
+                                self.$('.input-lat').on('focusout', function (event) {
+                                    self.renderTreeInfo(tree);
+                                });
+                                self.$('.input-lat').on('keydown', function (event) {
+                                    if (event.keyCode == 27) {
+                                        self.renderTreeInfo(tree);
+                                    }
+                                });
+                            });
+                            // Event listner for changing latitude
+                            self.$('.input-lat').on('click', function (event) {
+                                $(this).replaceWith("<input class='input-lat form-control' value='" + $(this).html() + "' />");
+                                self.$('.input-lat').focus();
+                                self.$('.input-lat').on('focusout', function (event) {
+                                    self.updateTreeLocation(tree, new L.LatLng(parseFloat(self.$('.input-lat').val()), self._selectedMarker.getLatLng().lng));
+                                });
+                                self.$('.input-lat').on('keydown', function (event) {
+                                    if (event.keyCode == 13) {
+                                        self.updateTreeLocation(tree, new L.LatLng(parseFloat(self.$('.input-lat').val()), self._selectedMarker.getLatLng().lng));
+                                    }
+                                    else if (event.keyCode == 27) {
+                                        self.renderTreeInfo(tree);
+                                    }
+                                });
+                            });
+                            // Event listner for changing longitude
+                            self.$('.input-lng').on('click', function (event) {
+                                var width = self.$('.input-lng').outerWidth() + 8;
+                                $(this).replaceWith("<input class='input-lng form-control' value='" + $(this).html() + "' />");
+                                //self.$('.input-lng').css({ width: width });
+                                self.$('.input-lng').focus();
+                                self.$('.input-lng').on('focusout', function (event) {
+                                    self.updateTreeLocation(tree, new L.LatLng(self._selectedMarker.getLatLng().lat, parseFloat(self.$('.input-lng').val())));
+                                });
+                                self.$('.input-lng').on('keydown', function (event) {
+                                    if (event.keyCode == 13) {
+                                        self.updateTreeLocation(tree, new L.LatLng(self._selectedMarker.getLatLng().lat, parseFloat(self.$('.input-lng').val())));
+                                    }
+                                    else if (event.keyCode == 27) {
+                                        self.renderTreeInfo(tree);
+                                    }
+                                });
+                            });
                         }
                     }, function (response) {
                         // Handled as refreshing the page if it's not logged in
@@ -115,6 +227,8 @@ var FoodParent;
                 "change #checkbox-mytrees": "_toggleMyTrees",
                 "click .evt-reset-filter": "_resetFilter",
                 "click .btn-action": "_mouseClick",
+                "click .flag-radio": "_updateFlag",
+                "click .ownership-radio": "_updateOwnership",
             };
             self.delegateEvents();
         }

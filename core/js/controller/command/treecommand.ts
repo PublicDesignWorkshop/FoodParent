@@ -36,17 +36,27 @@
                 {
                     wait: true,
                     success: function (tree: Tree, response: any) {
-                        self._note = new Note({
-                            type: NoteType.INFO,
-                            tree: self._tree.getId(),
-                            person: 0,
-                            //comment: "Status has changed from '" + Model.getFlags().findWhere({ id: self._previousFlag }).getName()
-                            //+ "' to '" + Model.getFlags().findWhere({ id: self._flag }).getName() + "'",
-                            comment: "Status has changed as '" + Model.getFlags().findWhere({ id: self._flag }).getName() + "'",
-                            picture: "",
-                            rate: -1,
-                            date: moment(new Date()).format(Setting.getDateTimeFormat()),
-                        });
+                        if (self._addmode) {
+                            self._note = new Note({
+                                type: NoteType.INFO,
+                                tree: self._tree.getId(),
+                                person: 0,
+                                comment: "Status '" + Model.getFlags().findWhere({ id: self._flag }).getName() + "' has added.",
+                                picture: "",
+                                rate: -1,
+                                date: moment(new Date()).format(Setting.getDateTimeFormat()),
+                            });
+                        } else {
+                            self._note = new Note({
+                                type: NoteType.INFO,
+                                tree: self._tree.getId(),
+                                person: 0,
+                                comment: "Status '" + Model.getFlags().findWhere({ id: self._flag }).getName() + "' has removed.",
+                                picture: "",
+                                rate: -1,
+                                date: moment(new Date()).format(Setting.getDateTimeFormat()),
+                            });
+                        }
                         self._note.save(
                             {},
                             {

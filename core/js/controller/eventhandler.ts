@@ -52,8 +52,8 @@
                 case VIEW_STATUS.TREES:
                     switch (code) {
                         case 27:    // esc
-                            View.getTreesView().removeTreeInfo();
-                            View.getTreesView().closeMapFilter();
+                            //View.getTreesView().removeTreeInfo();
+                            //View.getTreesView().closeMapFilter();
                             break;
                     }
                     break;

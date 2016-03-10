@@ -188,7 +188,6 @@
                 for (var j = 0; j < self._markers.length; j++) {
                     if (self._markers[j].options.id == self._id) {
                         self._markers[j].openPopup();
-
                         break;
                     }
                 }
@@ -639,6 +638,47 @@
             });
         }
 
+        protected renderOwnershipInfo(ownership: Ownership): void {
+            var self: TreesMapView = this;
+            Controller.checkIsAdmin(function (response) {
+                $.each(self.$('.ownership-radio'), function (index: number, item: JQuery) {
+                    if (ownership != undefined) {
+                        if (parseInt($(item).attr('data-target')) == ownership.getId()) {
+                            $(item).addClass('active');
+                            $(item).find('input').prop({ 'checked': 'checked' });
+                        } else {
+                            $(item).removeClass('active');
+                            $(item).find('input').prop({ 'checked': '' });
+                        }
+                        if (parseInt($(item).attr('data-target')) == 0) {
+                            $(this).attr('disabled', 'disabled');
+                            $(item).addClass('disabled');
+                        }
+                    }
+                });
+            }, function (response) {
+                $.each(self.$('.ownership-radio'), function (index: number, item: JQuery) {
+                    if (ownership != undefined) {
+                        if (parseInt($(item).attr('data-target')) == ownership.getId()) {
+                            $(item).addClass('active');
+                            $(item).find('input').prop({ 'checked': 'checked' });
+                        } else {
+                            $(item).removeClass('active');
+                            $(item).find('input').prop({ 'checked': '' });
+                            $(item).addClass('hidden');
+                        }
+                        if (parseInt($(item).attr('data-target')) == 0) {
+                            $(this).attr('disabled', 'disabled');
+                            $(item).addClass('disabled');
+                        }
+                        $(item).css({ 'pointer-events': 'none' });
+                    }
+                });
+            }, function () {
+                EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
+            });
+        }
+
         public panToCurrentLocation = () => {
             var self: TreesMapView = this;
             Controller.updateGeoLocation(function (position: Position) {
@@ -652,6 +692,133 @@
                 }
                 self._map.panTo(L.CRS.EPSG3857.pointToLatLng(point, self._map.getZoom()));
             }, self.renderMapError);
+        }
+
+        protected updateTreeAddress(tree: Tree, address: string) {
+            var self: TreesMapView = this;
+            if (address.trim() == '') {
+                FoodParent.GeoLocation.reverseGeocoding(tree.getLocation(), function (data: FoodParent.ReverseGeoLocation) {
+                    if ((data.road + ", " + data.county + ", " + data.state + ", " + data.postcode) != tree.getAddress()) {
+                        FoodParent.EventHandler.handleTreeData(tree, FoodParent.DATA_MODE.UPDATE_ADDRESS, { address: data.road + ", " + data.county + ", " + data.state + ", " + data.postcode }, function () {
+                            var food: FoodParent.Food = FoodParent.Model.getFoods().findWhere({ id: tree.getFoodId() });
+                            FoodParent.EventHandler.handleDataChange("Address of <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has been changed successfully.", true);
+                            self.renderTreeInfo(tree);
+                        }, function () {
+                            FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+                        });
+                    } else {
+                        self.renderTreeInfo(tree);
+                    }
+                }, function () {
+                    FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+                });
+            } else if (tree.getAddress().trim() != address.trim()) {
+                FoodParent.EventHandler.handleTreeData(tree, FoodParent.DATA_MODE.UPDATE_ADDRESS, { address: address.trim() }, function () {
+                    var food: FoodParent.Food = FoodParent.Model.getFoods().findWhere({ id: tree.getFoodId() });
+                    FoodParent.EventHandler.handleDataChange("Address of <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has been changed successfully.", true);
+                    self.renderTreeInfo(tree);
+                }, function () {
+                    FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+                });
+            } else {
+                self.renderTreeInfo(tree);
+            }
+        }
+
+        protected updateTreeDescription(tree: Tree, description: string) {
+            var self: TreesMapView = this;
+            if (tree.getDescription().trim() != description.trim()) {
+                EventHandler.handleTreeData(tree, DATA_MODE.UPDATE_DESCRIPTION, { description: description }, function () {
+                    var food: Food = Model.getFoods().findWhere({ id: tree.getFoodId() });
+                    EventHandler.handleDataChange("Description of <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has changed successfully.", true);
+                    self.renderTreeInfo(tree);
+                }, function () {
+                    EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
+                });
+            } else {
+                self.renderTreeInfo(tree);
+            }
+        }
+
+        protected updateTreeFoodType(tree: Tree, selected: number) {
+            var self: TreesMapView = this;
+            if (tree.getFoodId() != selected) {
+                EventHandler.handleTreeData(tree, DATA_MODE.UPDATE_FOODTYPE, { food: selected }, function () {
+                    var food: Food = Model.getFoods().findWhere({ id: tree.getFoodId() });
+                    EventHandler.handleDataChange("Food type of <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has changed successfully.", true);
+                    self._selectedMarker.label._container.innerHTML = food.getName() + " " + tree.getName();
+                    self._selectedMarker.setIcon(MarkerFractory.getIcon(food));
+                    self.renderTreeInfo(tree);
+                }, function () {
+                    EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
+                });
+                self.renderTreeInfo(tree);
+            } else {
+                self.renderTreeInfo(tree);
+            }
+        }
+
+        protected updateTreeLocation(tree: Tree, location: L.LatLng) {
+            var self: TreesMapView = this;
+            if (location.lat != self._selectedMarker.getLatLng().lat || location.lng != self._selectedMarker.getLatLng().lng) {
+                if (self._selectedMarker != undefined && self._selectedMarker.options.id != undefined) {
+                    EventHandler.handleTreeData(tree, DATA_MODE.UPDATE_LOCATION, { marker: self._selectedMarker, location: location }, function () {
+                        var food: Food = Model.getFoods().findWhere({ id: tree.getFoodId() });
+                        EventHandler.handleDataChange("Location of <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has changed successfully.", true);
+                        // Move marker to desired location & update info panel
+                        self._selectedMarker.setLatLng(tree.getLocation());
+                        self._map.setView(tree.getLocation());
+                        self.renderTreeInfo(tree);
+                    }, function () {
+                        EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
+                    });
+                }
+            } else {
+                self.renderTreeInfo(tree);
+            }
+        }
+
+        protected _updateFlag(event: Event) {
+            var self: TreesMapView = this;
+            var tree: Tree = Model.getTrees().findWhere({ id: self._selectedMarker.options.id });
+            var flag: number = parseInt($(event.target).attr('data-target'));
+            setTimeout(function () {
+                if ($(event.target).find('input[type="checkbox"]').prop('checked')) {   // checked
+                    EventHandler.handleTreeData(tree, DATA_MODE.UPDATE_FLAG, { flag: flag, addmode: true }, function () {
+                        var food: Food = Model.getFoods().findWhere({ id: tree.getFoodId() });
+                        self.renderFlagInfo(tree.getFlags());
+                        EventHandler.handleDataChange("Status of <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has changed successfully.", true);
+                        self._applyFilter();
+                    }, function () {
+                        EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
+                    });
+                } else {    // unchecked
+                    EventHandler.handleTreeData(tree, DATA_MODE.UPDATE_FLAG, { flag: flag, addmode: false }, function () {
+                        var food: Food = Model.getFoods().findWhere({ id: tree.getFoodId() });
+                        self.renderFlagInfo(tree.getFlags());
+                        EventHandler.handleDataChange("Status of <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has changed successfully.", true);
+                        self._applyFilter();
+                    }, function () {
+                        EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
+                    });
+                }
+            }, 1);
+        }
+
+        protected _updateOwnership(event: Event): void {
+            var self: TreesMapView = this;
+            var tree: Tree = Model.getTrees().findWhere({ id: self._selectedMarker.options.id });
+            var ownership: number = parseInt($(event.target).attr('data-target'));
+            if (tree.getOwnershipId() != ownership) {
+                EventHandler.handleTreeData(tree, DATA_MODE.UPDATE_OWNERSHIP, { ownership: ownership }, function () {
+                    var food: Food = Model.getFoods().findWhere({ id: tree.getFoodId() });
+                    var ownership: Ownership = Model.getOwnerships().findWhere({ id: tree.getOwnershipId() });
+                    self.renderOwnershipInfo(ownership);
+                    EventHandler.handleDataChange("Ownership of <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has changed successfully.", true);
+                }, function () {
+                    EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
+                });
+            }
         }
     }
 }

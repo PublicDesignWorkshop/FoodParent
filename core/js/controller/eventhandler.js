@@ -99,8 +99,8 @@ var FoodParent;
                 case VIEW_STATUS.TREES:
                     switch (code) {
                         case 27:
-                            FoodParent.View.getTreesView().removeTreeInfo();
-                            FoodParent.View.getTreesView().closeMapFilter();
+                            //View.getTreesView().removeTreeInfo();
+                            //View.getTreesView().closeMapFilter();
                             break;
                     }
                     break;
