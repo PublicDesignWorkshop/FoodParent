@@ -42919,6 +42919,7 @@ var FoodParent;
                     if (FoodParent.View.getViewStatus() != VIEW_STATUS.LOGIN) {
                         FoodParent.Controller.checkIsLoggedIn(function (response) {
                             FoodParent.Controller.checkIsAdmin(function () {
+                                new FoodParent.RenderAccountViewCommand({ el: FoodParent.Setting.getPopWrapperElement() }).execute();
                             }, function () {
                                 new FoodParent.RenderAccountViewCommand({ el: FoodParent.Setting.getPopWrapperElement() }).execute();
                             }, function () {

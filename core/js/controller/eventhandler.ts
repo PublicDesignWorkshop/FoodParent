@@ -204,7 +204,7 @@
                     if (View.getViewStatus() != VIEW_STATUS.LOGIN) {
                         Controller.checkIsLoggedIn(function (response) {
                             Controller.checkIsAdmin(function () {
-                                
+                                new RenderAccountViewCommand({ el: Setting.getPopWrapperElement() }).execute();
                             }, function () {
                                 new RenderAccountViewCommand({ el: Setting.getPopWrapperElement() }).execute();
                             }, function () {
