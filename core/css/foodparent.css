@@ -15188,7 +15188,7 @@ button.close {
         padding: 4px 16px;
     }
     #wrapper-treeinfo #content-header .btn-close {
-        padding-top: 4px;
+        padding-top: 2px;
         cursor: pointer;
         font-size: x-large;
     }
@@ -15198,7 +15198,8 @@ button.close {
         display: -webkit-flex;
         display: flex;
         font-size: x-large;
-        padding: 4px 0;
+        font-weight: 700;
+        padding: 4px 0 2px 0;
         margin: 0;
         -webkit-justify-content: center;
         justify-content: center;
