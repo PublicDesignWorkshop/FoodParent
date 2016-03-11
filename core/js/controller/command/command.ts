@@ -160,8 +160,8 @@
         }
         public execute(): any {
             var self: RenderConfirmViewCommand = this;
-            var view: AlertView = ConfirmViewFractory.create(self._el, self._message, self._command).render();
-            View.setPopupView(view);
+            var view: PopupView = ConfirmViewFractory.create(self._el, self._message, self._command).render();
+            View.addPopupView(view);
             View.setViewStatus(VIEW_STATUS.CONFIRM);
         }
         public undo(): any {
@@ -245,8 +245,8 @@
         }
         public execute(): any {
             var self: RenderImageNoteViewCommand = this;
-            var view: AlertView = ImageNoteViewFactory.create(self._el, self._note).render();
-            View.setPopupView(view);
+            var view: PopupView = ImageNoteViewFactory.create(self._el, self._note).render();
+            View.addPopupView(view);
             View.setViewStatus(VIEW_STATUS.IMAGENOTE_TREE);
         }
         public undo(): any {
@@ -264,8 +264,8 @@
         }
         public execute(): any {
             var self: RenderPostNoteViewCommand = this;
-            var view: AlertView = PostNoteViewFactory.create(self._el, self._tree).render();
-            View.setPopupView(view);
+            var view: PopupView = PostNoteViewFactory.create(self._el, self._tree).render();
+            View.addPopupView(view);
             View.setViewStatus(VIEW_STATUS.POST_NOTE);
         }
         public undo(): any {
@@ -287,8 +287,8 @@
         }
         public execute(): any {
             var self: RenderAlertViewCommand = this;
-            var view: AlertView = AlertViewFractory.create(self._el, self._errorMode, self._customMessage).render();
-            View.setPopupView(view);
+            var view: PopupView = AlertViewFractory.create(self._el, self._errorMode, self._customMessage).render();
+            View.addPopupView(view);
             switch (self._errorMode) {
                 case ERROR_MODE.GEO_PERMISSION_ERROR:
                     View.setViewStatus(VIEW_STATUS.GEO_ERROR);
@@ -516,8 +516,8 @@
         }
         public execute(): any {
             var self: RenderAddDonationViewCommand = this;
-            var view: AlertView = AddDonationViewFactory.create(self._el, self._place).render();
-            View.setPopupView(view);
+            var view: PopupView = AddDonationViewFactory.create(self._el, self._place).render();
+            View.addPopupView(view);
             View.setViewStatus(VIEW_STATUS.ADD_DONATION);
         }
         public undo(): any {
@@ -557,8 +557,8 @@
         }
         public execute(): any {
             var self: RenderEditDonationViewCommand = this;
-            var view: AlertView = EditDonationViewFactory.create(self._el, self._donation).render();
-            View.setPopupView(view);
+            var view: PopupView = EditDonationViewFactory.create(self._el, self._donation).render();
+            View.addPopupView(view);
             View.setViewStatus(VIEW_STATUS.EDIT_DONATION);
         }
         public undo(): any {
@@ -608,8 +608,8 @@
         }
         public execute(): any {
             var self: RenderSignUpViewCommand = this;
-            var view: AlertView = SignUpViewFactory.create(self._el).render();
-            View.setPopupView(view);
+            var view: PopupView = SignUpViewFactory.create(self._el).render();
+            View.addPopupView(view);
             View.setViewStatus(VIEW_STATUS.SIGNUP);
         }
         public undo(): any {
@@ -627,8 +627,8 @@
         }
         public execute(): any {
             var self: RenderChangePasswordViewCommand = this;
-            var view: AlertView = ChangePasswordViewFactory.create(self._el, self._person).render();
-            View.setPopupView(view);
+            var view: PopupView = ChangePasswordViewFactory.create(self._el, self._person).render();
+            View.addPopupView(view);
             View.setViewStatus(VIEW_STATUS.CHANGE_PASSWORD);
         }
         public undo(): any {

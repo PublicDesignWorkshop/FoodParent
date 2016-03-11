@@ -222,6 +222,7 @@
         private _marker: L.Marker;
         private _location: L.LatLng;
         private _prevLocation: L.LatLng;
+        private _prevAddress: string;
         private _success: Function;
         private _error: Function;
         private _note: Note;
@@ -244,57 +245,63 @@
         public execute(): any {
             var self: UpdateTreeLocation = this;
             self._prevLocation = self._tree.getLocation();
-            self._tree.save(
-                {
-                    'lat': self._location.lat,
-                    'lng': self._location.lng
-                },
-                {
-                    wait: true,
-                    success: function (tree: Tree, response: any) {
-                        self._note = new Note({
-                            type: NoteType.INFO,
-                            tree: self._tree.getId(),
-                            person: 0,
-                            //comment: "Location has changed from '@ " + self._prevLocation.lat.toFixed(4) + ", " + self._prevLocation.lng.toFixed(4)
-                            //+ "' to '" + '@ ' + self._location.lat.toFixed(4) + ", " + self._location.lng.toFixed(4) + "'",
-                            comment: "Location has changed as '" + '@ ' + self._location.lat.toFixed(4) + ", " + self._location.lng.toFixed(4) + "'",
-                            picture: "",
-                            rate: -1,
-                            date: moment(new Date()).format(Setting.getDateTimeFormat()),
-                        });
-                        self._note.save(
-                            {},
-                            {
-                                wait: true,
-                                success: function (note: Note, response: any) {
-                                    Model.getNotes().add(note);
-                                    if (self._success) {
-                                        self._success();
-                                    }
-                                },
-                                error: function (error) {
-                                    if (self._error) {
-                                        self._error();
-                                    }
-                                },
+            self._prevAddress = self._tree.getAddress();
+
+            GeoLocation.reverseGeocoding(self._tree.getLocation(), function (data: ReverseGeoLocation) {
+                self._tree.save(
+                    {
+                        'lat': self._location.lat,
+                        'lng': self._location.lng,
+                        'address': data.road + ", " + data.county + ", " + data.state + ", " + data.country + ", " + data.postcode,
+                    },
+                    {
+                        wait: true,
+                        success: function (tree: Tree, response: any) {
+                            self._note = new Note({
+                                type: NoteType.INFO,
+                                tree: self._tree.getId(),
+                                person: 0,
+                                comment: "Location has changed as '" + '@ ' + self._location.lat.toFixed(4) + ", " + self._location.lng.toFixed(4) + "'",
+                                picture: "",
+                                rate: -1,
+                                date: moment(new Date()).format(Setting.getDateTimeFormat()),
+                            });
+                            self._note.save(
+                                {},
+                                {
+                                    wait: true,
+                                    success: function (note: Note, response: any) {
+                                        Model.getNotes().add(note);
+                                        if (self._success) {
+                                            self._success();
+                                        }
+                                    },
+                                    error: function (error) {
+                                        if (self._error) {
+                                            self._error();
+                                        }
+                                    },
+                                }
+                            );
+                        },
+                        error: function (error, response) {
+                            if (self._error) {
+                                self._error();
                             }
-                        );
-                    },
-                    error: function (error, response) {
-                        if (self._error) {
-                            self._error();
-                        }
-                    },
-                }
-            );
+                        },
+                    }
+                );
+            }, function () {
+                EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
+            });
         }
         public undo(): any {
             var self: UpdateTreeLocation = this;
             self._tree.save(
                 {
                     'lat': self._prevLocation.lat,
-                    'lng': self._prevLocation.lng
+                    'lng': self._prevLocation.lng,
+                    'address': self._prevAddress,
                 },
                 {
                     wait: true,

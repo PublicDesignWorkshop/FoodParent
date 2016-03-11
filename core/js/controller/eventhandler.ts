@@ -11,9 +11,9 @@
         ADD_DONATION_TREE, REMOVE_DONATION_TREE, UPDATE_DONATION_AMOUNT,
     }
     export enum VIEW_STATUS {
-        NONE, HOME, 
+        NONE, HOME, CONFIRM,
         TREES, TREES_TABLE,
-        PARENT_TREES, GEO_ERROR, NETWORK_ERROR, CONFIRM, MANAGE_PEOPLE, MANAGE_ADOPTION, DETAIL_TREE, IMAGENOTE_TREE, POST_NOTE, MANAGE_DONATIONS, ADD_DONATION, DETAIL_DONATION, EDIT_DONATION, LOGIN, SERVER_RESPONSE_ERROR, SIGNUP, ADOPT_TREE, UNADOPT_TREE,
+        PARENT_TREES, GEO_ERROR, NETWORK_ERROR, MANAGE_PEOPLE, MANAGE_ADOPTION, DETAIL_TREE, IMAGENOTE_TREE, POST_NOTE, MANAGE_DONATIONS, ADD_DONATION, DETAIL_DONATION, EDIT_DONATION, LOGIN, SERVER_RESPONSE_ERROR, SIGNUP, ADOPT_TREE, UNADOPT_TREE,
         CHANGE_PASSWORD
     }
     export enum CREDENTIAL_MODE {
@@ -239,8 +239,9 @@
                     }
                     break;
                 case VIEW_STATUS.CONFIRM:
-                    if (el.hasClass('confirm-confirm') || el.hasClass('confirm-cancel')) {
-                        new RemoveAlertViewCommand({ delay: Setting.getRemovePopupDuration() }).execute();
+                    if (el.hasClass('evt-close') || el.hasClass('evt-submit')) {
+                        new RemovePopupViewCommand({ delay: Setting.getRemovePopupDuration() }).execute();
+                        new RefreshCurrentViewCommand().execute();
                     }
                     break;
                 case VIEW_STATUS.TREES:
@@ -289,6 +290,7 @@
                         EventHandler.handleTreeData(tree, DATA_MODE.CREATE, {}, function () {
                             var food: Food = Model.getFoods().findWhere({ id: tree.getFoodId() });
                             new RefreshCurrentViewCommand().execute();
+                            FoodParent.Router.getInstance().navigate("trees/" + tree.getId(), { trigger: true, replace: true });
                             EventHandler.handleDataChange("<strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has been created successfully.", true);
                         }, function () {
                             EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
@@ -296,6 +298,15 @@
                             var food: Food = Model.getFoods().findWhere({ id: tree.getFoodId() });
                             EventHandler.handleDataChange("<strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has been deleted successfully.", false);
                             new RefreshCurrentViewCommand().execute();
+                        });
+                    } else if (el.hasClass('evt-tree-remove')) {
+                        var tree: Tree = Model.getTrees().findWhere({ id: options.marker.options.id });
+                        EventHandler.handleTreeData(tree, DATA_MODE.DELETE, {}, function () {
+                            var food: Food = Model.getFoods().findWhere({ id: tree.getFoodId() });
+                            new RefreshCurrentViewCommand().execute();
+                            EventHandler.handleDataChange("<strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has deleted successfully.", false);
+                        }, function () {
+                            EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
                         });
                     }
                     break;
@@ -621,7 +632,7 @@
                 case DATA_MODE.DELETE:
                     var food: Food = Model.getFoods().findWhere({ id: tree.getFoodId() });
                     var command: Command = new DeleteTree({ tree: tree }, success, error);
-                    new RenderConfirmViewCommand({ el: Setting.getPopWrapperElement(), message: "Are you sure to delete " + food.getName() + " " + tree.getName() + "?", command: command }).execute();
+                    new RenderConfirmViewCommand({ el: Setting.getPopWrapperElement(), message: "Are you sure to delete '" + food.getName() + " " + tree.getName() + "' ?", command: command }).execute();
                     break;
             }
             if (self._lastCommand != undefined) {

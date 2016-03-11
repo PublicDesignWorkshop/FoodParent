@@ -42688,12 +42688,12 @@ var FoodParent;
     (function (VIEW_STATUS) {
         VIEW_STATUS[VIEW_STATUS["NONE"] = 0] = "NONE";
         VIEW_STATUS[VIEW_STATUS["HOME"] = 1] = "HOME";
-        VIEW_STATUS[VIEW_STATUS["TREES"] = 2] = "TREES";
-        VIEW_STATUS[VIEW_STATUS["TREES_TABLE"] = 3] = "TREES_TABLE";
-        VIEW_STATUS[VIEW_STATUS["PARENT_TREES"] = 4] = "PARENT_TREES";
-        VIEW_STATUS[VIEW_STATUS["GEO_ERROR"] = 5] = "GEO_ERROR";
-        VIEW_STATUS[VIEW_STATUS["NETWORK_ERROR"] = 6] = "NETWORK_ERROR";
-        VIEW_STATUS[VIEW_STATUS["CONFIRM"] = 7] = "CONFIRM";
+        VIEW_STATUS[VIEW_STATUS["CONFIRM"] = 2] = "CONFIRM";
+        VIEW_STATUS[VIEW_STATUS["TREES"] = 3] = "TREES";
+        VIEW_STATUS[VIEW_STATUS["TREES_TABLE"] = 4] = "TREES_TABLE";
+        VIEW_STATUS[VIEW_STATUS["PARENT_TREES"] = 5] = "PARENT_TREES";
+        VIEW_STATUS[VIEW_STATUS["GEO_ERROR"] = 6] = "GEO_ERROR";
+        VIEW_STATUS[VIEW_STATUS["NETWORK_ERROR"] = 7] = "NETWORK_ERROR";
         VIEW_STATUS[VIEW_STATUS["MANAGE_PEOPLE"] = 8] = "MANAGE_PEOPLE";
         VIEW_STATUS[VIEW_STATUS["MANAGE_ADOPTION"] = 9] = "MANAGE_ADOPTION";
         VIEW_STATUS[VIEW_STATUS["DETAIL_TREE"] = 10] = "DETAIL_TREE";
@@ -42943,8 +42943,9 @@ var FoodParent;
                     }
                     break;
                 case VIEW_STATUS.CONFIRM:
-                    if (el.hasClass('confirm-confirm') || el.hasClass('confirm-cancel')) {
-                        new RemoveAlertViewCommand({ delay: FoodParent.Setting.getRemovePopupDuration() }).execute();
+                    if (el.hasClass('evt-close') || el.hasClass('evt-submit')) {
+                        new FoodParent.RemovePopupViewCommand({ delay: FoodParent.Setting.getRemovePopupDuration() }).execute();
+                        new FoodParent.RefreshCurrentViewCommand().execute();
                     }
                     break;
                 case VIEW_STATUS.TREES:
@@ -43006,6 +43007,7 @@ var FoodParent;
                         EventHandler.handleTreeData(tree, DATA_MODE.CREATE, {}, function () {
                             var food = FoodParent.Model.getFoods().findWhere({ id: tree.getFoodId() });
                             new FoodParent.RefreshCurrentViewCommand().execute();
+                            FoodParent.Router.getInstance().navigate("trees/" + tree.getId(), { trigger: true, replace: true });
                             EventHandler.handleDataChange("<strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has been created successfully.", true);
                         }, function () {
                             EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
@@ -43013,6 +43015,16 @@ var FoodParent;
                             var food = FoodParent.Model.getFoods().findWhere({ id: tree.getFoodId() });
                             EventHandler.handleDataChange("<strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has been deleted successfully.", false);
                             new FoodParent.RefreshCurrentViewCommand().execute();
+                        });
+                    }
+                    else if (el.hasClass('evt-tree-remove')) {
+                        var tree = FoodParent.Model.getTrees().findWhere({ id: options.marker.options.id });
+                        EventHandler.handleTreeData(tree, DATA_MODE.DELETE, {}, function () {
+                            var food = FoodParent.Model.getFoods().findWhere({ id: tree.getFoodId() });
+                            new FoodParent.RefreshCurrentViewCommand().execute();
+                            EventHandler.handleDataChange("<strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has deleted successfully.", false);
+                        }, function () {
+                            EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
                         });
                     }
                     break;
@@ -43346,7 +43358,7 @@ var FoodParent;
                 case DATA_MODE.DELETE:
                     var food = FoodParent.Model.getFoods().findWhere({ id: tree.getFoodId() });
                     var command = new FoodParent.DeleteTree({ tree: tree }, success, error);
-                    new FoodParent.RenderConfirmViewCommand({ el: FoodParent.Setting.getPopWrapperElement(), message: "Are you sure to delete " + food.getName() + " " + tree.getName() + "?", command: command }).execute();
+                    new FoodParent.RenderConfirmViewCommand({ el: FoodParent.Setting.getPopWrapperElement(), message: "Are you sure to delete '" + food.getName() + " " + tree.getName() + "' ?", command: command }).execute();
                     break;
             }
             if (self._lastCommand != undefined) {
@@ -43635,7 +43647,7 @@ var FoodParent;
         RenderConfirmViewCommand.prototype.execute = function () {
             var self = this;
             var view = FoodParent.ConfirmViewFractory.create(self._el, self._message, self._command).render();
-            FoodParent.View.setPopupView(view);
+            FoodParent.View.addPopupView(view);
             FoodParent.View.setViewStatus(FoodParent.VIEW_STATUS.CONFIRM);
         };
         RenderConfirmViewCommand.prototype.undo = function () {
@@ -43715,7 +43727,7 @@ var FoodParent;
         RenderImageNoteViewCommand.prototype.execute = function () {
             var self = this;
             var view = FoodParent.ImageNoteViewFactory.create(self._el, self._note).render();
-            FoodParent.View.setPopupView(view);
+            FoodParent.View.addPopupView(view);
             FoodParent.View.setViewStatus(FoodParent.VIEW_STATUS.IMAGENOTE_TREE);
         };
         RenderImageNoteViewCommand.prototype.undo = function () {
@@ -43732,7 +43744,7 @@ var FoodParent;
         RenderPostNoteViewCommand.prototype.execute = function () {
             var self = this;
             var view = FoodParent.PostNoteViewFactory.create(self._el, self._tree).render();
-            FoodParent.View.setPopupView(view);
+            FoodParent.View.addPopupView(view);
             FoodParent.View.setViewStatus(FoodParent.VIEW_STATUS.POST_NOTE);
         };
         RenderPostNoteViewCommand.prototype.undo = function () {
@@ -43752,7 +43764,7 @@ var FoodParent;
         RenderAlertViewCommand.prototype.execute = function () {
             var self = this;
             var view = FoodParent.AlertViewFractory.create(self._el, self._errorMode, self._customMessage).render();
-            FoodParent.View.setPopupView(view);
+            FoodParent.View.addPopupView(view);
             switch (self._errorMode) {
                 case FoodParent.ERROR_MODE.GEO_PERMISSION_ERROR:
                     FoodParent.View.setViewStatus(FoodParent.VIEW_STATUS.GEO_ERROR);
@@ -43976,7 +43988,7 @@ var FoodParent;
         RenderAddDonationViewCommand.prototype.execute = function () {
             var self = this;
             var view = FoodParent.AddDonationViewFactory.create(self._el, self._place).render();
-            FoodParent.View.setPopupView(view);
+            FoodParent.View.addPopupView(view);
             FoodParent.View.setViewStatus(FoodParent.VIEW_STATUS.ADD_DONATION);
         };
         RenderAddDonationViewCommand.prototype.undo = function () {
@@ -44013,7 +44025,7 @@ var FoodParent;
         RenderEditDonationViewCommand.prototype.execute = function () {
             var self = this;
             var view = FoodParent.EditDonationViewFactory.create(self._el, self._donation).render();
-            FoodParent.View.setPopupView(view);
+            FoodParent.View.addPopupView(view);
             FoodParent.View.setViewStatus(FoodParent.VIEW_STATUS.EDIT_DONATION);
         };
         RenderEditDonationViewCommand.prototype.undo = function () {
@@ -44062,7 +44074,7 @@ var FoodParent;
         RenderSignUpViewCommand.prototype.execute = function () {
             var self = this;
             var view = FoodParent.SignUpViewFactory.create(self._el).render();
-            FoodParent.View.setPopupView(view);
+            FoodParent.View.addPopupView(view);
             FoodParent.View.setViewStatus(FoodParent.VIEW_STATUS.SIGNUP);
         };
         RenderSignUpViewCommand.prototype.undo = function () {
@@ -44079,7 +44091,7 @@ var FoodParent;
         RenderChangePasswordViewCommand.prototype.execute = function () {
             var self = this;
             var view = FoodParent.ChangePasswordViewFactory.create(self._el, self._person).render();
-            FoodParent.View.setPopupView(view);
+            FoodParent.View.addPopupView(view);
             FoodParent.View.setViewStatus(FoodParent.VIEW_STATUS.CHANGE_PASSWORD);
         };
         RenderChangePasswordViewCommand.prototype.undo = function () {
@@ -44301,50 +44313,55 @@ var FoodParent;
         UpdateTreeLocation.prototype.execute = function () {
             var self = this;
             self._prevLocation = self._tree.getLocation();
-            self._tree.save({
-                'lat': self._location.lat,
-                'lng': self._location.lng
-            }, {
-                wait: true,
-                success: function (tree, response) {
-                    self._note = new FoodParent.Note({
-                        type: FoodParent.NoteType.INFO,
-                        tree: self._tree.getId(),
-                        person: 0,
-                        //comment: "Location has changed from '@ " + self._prevLocation.lat.toFixed(4) + ", " + self._prevLocation.lng.toFixed(4)
-                        //+ "' to '" + '@ ' + self._location.lat.toFixed(4) + ", " + self._location.lng.toFixed(4) + "'",
-                        comment: "Location has changed as '" + '@ ' + self._location.lat.toFixed(4) + ", " + self._location.lng.toFixed(4) + "'",
-                        picture: "",
-                        rate: -1,
-                        date: moment(new Date()).format(FoodParent.Setting.getDateTimeFormat()),
-                    });
-                    self._note.save({}, {
-                        wait: true,
-                        success: function (note, response) {
-                            FoodParent.Model.getNotes().add(note);
-                            if (self._success) {
-                                self._success();
-                            }
-                        },
-                        error: function (error) {
-                            if (self._error) {
-                                self._error();
-                            }
-                        },
-                    });
-                },
-                error: function (error, response) {
-                    if (self._error) {
-                        self._error();
-                    }
-                },
+            self._prevAddress = self._tree.getAddress();
+            FoodParent.GeoLocation.reverseGeocoding(self._tree.getLocation(), function (data) {
+                self._tree.save({
+                    'lat': self._location.lat,
+                    'lng': self._location.lng,
+                    'address': data.road + ", " + data.county + ", " + data.state + ", " + data.country + ", " + data.postcode,
+                }, {
+                    wait: true,
+                    success: function (tree, response) {
+                        self._note = new FoodParent.Note({
+                            type: FoodParent.NoteType.INFO,
+                            tree: self._tree.getId(),
+                            person: 0,
+                            comment: "Location has changed as '" + '@ ' + self._location.lat.toFixed(4) + ", " + self._location.lng.toFixed(4) + "'",
+                            picture: "",
+                            rate: -1,
+                            date: moment(new Date()).format(FoodParent.Setting.getDateTimeFormat()),
+                        });
+                        self._note.save({}, {
+                            wait: true,
+                            success: function (note, response) {
+                                FoodParent.Model.getNotes().add(note);
+                                if (self._success) {
+                                    self._success();
+                                }
+                            },
+                            error: function (error) {
+                                if (self._error) {
+                                    self._error();
+                                }
+                            },
+                        });
+                    },
+                    error: function (error, response) {
+                        if (self._error) {
+                            self._error();
+                        }
+                    },
+                });
+            }, function () {
+                FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
             });
         };
         UpdateTreeLocation.prototype.undo = function () {
             var self = this;
             self._tree.save({
                 'lat': self._prevLocation.lat,
-                'lng': self._prevLocation.lng
+                'lng': self._prevLocation.lng,
+                'address': self._prevAddress,
             }, {
                 wait: true,
                 success: function (tree, response) {
@@ -46825,18 +46842,39 @@ var TreeCreateCell = Backgrid.Cell.extend({
     },
     _createRow: function (event) {
         var tree = this.model;
-        FoodParent.EventHandler.handleTreeData(tree, FoodParent.DATA_MODE.CREATE, {}, function () {
-            var food = FoodParent.Model.getFoods().findWhere({ id: tree.getFoodId() });
-            FoodParent.EventHandler.handleDataChange("<strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has been created successfully.", true);
-            $('#wrapper-tree-list .new-tree').addClass('hidden');
-            new FoodParent.RefreshCurrentViewCommand().execute();
-        }, function () {
-            FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
-        }, function () {
-            var food = FoodParent.Model.getFoods().findWhere({ id: tree.getFoodId() });
-            FoodParent.EventHandler.handleDataChange("<strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has been deleted successfully.", false);
-            new FoodParent.RefreshCurrentViewCommand().execute();
-        });
+        if (tree.getAddress().trim() == "") {
+            FoodParent.GeoLocation.reverseGeocoding(tree.getLocation(), function (data) {
+                tree.set({ 'address': data.road + ", " + data.county + ", " + data.state + ", " + data.country + ", " + data.postcode });
+                FoodParent.EventHandler.handleTreeData(tree, FoodParent.DATA_MODE.CREATE, {}, function () {
+                    var food = FoodParent.Model.getFoods().findWhere({ id: tree.getFoodId() });
+                    FoodParent.EventHandler.handleDataChange("<strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has been created successfully.", true);
+                    $('#wrapper-tree-list .new-tree').addClass('hidden');
+                    new FoodParent.RefreshCurrentViewCommand().execute();
+                }, function () {
+                    FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+                }, function () {
+                    var food = FoodParent.Model.getFoods().findWhere({ id: tree.getFoodId() });
+                    FoodParent.EventHandler.handleDataChange("<strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has been deleted successfully.", false);
+                    new FoodParent.RefreshCurrentViewCommand().execute();
+                });
+            }, function () {
+                FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+            });
+        }
+        else {
+            FoodParent.EventHandler.handleTreeData(tree, FoodParent.DATA_MODE.CREATE, {}, function () {
+                var food = FoodParent.Model.getFoods().findWhere({ id: tree.getFoodId() });
+                FoodParent.EventHandler.handleDataChange("<strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has been created successfully.", true);
+                $('#wrapper-tree-list .new-tree').addClass('hidden');
+                new FoodParent.RefreshCurrentViewCommand().execute();
+            }, function () {
+                FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+            }, function () {
+                var food = FoodParent.Model.getFoods().findWhere({ id: tree.getFoodId() });
+                FoodParent.EventHandler.handleDataChange("<strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has been deleted successfully.", false);
+                new FoodParent.RefreshCurrentViewCommand().execute();
+            });
+        }
     },
     render: function () {
         $(this.el).html(this.template());
@@ -46857,8 +46895,8 @@ var TreeDeleteCell = Backgrid.Cell.extend({
         else {
             FoodParent.EventHandler.handleTreeData(tree, FoodParent.DATA_MODE.DELETE, {}, function () {
                 var food = FoodParent.Model.getFoods().findWhere({ id: tree.getFoodId() });
-                FoodParent.EventHandler.handleDataChange("<strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has deleted successfully.", false);
                 new FoodParent.RefreshCurrentViewCommand().execute();
+                FoodParent.EventHandler.handleDataChange("<strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has deleted successfully.", false);
             }, function () {
                 FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
             });
@@ -49156,11 +49194,24 @@ var FoodParent;
         };
         Template.getConfirmViewTemplate = function () {
             var template = '';
-            template += '<div id="wrapper-confirm">';
-            template += '<div class="outer-frame">';
-            template += '<div class="inner-frame">';
-            template += '<%= content %>';
-            template += '</div>';
+            template += '<div id="wrapper-confirm" class="frame-pop">';
+            template += '<div id="frame-confirm">';
+            template += '<div id="content-header">';
+            template += '<div class="text-header"><%= header %></div>';
+            template += '<div class="btn-close evt-close">';
+            template += '<i class="fa fa-remove"></i>';
+            template += '</div>'; // end of top-right-button button-close
+            template += '</div>'; // end of #wrapper-header
+            template += '<div class="info-group">';
+            template += '<div class="text-label"><%= message %><br/><i>This action cannot be undone.</i></div>';
+            template += '</div>'; // end of .info-group
+            template += '<hr />';
+            template += '<div class="info-button-group">';
+            template += '<div class="btn-brown btn-medium evt-submit">Submit</div>';
+            template += '</div>'; // end of .info-button-group
+            template += '<div class="info-button-group">';
+            template += '<div class="btn-brown btn-medium evt-close">Cancel</div>';
+            template += '</div>'; // end of .info-button-group
             template += '</div>';
             template += '</div>';
             return template;
@@ -51645,26 +51696,6 @@ var FoodParent;
         return ImageNoteViewFactory;
     })();
     FoodParent.ImageNoteViewFactory = ImageNoteViewFactory;
-    var ConfirmViewFractory = (function () {
-        function ConfirmViewFractory(args) {
-            if (ConfirmViewFractory._instance) {
-                throw new Error("Error: Instantiation failed: Use ConfirmViewFractory.getInstance() instead of new.");
-            }
-            ConfirmViewFractory._instance = this;
-        }
-        ConfirmViewFractory.getInstance = function () {
-            return ConfirmViewFractory._instance;
-        };
-        ConfirmViewFractory.create = function (el, message, command) {
-            var view = new ConfirmView({ el: el });
-            view.setMessage(message);
-            view.setCommand(command);
-            return view;
-        };
-        ConfirmViewFractory._instance = new ConfirmViewFractory();
-        return ConfirmViewFractory;
-    })();
-    FoodParent.ConfirmViewFractory = ConfirmViewFractory;
     var AlertViewFractory = (function () {
         function AlertViewFractory(args) {
             if (AlertViewFractory._instance) {
@@ -52118,88 +52149,6 @@ var FoodParent;
         return AlertView;
     })(FoodParent.PopupView);
     FoodParent.AlertView = AlertView;
-    var ConfirmView = (function (_super) {
-        __extends(ConfirmView, _super);
-        function ConfirmView(options) {
-            _super.call(this, options);
-            var self = this;
-            self.bDebug = true;
-            //$(window).resize(_.debounce(that.customResize, Setting.getInstance().getResizeTimeout()));
-            self.events = {
-                "click .confirm-confirm": "_executeCommand",
-                "click .confirm-cancel": "_mouseClick",
-            };
-            self.delegateEvents();
-        }
-        ConfirmView.prototype.setMessage = function (message) {
-            var self = this;
-            self._message = message;
-        };
-        ConfirmView.prototype.setCommand = function (command) {
-            var self = this;
-            self._command = command;
-        };
-        ConfirmView.prototype.render = function (args) {
-            if (this.bRendered) {
-                this.update(args);
-                return;
-            }
-            this.bRendered = true;
-            /////
-            var self = this;
-            if (self.bDebug)
-                console.log(ConfirmView.TAG + "render()");
-            var tag = "";
-            tag += "<p>" + self._message + "<br/> This action cannot be undone.</p>";
-            tag += "<div class='confirm-button-group'>";
-            tag += "<div class='button-outer-frame button1'><div class='button-inner-frame confirm-confirm'>Confirm</div></div>";
-            tag += "<div class='button-outer-frame button1'><div class='button-inner-frame confirm-cancel'>Cancel</div></div>";
-            tag += "</div>";
-            var template = _.template(FoodParent.Template.getConfirmViewTemplate());
-            var data = {
-                content: tag,
-            };
-            self.$el.html(template(data));
-            self.setElement(self.$('#wrapper-confirm'));
-            self.setVisible();
-            return self;
-        };
-        ConfirmView.prototype.update = function (args) {
-            if (!this.bRendered) {
-                this.render(args);
-                return;
-            }
-            /////
-            var self = this;
-            if (self.bDebug)
-                console.log(ConfirmView.TAG + "update()");
-            return self;
-        };
-        ConfirmView.prototype._mouseEnter = function (event) {
-            var self = this;
-            FoodParent.EventHandler.handleMouseEnter($(event.currentTarget), self);
-        };
-        ConfirmView.prototype._mouseClick = function (event) {
-            var self = this;
-            FoodParent.EventHandler.handleMouseClick($(event.currentTarget), self);
-        };
-        ConfirmView.prototype._executeCommand = function (event) {
-            var self = this;
-            self._command.execute();
-            FoodParent.EventHandler.handleMouseClick($(event.currentTarget), self);
-        };
-        ConfirmView.prototype.setVisible = function () {
-            var self = this;
-            FoodParent.Setting.getPopWrapperElement().removeClass('hidden');
-        };
-        ConfirmView.prototype.setInvisible = function () {
-            var self = this;
-            FoodParent.Setting.getPopWrapperElement().addClass('hidden');
-        };
-        ConfirmView.TAG = "ConfirmView - ";
-        return ConfirmView;
-    })(FoodParent.PopupView);
-    FoodParent.ConfirmView = ConfirmView;
 })(FoodParent || (FoodParent = {}));
 
 var __extends = (this && this.__extends) || function (d, b) {
@@ -52739,6 +52688,103 @@ var __extends = (this && this.__extends) || function (d, b) {
 };
 var FoodParent;
 (function (FoodParent) {
+    var ConfirmViewFractory = (function () {
+        function ConfirmViewFractory(args) {
+            if (ConfirmViewFractory._instance) {
+                throw new Error("Error: Instantiation failed: Use ConfirmViewFractory.getInstance() instead of new.");
+            }
+            ConfirmViewFractory._instance = this;
+        }
+        ConfirmViewFractory.getInstance = function () {
+            return ConfirmViewFractory._instance;
+        };
+        ConfirmViewFractory.create = function (el, message, command) {
+            var view = new ConfirmView({ el: el });
+            view.setMessage(message);
+            view.setCommand(command);
+            return view;
+        };
+        ConfirmViewFractory._instance = new ConfirmViewFractory();
+        return ConfirmViewFractory;
+    })();
+    FoodParent.ConfirmViewFractory = ConfirmViewFractory;
+    var ConfirmView = (function (_super) {
+        __extends(ConfirmView, _super);
+        function ConfirmView(options) {
+            _super.call(this, options);
+            var self = this;
+            self.bDebug = true;
+            //$(window).resize(_.debounce(that.customResize, Setting.getInstance().getResizeTimeout()));
+            self.events = {
+                "click .evt-submit": "_executeCommand",
+                "click .evt-close": "_mouseClick",
+            };
+            self.delegateEvents();
+        }
+        ConfirmView.prototype.setMessage = function (message) {
+            var self = this;
+            self._message = message;
+        };
+        ConfirmView.prototype.setCommand = function (command) {
+            var self = this;
+            self._command = command;
+        };
+        ConfirmView.prototype.render = function (args) {
+            _super.prototype.render.call(this, args);
+            var self = this;
+            if (self.bDebug)
+                console.log(ConfirmView.TAG + "render()");
+            var template = _.template(FoodParent.Template.getConfirmViewTemplate());
+            var data = {
+                header: "Deleting Tree",
+                message: self._message,
+            };
+            self.$el.append(template(data));
+            self.setElement(self.$('#wrapper-confirm'));
+            self.setVisible();
+            return self;
+        };
+        ConfirmView.prototype.update = function (args) {
+            _super.prototype.update.call(this, args);
+            var self = this;
+            if (self.bDebug)
+                console.log(ConfirmView.TAG + "update()");
+            return self;
+        };
+        ConfirmView.prototype._mouseEnter = function (event) {
+            var self = this;
+            FoodParent.EventHandler.handleMouseEnter($(event.currentTarget), self);
+        };
+        ConfirmView.prototype._mouseClick = function (event) {
+            var self = this;
+            FoodParent.EventHandler.handleMouseClick($(event.currentTarget), self);
+        };
+        ConfirmView.prototype._executeCommand = function (event) {
+            var self = this;
+            self._command.execute();
+            FoodParent.EventHandler.handleMouseClick($(event.currentTarget), self);
+        };
+        ConfirmView.prototype.setVisible = function () {
+            var self = this;
+            FoodParent.Setting.getPopWrapperElement().removeClass('hidden');
+        };
+        ConfirmView.prototype.setInvisible = function () {
+            var self = this;
+            FoodParent.Setting.getPopWrapperElement().addClass('hidden');
+        };
+        ConfirmView.TAG = "ConfirmView - ";
+        return ConfirmView;
+    })(FoodParent.PopupView);
+    FoodParent.ConfirmView = ConfirmView;
+})(FoodParent || (FoodParent = {}));
+
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var FoodParent;
+(function (FoodParent) {
     var TreesViewFractory = (function () {
         function TreesViewFractory(args) {
             if (TreesViewFractory._instance) {
@@ -52834,63 +52880,138 @@ var FoodParent;
                 if (self.bDebug)
                     console.log(TreesMapView.TAG + "renderMap()");
                 var accuracy = position.coords.accuracy;
-                self._location = new L.LatLng(position.coords.latitude, position.coords.longitude);
-                // Rener map only when the map is not rendered in a browswer
-                if (self._map == undefined) {
-                    self.$('#list-donation').css({ height: FoodParent.View.getHeight() - 60 });
-                    self.setLocation(new L.LatLng(position.coords.latitude, position.coords.longitude));
-                    self._map = L.map($('#content-map')[0].id, {
-                        zoomControl: false,
-                        closePopupOnClick: self._bClosePopupOnClick,
-                        doubleClickZoom: true,
-                        touchZoom: true,
-                        zoomAnimation: true,
-                        markerZoomAnimation: true,
-                    }).setView(self._location, self._zoom);
-                    L.tileLayer(FoodParent.Setting.getTileMapAddress(), {
-                        minZoom: FoodParent.Setting.getMapMinZoomLevel(),
-                        maxZoom: FoodParent.Setting.getMapMaxZoomLevel(),
-                    }).addTo(self._map);
-                    self._map.invalidateSize(false);
-                    // add event listener for finishing map creation.
-                    self._map.whenReady(self.renderTrees);
-                    // add event listener for dragging map
-                    self._map.on("moveend", self.afterMoveMap);
-                    //Controller.fetchAllTrees();
-                    self._map.on('popupopen', function (event) {
-                        var marker = event.popup._source;
-                        marker._bringToFront();
-                        $(marker.label._container).addClass('active');
-                        var tree = FoodParent.Model.getTrees().findWhere({ id: marker.options.id });
-                        self.renderTreeInfo(tree);
-                        self._selectedMarker = marker;
-                        // Make MessageView invisible.
-                        if (FoodParent.View.getMessageView()) {
-                            FoodParent.View.getMessageView().setInvisible();
-                        }
+                if (self._id != 0) {
+                    FoodParent.Controller.fetchAllTrees(function () {
+                        var tree = FoodParent.Model.getTrees().findWhere({ id: Math.floor(self._id) });
+                        self._location = tree.getLocation();
                         // Move the map slight off from the center using CRS projection
-                        var point = L.CRS.EPSG3857.latLngToPoint(self._selectedMarker.getLatLng(), self._map.getZoom());
+                        var point = L.CRS.EPSG3857.latLngToPoint(self._location, self._zoom);
                         if (FoodParent.View.getWidth() > FoodParent.View.getHeight()) {
-                            point.x += self._map.getSize().x * 0.225;
+                            point.x += self.$('#content-map').outerWidth() * 0.2;
                         }
                         else {
-                            point.y -= self._map.getSize().y * 0.25;
+                            point.y -= self.$('#content-map').outerHeight() * 0.2;
                         }
-                        self._map.panTo(L.CRS.EPSG3857.pointToLatLng(point, self._map.getZoom()));
-                        // Close map filter for mobile portrait view
-                        if (FoodParent.View.getWidth() < FoodParent.View.getHeight()) {
-                            self.closeMapFilter();
+                        // Rener map only when the map is not rendered in a browswer
+                        if (self._map == undefined) {
+                            self.$('#list-donation').css({ height: FoodParent.View.getHeight() - 60 });
+                            self.setLocation(L.CRS.EPSG3857.pointToLatLng(point, self._zoom));
+                            self._map = L.map($('#content-map')[0].id, {
+                                zoomControl: false,
+                                closePopupOnClick: self._bClosePopupOnClick,
+                                doubleClickZoom: true,
+                                touchZoom: true,
+                                zoomAnimation: true,
+                                markerZoomAnimation: true,
+                            }).setView(self._location, self._zoom);
+                            L.tileLayer(FoodParent.Setting.getTileMapAddress(), {
+                                minZoom: FoodParent.Setting.getMapMinZoomLevel(),
+                                maxZoom: FoodParent.Setting.getMapMaxZoomLevel(),
+                            }).addTo(self._map);
+                            self._map.invalidateSize(false);
+                            // add event listener for finishing map creation.
+                            self._map.whenReady(self.renderTrees);
+                            // add event listener for dragging map
+                            self._map.on("moveend", self.afterMoveMap);
+                            //Controller.fetchAllTrees();
+                            self._map.on('popupopen', function (event) {
+                                var marker = event.popup._source;
+                                marker._bringToFront();
+                                $(marker.label._container).addClass('active');
+                                var tree = FoodParent.Model.getTrees().findWhere({ id: marker.options.id });
+                                self.renderTreeInfo(tree);
+                                self._selectedMarker = marker;
+                                // Make MessageView invisible.
+                                if (FoodParent.View.getMessageView()) {
+                                    FoodParent.View.getMessageView().setInvisible();
+                                }
+                                // Move the map slight off from the center using CRS projection
+                                var point = L.CRS.EPSG3857.latLngToPoint(self._selectedMarker.getLatLng(), self._map.getZoom());
+                                if (FoodParent.View.getWidth() > FoodParent.View.getHeight()) {
+                                    point.x += self._map.getSize().x * 0.225;
+                                }
+                                else {
+                                    point.y -= self._map.getSize().y * 0.25;
+                                }
+                                self._map.panTo(L.CRS.EPSG3857.pointToLatLng(point, self._map.getZoom()));
+                                // Close map filter for mobile portrait view
+                                if (FoodParent.View.getWidth() < FoodParent.View.getHeight()) {
+                                    self.closeMapFilter();
+                                }
+                                FoodParent.Router.getInstance().navigate("trees/" + tree.getId(), { trigger: false, replace: true });
+                            });
+                            self._map.on('popupclose', function (event) {
+                                var marker = event.popup._source;
+                                marker._resetZIndex();
+                                $(marker.label._container).removeClass('active');
+                                self.$('#wrapper-treeinfo').addClass('hidden');
+                                self._selectedMarker = null;
+                                FoodParent.Router.getInstance().navigate("trees/0", { trigger: false, replace: true });
+                            });
                         }
-                        FoodParent.Router.getInstance().navigate("trees/" + tree.getId(), { trigger: false, replace: true });
+                    }, function (errorMode) {
+                        FoodParent.EventHandler.handleError(errorMode);
                     });
-                    self._map.on('popupclose', function (event) {
-                        var marker = event.popup._source;
-                        marker._resetZIndex();
-                        $(marker.label._container).removeClass('active');
-                        self.$('#wrapper-treeinfo').addClass('hidden');
-                        self._selectedMarker = null;
-                        FoodParent.Router.getInstance().navigate("trees/0", { trigger: false, replace: true });
-                    });
+                }
+                else {
+                    self._location = new L.LatLng(position.coords.latitude, position.coords.longitude);
+                    // Rener map only when the map is not rendered in a browswer
+                    if (self._map == undefined) {
+                        self.$('#list-donation').css({ height: FoodParent.View.getHeight() - 60 });
+                        self.setLocation(new L.LatLng(position.coords.latitude, position.coords.longitude));
+                        self._map = L.map($('#content-map')[0].id, {
+                            zoomControl: false,
+                            closePopupOnClick: self._bClosePopupOnClick,
+                            doubleClickZoom: true,
+                            touchZoom: true,
+                            zoomAnimation: true,
+                            markerZoomAnimation: true,
+                        }).setView(self._location, self._zoom);
+                        L.tileLayer(FoodParent.Setting.getTileMapAddress(), {
+                            minZoom: FoodParent.Setting.getMapMinZoomLevel(),
+                            maxZoom: FoodParent.Setting.getMapMaxZoomLevel(),
+                        }).addTo(self._map);
+                        self._map.invalidateSize(false);
+                        // add event listener for finishing map creation.
+                        self._map.whenReady(self.renderTrees);
+                        // add event listener for dragging map
+                        self._map.on("moveend", self.afterMoveMap);
+                        //Controller.fetchAllTrees();
+                        self._map.on('popupopen', function (event) {
+                            var marker = event.popup._source;
+                            marker._bringToFront();
+                            $(marker.label._container).addClass('active');
+                            var tree = FoodParent.Model.getTrees().findWhere({ id: marker.options.id });
+                            self.renderTreeInfo(tree);
+                            self._selectedMarker = marker;
+                            // Make MessageView invisible.
+                            if (FoodParent.View.getMessageView()) {
+                                FoodParent.View.getMessageView().setInvisible();
+                            }
+                            // Move the map slight off from the center using CRS projection
+                            var point = L.CRS.EPSG3857.latLngToPoint(self._selectedMarker.getLatLng(), self._map.getZoom());
+                            if (FoodParent.View.getWidth() > FoodParent.View.getHeight()) {
+                                point.x += self._map.getSize().x * 0.225;
+                            }
+                            else {
+                                point.y -= self._map.getSize().y * 0.25;
+                            }
+                            self._map.panTo(L.CRS.EPSG3857.pointToLatLng(point, self._map.getZoom()));
+                            // Close map filter for mobile portrait view
+                            if (FoodParent.View.getWidth() < FoodParent.View.getHeight()) {
+                                self.closeMapFilter();
+                            }
+                            FoodParent.Router.getInstance().navigate("trees/" + tree.getId(), { trigger: false, replace: true });
+                        });
+                        self._map.on('popupclose', function (event) {
+                            var marker = event.popup._source;
+                            marker._resetZIndex();
+                            $(marker.label._container).removeClass('active');
+                            self.$('#wrapper-treeinfo').addClass('hidden');
+                            self._selectedMarker = null;
+                            FoodParent.Router.getInstance().navigate("trees/0", { trigger: false, replace: true });
+                        });
+                    }
                 }
             };
             this.afterMoveMap = function () {

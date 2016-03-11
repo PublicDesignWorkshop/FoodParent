@@ -36,6 +36,7 @@
     <Content Include="core\css\backgrid.css" />
     <Content Include="core\css\base.css" />
     <Content Include="core\css\button.css" />
+    <Content Include="core\css\confirm.css" />
     <Content Include="core\css\foodparent.css" />
     <Content Include="core\css\foodparent.min.css">
       <DependentUpon>foodparent.css</DependentUpon>
@@ -252,6 +253,7 @@
     <TypeScriptCompile Include="core\js\model\tree.ts" />
     <TypeScriptCompile Include="core\js\view\adoptview.ts" />
     <TypeScriptCompile Include="core\js\view\alertview.ts" />
+    <TypeScriptCompile Include="core\js\view\confirmview.ts" />
     <TypeScriptCompile Include="core\js\view\gridformat\donationgridformat.ts" />
     <TypeScriptCompile Include="core\js\view\gridformat\locationgridformat.ts" />
     <TypeScriptCompile Include="core\js\view\loginview.ts" />

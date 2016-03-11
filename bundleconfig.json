@@ -76,6 +76,7 @@
       "core/js/view/alertview.js",
       "core/js/view/loginview.js",
       "core/js/view/postview.js",
+      "core/js/view/confirmview.js",
 
       // View - Trees
       "core/js/view/treesmap.js",
@@ -156,6 +157,7 @@
       "core/css/login.css",
       "core/css/adopt.css",
       "core/css/password.css",
+      "core/css/confirm.css",
 
       // View - Trees
       "core/css/treesmap.css",

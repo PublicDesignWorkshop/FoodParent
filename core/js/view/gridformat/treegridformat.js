@@ -408,18 +408,39 @@ var TreeCreateCell = Backgrid.Cell.extend({
     },
     _createRow: function (event) {
         var tree = this.model;
-        FoodParent.EventHandler.handleTreeData(tree, FoodParent.DATA_MODE.CREATE, {}, function () {
-            var food = FoodParent.Model.getFoods().findWhere({ id: tree.getFoodId() });
-            FoodParent.EventHandler.handleDataChange("<strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has been created successfully.", true);
-            $('#wrapper-tree-list .new-tree').addClass('hidden');
-            new FoodParent.RefreshCurrentViewCommand().execute();
-        }, function () {
-            FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
-        }, function () {
-            var food = FoodParent.Model.getFoods().findWhere({ id: tree.getFoodId() });
-            FoodParent.EventHandler.handleDataChange("<strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has been deleted successfully.", false);
-            new FoodParent.RefreshCurrentViewCommand().execute();
-        });
+        if (tree.getAddress().trim() == "") {
+            FoodParent.GeoLocation.reverseGeocoding(tree.getLocation(), function (data) {
+                tree.set({ 'address': data.road + ", " + data.county + ", " + data.state + ", " + data.country + ", " + data.postcode });
+                FoodParent.EventHandler.handleTreeData(tree, FoodParent.DATA_MODE.CREATE, {}, function () {
+                    var food = FoodParent.Model.getFoods().findWhere({ id: tree.getFoodId() });
+                    FoodParent.EventHandler.handleDataChange("<strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has been created successfully.", true);
+                    $('#wrapper-tree-list .new-tree').addClass('hidden');
+                    new FoodParent.RefreshCurrentViewCommand().execute();
+                }, function () {
+                    FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+                }, function () {
+                    var food = FoodParent.Model.getFoods().findWhere({ id: tree.getFoodId() });
+                    FoodParent.EventHandler.handleDataChange("<strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has been deleted successfully.", false);
+                    new FoodParent.RefreshCurrentViewCommand().execute();
+                });
+            }, function () {
+                FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+            });
+        }
+        else {
+            FoodParent.EventHandler.handleTreeData(tree, FoodParent.DATA_MODE.CREATE, {}, function () {
+                var food = FoodParent.Model.getFoods().findWhere({ id: tree.getFoodId() });
+                FoodParent.EventHandler.handleDataChange("<strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has been created successfully.", true);
+                $('#wrapper-tree-list .new-tree').addClass('hidden');
+                new FoodParent.RefreshCurrentViewCommand().execute();
+            }, function () {
+                FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+            }, function () {
+                var food = FoodParent.Model.getFoods().findWhere({ id: tree.getFoodId() });
+                FoodParent.EventHandler.handleDataChange("<strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has been deleted successfully.", false);
+                new FoodParent.RefreshCurrentViewCommand().execute();
+            });
+        }
     },
     render: function () {
         $(this.el).html(this.template());
@@ -440,8 +461,8 @@ var TreeDeleteCell = Backgrid.Cell.extend({
         else {
             FoodParent.EventHandler.handleTreeData(tree, FoodParent.DATA_MODE.DELETE, {}, function () {
                 var food = FoodParent.Model.getFoods().findWhere({ id: tree.getFoodId() });
-                FoodParent.EventHandler.handleDataChange("<strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has deleted successfully.", false);
                 new FoodParent.RefreshCurrentViewCommand().execute();
+                FoodParent.EventHandler.handleDataChange("<strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has deleted successfully.", false);
             }, function () {
                 FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
             });

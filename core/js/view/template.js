@@ -277,11 +277,24 @@ var FoodParent;
         };
         Template.getConfirmViewTemplate = function () {
             var template = '';
-            template += '<div id="wrapper-confirm">';
-            template += '<div class="outer-frame">';
-            template += '<div class="inner-frame">';
-            template += '<%= content %>';
-            template += '</div>';
+            template += '<div id="wrapper-confirm" class="frame-pop">';
+            template += '<div id="frame-confirm">';
+            template += '<div id="content-header">';
+            template += '<div class="text-header"><%= header %></div>';
+            template += '<div class="btn-close evt-close">';
+            template += '<i class="fa fa-remove"></i>';
+            template += '</div>'; // end of top-right-button button-close
+            template += '</div>'; // end of #wrapper-header
+            template += '<div class="info-group">';
+            template += '<div class="text-label"><%= message %><br/><i>This action cannot be undone.</i></div>';
+            template += '</div>'; // end of .info-group
+            template += '<hr />';
+            template += '<div class="info-button-group">';
+            template += '<div class="btn-brown btn-medium evt-submit">Submit</div>';
+            template += '</div>'; // end of .info-button-group
+            template += '<div class="info-button-group">';
+            template += '<div class="btn-brown btn-medium evt-close">Cancel</div>';
+            template += '</div>'; // end of .info-button-group
             template += '</div>';
             template += '</div>';
             return template;

@@ -153,7 +153,7 @@ var FoodParent;
         RenderConfirmViewCommand.prototype.execute = function () {
             var self = this;
             var view = FoodParent.ConfirmViewFractory.create(self._el, self._message, self._command).render();
-            FoodParent.View.setPopupView(view);
+            FoodParent.View.addPopupView(view);
             FoodParent.View.setViewStatus(FoodParent.VIEW_STATUS.CONFIRM);
         };
         RenderConfirmViewCommand.prototype.undo = function () {
@@ -233,7 +233,7 @@ var FoodParent;
         RenderImageNoteViewCommand.prototype.execute = function () {
             var self = this;
             var view = FoodParent.ImageNoteViewFactory.create(self._el, self._note).render();
-            FoodParent.View.setPopupView(view);
+            FoodParent.View.addPopupView(view);
             FoodParent.View.setViewStatus(FoodParent.VIEW_STATUS.IMAGENOTE_TREE);
         };
         RenderImageNoteViewCommand.prototype.undo = function () {
@@ -250,7 +250,7 @@ var FoodParent;
         RenderPostNoteViewCommand.prototype.execute = function () {
             var self = this;
             var view = FoodParent.PostNoteViewFactory.create(self._el, self._tree).render();
-            FoodParent.View.setPopupView(view);
+            FoodParent.View.addPopupView(view);
             FoodParent.View.setViewStatus(FoodParent.VIEW_STATUS.POST_NOTE);
         };
         RenderPostNoteViewCommand.prototype.undo = function () {
@@ -270,7 +270,7 @@ var FoodParent;
         RenderAlertViewCommand.prototype.execute = function () {
             var self = this;
             var view = FoodParent.AlertViewFractory.create(self._el, self._errorMode, self._customMessage).render();
-            FoodParent.View.setPopupView(view);
+            FoodParent.View.addPopupView(view);
             switch (self._errorMode) {
                 case FoodParent.ERROR_MODE.GEO_PERMISSION_ERROR:
                     FoodParent.View.setViewStatus(FoodParent.VIEW_STATUS.GEO_ERROR);
@@ -494,7 +494,7 @@ var FoodParent;
         RenderAddDonationViewCommand.prototype.execute = function () {
             var self = this;
             var view = FoodParent.AddDonationViewFactory.create(self._el, self._place).render();
-            FoodParent.View.setPopupView(view);
+            FoodParent.View.addPopupView(view);
             FoodParent.View.setViewStatus(FoodParent.VIEW_STATUS.ADD_DONATION);
         };
         RenderAddDonationViewCommand.prototype.undo = function () {
@@ -531,7 +531,7 @@ var FoodParent;
         RenderEditDonationViewCommand.prototype.execute = function () {
             var self = this;
             var view = FoodParent.EditDonationViewFactory.create(self._el, self._donation).render();
-            FoodParent.View.setPopupView(view);
+            FoodParent.View.addPopupView(view);
             FoodParent.View.setViewStatus(FoodParent.VIEW_STATUS.EDIT_DONATION);
         };
         RenderEditDonationViewCommand.prototype.undo = function () {
@@ -580,7 +580,7 @@ var FoodParent;
         RenderSignUpViewCommand.prototype.execute = function () {
             var self = this;
             var view = FoodParent.SignUpViewFactory.create(self._el).render();
-            FoodParent.View.setPopupView(view);
+            FoodParent.View.addPopupView(view);
             FoodParent.View.setViewStatus(FoodParent.VIEW_STATUS.SIGNUP);
         };
         RenderSignUpViewCommand.prototype.undo = function () {
@@ -597,7 +597,7 @@ var FoodParent;
         RenderChangePasswordViewCommand.prototype.execute = function () {
             var self = this;
             var view = FoodParent.ChangePasswordViewFactory.create(self._el, self._person).render();
-            FoodParent.View.setPopupView(view);
+            FoodParent.View.addPopupView(view);
             FoodParent.View.setViewStatus(FoodParent.VIEW_STATUS.CHANGE_PASSWORD);
         };
         RenderChangePasswordViewCommand.prototype.undo = function () {

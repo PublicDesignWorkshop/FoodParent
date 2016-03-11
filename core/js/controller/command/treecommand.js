@@ -210,50 +210,55 @@ var FoodParent;
         UpdateTreeLocation.prototype.execute = function () {
             var self = this;
             self._prevLocation = self._tree.getLocation();
-            self._tree.save({
-                'lat': self._location.lat,
-                'lng': self._location.lng
-            }, {
-                wait: true,
-                success: function (tree, response) {
-                    self._note = new FoodParent.Note({
-                        type: FoodParent.NoteType.INFO,
-                        tree: self._tree.getId(),
-                        person: 0,
-                        //comment: "Location has changed from '@ " + self._prevLocation.lat.toFixed(4) + ", " + self._prevLocation.lng.toFixed(4)
-                        //+ "' to '" + '@ ' + self._location.lat.toFixed(4) + ", " + self._location.lng.toFixed(4) + "'",
-                        comment: "Location has changed as '" + '@ ' + self._location.lat.toFixed(4) + ", " + self._location.lng.toFixed(4) + "'",
-                        picture: "",
-                        rate: -1,
-                        date: moment(new Date()).format(FoodParent.Setting.getDateTimeFormat()),
-                    });
-                    self._note.save({}, {
-                        wait: true,
-                        success: function (note, response) {
-                            FoodParent.Model.getNotes().add(note);
-                            if (self._success) {
-                                self._success();
-                            }
-                        },
-                        error: function (error) {
-                            if (self._error) {
-                                self._error();
-                            }
-                        },
-                    });
-                },
-                error: function (error, response) {
-                    if (self._error) {
-                        self._error();
-                    }
-                },
+            self._prevAddress = self._tree.getAddress();
+            FoodParent.GeoLocation.reverseGeocoding(self._tree.getLocation(), function (data) {
+                self._tree.save({
+                    'lat': self._location.lat,
+                    'lng': self._location.lng,
+                    'address': data.road + ", " + data.county + ", " + data.state + ", " + data.country + ", " + data.postcode,
+                }, {
+                    wait: true,
+                    success: function (tree, response) {
+                        self._note = new FoodParent.Note({
+                            type: FoodParent.NoteType.INFO,
+                            tree: self._tree.getId(),
+                            person: 0,
+                            comment: "Location has changed as '" + '@ ' + self._location.lat.toFixed(4) + ", " + self._location.lng.toFixed(4) + "'",
+                            picture: "",
+                            rate: -1,
+                            date: moment(new Date()).format(FoodParent.Setting.getDateTimeFormat()),
+                        });
+                        self._note.save({}, {
+                            wait: true,
+                            success: function (note, response) {
+                                FoodParent.Model.getNotes().add(note);
+                                if (self._success) {
+                                    self._success();
+                                }
+                            },
+                            error: function (error) {
+                                if (self._error) {
+                                    self._error();
+                                }
+                            },
+                        });
+                    },
+                    error: function (error, response) {
+                        if (self._error) {
+                            self._error();
+                        }
+                    },
+                });
+            }, function () {
+                FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
             });
         };
         UpdateTreeLocation.prototype.undo = function () {
             var self = this;
             self._tree.save({
                 'lat': self._prevLocation.lat,
-                'lng': self._prevLocation.lng
+                'lng': self._prevLocation.lng,
+                'address': self._prevAddress,
             }, {
                 wait: true,
                 success: function (tree, response) {

@@ -32,12 +32,12 @@ var FoodParent;
     (function (VIEW_STATUS) {
         VIEW_STATUS[VIEW_STATUS["NONE"] = 0] = "NONE";
         VIEW_STATUS[VIEW_STATUS["HOME"] = 1] = "HOME";
-        VIEW_STATUS[VIEW_STATUS["TREES"] = 2] = "TREES";
-        VIEW_STATUS[VIEW_STATUS["TREES_TABLE"] = 3] = "TREES_TABLE";
-        VIEW_STATUS[VIEW_STATUS["PARENT_TREES"] = 4] = "PARENT_TREES";
-        VIEW_STATUS[VIEW_STATUS["GEO_ERROR"] = 5] = "GEO_ERROR";
-        VIEW_STATUS[VIEW_STATUS["NETWORK_ERROR"] = 6] = "NETWORK_ERROR";
-        VIEW_STATUS[VIEW_STATUS["CONFIRM"] = 7] = "CONFIRM";
+        VIEW_STATUS[VIEW_STATUS["CONFIRM"] = 2] = "CONFIRM";
+        VIEW_STATUS[VIEW_STATUS["TREES"] = 3] = "TREES";
+        VIEW_STATUS[VIEW_STATUS["TREES_TABLE"] = 4] = "TREES_TABLE";
+        VIEW_STATUS[VIEW_STATUS["PARENT_TREES"] = 5] = "PARENT_TREES";
+        VIEW_STATUS[VIEW_STATUS["GEO_ERROR"] = 6] = "GEO_ERROR";
+        VIEW_STATUS[VIEW_STATUS["NETWORK_ERROR"] = 7] = "NETWORK_ERROR";
         VIEW_STATUS[VIEW_STATUS["MANAGE_PEOPLE"] = 8] = "MANAGE_PEOPLE";
         VIEW_STATUS[VIEW_STATUS["MANAGE_ADOPTION"] = 9] = "MANAGE_ADOPTION";
         VIEW_STATUS[VIEW_STATUS["DETAIL_TREE"] = 10] = "DETAIL_TREE";
@@ -287,8 +287,9 @@ var FoodParent;
                     }
                     break;
                 case VIEW_STATUS.CONFIRM:
-                    if (el.hasClass('confirm-confirm') || el.hasClass('confirm-cancel')) {
-                        new RemoveAlertViewCommand({ delay: FoodParent.Setting.getRemovePopupDuration() }).execute();
+                    if (el.hasClass('evt-close') || el.hasClass('evt-submit')) {
+                        new FoodParent.RemovePopupViewCommand({ delay: FoodParent.Setting.getRemovePopupDuration() }).execute();
+                        new FoodParent.RefreshCurrentViewCommand().execute();
                     }
                     break;
                 case VIEW_STATUS.TREES:
@@ -350,6 +351,7 @@ var FoodParent;
                         EventHandler.handleTreeData(tree, DATA_MODE.CREATE, {}, function () {
                             var food = FoodParent.Model.getFoods().findWhere({ id: tree.getFoodId() });
                             new FoodParent.RefreshCurrentViewCommand().execute();
+                            FoodParent.Router.getInstance().navigate("trees/" + tree.getId(), { trigger: true, replace: true });
                             EventHandler.handleDataChange("<strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has been created successfully.", true);
                         }, function () {
                             EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
@@ -357,6 +359,16 @@ var FoodParent;
                             var food = FoodParent.Model.getFoods().findWhere({ id: tree.getFoodId() });
                             EventHandler.handleDataChange("<strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has been deleted successfully.", false);
                             new FoodParent.RefreshCurrentViewCommand().execute();
+                        });
+                    }
+                    else if (el.hasClass('evt-tree-remove')) {
+                        var tree = FoodParent.Model.getTrees().findWhere({ id: options.marker.options.id });
+                        EventHandler.handleTreeData(tree, DATA_MODE.DELETE, {}, function () {
+                            var food = FoodParent.Model.getFoods().findWhere({ id: tree.getFoodId() });
+                            new FoodParent.RefreshCurrentViewCommand().execute();
+                            EventHandler.handleDataChange("<strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has deleted successfully.", false);
+                        }, function () {
+                            EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
                         });
                     }
                     break;
@@ -690,7 +702,7 @@ var FoodParent;
                 case DATA_MODE.DELETE:
                     var food = FoodParent.Model.getFoods().findWhere({ id: tree.getFoodId() });
                     var command = new FoodParent.DeleteTree({ tree: tree }, success, error);
-                    new FoodParent.RenderConfirmViewCommand({ el: FoodParent.Setting.getPopWrapperElement(), message: "Are you sure to delete " + food.getName() + " " + tree.getName() + "?", command: command }).execute();
+                    new FoodParent.RenderConfirmViewCommand({ el: FoodParent.Setting.getPopWrapperElement(), message: "Are you sure to delete '" + food.getName() + " " + tree.getName() + "' ?", command: command }).execute();
                     break;
             }
             if (self._lastCommand != undefined) {

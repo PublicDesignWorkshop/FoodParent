@@ -143,65 +143,140 @@
             var self: TreesMapView = this;
             if (self.bDebug) console.log(TreesMapView.TAG + "renderMap()");
             var accuracy = position.coords.accuracy;
-            self._location = new L.LatLng(position.coords.latitude, position.coords.longitude);
-            // Rener map only when the map is not rendered in a browswer
-            if (self._map == undefined) {
-                self.$('#list-donation').css({ height: View.getHeight() - 60 });
-                self.setLocation(new L.LatLng(position.coords.latitude, position.coords.longitude));
-                self._map = L.map($('#content-map')[0].id, {
-                    zoomControl: false,
-                    closePopupOnClick: self._bClosePopupOnClick,
-                    doubleClickZoom: true,
-                    touchZoom: true,
-                    zoomAnimation: true,
-                    markerZoomAnimation: true,
-                }).setView(self._location, self._zoom);
-                L.tileLayer(Setting.getTileMapAddress(), {
-                    minZoom: Setting.getMapMinZoomLevel(),
-                    maxZoom: Setting.getMapMaxZoomLevel(),
-                }).addTo(self._map);
-                self._map.invalidateSize(false);
-
-                // add event listener for finishing map creation.
-                self._map.whenReady(self.renderTrees);
-                // add event listener for dragging map
-                self._map.on("moveend", self.afterMoveMap);
-
-                //Controller.fetchAllTrees();
-                self._map.on('popupopen', function (event: any) {
-                    var marker: L.Marker = event.popup._source;
-                    marker._bringToFront();
-                    $(marker.label._container).addClass('active');
-                    var tree: Tree = Model.getTrees().findWhere({ id: marker.options.id });
-                    self.renderTreeInfo(tree);
-                    self._selectedMarker = marker;
-                    // Make MessageView invisible.
-                    if (View.getMessageView()) {
-                        View.getMessageView().setInvisible();
-                    }
+            if (self._id != 0) {
+                Controller.fetchAllTrees(function () {
+                    var tree: Tree = Model.getTrees().findWhere({ id: Math.floor(self._id) });
+                    self._location = tree.getLocation();
                     // Move the map slight off from the center using CRS projection
-                    var point: L.Point = L.CRS.EPSG3857.latLngToPoint(self._selectedMarker.getLatLng(), self._map.getZoom());
+                    var point: L.Point = L.CRS.EPSG3857.latLngToPoint(self._location, self._zoom);
                     if (View.getWidth() > View.getHeight()) {
-                        point.x += self._map.getSize().x * 0.225;
+                        point.x += self.$('#content-map').outerWidth() * 0.2;
                     } else {
-                        point.y -= self._map.getSize().y * 0.25;
+                        point.y -= self.$('#content-map').outerHeight() * 0.2;
                     }
-                    self._map.panTo(L.CRS.EPSG3857.pointToLatLng(point, self._map.getZoom()));
-                    // Close map filter for mobile portrait view
-                    if (View.getWidth() < View.getHeight()) {
-                        self.closeMapFilter();
+                    // Rener map only when the map is not rendered in a browswer
+                    if (self._map == undefined) {
+                        self.$('#list-donation').css({ height: View.getHeight() - 60 });
+                        self.setLocation(L.CRS.EPSG3857.pointToLatLng(point, self._zoom));
+                        self._map = L.map($('#content-map')[0].id, {
+                            zoomControl: false,
+                            closePopupOnClick: self._bClosePopupOnClick,
+                            doubleClickZoom: true,
+                            touchZoom: true,
+                            zoomAnimation: true,
+                            markerZoomAnimation: true,
+                        }).setView(self._location, self._zoom);
+                        L.tileLayer(Setting.getTileMapAddress(), {
+                            minZoom: Setting.getMapMinZoomLevel(),
+                            maxZoom: Setting.getMapMaxZoomLevel(),
+                        }).addTo(self._map);
+                        self._map.invalidateSize(false);
+
+                        // add event listener for finishing map creation.
+                        self._map.whenReady(self.renderTrees);
+                        // add event listener for dragging map
+                        self._map.on("moveend", self.afterMoveMap);
+
+                        //Controller.fetchAllTrees();
+                        self._map.on('popupopen', function (event: any) {
+                            var marker: L.Marker = event.popup._source;
+                            marker._bringToFront();
+                            $(marker.label._container).addClass('active');
+                            var tree: Tree = Model.getTrees().findWhere({ id: marker.options.id });
+                            self.renderTreeInfo(tree);
+                            self._selectedMarker = marker;
+                            // Make MessageView invisible.
+                            if (View.getMessageView()) {
+                                View.getMessageView().setInvisible();
+                            }
+                            // Move the map slight off from the center using CRS projection
+                            var point: L.Point = L.CRS.EPSG3857.latLngToPoint(self._selectedMarker.getLatLng(), self._map.getZoom());
+                            if (View.getWidth() > View.getHeight()) {
+                                point.x += self._map.getSize().x * 0.225;
+                            } else {
+                                point.y -= self._map.getSize().y * 0.25;
+                            }
+                            self._map.panTo(L.CRS.EPSG3857.pointToLatLng(point, self._map.getZoom()));
+                            // Close map filter for mobile portrait view
+                            if (View.getWidth() < View.getHeight()) {
+                                self.closeMapFilter();
+                            }
+
+                            Router.getInstance().navigate("trees/" + tree.getId(), { trigger: false, replace: true });
+                        });
+                        self._map.on('popupclose', function (event: any) {
+                            var marker: L.Marker = event.popup._source;
+                            marker._resetZIndex();
+                            $(marker.label._container).removeClass('active');
+                            self.$('#wrapper-treeinfo').addClass('hidden');
+                            self._selectedMarker = null;
+                            Router.getInstance().navigate("trees/0", { trigger: false, replace: true });
+                        });
                     }
-                    
-                    Router.getInstance().navigate("trees/" + tree.getId(), { trigger: false, replace: true });
+                }, function (errorMode: ERROR_MODE) {
+                    EventHandler.handleError(errorMode);
                 });
-                self._map.on('popupclose', function (event: any) {
-                    var marker: L.Marker = event.popup._source;
-                    marker._resetZIndex();
-                    $(marker.label._container).removeClass('active');
-                    self.$('#wrapper-treeinfo').addClass('hidden');
-                    self._selectedMarker = null;
-                    Router.getInstance().navigate("trees/0", { trigger: false, replace: true });
-                });
+            } else {
+                self._location = new L.LatLng(position.coords.latitude, position.coords.longitude);
+                // Rener map only when the map is not rendered in a browswer
+                if (self._map == undefined) {
+                    self.$('#list-donation').css({ height: View.getHeight() - 60 });
+                    self.setLocation(new L.LatLng(position.coords.latitude, position.coords.longitude));
+                    self._map = L.map($('#content-map')[0].id, {
+                        zoomControl: false,
+                        closePopupOnClick: self._bClosePopupOnClick,
+                        doubleClickZoom: true,
+                        touchZoom: true,
+                        zoomAnimation: true,
+                        markerZoomAnimation: true,
+                    }).setView(self._location, self._zoom);
+                    L.tileLayer(Setting.getTileMapAddress(), {
+                        minZoom: Setting.getMapMinZoomLevel(),
+                        maxZoom: Setting.getMapMaxZoomLevel(),
+                    }).addTo(self._map);
+                    self._map.invalidateSize(false);
+
+                    // add event listener for finishing map creation.
+                    self._map.whenReady(self.renderTrees);
+                    // add event listener for dragging map
+                    self._map.on("moveend", self.afterMoveMap);
+
+                    //Controller.fetchAllTrees();
+                    self._map.on('popupopen', function (event: any) {
+                        var marker: L.Marker = event.popup._source;
+                        marker._bringToFront();
+                        $(marker.label._container).addClass('active');
+                        var tree: Tree = Model.getTrees().findWhere({ id: marker.options.id });
+                        self.renderTreeInfo(tree);
+                        self._selectedMarker = marker;
+                        // Make MessageView invisible.
+                        if (View.getMessageView()) {
+                            View.getMessageView().setInvisible();
+                        }
+                        // Move the map slight off from the center using CRS projection
+                        var point: L.Point = L.CRS.EPSG3857.latLngToPoint(self._selectedMarker.getLatLng(), self._map.getZoom());
+                        if (View.getWidth() > View.getHeight()) {
+                            point.x += self._map.getSize().x * 0.225;
+                        } else {
+                            point.y -= self._map.getSize().y * 0.25;
+                        }
+                        self._map.panTo(L.CRS.EPSG3857.pointToLatLng(point, self._map.getZoom()));
+                        // Close map filter for mobile portrait view
+                        if (View.getWidth() < View.getHeight()) {
+                            self.closeMapFilter();
+                        }
+
+                        Router.getInstance().navigate("trees/" + tree.getId(), { trigger: false, replace: true });
+                    });
+                    self._map.on('popupclose', function (event: any) {
+                        var marker: L.Marker = event.popup._source;
+                        marker._resetZIndex();
+                        $(marker.label._container).removeClass('active');
+                        self.$('#wrapper-treeinfo').addClass('hidden');
+                        self._selectedMarker = null;
+                        Router.getInstance().navigate("trees/0", { trigger: false, replace: true });
+                    });
+                }
             }
         }
         private afterMoveMap = () => {
