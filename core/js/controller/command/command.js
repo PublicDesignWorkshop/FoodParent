@@ -554,8 +554,7 @@ var FoodParent;
             FoodParent.View.setViewStatus(FoodParent.VIEW_STATUS.LOGIN);
             new SetActiveNavItemCommand({ el: FoodParent.Setting.getNavWrapperElement(), viewStatus: FoodParent.VIEW_STATUS.LOGIN }).execute();
         };
-        RenderAccountViewCommand.prototype.undo = function () {
-        };
+        RenderAccountViewCommand.prototype.undo = function () { };
         return RenderAccountViewCommand;
     })();
     FoodParent.RenderAccountViewCommand = RenderAccountViewCommand;

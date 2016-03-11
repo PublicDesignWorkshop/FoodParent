@@ -2088,7 +2088,7 @@
 
         public static getLogInViewTemplate(): string {
             var template = '';
-            template += '<div id="wrapper-login">';
+            template += '<div id="wrapper-login" class="popup-layer">';
 
             template +=     '<div id="content-header">';
             template +=         '<div class="text-header"><%= header %></div>';

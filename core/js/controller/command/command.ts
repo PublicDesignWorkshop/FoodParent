@@ -581,9 +581,7 @@
             View.setViewStatus(VIEW_STATUS.LOGIN);
             new SetActiveNavItemCommand({ el: Setting.getNavWrapperElement(), viewStatus: VIEW_STATUS.LOGIN }).execute();
         }
-        public undo(): any {
-
-        }
+        public undo(): any { }
     }
 
     export class RenderLogInViewCommand implements Command {
