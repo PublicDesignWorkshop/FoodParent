@@ -117,6 +117,12 @@
         public static getPopupView(): PopupView {
             return View._instance._popupViews[View._instance._popupViews.length - 1];
         }
+        public static getPopupViews(): Array<PopupView> {
+            return View._instance._popupViews;
+        }
+        public static resetPopupViews(): void {
+            View._instance._popupViews = new Array<PopupView>();
+        }
         public static removePopupView(): void {
             View._instance._popupViews.pop();
         }

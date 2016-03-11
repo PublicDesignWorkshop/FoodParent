@@ -104,7 +104,7 @@ var FoodParent;
             var self = EventHandler._instance;
             FoodParent.Controller.abortAllXHR();
             Pace.restart();
-            new FoodParent.RemoveAlertViewCommand().execute();
+            //new RemoveAlertViewCommand().execute();
             //if (View.getViewStatus() != viewStatus) {
             new FoodParent.RemoveChildViewCommand({ parent: FoodParent.View }).execute();
             //}
@@ -212,12 +212,13 @@ var FoodParent;
             if (view instanceof FoodParent.NavView) {
                 if (el.hasClass('evt-title')) {
                     new FoodParent.NavigateCommand({ hash: 'trees', id: 0 }).execute();
+                    new FoodParent.ResetPopupViewCommand().execute();
                     Backbone.history.loadUrl(Backbone.history.fragment);
                 }
                 else if (el.hasClass('evt-trees')) {
                     if (FoodParent.View.getViewStatus() != VIEW_STATUS.TREES) {
                         new FoodParent.NavigateCommand({ hash: 'trees', id: 0 }).execute();
-                        new FoodParent.RemovePopupViewCommand({ delay: FoodParent.Setting.getRemovePopupDuration() }).execute();
+                        new FoodParent.ResetPopupViewCommand().execute();
                         new FoodParent.RefreshCurrentViewCommand().execute();
                     }
                 }
@@ -282,12 +283,12 @@ var FoodParent;
                 case VIEW_STATUS.GEO_ERROR:
                 case VIEW_STATUS.NETWORK_ERROR:
                     if (el.hasClass('alert-confirm')) {
-                        new FoodParent.RemoveAlertViewCommand({ delay: FoodParent.Setting.getRemovePopupDuration() }).execute();
+                        new RemoveAlertViewCommand({ delay: FoodParent.Setting.getRemovePopupDuration() }).execute();
                     }
                     break;
                 case VIEW_STATUS.CONFIRM:
                     if (el.hasClass('confirm-confirm') || el.hasClass('confirm-cancel')) {
-                        new FoodParent.RemoveAlertViewCommand({ delay: FoodParent.Setting.getRemovePopupDuration() }).execute();
+                        new RemoveAlertViewCommand({ delay: FoodParent.Setting.getRemovePopupDuration() }).execute();
                     }
                     break;
                 case VIEW_STATUS.TREES:
@@ -350,6 +351,9 @@ var FoodParent;
                         new FoodParent.RemovePopupViewCommand({ delay: FoodParent.Setting.getRemovePopupDuration() }).execute();
                         new FoodParent.RefreshCurrentViewCommand().execute();
                     }
+                    else if (el.hasClass('evt-manage-adopt')) {
+                        new FoodParent.RenderManageAdoptionViewCommand({ el: FoodParent.Setting.getPopWrapperElement(), tree: options.tree }).execute();
+                    }
                     break;
                 case VIEW_STATUS.MANAGE_ADOPTION:
                     if (el.hasClass('evt-close')) {
@@ -399,7 +403,7 @@ var FoodParent;
                     break;
                 case VIEW_STATUS.IMAGENOTE_TREE:
                     if (el.hasClass('button-close')) {
-                        new FoodParent.RemoveAlertViewCommand({ delay: FoodParent.Setting.getRemovePopupDuration() }).execute();
+                        new RemoveAlertViewCommand({ delay: FoodParent.Setting.getRemovePopupDuration() }).execute();
                         if (FoodParent.View.getDetailTreeView()) {
                             FoodParent.View.getDetailTreeView().refreshTreeInfo();
                         }
@@ -407,7 +411,7 @@ var FoodParent;
                     break;
                 case VIEW_STATUS.POST_NOTE:
                     if (el.hasClass('button-close')) {
-                        new FoodParent.RemoveAlertViewCommand({ delay: FoodParent.Setting.getRemovePopupDuration() }).execute();
+                        new RemoveAlertViewCommand({ delay: FoodParent.Setting.getRemovePopupDuration() }).execute();
                         if (FoodParent.View.getDetailTreeView()) {
                             FoodParent.View.getDetailTreeView().refreshTreeInfo();
                         }
@@ -427,7 +431,7 @@ var FoodParent;
                     if (el.hasClass('button-submit-donation')) {
                     }
                     else if (el.hasClass('button-close')) {
-                        new FoodParent.RemoveAlertViewCommand({ delay: FoodParent.Setting.getRemovePopupDuration() }).execute();
+                        new RemoveAlertViewCommand({ delay: FoodParent.Setting.getRemovePopupDuration() }).execute();
                         if (FoodParent.View.getDetailDonationView()) {
                             FoodParent.View.getDetailDonationView().refreshDonationInfo();
                         }
@@ -447,7 +451,7 @@ var FoodParent;
                     break;
                 case VIEW_STATUS.EDIT_DONATION:
                     if (el.hasClass('button-close')) {
-                        new FoodParent.RemoveAlertViewCommand({ delay: FoodParent.Setting.getRemovePopupDuration() }).execute();
+                        new RemoveAlertViewCommand({ delay: FoodParent.Setting.getRemovePopupDuration() }).execute();
                         if (FoodParent.View.getDetailDonationView()) {
                             FoodParent.View.getDetailDonationView().refreshDonationInfo();
                         }
@@ -463,6 +467,7 @@ var FoodParent;
                     else if (el.hasClass('evt-submit')) {
                         if (options.contact != undefined && options.password != undefined) {
                             FoodParent.Controller.processLogin(options.contact, options.password, function (response) {
+                                new FoodParent.ResetPopupViewCommand().execute();
                                 Backbone.history.loadUrl(Backbone.history.fragment);
                             }, function (response) {
                                 new FoodParent.RenderMessageViewCommand({ el: FoodParent.Setting.getMessageWrapperElement(), message: FoodParent.Setting.getErrorMessage(response.code), undoable: false }).execute();
@@ -473,6 +478,7 @@ var FoodParent;
                     }
                     else if (el.hasClass('evt-logout')) {
                         FoodParent.Controller.processLogout(function () {
+                            new FoodParent.ResetPopupViewCommand().execute();
                             Backbone.history.loadUrl(Backbone.history.fragment);
                         }, function () {
                             EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
@@ -481,12 +487,12 @@ var FoodParent;
                     break;
                 case VIEW_STATUS.SIGNUP:
                     if (el.hasClass('signup-cancel') || el.hasClass('button-close')) {
-                        new FoodParent.RemoveAlertViewCommand({ delay: FoodParent.Setting.getRemovePopupDuration() }).execute();
+                        new RemoveAlertViewCommand({ delay: FoodParent.Setting.getRemovePopupDuration() }).execute();
                     }
                     break;
                 case VIEW_STATUS.ADOPT_TREE:
                     if (el.hasClass('evt-close')) {
-                        new FoodParent.RemoveAlertViewCommand({ delay: FoodParent.Setting.getRemovePopupDuration() }).execute();
+                        new FoodParent.RemovePopupViewCommand({ delay: FoodParent.Setting.getRemovePopupDuration() }).execute();
                     }
                     else if (el.hasClass('evt-submit')) {
                         if (options.tree) {
@@ -513,7 +519,7 @@ var FoodParent;
                     break;
                 case VIEW_STATUS.UNADOPT_TREE:
                     if (el.hasClass('evt-close')) {
-                        new FoodParent.RemoveAlertViewCommand({ delay: FoodParent.Setting.getRemovePopupDuration() }).execute();
+                        new FoodParent.RemovePopupViewCommand({ delay: FoodParent.Setting.getRemovePopupDuration() }).execute();
                     }
                     else if (el.hasClass('evt-submit')) {
                         if (options.tree) {
@@ -556,7 +562,7 @@ var FoodParent;
                     break;
                 case VIEW_STATUS.CHANGE_PASSWORD:
                     if (el.hasClass('password-cancel') || el.hasClass('button-close')) {
-                        new FoodParent.RemoveAlertViewCommand({ delay: FoodParent.Setting.getRemovePopupDuration() }).execute();
+                        new RemoveAlertViewCommand({ delay: FoodParent.Setting.getRemovePopupDuration() }).execute();
                     }
                     break;
             }

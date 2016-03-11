@@ -382,12 +382,12 @@ var TreeMapViewCell = Backgrid.Cell.extend({
 });
 
 var ManageAdoptionViewCell = Backgrid.Cell.extend({
-    template: _.template('<div class="btn-table" data-target="<%= treeid %>"><i class="fa fa-users"></i></div>'),
+    template: _.template('<div class="btn-table evt-manage-adopt" data-target="<%= treeid %>"><i class="fa fa-users"></i></div>'),
     events: {
         "click .btn-table": "_manageAdoption"
     },
-    _manageAdoption: function (event) {
-        var tree: number = parseInt($(event.target).attr('data-target'));
+    _manageAdoption: function (event: Event) {
+        var tree: number = parseInt($(event.currentTarget).attr('data-target'));
         FoodParent.EventHandler.handleMouseClick($(event.currentTarget), this, { tree: tree });
         //FoodParent.Router.getInstance().navigate("tree/" + this.model.getId(), { trigger: true });
     },

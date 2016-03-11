@@ -1,5 +1,5 @@
 ﻿@media all {
-    #wrapper-tree-adopt {
+    #wrapper-tree-adopt #frame-tree-adopt {
         float: right;
         max-width: 480px;
     }

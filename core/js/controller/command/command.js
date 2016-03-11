@@ -170,9 +170,6 @@ var FoodParent;
         RenderManageAdoptionViewCommand.prototype.execute = function () {
             var self = this;
             var view = FoodParent.AdoptionManageViewFactory.create(self._el, self._tree).render();
-            if (FoodParent.View.getPopupView()) {
-                FoodParent.View.popViewStatus();
-            }
             FoodParent.View.addPopupView(view);
             FoodParent.View.setViewStatus(FoodParent.VIEW_STATUS.MANAGE_ADOPTION);
         };
@@ -188,10 +185,7 @@ var FoodParent;
         RenderTreesTableViewCommand.prototype.execute = function () {
             var self = this;
             var view = FoodParent.TreesTableViewFactory.create(self._el).render();
-            if (FoodParent.View.getPopupView()) {
-                FoodParent.View.popViewStatus();
-            }
-            FoodParent.View.setPopupView(view);
+            FoodParent.View.addPopupView(view);
             FoodParent.View.setViewStatus(FoodParent.VIEW_STATUS.TREES_TABLE);
         };
         RenderTreesTableViewCommand.prototype.undo = function () { };
@@ -207,7 +201,7 @@ var FoodParent;
         RenderAdoptTreeViewCommand.prototype.execute = function () {
             var self = this;
             var view = FoodParent.AdoptTreeViewFactory.create(self._el, self._tree).render();
-            FoodParent.View.setPopupView(view);
+            FoodParent.View.addPopupView(view);
             FoodParent.View.setViewStatus(FoodParent.VIEW_STATUS.ADOPT_TREE);
         };
         RenderAdoptTreeViewCommand.prototype.undo = function () { };
@@ -223,7 +217,7 @@ var FoodParent;
         RenderUnadoptTreeViewCommand.prototype.execute = function () {
             var self = this;
             var view = FoodParent.UnadoptTreeViewFactory.create(self._el, self._tree).render();
-            FoodParent.View.setPopupView(view);
+            FoodParent.View.addPopupView(view);
             FoodParent.View.setViewStatus(FoodParent.VIEW_STATUS.UNADOPT_TREE);
         };
         RenderUnadoptTreeViewCommand.prototype.undo = function () { };
@@ -294,31 +288,26 @@ var FoodParent;
         return RenderAlertViewCommand;
     })();
     FoodParent.RenderAlertViewCommand = RenderAlertViewCommand;
-    var RemoveAlertViewCommand = (function () {
-        function RemoveAlertViewCommand(args) {
+    var ResetPopupViewCommand = (function () {
+        function ResetPopupViewCommand(args) {
             var self = this;
-            if (args != undefined && args.delay != undefined) {
-                self._delay = args.delay;
-            }
-            else {
-                self._delay = 0;
-            }
         }
-        RemoveAlertViewCommand.prototype.execute = function () {
+        ResetPopupViewCommand.prototype.execute = function () {
             var self = this;
-            if (FoodParent.View.getPopupView()) {
-                setTimeout(function () {
-                    FoodParent.View.getPopupView().setInvisible();
-                    FoodParent.Setting.getPopWrapperElement().html("");
-                }, self._delay);
+            while (FoodParent.View.getPopupView() != undefined) {
+                FoodParent.Setting.getPopWrapperElement().children('.frame-pop').last().remove();
+                FoodParent.View.removePopupView();
+                console.log(FoodParent.View.getPopupViews());
+                if (FoodParent.View.getPopupView() == undefined) {
+                    FoodParent.Setting.getPopWrapperElement().addClass('hidden');
+                }
                 FoodParent.View.popViewStatus();
             }
         };
-        RemoveAlertViewCommand.prototype.undo = function () {
-        };
-        return RemoveAlertViewCommand;
+        ResetPopupViewCommand.prototype.undo = function () { };
+        return ResetPopupViewCommand;
     })();
-    FoodParent.RemoveAlertViewCommand = RemoveAlertViewCommand;
+    FoodParent.ResetPopupViewCommand = ResetPopupViewCommand;
     var RemovePopupViewCommand = (function () {
         function RemovePopupViewCommand(args) {
             var self = this;
@@ -333,11 +322,15 @@ var FoodParent;
             var self = this;
             if (FoodParent.View.getPopupView()) {
                 setTimeout(function () {
-                    FoodParent.View.getPopupView().setInvisible();
-                    FoodParent.Setting.getPopWrapperElement().html("");
+                    FoodParent.Setting.getPopWrapperElement().children('.frame-pop').last().remove();
                     FoodParent.View.removePopupView();
+                    console.log(FoodParent.View.getPopupViews());
+                    if (FoodParent.View.getPopupView() == undefined) {
+                        FoodParent.Setting.getPopWrapperElement().addClass('hidden');
+                    }
                 }, self._delay);
                 FoodParent.View.popViewStatus();
+                console.log(FoodParent.View.getViewStatus());
             }
         };
         RemovePopupViewCommand.prototype.undo = function () { };
@@ -350,23 +343,25 @@ var FoodParent;
         }
         RefreshCurrentViewCommand.prototype.execute = function () {
             var self = this;
-            if (FoodParent.View.getViewStatus() == FoodParent.VIEW_STATUS.TREES) {
-                if (FoodParent.View.getTreesView()) {
-                    FoodParent.View.getTreesView()._applyFilter();
-                    FoodParent.View.getTreesView().renderTreeInfo();
+            setTimeout(function () {
+                if (FoodParent.View.getViewStatus() == FoodParent.VIEW_STATUS.TREES) {
+                    if (FoodParent.View.getTreesView()) {
+                        FoodParent.View.getTreesView()._applyFilter();
+                        FoodParent.View.getTreesView().renderTreeInfo();
+                    }
                 }
-            }
-            else if (FoodParent.View.getViewStatus() == FoodParent.VIEW_STATUS.DETAIL_TREE) {
-                if (FoodParent.View.getDetailTreeView()) {
-                    FoodParent.View.getDetailTreeView().renderMenu();
+                else if (FoodParent.View.getViewStatus() == FoodParent.VIEW_STATUS.DETAIL_TREE) {
+                    if (FoodParent.View.getDetailTreeView()) {
+                        FoodParent.View.getDetailTreeView().renderMenu();
+                    }
                 }
-            }
-            else if (FoodParent.View.getViewStatus() == FoodParent.VIEW_STATUS.MANAGE_ADOPTION) {
-                if (FoodParent.View.getPopupView()) {
-                    FoodParent.View.getPopupView()._applyFilter();
+                else if (FoodParent.View.getViewStatus() == FoodParent.VIEW_STATUS.MANAGE_ADOPTION) {
+                    if (FoodParent.View.getPopupView()) {
+                        FoodParent.View.getPopupView()._applyFilter();
+                    }
                 }
-            }
-            new SetActiveNavItemCommand({ el: FoodParent.Setting.getNavWrapperElement(), viewStatus: FoodParent.View.getViewStatus() }).execute();
+                new SetActiveNavItemCommand({ el: FoodParent.Setting.getNavWrapperElement(), viewStatus: FoodParent.View.getViewStatus() }).execute();
+            }, FoodParent.Setting.getRemovePopupDuration());
         };
         RefreshCurrentViewCommand.prototype.undo = function () { };
         return RefreshCurrentViewCommand;
@@ -547,9 +542,6 @@ var FoodParent;
         RenderAccountViewCommand.prototype.execute = function () {
             var self = this;
             var view = FoodParent.AccountViewFactory.create(self._el).render();
-            if (FoodParent.View.getPopupView()) {
-                FoodParent.View.popViewStatus();
-            }
             FoodParent.View.addPopupView(view);
             FoodParent.View.setViewStatus(FoodParent.VIEW_STATUS.LOGIN);
             new SetActiveNavItemCommand({ el: FoodParent.Setting.getNavWrapperElement(), viewStatus: FoodParent.VIEW_STATUS.LOGIN }).execute();

@@ -130,7 +130,7 @@
             Controller.checkIsLoggedIn(function (response) {
                 Controller.checkIsAdmin(function () {
                     var template = _.template(Template.getAccountViewTemplateForAdmin());
-                    Setting.getPopWrapperElement().html(template({
+                    Setting.getPopWrapperElement().append(template({
                         header: 'Admin Info',
                         contact: response.contact,
                     }));
@@ -144,7 +144,7 @@
                     });
                 }, function () {
                     var template = _.template(Template.getAccountViewTemplateForParent());
-                    Setting.getPopWrapperElement().html(template({
+                    Setting.getPopWrapperElement().append(template({
                         header: 'Parent Info',
                         contact: response.contact,
                     }));

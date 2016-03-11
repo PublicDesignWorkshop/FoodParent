@@ -85,7 +85,7 @@ var AdoptionAddCell = Backgrid.Cell.extend({
         var person = this.model;
         var treeId = parseInt($('.list-adoption').attr('data-target'));
         if (FoodParent.Model.getAdopts().checkAdoption(treeId, person.getId())) {
-            $(self.el).html('<div class="btn-table blank-marker-control-item"></div>');
+            $(self.el).html('<div class="blank-marker-control-item"></div>');
         }
         else {
             $(self.el).html(self.template());

@@ -1175,7 +1175,8 @@ var FoodParent;
         };
         Template.getTreesTableViewTemplateForAdmin = function () {
             var template = '';
-            template += '<div id="wrapper-tree-list">';
+            template += '<div id="wrapper-tree-list" class="frame-pop">';
+            template += '<div id="frame-tree-list">';
             template += '<div id="content-header">';
             template += '<div class="text-header"><%= header %></div>';
             template += '<div class="btn-close evt-close">';
@@ -1196,12 +1197,13 @@ var FoodParent;
             template += '</div>'; // end of .info-button-group
             template += '</div>'; // end of #content-tree-list
             template += '</div>'; // end of .frame-flex-group
+            template += '</div>'; // end of #frame-tree-list
             template += '</div>'; // end of #wrapper-tree-list
             return template;
         };
         Template.getAdoptionManageViewTemplateForAdmin = function () {
             var template = '';
-            template += '<div id="wrapper-manage-adoption">';
+            template += '<div id="wrapper-manage-adoption" class="frame-pop">';
             template += '<div id="content-header">';
             template += '<div class="text-header"><%= header %></div>';
             template += '<div class="btn-close evt-close">';
@@ -1721,7 +1723,8 @@ var FoodParent;
         };
         Template.getLogInViewTemplate = function () {
             var template = '';
-            template += '<div id="wrapper-login">';
+            template += '<div id="wrapper-login" class="frame-pop">';
+            template += '<div id="frame-login">';
             template += '<div id="content-header">';
             template += '<div class="text-header"><%= header %></div>';
             template += '<div class="btn-close evt-close">';
@@ -1757,12 +1760,14 @@ var FoodParent;
             template += '<div class="btn-brown btn-medium evt-close">Cancel</div>';
             template += '</div>'; // end of .info-button-group
             template += '</div>'; // end of .content-login
+            template += '</div>'; // end of #frame-login
             template += '</div>'; // end of #wrapper-login
             return template;
         };
         Template.getAccountViewTemplateForParent = function () {
             var template = '';
-            template += '<div id="wrapper-login">';
+            template += '<div id="wrapper-login" class="frame-pop">';
+            template += '<div id="frame-login">';
             template += '<div id="content-header">';
             template += '<div class="text-header"><%= header %></div>';
             template += '<div class="btn-close evt-close">';
@@ -1795,6 +1800,7 @@ var FoodParent;
             template += '<div class="btn-brown btn-medium evt-close">Cancel</div>';
             template += '</div>'; // end of .info-button-group
             template += '</div>'; // end of .content-login
+            template += '</div>'; // end of #frame-login
             template += '</div>'; // end of #wrapper-login
             return template;
             /*
@@ -1820,7 +1826,7 @@ var FoodParent;
         };
         Template.getLoggedInViewTemplate = function () {
             var template = '';
-            template += '<div id="wrapper-login">';
+            template += '<div id="wrapper-login" class="frame-pop">';
             template += '<div class="outer-frame">';
             template += '<div class="inner-frame">';
             template += '<div class="wrapper-login-content">';
@@ -1936,7 +1942,8 @@ var FoodParent;
         };
         Template.getAdoptTreeViewTemplate = function () {
             var template = '';
-            template += '<div id="wrapper-tree-adopt">';
+            template += '<div id="wrapper-tree-adopt" class="frame-pop">';
+            template += '<div id="frame-tree-adopt">';
             template += '<div id="content-header">';
             template += '<div class="text-header"><%= header %></div>';
             template += '<div class="btn-close evt-close">';
@@ -1956,12 +1963,14 @@ var FoodParent;
             template += '<div class="btn-brown btn-medium evt-close">Cancel</div>';
             template += '</div>'; // end of .info-button-group
             template += '</div>'; // end of .content-login
+            template += '</div>'; // end of #frame-tree-adopt
             template += '</div>'; // end of #wrapper-tree-adopt
             return template;
         };
         Template.getUnadoptTreeViewTemplate = function () {
             var template = '';
-            template += '<div id="wrapper-tree-adopt">';
+            template += '<div id="wrapper-tree-adopt" class="frame-pop">';
+            template += '<div id="frame-tree-adopt">';
             template += '<div id="content-header">';
             template += '<div class="text-header"><%= header %></div>';
             template += '<div class="btn-close evt-close">';
@@ -1981,6 +1990,7 @@ var FoodParent;
             template += '<div class="btn-brown btn-medium evt-close">Cancel</div>';
             template += '</div>'; // end of .info-button-group
             template += '</div>'; // end of .content-login
+            template += '</div>'; // end of #frame-tree-adopt
             template += '</div>'; // end of #wrapper-tree-adopt
             return template;
         };

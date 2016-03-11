@@ -166,7 +166,7 @@ var FoodParent;
                         self._note.setPersonId(parseInt(response1.id));
                         FoodParent.EventHandler.handleNoteData(self._note, FoodParent.DATA_MODE.CREATE, {}, function () {
                             FoodParent.EventHandler.handleDataChange("New note for <strong><i>" + food.getName() + " " + self._tree.getName() + "</i></strong> has been created.", false);
-                            new FoodParent.RemoveAlertViewCommand({ delay: FoodParent.Setting.getRemovePopupDuration() }).execute();
+                            new RemoveAlertViewCommand({ delay: FoodParent.Setting.getRemovePopupDuration() }).execute();
                             if (FoodParent.View.getDetailTreeView()) {
                                 FoodParent.View.getDetailTreeView().refreshTreeInfo();
                             }
@@ -188,7 +188,7 @@ var FoodParent;
                                 self._note.setPersonId(parseInt(response2.id));
                                 FoodParent.EventHandler.handleNoteData(self._note, FoodParent.DATA_MODE.CREATE, {}, function () {
                                     FoodParent.EventHandler.handleDataChange("New note for <strong><i>" + food.getName() + " " + self._tree.getName() + "</i></strong> has been created.", false);
-                                    new FoodParent.RemoveAlertViewCommand({ delay: FoodParent.Setting.getRemovePopupDuration() }).execute();
+                                    new RemoveAlertViewCommand({ delay: FoodParent.Setting.getRemovePopupDuration() }).execute();
                                     if (FoodParent.View.getDetailTreeView()) {
                                         FoodParent.View.getDetailTreeView().refreshTreeInfo();
                                     }

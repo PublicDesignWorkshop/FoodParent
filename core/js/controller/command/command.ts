@@ -180,9 +180,6 @@
         public execute(): any {
             var self: RenderManageAdoptionViewCommand = this;
             var view: PopupView = AdoptionManageViewFactory.create(self._el, self._tree).render();
-            if (View.getPopupView()) {
-                View.popViewStatus();
-            }
             View.addPopupView(view);
             View.setViewStatus(VIEW_STATUS.MANAGE_ADOPTION);
         }
@@ -198,10 +195,7 @@
         public execute(): any {
             var self: RenderTreesTableViewCommand = this;
             var view: PopupView = TreesTableViewFactory.create(self._el).render();
-            if (View.getPopupView()) {
-                View.popViewStatus();
-            }
-            View.setPopupView(view);
+            View.addPopupView(view);
             View.setViewStatus(VIEW_STATUS.TREES_TABLE);
         }
         public undo(): any { }
@@ -218,7 +212,7 @@
         public execute(): any {
             var self: RenderAdoptTreeViewCommand = this;
             var view: PopupView = AdoptTreeViewFactory.create(self._el, self._tree).render();
-            View.setPopupView(view);
+            View.addPopupView(view);
             View.setViewStatus(VIEW_STATUS.ADOPT_TREE);
         }
         public undo(): any {}
@@ -235,7 +229,7 @@
         public execute(): any {
             var self: RenderUnadoptTreeViewCommand = this;
             var view: PopupView = UnadoptTreeViewFactory.create(self._el, self._tree).render();
-            View.setPopupView(view);
+            View.addPopupView(view);
             View.setViewStatus(VIEW_STATUS.UNADOPT_TREE);
         }
         public undo(): any {}
@@ -312,31 +306,27 @@
 
         }
     }
-
-    export class RemoveAlertViewCommand implements Command {
-        private _delay: number;
+    
+    
+    export class ResetPopupViewCommand implements Command {
         constructor(args?: any) {
-            var self: RemoveAlertViewCommand = this;
-            if (args != undefined && args.delay != undefined) {
-                self._delay = args.delay;
-            } else {
-                self._delay = 0;
-            }
+            var self: ResetPopupViewCommand = this;
         }
         public execute(): any {
-            var self: RemoveAlertViewCommand = this;
-            if (View.getPopupView()) {
-                setTimeout(function () {
-                    View.getPopupView().setInvisible();
-                    Setting.getPopWrapperElement().html("");
-                }, self._delay);
+            var self: ResetPopupViewCommand = this;
+            while (View.getPopupView() != undefined) {
+                Setting.getPopWrapperElement().children('.frame-pop').last().remove();
+                View.removePopupView();
+                console.log(View.getPopupViews());
+                if (View.getPopupView() == undefined) {
+                    Setting.getPopWrapperElement().addClass('hidden');
+                }
                 View.popViewStatus();
             }
         }
-        public undo(): any {
-
-        }
+        public undo(): any { }
     }
+    
 
     export class RemovePopupViewCommand implements Command {
         private _delay: number;
@@ -352,11 +342,15 @@
             var self: RemovePopupViewCommand = this;
             if (View.getPopupView()) {
                 setTimeout(function () {
-                    View.getPopupView().setInvisible();
-                    Setting.getPopWrapperElement().html("");
+                    Setting.getPopWrapperElement().children('.frame-pop').last().remove();
                     View.removePopupView();
+                    console.log(View.getPopupViews());
+                    if (View.getPopupView() == undefined) {
+                        Setting.getPopWrapperElement().addClass('hidden');
+                    }
                 }, self._delay);
                 View.popViewStatus();
+                console.log(View.getViewStatus());
             }
         }
         public undo(): any { }
@@ -368,21 +362,24 @@
         }
         public execute(): any {
             var self: RefreshCurrentViewCommand = this;
-            if (View.getViewStatus() == VIEW_STATUS.TREES) {
-                if (View.getTreesView()) {
-                    View.getTreesView()._applyFilter();
-                    View.getTreesView().renderTreeInfo();
+            setTimeout(function () {
+                if (View.getViewStatus() == VIEW_STATUS.TREES) {
+                    if (View.getTreesView()) {
+                        View.getTreesView()._applyFilter();
+                        View.getTreesView().renderTreeInfo();
+                    }
+                } else if (View.getViewStatus() == VIEW_STATUS.DETAIL_TREE) {
+                    if (View.getDetailTreeView()) {
+                        View.getDetailTreeView().renderMenu();
+                    }
+                } else if (View.getViewStatus() == VIEW_STATUS.MANAGE_ADOPTION) {
+                    if (FoodParent.View.getPopupView()) {
+                        (<FoodParent.AdoptionManageView>FoodParent.View.getPopupView())._applyFilter();
+                    }
                 }
-            } else if (View.getViewStatus() == VIEW_STATUS.DETAIL_TREE) {
-                if (View.getDetailTreeView()) {
-                    View.getDetailTreeView().renderMenu();
-                }
-            } else if (View.getViewStatus() == VIEW_STATUS.MANAGE_ADOPTION) {
-                if (FoodParent.View.getPopupView()) {
-                    (<FoodParent.AdoptionManageView>FoodParent.View.getPopupView())._applyFilter();
-                }
-            }
-            new SetActiveNavItemCommand({ el: Setting.getNavWrapperElement(), viewStatus: View.getViewStatus() }).execute();
+                new SetActiveNavItemCommand({ el: Setting.getNavWrapperElement(), viewStatus: View.getViewStatus() }).execute();
+            }, Setting.getRemovePopupDuration());
+            
         }
         public undo(): any { }
     }
@@ -574,9 +571,6 @@
         public execute(): any {
             var self: RenderAccountViewCommand = this;
             var view: PopupView = AccountViewFactory.create(self._el).render();
-            if (View.getPopupView()) {
-                View.popViewStatus();
-            }
             View.addPopupView(view);
             View.setViewStatus(VIEW_STATUS.LOGIN);
             new SetActiveNavItemCommand({ el: Setting.getNavWrapperElement(), viewStatus: VIEW_STATUS.LOGIN }).execute();

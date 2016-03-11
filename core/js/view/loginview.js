@@ -140,7 +140,7 @@ var FoodParent;
             FoodParent.Controller.checkIsLoggedIn(function (response) {
                 FoodParent.Controller.checkIsAdmin(function () {
                     var template = _.template(FoodParent.Template.getAccountViewTemplateForAdmin());
-                    FoodParent.Setting.getPopWrapperElement().html(template({
+                    FoodParent.Setting.getPopWrapperElement().append(template({
                         header: 'Admin Info',
                         contact: response.contact,
                     }));
@@ -154,7 +154,7 @@ var FoodParent;
                     });
                 }, function () {
                     var template = _.template(FoodParent.Template.getAccountViewTemplateForParent());
-                    FoodParent.Setting.getPopWrapperElement().html(template({
+                    FoodParent.Setting.getPopWrapperElement().append(template({
                         header: 'Parent Info',
                         contact: response.contact,
                     }));

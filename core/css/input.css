@@ -5,22 +5,24 @@
         -webkit-user-select: all;
         user-select: all;
     }
+
     input, .form-control {
         -webkit-box-shadow: none;
         box-shadow: none;
         border-radius: 1px;
-        -moz-user-select: all;
-        -ms-user-select: all;
-        -webkit-user-select: all;
-        user-select: all;
+        -moz-user-select: initial;
+        -ms-user-select: initial;
+        -webkit-user-select: initial;
+        user-select: initial;
     }
+
     input:focus, .form-control:focus {
         border-color: #5e4e51;
         outline: 0;
         -webkit-box-shadow: none;
         box-shadow: none;
     }
-
+}
 
 
 

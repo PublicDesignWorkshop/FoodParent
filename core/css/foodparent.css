@@ -13192,6 +13192,13 @@ button.close {
         left: 0;
         width: 100%;
         height: 100%;
+    }
+    #wrapper-pop .frame-pop {
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 100%;
+        height: 100%;
         padding: 70px 24px 20px 24px;
         background-color: rgba(255, 255, 255, 0.9);
         overflow-y: auto;
@@ -13581,6 +13588,11 @@ button.close {
         text-align: left;
     }
 
+    .list-tree td {
+        padding-left: 4px;
+        padding-right: 4px;
+        border-bottom: 1px solid rgba(94, 78, 81, 0.15);
+    }
     .list-tree .backgrid .food {
         width: 15%;
     }
@@ -13656,8 +13668,8 @@ button.close {
     }
 
     .list-adoption td {
-        padding-left: 8px;
-        padding-right: 8px;
+        padding-left: 4px;
+        padding-right: 4px;
         border-bottom: 1px solid rgba(94, 78, 81, 0.15);
     }
     .list-adoption .backgrid .auth {
@@ -13788,22 +13800,22 @@ button.close {
 
 @media only screen and (min-width: 737px) and (max-width: 1280px) and (orientation: landscape) {
     .list-tree td, .new-tree td, .list-people td, .list-people th, .new-person td, .list-adoption td, .list-location td, .list-location th, .new-location td, .new-location th, .list-donation td, .list-donation th, .new-donation td {
-        font-size: medium;
+        font-size: small;
     }
     .list-tree a, .new-tree a, .list-tree a, .new-person a, .list-adoption a {
-        font-size: medium;
+        font-size: small;
     }
 }
 
 
 @media only screen and (min-width: 1281px) and (max-width: 1920px) and (orientation: landscape) {
     .list-tree td, .new-tree td, .list-people td, .list-people th, .new-person td, .list-adoption td, .list-location td, .list-location th, .new-location td, .new-location th, .list-donation td, .list-donation th, .new-donation td {
-        font-size: large;
-        padding-top: 4px;
-        padding-bottom: 4px;
+        font-size: medium;
+        padding-top: 2px;
+        padding-bottom: 2px;
     }
     .list-tree a, .new-tree a, .list-tree a, .new-person a, .list-adoption a {
-        font-size: large;
+        font-size: medium;
     }
 }
 @media all {
@@ -14542,22 +14554,24 @@ button.close {
         -webkit-user-select: all;
         user-select: all;
     }
+
     input, .form-control {
         -webkit-box-shadow: none;
         box-shadow: none;
         border-radius: 1px;
-        -moz-user-select: all;
-        -ms-user-select: all;
-        -webkit-user-select: all;
-        user-select: all;
+        -moz-user-select: initial;
+        -ms-user-select: initial;
+        -webkit-user-select: initial;
+        user-select: initial;
     }
+
     input:focus, .form-control:focus {
         border-color: #5e4e51;
         outline: 0;
         -webkit-box-shadow: none;
         box-shadow: none;
     }
-
+}
 
 
 
@@ -15039,7 +15053,7 @@ button.close {
 }
 
 @media all {
-    #wrapper-login {
+    #wrapper-login #frame-login {
         float: right;
         max-width: 480px;
     }
@@ -15089,7 +15103,7 @@ button.close {
     }
 }
 @media all {
-    #wrapper-tree-adopt {
+    #wrapper-tree-adopt #frame-tree-adopt {
         float: right;
         max-width: 480px;
     }
@@ -15761,7 +15775,7 @@ button.close {
     /*
         CSS for Manage Adoptions
     */
-    #wrapper-tree-list {
+    #wrapper-tree-list #frame-tree-list {
         width: 100%;
         height: 100%;
     }

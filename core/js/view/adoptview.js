@@ -249,7 +249,7 @@ var FoodParent;
                 treename: food.getName() + " " + self._tree.getName(),
                 treeId: self._tree.getId(),
             };
-            self.$el.html(template(data));
+            self.$el.append(template(data));
             self.setElement(self.$('#wrapper-manage-adoption'));
             self.renderManageAdoption();
             self.setVisible();

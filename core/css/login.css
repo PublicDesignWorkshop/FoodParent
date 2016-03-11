@@ -1,5 +1,5 @@
 ﻿@media all {
-    #wrapper-login {
+    #wrapper-login #frame-login {
         float: right;
         max-width: 480px;
     }

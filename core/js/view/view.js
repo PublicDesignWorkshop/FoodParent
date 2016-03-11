@@ -109,6 +109,12 @@ var FoodParent;
         View.getPopupView = function () {
             return View._instance._popupViews[View._instance._popupViews.length - 1];
         };
+        View.getPopupViews = function () {
+            return View._instance._popupViews;
+        };
+        View.resetPopupViews = function () {
+            View._instance._popupViews = new Array();
+        };
         View.removePopupView = function () {
             View._instance._popupViews.pop();
         };

@@ -112,34 +112,6 @@ var FoodParent;
                 if (self.bDebug)
                     console.log(NavView.TAG + "Error occured");
             });
-            /*
-            Controller.checkLogin(function (data) {
-                if (data.result == true || data.result == 'true') {   // Is signed in
-                    Controller.checkAdmin(function (data2) {
-                        if (data2.result == true || data2.result == 'true') {   // Is admin
-                            template = _.template(Template.getNavViewManageItemsTemplate2());
-                            self.$('#list-nav').html(template({
-                                contact: data2.contact,
-                            }));
-                        } else if (data2.result == false || data2.result == 'false') {   // Not admin
-                            template = _.template(Template.getNavViewManageItemsTemplate3());
-                            self.$('#list-nav').html(template({
-                                contact: data.contact,
-                            }));
-                        }
-                        self.setActiveNavItem(View.getViewStatus());
-                    }, function () {
-
-                    });
-                } else if (data.result == false || data.result == 'false') {   // Not signed in
-                    template = _.template(Template.getNavViewManageItemsTemplate());
-                    self.$('#list-nav').html(template({}));
-                    self.setActiveNavItem(View.getViewStatus());
-                }
-            }, function () {
-
-            });
-            */
         };
         NavView.prototype.setActiveNavItem = function (viewStatus) {
             var self = this;

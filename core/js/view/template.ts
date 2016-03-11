@@ -1382,7 +1382,8 @@
 
         public static getTreesTableViewTemplateForAdmin(): string {
             var template = '';
-            template += '<div id="wrapper-tree-list">';
+            template += '<div id="wrapper-tree-list" class="frame-pop">';
+            template += '<div id="frame-tree-list">';
             template +=     '<div id="content-header">';
             template +=         '<div class="text-header"><%= header %></div>';
             template +=         '<div class="btn-close evt-close">';
@@ -1407,6 +1408,7 @@
 
             template +=         '</div>';   // end of #content-tree-list
             template +=     '</div>';   // end of .frame-flex-group
+            template += '</div>';   // end of #frame-tree-list
             template += '</div>';   // end of #wrapper-tree-list
             return template;
         }
@@ -1414,7 +1416,7 @@
 
         public static getAdoptionManageViewTemplateForAdmin(): string {
             var template = '';
-            template += '<div id="wrapper-manage-adoption">';
+            template += '<div id="wrapper-manage-adoption" class="frame-pop">';
             template +=     '<div id="content-header">';
             template +=         '<div class="text-header"><%= header %></div>';
             template +=         '<div class="btn-close evt-close">';
@@ -2088,7 +2090,8 @@
 
         public static getLogInViewTemplate(): string {
             var template = '';
-            template += '<div id="wrapper-login" class="popup-layer">';
+            template += '<div id="wrapper-login" class="frame-pop">';
+            template += '<div id="frame-login">';
 
             template +=     '<div id="content-header">';
             template +=         '<div class="text-header"><%= header %></div>';
@@ -2134,7 +2137,7 @@
             template +=         '</div>';   // end of .info-button-group
 
             template +=     '</div>';   // end of .content-login
-
+            template += '</div>';   // end of #frame-login
             template += '</div>';   // end of #wrapper-login
             return template;
         }
@@ -2142,8 +2145,8 @@
 
         public static getAccountViewTemplateForParent(): string {
             var template = '';
-            template += '<div id="wrapper-login">';
-
+            template += '<div id="wrapper-login" class="frame-pop">';
+            template += '<div id="frame-login">';
             template +=     '<div id="content-header">';
             template +=         '<div class="text-header"><%= header %></div>';
             template +=         '<div class="btn-close evt-close">';
@@ -2184,7 +2187,7 @@
             template +=         '</div>';   // end of .info-button-group
 
             template +=     '</div>';   // end of .content-login
-
+            template += '</div>';   // end of #frame-login
             template += '</div>';   // end of #wrapper-login
             return template;
 
@@ -2214,7 +2217,7 @@
 
         public static getLoggedInViewTemplate(): string {
             var template = '';
-            template += '<div id="wrapper-login">';
+            template += '<div id="wrapper-login" class="frame-pop">';
             template += '<div class="outer-frame">';
             template += '<div class="inner-frame">';
             template += '<div class="wrapper-login-content">';
@@ -2358,7 +2361,8 @@
 
         public static getAdoptTreeViewTemplate(): string {
             var template = '';
-            template += '<div id="wrapper-tree-adopt">';
+            template += '<div id="wrapper-tree-adopt" class="frame-pop">';
+            template += '<div id="frame-tree-adopt">';
             template +=     '<div id="content-header">';
             template +=         '<div class="text-header"><%= header %></div>';
             template +=         '<div class="btn-close evt-close">';
@@ -2383,13 +2387,15 @@
             template +=         '</div>';   // end of .info-button-group
 
             template +=     '</div>';   // end of .content-login
+            template += '</div>';   // end of #frame-tree-adopt
             template += '</div>';   // end of #wrapper-tree-adopt
             return template;
         }
 
         public static getUnadoptTreeViewTemplate(): string {
         var template = '';
-            template += '<div id="wrapper-tree-adopt">';
+            template += '<div id="wrapper-tree-adopt" class="frame-pop">';
+            template += '<div id="frame-tree-adopt">';
             template +=     '<div id="content-header">';
             template +=         '<div class="text-header"><%= header %></div>';
             template +=         '<div class="btn-close evt-close">';
@@ -2414,6 +2420,7 @@
             template +=         '</div>';   // end of .info-button-group
 
             template +=     '</div>';   // end of .content-login
+            template += '</div>';   // end of #frame-tree-adopt
             template += '</div>';   // end of #wrapper-tree-adopt
             return template;
         }

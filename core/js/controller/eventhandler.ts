@@ -63,7 +63,7 @@
             var self: EventHandler = EventHandler._instance;
             Controller.abortAllXHR();
             Pace.restart();
-            new RemoveAlertViewCommand().execute();
+            //new RemoveAlertViewCommand().execute();
             //if (View.getViewStatus() != viewStatus) {
                 new RemoveChildViewCommand({ parent: View }).execute();
             //}
@@ -168,11 +168,12 @@
             if (view instanceof NavView) {
                 if (el.hasClass('evt-title')) {
                     new NavigateCommand({ hash: 'trees', id: 0 }).execute();
+                    new ResetPopupViewCommand().execute();
                     Backbone.history.loadUrl(Backbone.history.fragment);
                 } else if (el.hasClass('evt-trees')) {
                     if (View.getViewStatus() != VIEW_STATUS.TREES) {
                         new NavigateCommand({ hash: 'trees', id: 0 }).execute();
-                        new RemovePopupViewCommand({ delay: Setting.getRemovePopupDuration() }).execute();
+                        new ResetPopupViewCommand().execute();
                         new RefreshCurrentViewCommand().execute();
                     }
                 } else if (el.hasClass('people')) {
@@ -289,6 +290,8 @@
                     if (el.hasClass('evt-close')) {
                         new RemovePopupViewCommand({ delay: Setting.getRemovePopupDuration() }).execute();
                         new RefreshCurrentViewCommand().execute();
+                    } else if (el.hasClass('evt-manage-adopt')) {
+                        new RenderManageAdoptionViewCommand({ el: Setting.getPopWrapperElement(), tree: options.tree }).execute();
                     }
                     break;
                 case VIEW_STATUS.MANAGE_ADOPTION:
@@ -394,6 +397,7 @@
                     } else if (el.hasClass('evt-submit')) {
                         if (options.contact != undefined && options.password != undefined) {
                             Controller.processLogin(options.contact, options.password, function (response) {
+                                new ResetPopupViewCommand().execute();
                                 Backbone.history.loadUrl(Backbone.history.fragment);
                             }, function (response) {
                                 new RenderMessageViewCommand({ el: Setting.getMessageWrapperElement(), message: Setting.getErrorMessage(response.code), undoable: false }).execute();
@@ -403,6 +407,7 @@
                         }
                     } else if (el.hasClass('evt-logout')) {
                         Controller.processLogout(function () {
+                            new ResetPopupViewCommand().execute();
                             Backbone.history.loadUrl(Backbone.history.fragment);
                         }, function () {
                             EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
@@ -416,7 +421,7 @@
                     break;
                 case VIEW_STATUS.ADOPT_TREE:
                     if (el.hasClass('evt-close')) {
-                        new RemoveAlertViewCommand({ delay: Setting.getRemovePopupDuration() }).execute();
+                        new RemovePopupViewCommand({ delay: Setting.getRemovePopupDuration() }).execute();
                     } else if (el.hasClass('evt-submit')) {
                         if (options.tree) {
                             Controller.checkIsLoggedIn(function (response) {
@@ -442,7 +447,7 @@
                     break;
                 case VIEW_STATUS.UNADOPT_TREE:
                     if (el.hasClass('evt-close')) {
-                        new RemoveAlertViewCommand({ delay: Setting.getRemovePopupDuration() }).execute();
+                        new RemovePopupViewCommand({ delay: Setting.getRemovePopupDuration() }).execute();
                     } else if (el.hasClass('evt-submit')) {
                         if (options.tree) {
                             Controller.checkIsLoggedIn(function (response) {
