@@ -90,7 +90,7 @@
             return 19;
         }
         public static getMapCenterZoomLevel(): number {
-            return 16;
+            return 15;
         }
         public static getDateForDatePicker(): string {
             return "YYYY/MM/DD";

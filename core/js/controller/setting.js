@@ -89,7 +89,7 @@ var FoodParent;
             return 19;
         };
         Setting.getMapCenterZoomLevel = function () {
-            return 16;
+            return 15;
         };
         Setting.getDateForDatePicker = function () {
             return "YYYY/MM/DD";

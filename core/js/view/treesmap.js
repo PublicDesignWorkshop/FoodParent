@@ -105,7 +105,7 @@ var FoodParent;
                         var tree = FoodParent.Model.getTrees().findWhere({ id: Math.floor(self._id) });
                         self._location = tree.getLocation();
                         // Move the map slight off from the center using CRS projection
-                        var point = L.CRS.EPSG3857.latLngToPoint(self._location, self._zoom);
+                        var point = L.CRS.EPSG3857.latLngToPoint(self._location, FoodParent.Setting.getMapCenterZoomLevel());
                         if (FoodParent.View.getWidth() > FoodParent.View.getHeight()) {
                             point.x += self.$('#content-map').outerWidth() * 0.2;
                         }
@@ -115,7 +115,7 @@ var FoodParent;
                         // Rener map only when the map is not rendered in a browswer
                         if (self._map == undefined) {
                             self.$('#list-donation').css({ height: FoodParent.View.getHeight() - 60 });
-                            self.setLocation(L.CRS.EPSG3857.pointToLatLng(point, self._zoom));
+                            self.setLocation(L.CRS.EPSG3857.pointToLatLng(point, FoodParent.Setting.getMapCenterZoomLevel()));
                             self._map = L.map($('#content-map')[0].id, {
                                 zoomControl: false,
                                 closePopupOnClick: self._bClosePopupOnClick,
@@ -123,7 +123,7 @@ var FoodParent;
                                 touchZoom: true,
                                 zoomAnimation: true,
                                 markerZoomAnimation: true,
-                            }).setView(self._location, self._zoom);
+                            }).setView(self._location, FoodParent.Setting.getMapCenterZoomLevel());
                             L.tileLayer(FoodParent.Setting.getTileMapAddress(), {
                                 minZoom: FoodParent.Setting.getMapMinZoomLevel(),
                                 maxZoom: FoodParent.Setting.getMapMaxZoomLevel(),
