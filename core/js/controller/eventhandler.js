@@ -211,14 +211,14 @@ var FoodParent;
             // Handle navigation view mouse click event
             if (view instanceof FoodParent.NavView) {
                 if (el.hasClass('evt-title')) {
-                    new FoodParent.NavigateCommand({ hash: 'trees', id: 0 }).execute();
                     new FoodParent.ResetPopupViewCommand().execute();
+                    new FoodParent.NavigateCommand({ hash: 'trees', id: 0 }).execute();
                     Backbone.history.loadUrl(Backbone.history.fragment);
                 }
                 else if (el.hasClass('evt-trees')) {
                     if (FoodParent.View.getViewStatus() != VIEW_STATUS.TREES) {
-                        new FoodParent.NavigateCommand({ hash: 'trees', id: 0 }).execute();
                         new FoodParent.ResetPopupViewCommand().execute();
+                        new FoodParent.NavigateCommand({ hash: 'trees', id: 0 }).execute();
                         new FoodParent.RefreshCurrentViewCommand().execute();
                     }
                 }
@@ -344,6 +344,20 @@ var FoodParent;
                     else if (el.hasClass('button-new-note')) {
                         var tree = FoodParent.Model.getTrees().findWhere({ id: parseInt(options.tree) });
                         new FoodParent.RenderPostNoteViewCommand({ el: FoodParent.Setting.getPopWrapperElement(), tree: tree }).execute();
+                    }
+                    else if (el.hasClass('evt-add-tree')) {
+                        var tree = options.tree;
+                        EventHandler.handleTreeData(tree, DATA_MODE.CREATE, {}, function () {
+                            var food = FoodParent.Model.getFoods().findWhere({ id: tree.getFoodId() });
+                            new FoodParent.RefreshCurrentViewCommand().execute();
+                            EventHandler.handleDataChange("<strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has been created successfully.", true);
+                        }, function () {
+                            EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
+                        }, function () {
+                            var food = FoodParent.Model.getFoods().findWhere({ id: tree.getFoodId() });
+                            EventHandler.handleDataChange("<strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has been deleted successfully.", false);
+                            new FoodParent.RefreshCurrentViewCommand().execute();
+                        });
                     }
                     break;
                 case VIEW_STATUS.TREES_TABLE:

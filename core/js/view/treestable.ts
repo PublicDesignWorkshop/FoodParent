@@ -30,6 +30,7 @@ module FoodParent {
                 "click .evt-close": "_mouseClick",
                 "click .btn-filter": "_clickFilter",
                 "click .evt-reset-filter": "_resetFilter",
+                "click .evt-add-tree": "_addTree",
             };
             self.delegateEvents();
         }
@@ -70,7 +71,7 @@ module FoodParent {
             });
         }
 
-        public renderTreeList = (trees: Trees) => {
+        public renderTreeList = (trees?: Trees) => {
             var self: TreesTableView = this;
             var optionValues = new Array<{ name: string, values: any }>();
             optionValues.push({ name: "Food", values: Model.getFoods().toArray() });
@@ -98,18 +99,8 @@ module FoodParent {
                 ownerships: Model.getOwnerships(),
             }
             self.$('.tree-filter').html(template(data));
-        }
-
-        public renderParentsList = (parents: Persons) => {
-            var self: TreesTableView = this;
-            var grid = new Backgrid.Grid({
-                columns: AdoptionColumn,
-                collection: parents,
-                emptyText: Setting.getNoDataText(),
-            });
-            grid.render();
-            grid.sort("name", "ascending");
-            self.$(".list-adoption").html(grid.el);
+            // Apply filter
+            self._applyFilter();
         }
 
         private _mouseClick(event: Event): void {
@@ -119,49 +110,121 @@ module FoodParent {
 
         protected _clickFilter(event: Event): void {
             var self: TreesTableView = this;
-            // Parenting filter
-            if ($(event.currentTarget).hasClass('filter-parenting-item')) {
+            // Ownership filter
+            if ($(event.currentTarget).hasClass('filter-owner-item')) {
                 if ($(event.currentTarget).hasClass('active')) {
                     $(event.currentTarget).removeClass('active');
                 } else {
                     $(event.currentTarget).addClass('active');
                 }
-                if (self.$('.filter-parenting-item').length == self.$('.filter-parenting-item.active').length) {
-                    self.$('.filter-parenting-all').addClass('active');
+                if (self.$('.filter-owner-item').length == self.$('.filter-owner-item.active').length) {
+                    self.$('.filter-owner-all').addClass('active');
                 } else {
-                    self.$('.filter-parenting-all').removeClass('active');
+                    self.$('.filter-owner-all').removeClass('active');
                 }
             }
-            if ($(event.currentTarget).hasClass('filter-parenting-all')) {
+            if ($(event.currentTarget).hasClass('filter-owner-all')) {
                 if ($(event.currentTarget).hasClass('active')) {
                     $(event.currentTarget).removeClass('active');
-                    self.$('.filter-parenting-item').removeClass('active');
+                    self.$('.filter-owner-item').removeClass('active');
                 } else {
                     $(event.currentTarget).addClass('active');
-                    self.$('.filter-parenting-item').addClass('active');
+                    self.$('.filter-owner-item').addClass('active');
+                }
+            }
+            
+            // Adoption filter
+            if ($(event.currentTarget).hasClass('filter-adopt-item')) {
+                if ($(event.currentTarget).hasClass('active')) {
+                    $(event.currentTarget).removeClass('active');
+                } else {
+                    $(event.currentTarget).addClass('active');
+                }
+                if (self.$('.filter-adopt-item').length == self.$('.filter-adopt-item.active').length) {
+                    self.$('.filter-adopt-all').addClass('active');
+                } else {
+                    self.$('.filter-adopt-all').removeClass('active');
+                }
+            }
+            if ($(event.currentTarget).hasClass('filter-adopt-all')) {
+                if ($(event.currentTarget).hasClass('active')) {
+                    $(event.currentTarget).removeClass('active');
+                    self.$('.filter-adopt-item').removeClass('active');
+                } else {
+                    $(event.currentTarget).addClass('active');
+                    self.$('.filter-adopt-item').addClass('active');
                 }
             }
 
-            // Authorization filter
-            if ($(event.currentTarget).hasClass('filter-auth-item')) {
+            // Status filter
+            if ($(event.currentTarget).hasClass('filter-flag-item')) {
                 if ($(event.currentTarget).hasClass('active')) {
                     $(event.currentTarget).removeClass('active');
                 } else {
                     $(event.currentTarget).addClass('active');
                 }
-                if (self.$('.filter-auth-item').length == self.$('.filter-auth-item.active').length) {
-                    self.$('.filter-auth-all').addClass('active');
+
+                if (self.$('.filter-flag-item').length == self.$('.filter-flag-item.active').length) {
+                    self.$('.filter-flag-all').addClass('active');
                 } else {
-                    self.$('.filter-auth-all').removeClass('active');
+                    self.$('.filter-flag-all').removeClass('active');
                 }
             }
-            if ($(event.currentTarget).hasClass('filter-auth-all')) {
+            if ($(event.currentTarget).hasClass('filter-flag-all')) {
                 if ($(event.currentTarget).hasClass('active')) {
                     $(event.currentTarget).removeClass('active');
-                    self.$('.filter-auth-item').removeClass('active');
+                    self.$('.filter-flag-item').removeClass('active');
                 } else {
                     $(event.currentTarget).addClass('active');
-                    self.$('.filter-auth-item').addClass('active');
+                    self.$('.filter-flag-item').addClass('active');
+                }
+            }
+
+            // Rating filter
+            if ($(event.currentTarget).hasClass('filter-rating-item')) {
+                if ($(event.currentTarget).hasClass('active')) {
+                    $(event.currentTarget).removeClass('active');
+                } else {
+                    $(event.currentTarget).addClass('active');
+                }
+
+                if (self.$('.filter-rating-item').length == self.$('.filter-rating-item.active').length) {
+                    self.$('.filter-rating-all').addClass('active');
+                } else {
+                    self.$('.filter-rating-all').removeClass('active');
+                }
+            }
+            if ($(event.currentTarget).hasClass('filter-rating-all')) {
+                if ($(event.currentTarget).hasClass('active')) {
+                    $(event.currentTarget).removeClass('active');
+                    self.$('.filter-rating-item').removeClass('active');
+                } else {
+                    $(event.currentTarget).addClass('active');
+                    self.$('.filter-rating-item').addClass('active');
+                }
+            }
+
+            // Last updated filter
+            if ($(event.currentTarget).hasClass('filter-last-item')) {
+                if ($(event.currentTarget).hasClass('active')) {
+                    $(event.currentTarget).removeClass('active');
+                } else {
+                    $(event.currentTarget).addClass('active');
+                }
+
+                if (self.$('.filter-last-item').length == self.$('.filter-last-item.active').length) {
+                    self.$('.filter-last-all').addClass('active');
+                } else {
+                    self.$('.filter-last-all').removeClass('active');
+                }
+            }
+            if ($(event.currentTarget).hasClass('filter-last-all')) {
+                if ($(event.currentTarget).hasClass('active')) {
+                    $(event.currentTarget).removeClass('active');
+                    self.$('.filter-last-item').removeClass('active');
+                } else {
+                    $(event.currentTarget).addClass('active');
+                    self.$('.filter-last-item').addClass('active');
                 }
             }
             // Apply filter
@@ -171,50 +234,114 @@ module FoodParent {
         private _resetFilter(event: Event): void {
             var self: TreesTableView = this;
             // Set the status of right corner button based on filter on / off status
-            self.$('.filter-parenting-all').addClass('active');
-            self.$('.filter-auth-all').addClass('active');
-            self.$('.filter-parenting-item').removeClass('active');
-            self.$('.filter-auth-item').removeClass('active');
+            self.$('.filter-owner-all').addClass('active');
+            self.$('.filter-adopt-all').addClass('active');
+            self.$('.filter-flag-all').addClass('active');
+            self.$('.filter-rating-all').addClass('active');
+            self.$('.filter-last-all').addClass('active');
+            self.$('.filter-owner-item').removeClass('active');
+            self.$('.filter-adopt-item').removeClass('active');
+            self.$('.filter-flag-item').removeClass('active');
+            self.$('.filter-rating-item').removeClass('active');
+            self.$('.filter-last-item').removeClass('active');
             // Apply filter
             self._applyFilter();
         }
 
         public _applyFilter(event?: Event): void {
             var self: TreesTableView = this;
-            var persons: Persons = Model.getPersons();
-
-            // Apply parenting filtering
+            // Find all trees
+            var trees: Trees = Model.getTrees();
+            // Apply ownership filtering
+            var ownershipIds = new Array<number>();
+            if (self.$('.filter-owner-all').hasClass('active')) {
+                $.each(self.$('.filter-owner-item'), function (index: number, element: JQuery) {
+                    ownershipIds.push(parseInt($(element).attr('data-id')));
+                });
+            } else {
+                $.each(self.$('.filter-owner-item'), function (index: number, element: JQuery) {
+                    if ($(element).hasClass('active')) {
+                        ownershipIds.push(parseInt($(element).attr('data-id')));
+                    }
+                });
+            }
+            trees = trees.filterByOwnershipIds(ownershipIds);
+            // Apply adoption flitering
             var adoptIds = new Array<number>();
-            if (self.$('.filter-parenting-all').hasClass('active')) {
-                $.each(self.$('.filter-parenting-item'), function (index: number, element: JQuery) {
+            if (self.$('.filter-adopt-all').hasClass('active')) {
+                $.each(self.$('.filter-adopt-item'), function (index: number, element: JQuery) {
                     adoptIds.push(parseInt($(element).attr('data-id')));
                 });
             } else {
-                $.each(self.$('.filter-parenting-item'), function (index: number, element: JQuery) {
+                $.each(self.$('.filter-adopt-item'), function (index: number, element: JQuery) {
                     if ($(element).hasClass('active')) {
                         adoptIds.push(parseInt($(element).attr('data-id')));
                     }
                 });
             }
-            persons = persons.filterByAdoptStatusForTree(adoptIds, self._tree.getId());
-            
-            // Apply authorization filtering
-            var authIds = new Array<number>();
-            if (self.$('.filter-auth-all').hasClass('active')) {
-                $.each(self.$('.filter-auth-item'), function (index: number, element: JQuery) {
-                    authIds.push(parseInt($(element).attr('data-id')));
+            trees = trees.filterByAdoptStatus(adoptIds);
+            // Apply flag / status flitering
+            var flagIds = new Array<number>();
+            if (self.$('.filter-flag-all').hasClass('active')) {
+                $.each(self.$('.filter-flag-item'), function (index: number, element: JQuery) {
+                    flagIds.push(parseInt($(element).attr('data-id')));
                 });
             } else {
-                $.each(self.$('.filter-auth-item'), function (index: number, element: JQuery) {
+                $.each(self.$('.filter-flag-item'), function (index: number, element: JQuery) {
                     if ($(element).hasClass('active')) {
-                        authIds.push(parseInt($(element).attr('data-id')));
+                        flagIds.push(parseInt($(element).attr('data-id')));
                     }
                 });
             }
-            persons = persons.filterByAuthIds(authIds);
+            trees = trees.filterByFlagIds(flagIds);
 
             // update markers
-            self.renderParentsList(persons);
+            self.renderTreeList(trees);
+        }
+
+        private _addTree = () => {
+            var self: TreesTableView = this;
+            if (self.$(".new-tree").hasClass('hidden')) {
+                Controller.updateGeoLocation(self.renderNewTree, self.renderGeoLocationError);
+            } else {
+                self.$(".new-tree").addClass('hidden');
+            }
+        }
+
+        public renderNewTree = (position: Position) => {
+            var self: TreesTableView = this;
+            var tree: Tree = new Tree({ lat: position.coords.latitude, lng: position.coords.longitude, food: 1, type: 0, flag: 0, owner: 0, ownership: 1, description: "", address: "" });
+            var trees: Trees = new Trees();
+            trees.add(tree);
+            var optionValues = new Array<{ name: string, values: any }>();
+            optionValues.push({ name: "Food", values: Model.getFoods().toArray() });
+            NewTreeColumn[0].cell = Backgrid.SelectCell.extend({
+                editor: Backgrid.FoodSelectCellEditor,
+                optionValues: optionValues,
+            });
+            var grid = new Backgrid.Grid({
+                columns: NewTreeColumn,
+                collection: trees,
+                emptyText: Setting.getNoDataText(),
+            });
+            grid.render();
+            //grid.sort("name", "ascending");
+            self.$(".new-tree").html(grid.el);
+            self.$(".new-tree").removeClass('hidden');
+        }
+
+        private renderGeoLocationError = (error: PositionError) => {
+            var self: TreesTableView = this;
+            switch (error.code) {
+                case error.PERMISSION_DENIED:
+                    EventHandler.handleError(ERROR_MODE.GEO_PERMISSION_ERROR);
+                    break;
+                case error.POSITION_UNAVAILABLE:
+                    EventHandler.handleError(ERROR_MODE.GEO_PERMISSION_ERROR);
+                    break;
+                case error.TIMEOUT:
+                    break;
+            }
         }
     }
 }

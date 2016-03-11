@@ -13202,6 +13202,7 @@ button.close {
         padding: 70px 24px 20px 24px;
         background-color: rgba(255, 255, 255, 0.9);
         overflow-y: auto;
+        z-index: 5;
     }
 }
 @media all {
@@ -13216,6 +13217,7 @@ button.close {
         align-items: center;
         justify-content: center;
         pointer-events: none;
+        z-index: 9999;
     }
 
     #wrapper-message .outer-frame {
@@ -13594,7 +13596,7 @@ button.close {
         border-bottom: 1px solid rgba(94, 78, 81, 0.15);
     }
     .list-tree .backgrid .food {
-        width: 15%;
+        width: 20%;
     }
     .list-tree .backgrid .description {
         width: 20%;
@@ -13604,7 +13606,7 @@ button.close {
         text-align: center;
     }
     .list-tree .backgrid .parents {
-        width: 15%;
+        width: 20%;
     }
     .list-tree .backgrid .lat {
         width: 72px;
@@ -15056,6 +15058,7 @@ button.close {
     #wrapper-login #frame-login {
         float: right;
         max-width: 480px;
+        min-width: 280px;
     }
     #wrapper-login #content-header {
         display: -webkit-flex;
@@ -15178,6 +15181,7 @@ button.close {
         -webkit-user-select: none;
         user-select: none;
         font-weight: 700;
+        padding-left: 24px;
     }
     #wrapper-manage-adoption .info-group, #wrapper-login label {
         -moz-user-select: none;
@@ -15645,6 +15649,25 @@ button.close {
         color: #84a756;
         text-shadow: -1px -1px 1px rgba(0, 0, 0, 0.25);
     }
+    #wrapper-mapfilter .btn-add-tree {
+        width: 48px;
+        height: 48px;
+        padding-top: 2px;
+        background-color: rgba(94, 78, 81, 0.95);
+        pointer-events: all;
+        border-color: rgba(255, 255, 255, 1);
+        border-right: 2px solid rgba(255, 255, 255, 1);
+        cursor: pointer;
+    }
+    #wrapper-mapfilter .btn-add-tree .icon-add-tree {
+        padding-top: 8px;
+        font-size: x-large;
+        color: rgba(255, 255, 255, 1);
+    }
+    #wrapper-mapfilter .btn-add-tree .icon-add-tree:hover {
+        color: #84a756;
+        text-shadow: -1px -1px 1px rgba(0, 0, 0, 0.25);
+    }
     #wrapper-mapfilter .btn-mapfilter .icon-mapfilter-status {
         font-size: large;
         color: rgba(255, 255, 255, 1);
@@ -15798,6 +15821,7 @@ button.close {
         -webkit-user-select: none;
         user-select: none;
         font-weight: 700;
+        padding-left: 24px;
     }
     #wrapper-tree-list .info-group, #wrapper-login label {
         -moz-user-select: none;
@@ -15880,6 +15904,10 @@ button.close {
         left: 4px;
         font-size: medium;
         cursor: pointer;
+    }
+
+    #wrapper-tree-list .new-tree {
+        margin-bottom: 32px;
     }
 }
 @media print {

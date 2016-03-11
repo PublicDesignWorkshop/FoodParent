@@ -24,7 +24,7 @@
         border-bottom: 1px solid rgba(94, 78, 81, 0.15);
     }
     .list-tree .backgrid .food {
-        width: 15%;
+        width: 20%;
     }
     .list-tree .backgrid .description {
         width: 20%;
@@ -34,7 +34,7 @@
         text-align: center;
     }
     .list-tree .backgrid .parents {
-        width: 15%;
+        width: 20%;
     }
     .list-tree .backgrid .lat {
         width: 72px;

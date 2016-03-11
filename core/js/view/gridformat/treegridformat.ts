@@ -424,20 +424,19 @@ var TreeCreateCell = Backgrid.Cell.extend({
     events: {
         "click .btn-table": "_createRow"
     },
-    _createRow: function (e) {
+    _createRow: function (event: Event) {
         var tree: FoodParent.Tree = this.model;
         FoodParent.EventHandler.handleTreeData(tree, FoodParent.DATA_MODE.CREATE, {}, function () {
             var food: FoodParent.Food = FoodParent.Model.getFoods().findWhere({ id: tree.getFoodId() });
             FoodParent.EventHandler.handleDataChange("<strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has been created successfully.", true);
-            $('#wrapper-mtrees .new-tree').addClass('hidden');
-            //(<FoodParent.ManageTreesTableView>FoodParent.View.getManageTreesView())._applyFilter();
-            //(<FoodParent.ManageTreesTableView>FoodParent.View.getManageTreesView()).renderTreeList(FoodParent.Model.getTrees());
+            $('#wrapper-tree-list .new-tree').addClass('hidden');
+            new FoodParent.RefreshCurrentViewCommand().execute();
         }, function () {
             FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
         }, function () {
             var food: FoodParent.Food = FoodParent.Model.getFoods().findWhere({ id: tree.getFoodId() });
             FoodParent.EventHandler.handleDataChange("<strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has been deleted successfully.", false);
-            //(<FoodParent.ManageTreesTableView>FoodParent.View.getManageTreesView()).renderTreeList(FoodParent.Model.getTrees());
+            new FoodParent.RefreshCurrentViewCommand().execute();
         });
     },
     render: function () {
@@ -452,34 +451,19 @@ var TreeDeleteCell = Backgrid.Cell.extend({
     events: {
         "click .btn-table": "_deleteRow"
     },
-    _deleteRow: function (e) {
+    _deleteRow: function (event: Event) {
         var tree: FoodParent.Tree = this.model;
         if (tree.getId() == undefined) {
-            $('#wrapper-mtrees .new-tree').addClass('hidden');
+            $('#wrapper-tree-list .new-tree').addClass('hidden');
         } else {
             FoodParent.EventHandler.handleTreeData(tree, FoodParent.DATA_MODE.DELETE, {}, function () {
                 var food: FoodParent.Food = FoodParent.Model.getFoods().findWhere({ id: tree.getFoodId() });
                 FoodParent.EventHandler.handleDataChange("<strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has deleted successfully.", false);
+                new FoodParent.RefreshCurrentViewCommand().execute();
             }, function () {
                 FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
             });
         }
-        /*
-        var r = confirm(FoodParent.getDeleteConfirmText());
-        if (r == true) {
-            e.preventDefault();
-            this.model.collection.remove(this.model);
-            this.model.destroy({
-                wait: true,
-                success: function (model, response) {
-
-                },
-                error: function () {
-
-                },
-            });
-        }
-        */
     },
     render: function () {
         $(this.el).html(this.template());
@@ -749,12 +733,4 @@ var NewTreeColumn: any = [
         editable: false,
         cell: TreeDeleteCell,
     }
-    /*
-     {
-        name: "updated",
-        label: "Last Updated",
-        editable: false,
-        cell: TreeDateCell,
-    },
-    */
 ];

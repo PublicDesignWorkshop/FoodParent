@@ -74,6 +74,7 @@
         -webkit-user-select: none;
         user-select: none;
         font-weight: 700;
+        padding-left: 24px;
     }
     #wrapper-manage-adoption .info-group, #wrapper-login label {
         -moz-user-select: none;

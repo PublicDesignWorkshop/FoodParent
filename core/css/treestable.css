@@ -26,6 +26,7 @@
         -webkit-user-select: none;
         user-select: none;
         font-weight: 700;
+        padding-left: 24px;
     }
     #wrapper-tree-list .info-group, #wrapper-login label {
         -moz-user-select: none;
@@ -108,5 +109,9 @@
         left: 4px;
         font-size: medium;
         cursor: pointer;
+    }
+
+    #wrapper-tree-list .new-tree {
+        margin-bottom: 32px;
     }
 }

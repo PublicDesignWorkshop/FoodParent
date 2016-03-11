@@ -350,6 +350,11 @@ var FoodParent;
                         FoodParent.View.getTreesView().renderTreeInfo();
                     }
                 }
+                if (FoodParent.View.getViewStatus() == FoodParent.VIEW_STATUS.TREES_TABLE) {
+                    if (FoodParent.View.getPopupView()) {
+                        FoodParent.View.getPopupView()._applyFilter();
+                    }
+                }
                 else if (FoodParent.View.getViewStatus() == FoodParent.VIEW_STATUS.DETAIL_TREE) {
                     if (FoodParent.View.getDetailTreeView()) {
                         FoodParent.View.getDetailTreeView().renderMenu();

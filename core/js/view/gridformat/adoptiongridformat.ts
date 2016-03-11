@@ -112,9 +112,6 @@ var AdoptionDeleteCell = Backgrid.Cell.extend({
         FoodParent.EventHandler.handleAdoptionData(tree, person, FoodParent.DATA_MODE.DELETE, {}, function () {
             FoodParent.EventHandler.handleDataChange("<strong><i>" + person.getName() + "</i></strong> has unadopted <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> successfully.", false);
             new FoodParent.RefreshCurrentViewCommand().execute();
-            //if (FoodParent.View.getManageTreesView()) {
-            //    (<FoodParent.ManageTreesView>FoodParent.View.getManageTreesView()).renderTreeInfo(tree);
-            //}
         }, function () {
             FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
         }, function () {

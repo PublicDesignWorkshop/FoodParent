@@ -357,6 +357,19 @@ var FoodParent;
             // Update markers
             self.updateMarkers(trees);
         };
+        TreesMapViewForAdmin.prototype._mouseClick = function (event) {
+            var self = this;
+            if ($(event.currentTarget).hasClass('evt-add-tree')) {
+                var tree = new FoodParent.Tree({ lat: self._map.getCenter().lat, lng: self._map.getCenter().lng, food: 1, type: 0, flag: 0, owner: 0, ownership: 1, description: "", address: "" });
+                FoodParent.EventHandler.handleMouseClick($(event.currentTarget), self, { tree: tree });
+            }
+            else if (self._selectedMarker != undefined) {
+                FoodParent.EventHandler.handleMouseClick($(event.currentTarget), self, { marker: self._selectedMarker, tree: self._selectedMarker.options.id });
+            }
+            else {
+                FoodParent.EventHandler.handleMouseClick($(event.currentTarget), self, { marker: self._selectedMarker });
+            }
+        };
         TreesMapViewForAdmin.TAG = "TreesMapViewForAdmin - ";
         return TreesMapViewForAdmin;
     })(FoodParent.TreesMapView);

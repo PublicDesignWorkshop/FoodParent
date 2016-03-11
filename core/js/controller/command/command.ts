@@ -368,6 +368,10 @@
                         View.getTreesView()._applyFilter();
                         View.getTreesView().renderTreeInfo();
                     }
+                } if (View.getViewStatus() == VIEW_STATUS.TREES_TABLE) {
+                    if (FoodParent.View.getPopupView()) {
+                        (<FoodParent.TreesTableView>FoodParent.View.getPopupView())._applyFilter();
+                    }
                 } else if (View.getViewStatus() == VIEW_STATUS.DETAIL_TREE) {
                     if (View.getDetailTreeView()) {
                         View.getDetailTreeView().renderMenu();
