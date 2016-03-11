@@ -46748,13 +46748,12 @@ var TreeAddressCellEditor = Backgrid.Cell.extend({
 var TreeMapViewCell = Backgrid.Cell.extend({
     template: _.template('<div class="btn-table" data-target="<%= treeid %>"><i class="fa fa-map-marker"></i></div>'),
     events: {
-        "click .btn-table": "_showMapView"
+        "click .btn-table": "_panToTree"
     },
-    _showMapView: function (event) {
-        var tree = parseInt($(event.target).attr('data-target'));
-        //console.log(tree);
-        FoodParent.EventHandler.handleMouseClick($(event.currentTarget), this, { id: tree });
-        //FoodParent.Router.getInstance().navigate("tree/" + this.model.getId(), { trigger: true });
+    _panToTree: function (event) {
+        var tree = parseInt($(event.currentTarget).attr('data-target'));
+        new FoodParent.ResetPopupViewCommand().execute();
+        FoodParent.Router.getInstance().navigate("trees/" + $(event.currentTarget).attr('data-target'), { trigger: true, replace: true });
     },
     render: function () {
         $(this.el).html(this.template({
@@ -47902,7 +47901,7 @@ var AdoptionListCell = Backgrid.Cell.extend({
         "click .btn-tree": "_panToTree",
     },
     _panToTree: function (event) {
-        new FoodParent.RemovePopupViewCommand({ delay: FoodParent.Setting.getRemovePopupDuration() }).execute();
+        new FoodParent.ResetPopupViewCommand().execute();
         FoodParent.Router.getInstance().navigate("trees/" + $(event.currentTarget).attr('data-target'), { trigger: true, replace: true });
     },
     render: function () {

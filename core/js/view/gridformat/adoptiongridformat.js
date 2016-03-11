@@ -135,7 +135,7 @@ var AdoptionListCell = Backgrid.Cell.extend({
         "click .btn-tree": "_panToTree",
     },
     _panToTree: function (event) {
-        new FoodParent.RemovePopupViewCommand({ delay: FoodParent.Setting.getRemovePopupDuration() }).execute();
+        new FoodParent.ResetPopupViewCommand().execute();
         FoodParent.Router.getInstance().navigate("trees/" + $(event.currentTarget).attr('data-target'), { trigger: true, replace: true });
     },
     render: function () {
