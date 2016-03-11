@@ -15,16 +15,8 @@ var FoodParent;
         ManageTreesViewFractory.getInstance = function () {
             return ManageTreesViewFractory._instance;
         };
-        ManageTreesViewFractory.create = function (el, viewMode, id) {
+        ManageTreesViewFractory.create = function (el, id) {
             var view;
-            if (viewMode == FoodParent.VIEW_MODE.MAP) {
-                view = new ManageTreesMapView({ el: el });
-                view.setTreeId(id);
-            }
-            else if (viewMode == FoodParent.VIEW_MODE.TABLE) {
-                view = new ManageTreesTableView({ el: el });
-                view.setTreeId(id);
-            }
             return view;
         };
         ManageTreesViewFractory._instance = new ManageTreesViewFractory();
@@ -630,7 +622,7 @@ var FoodParent;
                         if (FoodParent.View.getMessageView()) {
                             FoodParent.View.getMessageView().setInvisible();
                         }
-                        FoodParent.Router.getInstance().navigate("mtrees/" + FoodParent.VIEW_MODE.MAP + "/" + tree.getId(), { trigger: false, replace: true });
+                        FoodParent.Router.getInstance().navigate("mtrees/" + tree.getId(), { trigger: false, replace: true });
                     });
                     self._map.on('popupclose', function (event) {
                         var marker = event.popup._source;

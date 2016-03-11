@@ -1,0 +1,112 @@
+﻿@media all {
+    
+    /*
+        CSS for Manage Adoptions
+    */
+    #wrapper-tree-list {
+        width: 100%;
+        height: 100%;
+    }
+    #wrapper-tree-list #content-header {
+        display: -webkit-flex;
+        display: flex;
+        margin: 0 0 8px 0;
+        color: #5e4e51;
+        font-size: xx-large;
+    }
+    #wrapper-tree-list hr {
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        margin: 2px 0;
+    }
+    #wrapper-tree-list #content-header .text-header {
+        -webkit-flex-grow: 1;
+        flex-grow: 1;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        -webkit-user-select: none;
+        user-select: none;
+        font-weight: 700;
+    }
+    #wrapper-tree-list .info-group, #wrapper-login label {
+        -moz-user-select: none;
+        -ms-user-select: none;
+        -webkit-user-select: none;
+        user-select: none;
+        color: #5e4e51;
+        margin: 4px 0;
+        text-align: left;
+        font-size: medium;
+        font-weight: 700;
+    }
+
+    #wrapper-tree-list .info-button-group {
+        margin: 4px 0;
+    }
+
+    #wrapper-tree-list .text-label {
+        padding: 2px 8px;
+    }
+
+    #wrapper-tree-list .frame-flex-group {
+        display: -webkit-flex;
+        display: flex;
+        overflow-x: auto;
+        height: 88%;
+    }
+    #content-tree-list {
+        padding-left: 8px;
+        -webkit-flex-grow: 1;
+        flex-grow: 1;
+        overflow-y: auto;
+    }
+    #content-tree-list .list-tree {
+        margin-top: 16px;
+    }
+    #wrapper-tree-list #content-filter-list {
+        overflow-y: auto;
+        padding: 4px;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        -webkit-user-select: none;
+        user-select: none;
+    }
+    #wrapper-tree-list #content-filter-list .text-label {
+        font-size: medium;
+        color: #5e4e51;
+        text-align: left;
+        padding: 2px 4px;
+        font-weight: 700;
+    }
+    #wrapper-tree-list #content-filter-list .info-button-group {
+        display: -webkit-flex;
+        display: flex;
+        -ms-flex-wrap: wrap;
+        -webkit-flex-wrap: wrap;
+        flex-wrap: wrap;
+    }
+    #wrapper-tree-list #content-filter-list .info-button-group div {
+        -webkit-flex-grow: 1;
+        flex-grow: 1;
+    }
+    #wrapper-tree-list .tree-filter {
+        max-width: 25%;
+        overflow-y: auto;
+    }
+    #wrapper-tree-list .tree-filter .text-header {
+        -moz-user-select: none;
+        -ms-user-select: none;
+        -webkit-user-select: none;
+        user-select: none;
+        font-weight: 700;
+        font-size: x-large;
+        color: #5e4e51;
+        padding: 2px 0 4px 0;
+    }
+    #wrapper-tree-list .tree-filter .icon-header {
+        position: relative;
+        top: -6px;
+        left: 4px;
+        font-size: medium;
+        cursor: pointer;
+    }
+}

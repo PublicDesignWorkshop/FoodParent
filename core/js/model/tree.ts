@@ -168,6 +168,10 @@
             var self: Tree = this;
             self.attributes.parents = Model.getAdopts().getParentIds(self.id);
         }
+        public getUpdatedDate(): string {
+            var self: Tree = this;
+            return moment(this.get('updated')).format(Setting.getDateFormat());
+        }
     }
     export class Trees extends Backbone.Collection<Tree> {
         url: string = "trees.php";

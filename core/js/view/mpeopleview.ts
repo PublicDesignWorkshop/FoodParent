@@ -14,12 +14,10 @@ module FoodParent {
         public static getInstance(): ManagePeopleViewFractory {
             return ManagePeopleViewFractory._instance;
         }
-        public static create(el: JQuery, viewMode: VIEW_MODE, id: number): ManagePeopleView {
+        public static create(el: JQuery, id: number): ManagePeopleView {
             var view: ManagePeopleView;
-            if (viewMode == VIEW_MODE.TABLE) {
-                view = new ManagePeopleTableView({ el: el });
-                view.setPeopleId(id);
-            }
+            view = new ManagePeopleTableView({ el: el });
+            view.setPeopleId(id);
             return view;
         }
     }

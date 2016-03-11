@@ -79,13 +79,11 @@
 
     export class RenderTreesViewCommand implements Command {
         private _el: JQuery;
-        private _viewMode: VIEW_MODE;
         private _id: number;
         private _credential: CREDENTIAL_MODE;
         constructor(args?: any) {
             var self: RenderTreesViewCommand = this;
             self._el = args.el;
-            self._viewMode = args.viewMode;
             self._id = args.id;
             self._credential = args.credential;
         }
@@ -94,7 +92,7 @@
             if (View.getTreesView()) {
                 View.getTreesView().render();
             } else {
-                var view: TreesView = TreesViewFractory.create(self._el, self._viewMode, self._id, self._credential).render();
+                var view: TreesView = TreesViewFractory.create(self._el, self._id, self._credential).render();
                 View.addChild(view);
                 View.setTreesView(view);
             }
@@ -106,12 +104,10 @@
 
     export class RenderManagePeopleViewCommand implements Command {
         private _el: JQuery;
-        private _viewMode: VIEW_MODE;
         private _id: number;
         constructor(args?: any) {
             var self: RenderManagePeopleViewCommand = this;
             self._el = args.el;
-            self._viewMode = args.viewMode;
             self._id = args.id;
         }
         public execute(): any {
@@ -119,7 +115,7 @@
             if (View.getManagePeopleView()) {
 
             } else {
-                var view: ManagePeopleView = ManagePeopleViewFractory.create(self._el, self._viewMode, self._id).render();
+                var view: ManagePeopleView = ManagePeopleViewFractory.create(self._el, self._id).render();
                 View.addChild(view);
                 View.setManagePeopleView(view);
             }
@@ -131,12 +127,10 @@
 
     export class RenderDetailTreeViewCommand implements Command {
         private _el: JQuery;
-        private _viewMode: VIEW_MODE;
         private _id: number;
         constructor(args?: any) {
             var self: RenderDetailTreeViewCommand = this;
             self._el = args.el;
-            self._viewMode = args.viewMode;
             self._id = args.id;
         }
         public execute(): any {
@@ -144,7 +138,7 @@
             if (View.getDetailTreeView()) {
 
             } else {
-                var view: DetailTreeView = DetailTreeViewFractory.create(self._el, self._viewMode, self._id).render();
+                var view: DetailTreeView = DetailTreeViewFractory.create(self._el, self._id).render();
                 View.addChild(view);
                 View.setDetailTreeView(view);
             }
@@ -185,13 +179,32 @@
         }
         public execute(): any {
             var self: RenderManageAdoptionViewCommand = this;
-            var view: AlertView = AdoptionManageViewFactory.create(self._el, self._tree).render();
-            View.setPopupView(view);
+            var view: PopupView = AdoptionManageViewFactory.create(self._el, self._tree).render();
+            if (View.getPopupView()) {
+                View.popViewStatus();
+            }
+            View.addPopupView(view);
             View.setViewStatus(VIEW_STATUS.MANAGE_ADOPTION);
         }
-        public undo(): any {
+        public undo(): any { }
+    }
 
+    export class RenderTreesTableViewCommand implements Command {
+        private _el: JQuery;
+        constructor(args?: any) {
+            var self: RenderTreesTableViewCommand = this;
+            self._el = args.el;
         }
+        public execute(): any {
+            var self: RenderTreesTableViewCommand = this;
+            var view: PopupView = TreesTableViewFactory.create(self._el).render();
+            if (View.getPopupView()) {
+                View.popViewStatus();
+            }
+            View.setPopupView(view);
+            View.setViewStatus(VIEW_STATUS.TREES_TABLE);
+        }
+        public undo(): any { }
     }
 
     export class RenderAdoptTreeViewCommand implements Command {
@@ -317,8 +330,8 @@
                     View.getPopupView().setInvisible();
                     Setting.getPopWrapperElement().html("");
                 }, self._delay);
+                View.popViewStatus();
             }
-            View.popViewStatus();
         }
         public undo(): any {
 
@@ -341,11 +354,12 @@
                 setTimeout(function () {
                     View.getPopupView().setInvisible();
                     Setting.getPopWrapperElement().html("");
+                    View.removePopupView();
                 }, self._delay);
+                View.popViewStatus();
             }
-            View.popViewStatus();
         }
-        public undo(): any {}
+        public undo(): any { }
     }
 
     export class RefreshCurrentViewCommand implements Command {
@@ -362,6 +376,10 @@
             } else if (View.getViewStatus() == VIEW_STATUS.DETAIL_TREE) {
                 if (View.getDetailTreeView()) {
                     View.getDetailTreeView().renderMenu();
+                }
+            } else if (View.getViewStatus() == VIEW_STATUS.MANAGE_ADOPTION) {
+                if (FoodParent.View.getPopupView()) {
+                    (<FoodParent.AdoptionManageView>FoodParent.View.getPopupView())._applyFilter();
                 }
             }
             new SetActiveNavItemCommand({ el: Setting.getNavWrapperElement(), viewStatus: View.getViewStatus() }).execute();
@@ -387,22 +405,16 @@
     export class NavigateCommand implements Command {
         private _hash: string;
         private _id: number;
-        private _viewMode: VIEW_MODE;
         constructor(args?: any) {
             var self: NavigateCommand = this;
             self._hash = args.hash;
             if (args.id != undefined) {
                 self._id = args.id;
             }
-            if (args.viewMode != undefined) {
-                self._viewMode = args.viewMode;
-            }
         }
         public execute(): any {
             var self: NavigateCommand = this;
-            if (self._viewMode != undefined && self._id != undefined) {
-                Router.getInstance().navigate(self._hash + "/" + self._viewMode + "/" + self._id, { trigger: true, replace: false });
-            } else if (self._id != undefined) {
+            if (self._id != undefined) {
                 Router.getInstance().navigate(self._hash + "/" + self._id, { trigger: true, replace: false });
             } else {
                 Router.getInstance().navigate(self._hash, { trigger: true, replace: false });
@@ -472,12 +484,10 @@
 
     export class RenderManageDonationsViewCommand implements Command {
         private _el: JQuery;
-        private _viewMode: VIEW_MODE;
         private _id: number;
         constructor(args?: any) {
             var self: RenderManageDonationsViewCommand = this;
             self._el = args.el;
-            self._viewMode = args.viewMode;
             self._id = args.id;
         }
         public execute(): any {
@@ -485,7 +495,7 @@
             if (View.getManageDonationsView()) {
 
             } else {
-                var view: ManageDonationsView = ManageDonationsViewFractory.create(self._el, self._viewMode, self._id).render();
+                var view: ManageDonationsView = ManageDonationsViewFractory.create(self._el, self._id).render();
                 View.addChild(view);
                 View.setManageDonationsView(view);
             }
@@ -516,12 +526,10 @@
 
     export class RenderDetailDonationViewCommand implements Command {
         private _el: JQuery;
-        private _viewMode: VIEW_MODE;
         private _id: number;
         constructor(args?: any) {
             var self: RenderDetailDonationViewCommand = this;
             self._el = args.el;
-            self._viewMode = args.viewMode;
             self._id = args.id;
         }
         public execute(): any {
@@ -529,7 +537,7 @@
             if (View.getDetailDonationView()) {
 
             } else {
-                var view: DetailDonationView = DetailDonationViewFractory.create(self._el, self._viewMode, self._id).render();
+                var view: DetailDonationView = DetailDonationViewFractory.create(self._el, self._id).render();
                 View.addChild(view);
                 View.setDetailDonationView(view);
             }
@@ -566,7 +574,10 @@
         public execute(): any {
             var self: RenderAccountViewCommand = this;
             var view: PopupView = AccountViewFactory.create(self._el).render();
-            View.setPopupView(view);
+            if (View.getPopupView()) {
+                View.popViewStatus();
+            }
+            View.addPopupView(view);
             View.setViewStatus(VIEW_STATUS.LOGIN);
             new SetActiveNavItemCommand({ el: Setting.getNavWrapperElement(), viewStatus: VIEW_STATUS.LOGIN }).execute();
         }
@@ -584,7 +595,7 @@
         public execute(): any {
             var self: RenderLogInViewCommand = this;
             var view: PopupView = LogInViewFactory.create(self._el).render();
-            View.setPopupView(view);
+            View.addPopupView(view);
             View.setViewStatus(VIEW_STATUS.LOGIN);
             new SetActiveNavItemCommand({ el: Setting.getNavWrapperElement(), viewStatus: VIEW_STATUS.LOGIN }).execute();
         }

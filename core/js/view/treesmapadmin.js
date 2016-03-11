@@ -74,6 +74,41 @@ var FoodParent;
                     }
                 }
             };
+            this.updateMarkers = function (trees) {
+                var self = _this;
+                console.log(FoodParent.TreesMapView.TAG + "updateMarkers()");
+                // Add new markers
+                $.each(trees.models, function (index, tree) {
+                    var bFound = false;
+                    for (var j = 0; j < self._markers.length && !bFound; j++) {
+                        if (tree.getId() == self._markers[j].options.id) {
+                            bFound = true;
+                        }
+                    }
+                    if (!bFound) {
+                        self.addMarker(tree, true);
+                    }
+                });
+                // Remove unnecessary markers
+                for (var j = 0; j < self._markers.length;) {
+                    var bFound = false;
+                    $.each(trees.models, function (index, tree) {
+                        if (tree.getId() == self._markers[j].options.id) {
+                            bFound = true;
+                        }
+                    });
+                    if (!bFound) {
+                        // close popup if the marker is selected
+                        if (self._markers[j] == self._selectedMarker) {
+                            self._selectedMarker.closePopup();
+                        }
+                        self.removeMarker(self._markers[j]);
+                        self._markers = _.without(self._markers, self._markers[j]);
+                        j--;
+                    }
+                    j++;
+                }
+            };
             this.renderTreeInfo = function (tree) {
                 var self = _this;
                 if (tree == undefined && self._selectedMarker != undefined) {
@@ -219,6 +254,7 @@ var FoodParent;
             self.events = {
                 "click .evt-close": "removeTreeInfo",
                 "click .btn-mapfilter": "_toggleMapFilter",
+                "click .evt-marker-lock": "_toggleMarkerLock",
                 "click .btn-filter": "_clickFilter",
                 "keydown #wrapper-food-search": "_searchFood",
                 "click #input-search-food": "_searchFood",

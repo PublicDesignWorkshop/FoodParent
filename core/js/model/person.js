@@ -83,6 +83,10 @@ var FoodParent;
             var self = this;
             self.attributes.trees = FoodParent.Model.getAdopts().getTreeIds(self.id);
         };
+        Person.prototype.getUpdatedDate = function () {
+            var self = this;
+            return moment(this.get('updated')).format(FoodParent.Setting.getDateFormat());
+        };
         return Person;
     })(Backbone.Model);
     FoodParent.Person = Person;

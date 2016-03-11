@@ -591,12 +591,11 @@
             // Setup Router parameters
             this.routes = {
                 "": "home",
-                "trees/:viewMode/:id": "trees",
-                "mtree/:viewMode/:id": "manageTree",
-                "mpeople/:viewMode/:id": "managePeople",
-                "mdonations/:viewMode/:id": "manageDonations",
-                "mdonation/:viewMode/:id": "manageDonation",
-                "ptrees": "parentTrees",
+                "trees/:id": "trees",
+                "mtree/:id": "manageTree",
+                "mpeople/:id": "managePeople",
+                "mdonations/:id": "manageDonations",
+                "mdonation/:id": "manageDonation",
             }
             super(options);
         }
@@ -606,20 +605,20 @@
         home() {
             EventHandler.handleNavigate(VIEW_STATUS.HOME);
         }
-        trees(viewMode: VIEW_MODE, id: number) {
-            EventHandler.handleNavigate(VIEW_STATUS.TREES, { viewMode: viewMode, id: id });
+        trees(id: number) {
+            EventHandler.handleNavigate(VIEW_STATUS.TREES, { id: id });
         }
-        manageTree(viewMode: VIEW_MODE, id: number) {
-            EventHandler.handleNavigate(VIEW_STATUS.DETAIL_TREE, { viewMode: viewMode, id: id });
+        manageTree(id: number) {
+            EventHandler.handleNavigate(VIEW_STATUS.DETAIL_TREE, { id: id });
         }
-        managePeople(viewMode: VIEW_MODE, id: number) {
-            EventHandler.handleNavigate(VIEW_STATUS.MANAGE_PEOPLE, { viewMode: viewMode, id: id });
+        managePeople(id: number) {
+            EventHandler.handleNavigate(VIEW_STATUS.MANAGE_PEOPLE, { id: id });
         }
-        manageDonations(viewMode: VIEW_MODE, id: number) {
-            EventHandler.handleNavigate(VIEW_STATUS.MANAGE_DONATIONS, { viewMode: viewMode, id: id });
+        manageDonations(id: number) {
+            EventHandler.handleNavigate(VIEW_STATUS.MANAGE_DONATIONS, { id: id });
         }
-        manageDonation(viewMode: VIEW_MODE, id: number) {
-            EventHandler.handleNavigate(VIEW_STATUS.DETAIL_DONATION, { viewMode: viewMode, id: id });
+        manageDonation(id: number) {
+            EventHandler.handleNavigate(VIEW_STATUS.DETAIL_DONATION, { id: id });
         }
     }
 } 

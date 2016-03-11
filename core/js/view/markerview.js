@@ -31,7 +31,7 @@ var FoodParent;
                 popupAnchor: new L.Point(0, 48),
             });
             if (editable) {
-                var template = _.template(FoodParent.Template.getManageTreesPopupTemplate());
+                var template = _.template(FoodParent.Template.getManageTreesPopupTemplateForAdmin());
                 var data = {
                     id: tree.getId()
                 };

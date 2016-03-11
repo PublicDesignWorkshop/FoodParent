@@ -13,14 +13,6 @@
         align-items: center;
     }
 
-    .blank-marker-control-item {
-        display: block;
-        width: 30px;
-        height: 30px;
-        margin: 2px;
-        padding: 2px;
-    }
-
     .marker-control-item {
         width: 30px;
         height: 30px;
@@ -41,6 +33,8 @@
         box-shadow: inset 0 0 1px 1px rgba(0,0,0,0.25);
         background-color: rgba(0, 0, 0, 0.05);
     }
+
+    
 
     .leaflet-label {
         color: rgba(0, 0, 0, 0.5);

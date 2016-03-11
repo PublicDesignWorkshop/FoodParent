@@ -5,6 +5,65 @@ var __extends = (this && this.__extends) || function (d, b) {
 };
 var FoodParent;
 (function (FoodParent) {
+    var TreesViewFractory = (function () {
+        function TreesViewFractory(args) {
+            if (TreesViewFractory._instance) {
+                throw new Error("Error: Instantiation failed: Use TreesViewFractory.getInstance() instead of new.");
+            }
+            TreesViewFractory._instance = this;
+        }
+        TreesViewFractory.getInstance = function () {
+            return TreesViewFractory._instance;
+        };
+        TreesViewFractory.create = function (el, id, credential) {
+            var view;
+            if (credential == FoodParent.CREDENTIAL_MODE.GUEST) {
+                view = new FoodParent.TreesMapViewForGuest({ el: el });
+            }
+            else if (credential == FoodParent.CREDENTIAL_MODE.PARENT) {
+                view = new FoodParent.TreesMapViewForParent({ el: el });
+            }
+            else if (credential == FoodParent.CREDENTIAL_MODE.ADMIN) {
+                view = new FoodParent.TreesMapViewForAdmin({ el: el });
+            }
+            view.setTreeId(id);
+            return view;
+        };
+        TreesViewFractory._instance = new TreesViewFractory();
+        return TreesViewFractory;
+    })();
+    FoodParent.TreesViewFractory = TreesViewFractory;
+    var TreesView = (function (_super) {
+        __extends(TreesView, _super);
+        function TreesView() {
+            _super.apply(this, arguments);
+            this.renderTreeInfo = function (tree) { };
+            this.removeTreeInfo = function () { };
+            this.renderFilterList = function () { };
+            this.closeMapFilter = function () { };
+            this.panToCurrentLocation = function () { };
+        }
+        TreesView.prototype.render = function (args) {
+            _super.prototype.render.call(this, args);
+            var self = this;
+            return self;
+        };
+        TreesView.prototype.update = function (args) {
+            _super.prototype.update.call(this, args);
+            var self = this;
+            return self;
+        };
+        TreesView.prototype.resize = function () {
+            _super.prototype.resize.call(this);
+            var self = this;
+        };
+        TreesView.prototype.setTreeId = function (id) {
+            this._id = id;
+        };
+        TreesView.prototype._applyFilter = function (event) { };
+        return TreesView;
+    })(FoodParent.BaseView);
+    FoodParent.TreesView = TreesView;
     var TreesMapView = (function (_super) {
         __extends(TreesMapView, _super);
         function TreesMapView(options) {
@@ -88,7 +147,7 @@ var FoodParent;
                         if (FoodParent.View.getWidth() < FoodParent.View.getHeight()) {
                             self.closeMapFilter();
                         }
-                        FoodParent.Router.getInstance().navigate("trees/" + FoodParent.VIEW_MODE.MAP + "/" + tree.getId(), { trigger: false, replace: true });
+                        FoodParent.Router.getInstance().navigate("trees/" + tree.getId(), { trigger: false, replace: true });
                     });
                     self._map.on('popupclose', function (event) {
                         var marker = event.popup._source;
@@ -96,7 +155,7 @@ var FoodParent;
                         $(marker.label._container).removeClass('active');
                         self.$('#wrapper-treeinfo').addClass('hidden');
                         self._selectedMarker = null;
-                        FoodParent.Router.getInstance().navigate("trees/" + FoodParent.VIEW_MODE.MAP + "/0", { trigger: false, replace: true });
+                        FoodParent.Router.getInstance().navigate("trees/0", { trigger: false, replace: true });
                     });
                 }
             };
@@ -210,6 +269,7 @@ var FoodParent;
             self.events = {
                 "click .evt-close": "removeTreeInfo",
                 "click .btn-mapfilter": "_toggleMapFilter",
+                "click .evt-marker-lock": "_toggleMarkerLock",
             };
             self.delegateEvents();
         }
@@ -813,8 +873,27 @@ var FoodParent;
                 });
             }
         };
+        /**
+         * Toggle marker draggable
+         * @param event click event of marker popup control
+         */
+        TreesMapView.prototype._toggleMarkerLock = function (event) {
+            var self = this;
+            if (!self._selectedMarker.options.draggable) {
+                self._selectedMarker.options.draggable = true;
+                self._selectedMarker.dragging.enable();
+                $(event.target).html('<i class="fa fa-unlock-alt fa-2x"></i>');
+                self._selectedMarker._popup.setContent('<div class="marker-control-wrapper">' + $('.marker-control-wrapper').html() + '</div>');
+            }
+            else {
+                self._selectedMarker.options.draggable = false;
+                self._selectedMarker.dragging.disable();
+                $(event.target).html('<i class="fa fa-lock fa-2x"></i>');
+                self._selectedMarker._popup.setContent('<div class="marker-control-wrapper">' + $('.marker-control-wrapper').html() + '</div>');
+            }
+        };
         TreesMapView.TAG = "TreesMapView - ";
         return TreesMapView;
-    })(FoodParent.TreesView);
+    })(TreesView);
     FoodParent.TreesMapView = TreesMapView;
 })(FoodParent || (FoodParent = {}));

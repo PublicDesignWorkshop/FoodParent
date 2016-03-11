@@ -15,14 +15,10 @@ var FoodParent;
         ManageDonationsViewFractory.getInstance = function () {
             return ManageDonationsViewFractory._instance;
         };
-        ManageDonationsViewFractory.create = function (el, viewMode, id) {
+        ManageDonationsViewFractory.create = function (el, id) {
             var view;
-            if (viewMode == FoodParent.VIEW_MODE.MAP) {
-            }
-            else if (viewMode == FoodParent.VIEW_MODE.TABLE) {
-                view = new ManageDonationsTableView({ el: el });
-                view.setTreeId(id);
-            }
+            view = new ManageDonationsTableView({ el: el });
+            view.setTreeId(id);
             return view;
         };
         ManageDonationsViewFractory._instance = new ManageDonationsViewFractory();

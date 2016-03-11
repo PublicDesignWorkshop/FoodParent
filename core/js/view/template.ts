@@ -148,7 +148,7 @@
             return template;
         }
         public static getTreesMapViewTemplateForParent(): string {
-        var template = '';
+            var template = '';
             template += '<div id="content-map">';
             template += '</div>';   // end of #content-map
 
@@ -186,7 +186,45 @@
             return template;
         }
         public static getTreesMapViewTemplateForAdmin(): string {
-            return Template.getTreesMapViewTemplateForParent();
+            var template = '';
+            template += '<div id="content-map">';
+            template += '</div>';   // end of #content-map
+
+            template += '<div id="wrapper-mapfilter">';
+            template +=     '<div id="content-mapfilter">';
+            template +=     '</div>';
+            template +=     '<div id="wrapper-btn-mapfilter">';
+            template +=         '<div class="btn-mapfilter">';
+            template +=             '<div class="icon-mapfilter-status"><i class="fa fa-filter"></i></div>';
+            template +=             '<div class="text-mapfilter-status">off</div>';
+            template +=         '</div>';
+            template +=         '<div class="btn-location btn-action evt-location">';
+            template +=             '<div class="icon-location"><i class="fa fa-location-arrow"></i></div>';
+            template +=         '</div>';
+            template +=         '<div class="btn-tree-table btn-action evt-tree-table">';
+            template +=             '<div class="icon-tree-table"><i class="fa fa-th-list"></i></div>';
+            template +=         '</div>';
+            template +=         '<div class="deco-mapfilter">';
+            template +=         '</div>';
+            template +=     '</div>';   // end of #wrapper-treeinfo
+            template += '</div>';   // end of #wrapper-mapfilter
+
+            template += '<div id="wrapper-treeinfo" class="hidden">';
+            template += '</div>';   // end of #wrapper-treeinfo
+            template += '<div id="wrapper-mapmenu">';
+            template +=     '<div id="wrapper-food-search">';
+            template +=         '<div id="wrapper-list-food" class="hidden">';
+            template +=             '<div id="list-food" class=""></div>';
+            template +=         '</div>'; // end of #wrapper-list-food
+            template +=         '<div class="bottom-filters">';
+            template +=             '<input id="checkbox-mytrees" type="checkbox" data-toggle="toggle" />';
+            template +=             '<div class="search-box form-group">';
+            template +=                 '<input type="text" class="form-control" id="input-search-food" type="search" placeholder="Search by Food Name" value=""/>';
+            template +=             '</div>';   // end of .form-group
+            template +=         '</div>';   // end of .bottom-filters
+            template +=     '</div>';   // end of #wrapper-food-search
+            template += '</div>';   // end of #wrapper-mapmenu
+            return template;
         }
         
 
@@ -298,20 +336,20 @@
             return template;
         }
 
-        public static getManageTreesPopupTemplate(): string {
+        public static getManageTreesPopupTemplateForAdmin(): string {
             var template = '';
             template += '<div class="marker-control-wrapper">';
-            template +=     '<div class="marker-control-item marker-control-lock">';
+            template +=     '<div class="marker-control-item btn-action evt-marker-lock">';
             template +=         '<i class="fa fa-lock fa-2x"></i>';
             template +=     '</div>';
-            template +=     '<div class="marker-control-item marker-control-adoption">';
-            template +=         '<i class="fa fa-user-plus fa-2x"></i>';
+            template +=     '<div class="marker-control-item btn-action evt-manage-adopt">';
+            template +=         '<i class="fa fa-users fa-2x"></i>';
             template +=     '</div>';
-            template +=     '<div class="marker-control-item marker-control-info">';
+            template +=     '<div class="marker-control-item btn-action evt-tree-detail">';
             template +=         '<i class="fa fa-heartbeat fa-2x"></i>';
             template +=     '</div>';
-            template +=     '<div class="marker-control-item marker-control-delete">';
-            template +=         '<i class="fa fa-remove fa-2x"></i>';
+            template +=     '<div class="marker-control-item btn-action evt-tree-remove">';
+            template +=         '<i class="fa fa-trash-o fa-2x"></i>';
             template +=     '</div>';
             template += '</div>';
             return template;
@@ -718,7 +756,7 @@
 
             template += '<div class="hr"><hr /></div>';
             template += '<div class="info-header"><i class="fa fa-user fa-1x"></i> Parents</div>';
-            template += '<div class="info-group info-group-flex">';
+            template += '<div class="info-group info-group-flex btn-action evt-manage-adopt">';
             template += '<% _.each(persons.models, function (person, index) { %>';
             template +=     '<% if (index < persons.models.length - 1) { %>';
             template +=         '<div><%= person.getName() %>,&nbsp;</div>';
@@ -796,7 +834,7 @@
 
             template += '<div class="hr"><hr /></div>';
             template += '<div class="info-header"><i class="fa fa-user fa-1x"></i> Parents</div>';
-            template += '<div class="info-group info-group-flex">';
+            template += '<div class="info-group info-group-flex  btn-action evt-manage-adopt">';
             template += '<% _.each(persons.models, function (person, index) { %>';
             template +=     '<% if (index < persons.models.length - 1) { %>';
             template +=         '<div><%= person.getName() %>,&nbsp;</div>';
@@ -1299,66 +1337,34 @@
 
         public static getAdoptionFilterListTemplate(): string {
             var template = '';
-            template += '<div data-toggle="buttons">';
-            template += '<label class="btn filter-checkbox active list-hiearchy1">';
-            template += '<input type="checkbox" name="adoptsall" checked>';
-            template += '<i class="fa fa-square-o fa-1x"></i>';
-            template += '<i class="fa fa-check-square-o fa-1x"></i>';
-            template += ' Parenting Status (show all / hide)</label>';
-            template += '</div>';
+            template += '<div class="text-header"><%= header %> <span class="icon-header evt-reset-filter"><i class="fa fa-refresh"></i></span></div>';
+            template += '<div id="content-adoptionfilter">';
+            template +=     '<div class="text-label"><i class="fa fa-caret-right"></i> Parenting</div>';
+            template +=     '<div class="btn-green btn-medium btn-filter filter-parenting-all active">Parenting & Non-Parenting</div>';
+            template +=     '<div class="info-button-group">';
+            template +=         '<div class="btn-green btn-medium btn-filter filter-parenting-item" data-id="1">Parenting</div>';
+            template +=         '<div class="btn-green btn-medium btn-filter filter-parenting-item" data-id="0">Non-Parenting</div>';
+            template +=     '</div>';
+            template +=     '<hr />';
 
-            template += '<div data-toggle="buttons">';
-            template += '<label class="btn filter-checkbox filter-adopt active list-hiearchy2">';
-            template += '<input type="checkbox" name="1" checked>';
-            template += '<i class="fa fa-square-o fa-1x"></i>';
-            template += '<i class="fa fa-check-square-o fa-1x"></i>';
-            template += ' Parenting</label>';
-            template += '</div>';
-
-            template += '<div data-toggle="buttons">';
-            template += '<label class="btn filter-checkbox filter-adopt active list-hiearchy2">';
-            template += '<input type="checkbox" name="0" checked>';
-            template += '<i class="fa fa-square-o fa-1x"></i>';
-            template += '<i class="fa fa-check-square-o fa-1x"></i>';
-            template += ' Non-Parenting</label>';
-            template += '</div>';
-
-            template += '<hr />';
-
-            template += '<div data-toggle="buttons">';
-            template += '<label class="btn filter-checkbox active list-hiearchy1">';
-            template += '<input type="checkbox" name="authsall" checked>';
-            template += '<i class="fa fa-square-o fa-1x"></i>';
-            template += '<i class="fa fa-check-square-o fa-1x"></i>';
-            template += ' Auth Type (show all / hide)</label>';
-            template += '</div>';
-
-            template += '<% _.each(auths.models, function (auth) { %>';
-
-            template += '<div data-toggle="buttons">';
-            template += '<label class="btn filter-checkbox filter-auth active list-hiearchy2">';
-            template += '<input type="checkbox" name="<%= auth.getId() %>" checked>';
-            template += '<i class="fa fa-square-o fa-1x"></i>';
-            template += '<i class="fa fa-check-square-o fa-1x"></i>';
-            template += ' <%= auth.getName() %></label>';
-            template += '</div>';
-
-            template += '<% }); %>';
-
-
+            template +=     '<div class="text-label"><i class="fa fa-caret-right"></i> Authorization</div>';
+            template +=     '<div class="btn-green btn-medium btn-filter filter-auth-all active">All Authorizations</div>';
+            template +=     '<div class="info-button-group">';
+            template +=     '<% _.each(auths.models, function (auth) { %>';
+            template +=         '<div class="btn-green btn-medium btn-filter filter-auth-item" data-id="<%= auth.getId() %>"><%= auth.getName() %></div>';
+            template +=     '<% }); %>';
+            template +=     '</div>';
+            template += '</div>';   //end of #content-adoptionfilter
             return template;
         }
 
         public static getAdoptTreeCellTemplate(): string {
-            //<%= address %>
             var template = "";
-           // template += '<div class="cell-group">';
             template += '<% _.each(trees.models, function (tree) { %>';
             template +=     '<% var food = FoodParent.Model.getFoods().findWhere({ id: tree.getFoodId() }); %>';
-            template +=     '<div class="cell-link cell-tree-detail" data-target="<%= tree.getId() %>"><%= food.getName() + " " + tree.getName() %></div>';
+            template +=     '<% var name = food.getName() + tree.getName(); %>';
+            template +=     '<div class="btn-tree" data-target="<%= tree.getId() %>"><%= name %></div>';
             template += '<% }); %>';
-            //template += '<div class="cell-button cell-edit"><i class="fa fa-edit fa-1x"></i></div>';
-            //template += '</div>';
             return template;
         }
 
@@ -1367,48 +1373,74 @@
             var template = "";
             // template += '<div class="cell-group">';
             template += '<% _.each(persons.models, function (person) { %>';
-            template += '<div class="cell-link cell-person-detail" data-target="<%= person.getId() %>"><%= person.getName() %></div>';
+            template += '<div class="btn-tree" data-target="<%= person.getId() %>"><%= person.getName() %></div>';
             template += '<% }); %>';
             //template += '<div class="cell-button cell-edit"><i class="fa fa-edit fa-1x"></i></div>';
             //template += '</div>';
             return template;
         }
 
+        public static getTreesTableViewTemplateForAdmin(): string {
+            var template = '';
+            template += '<div id="wrapper-tree-list">';
+            template +=     '<div id="content-header">';
+            template +=         '<div class="text-header"><%= header %></div>';
+            template +=         '<div class="btn-close evt-close">';
+            template +=             '<i class="fa fa-remove"></i>';
+            template +=         '</div>';   // end of top-right-button button-close
+            template +=     '</div>';   // end of #wrapper-header
+            template +=     '<hr />';
 
-        public static getManageAdoptionViewTemplate(): string {
+            template +=     '<div class="frame-flex-group">';
+            template +=         '<div class="tree-filter">';
+            template +=         '</div>';   // end of .adoption-filter
+
+            template +=         '<div id="content-tree-list">';
+            template +=             '<div class="info-group">';
+            template +=                 '<div class="new-tree"></div>';
+            template +=             '</div>';   // end of .info-group
+
+            template +=             '<div class="info-group">';
+            template +=                 '<div class="list-tree">';
+            template +=                 '</div>';
+            template +=             '</div>';   // end of .info-button-group
+
+            template +=         '</div>';   // end of #content-tree-list
+            template +=     '</div>';   // end of .frame-flex-group
+            template += '</div>';   // end of #wrapper-tree-list
+            return template;
+        }
+
+
+        public static getAdoptionManageViewTemplateForAdmin(): string {
             var template = '';
             template += '<div id="wrapper-manage-adoption">';
-            template += '<div class="outer-frame">';
-            template += '<div class="inner-frame">';
-            
+            template +=     '<div id="content-header">';
+            template +=         '<div class="text-header"><%= header %></div>';
+            template +=         '<div class="btn-close evt-close">';
+            template +=             '<i class="fa fa-remove"></i>';
+            template +=         '</div>';   // end of top-right-button button-close
+            template +=     '</div>';   // end of #wrapper-header
+            template +=     '<hr />';
 
-            template +=     '<div id="wrapper-manage-adoption-table">';
-            template +=         '<div id="wrapper-tablemenu">';
-            template +=             '<div class="button-outer-frame2 button3"><div class="button-inner-frame2 collapsible-button" data-target="#filter-list">Filter List</div></div>';
-            template +=             '<div id="filter-list" class="collapsible-list">';
-            template +=             '</div>';
+            template +=     '<div class="frame-flex-group">';
+            template +=         '<div class="adoption-filter">';
+            template +=         '</div>';   // end of .adoption-filter
 
-            template +=             '<div class="button-outer-frame2 button3"><div class="button-inner-frame2 collapsible-button" data-target="#forage-list">Foragable List</div></div>';
-            template +=             '<div id="forage-list" class="collapsible-list hidden">';
-            template +=             '</div>';
-            template +=         '</div>';
+            template +=         '<div id="content-manage-adoption">';
+            template +=             '<div class="info-group">';
+            template +=                 '<div class="text-label"><i class="fa fa-caret-right"></i>  Click <i class="fa fa-plus-square fa-1x"></i> or <i class="fa fa-minus-square fa-1x"></i> icon to assign (or unassign) a parent for <strong><i><%= treename %></i></strong>.</div>';
+            template +=             '</div>';   // end of .info-group
 
-            template +=         '<div id="content-manage-adoption-table">';
-            template +=             '<div class="view-title">Tree Adoption</div>';
-            template +=             '<div class="view-description">Click <i class="fa fa-plus-square fa-1x"></i> icon to assign a new parent for <strong><i><%= treename %></i></strong>.</div>';
-            template +=             '<div class="list-adoption" data-target="<%= treeId %>">';
-            template +=             '</div>';
-            template +=         '</div>';
-            template +=     '</div>';
-
-            template +=     '<div class="top-right-button button-close">';
-            template +=         '<i class="fa fa-remove fa-2x"></i>';
-            template +=     '</div>';
+            template +=             '<div class="info-group">';
+            template +=                 '<div class="list-adoption" data-target="<%= treeId %>">';
+            template +=                 '</div>';
+            template +=             '</div>';   // end of .info-button-group
 
 
-            template += '</div>';
-            template += '</div>';
-            template += '</div>';
+            template +=         '</div>';   // end of #content-manage-adoption
+            template +=     '</div>';   // end of .frame-flex-group
+            template += '</div>';   // end of #wrapper-manage-adoption
             return template;
         }
 

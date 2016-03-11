@@ -15,12 +15,10 @@ var FoodParent;
         ManagePeopleViewFractory.getInstance = function () {
             return ManagePeopleViewFractory._instance;
         };
-        ManagePeopleViewFractory.create = function (el, viewMode, id) {
+        ManagePeopleViewFractory.create = function (el, id) {
             var view;
-            if (viewMode == FoodParent.VIEW_MODE.TABLE) {
-                view = new ManagePeopleTableView({ el: el });
-                view.setPeopleId(id);
-            }
+            view = new ManagePeopleTableView({ el: el });
+            view.setPeopleId(id);
             return view;
         };
         ManagePeopleViewFractory._instance = new ManagePeopleViewFractory();

@@ -1,4 +1,23 @@
-﻿var TreeDescriptionCellEditor = Backgrid.Cell.extend({
+﻿var TreeDateCell = Backgrid.Cell.extend({
+    template: _.template('<div class="text-date btn-date"><%= date %></div>'),
+    events: {
+        "click .btn-date": "_updateDate",
+    },
+    _updateDate: function (e) {
+
+    },
+    render: function () {
+        var self = this;
+        var tree: FoodParent.Tree = this.model;
+        $(self.el).html(self.template({
+            date: tree.getUpdatedDate(),
+        }));
+        this.delegateEvents();
+        return this;
+    }
+});
+
+var TreeDescriptionCellEditor = Backgrid.Cell.extend({
     tagName: "input",
     attributes: {
         type: "text"
@@ -343,9 +362,9 @@ var TreeAddressCellEditor = Backgrid.Cell.extend({
 });
 
 var TreeMapViewCell = Backgrid.Cell.extend({
-    template: _.template('<div class="marker-control-item mapview-item" data-target="<%= treeid %>"><i class="fa fa-map-marker fa-2x"></i></div>'),
+    template: _.template('<div class="btn-table" data-target="<%= treeid %>"><i class="fa fa-map-marker"></i></div>'),
     events: {
-        "click .mapview-item": "_showMapView"
+        "click .btn-table": "_showMapView"
     },
     _showMapView: function (event) {
         var tree: number = parseInt($(event.target).attr('data-target'));
@@ -363,9 +382,9 @@ var TreeMapViewCell = Backgrid.Cell.extend({
 });
 
 var ManageAdoptionViewCell = Backgrid.Cell.extend({
-    template: _.template('<div class="marker-control-item manage-adoption-item" data-target="<%= treeid %>"><i class="fa fa-user-plus fa-2x"></i></div>'),
+    template: _.template('<div class="btn-table" data-target="<%= treeid %>"><i class="fa fa-users"></i></div>'),
     events: {
-        "click .marker-control-item": "_manageAdoption"
+        "click .btn-table": "_manageAdoption"
     },
     _manageAdoption: function (event) {
         var tree: number = parseInt($(event.target).attr('data-target'));
@@ -382,9 +401,9 @@ var ManageAdoptionViewCell = Backgrid.Cell.extend({
 });
 
 var TreeDetailCell = Backgrid.Cell.extend({
-    template: _.template('<div class="marker-control-item tree-detail" data-target="<%= treeid %>"><i class="fa fa-heartbeat fa-2x"></i></div>'),
+    template: _.template('<div class="btn-table" data-target="<%= treeid %>"><i class="fa fa-heartbeat"></i></div>'),
     events: {
-        "click .marker-control-item": "_showDetail"
+        "click .btn-table": "_showDetail"
     },
     _showDetail: function (event) {
         var tree: number = parseInt($(event.target).attr('data-target'));
@@ -401,9 +420,9 @@ var TreeDetailCell = Backgrid.Cell.extend({
 });
 
 var TreeCreateCell = Backgrid.Cell.extend({
-    template: _.template('<div class="marker-control-item create-item"><i class="fa fa-save fa-2x"></i></div>'),
+    template: _.template('<div class="btn-table"><i class="fa fa-save"></i></div>'),
     events: {
-        "click": "_createRow"
+        "click .btn-table": "_createRow"
     },
     _createRow: function (e) {
         var tree: FoodParent.Tree = this.model;
@@ -429,9 +448,9 @@ var TreeCreateCell = Backgrid.Cell.extend({
 });
 
 var TreeDeleteCell = Backgrid.Cell.extend({
-    template: _.template('<div class="marker-control-item"><i class="fa fa-remove fa-2x"></i></div>'),
+    template: _.template('<div class="btn-table"><i class="fa fa-trash-o"></i></div>'),
     events: {
-        "click": "_deleteRow"
+        "click .btn-table": "_deleteRow"
     },
     _deleteRow: function (e) {
         var tree: FoodParent.Tree = this.model;
@@ -471,7 +490,7 @@ var TreeDeleteCell = Backgrid.Cell.extend({
 
 var TreeAdoptionCell = Backgrid.Cell.extend({
     events: {
-        "click .cell-link": "_linkTreeDetail",
+        "click .btn-tree": "_linkTreeDetail",
     },
     _linkTreeDetail: function (e) {
         //FoodParent.Router.getInstance().navigate("tree/" + this.model.getId(), { trigger: true });
@@ -663,6 +682,11 @@ var TreeColumn: any = [
         editable: false,
         cell: TreeAdoptionCell,
     }, {
+        name: "updated",
+        label: "Last Updated",
+        editable: false,
+        cell: TreeDateCell,
+    }, {
         label: "",
         sortable: false,
         editable: false,
@@ -683,14 +707,6 @@ var TreeColumn: any = [
         editable: false,
         cell: TreeDeleteCell,
     }
-    /*
-     {
-        name: "updated",
-        label: "Last Updated",
-        editable: false,
-        cell: Backgrid.Cell.extend({ editor: DatePickerCellEditor }),
-    },
-    */
 ];
 
 var NewTreeColumn: any = [
@@ -738,7 +754,7 @@ var NewTreeColumn: any = [
         name: "updated",
         label: "Last Updated",
         editable: false,
-        cell: Backgrid.Cell.extend({ editor: DatePickerCellEditor }),
+        cell: TreeDateCell,
     },
     */
 ];

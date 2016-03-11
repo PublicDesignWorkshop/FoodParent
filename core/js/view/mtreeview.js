@@ -15,15 +15,10 @@ var FoodParent;
         DetailTreeViewFractory.getInstance = function () {
             return DetailTreeViewFractory._instance;
         };
-        DetailTreeViewFractory.create = function (el, viewMode, id) {
+        DetailTreeViewFractory.create = function (el, id) {
             var view;
-            if (viewMode == FoodParent.VIEW_MODE.GRAPHIC) {
-                view = new DetailTreeGraphicView({ el: el });
-                view.setTreeId(id);
-            }
-            else if (viewMode == FoodParent.VIEW_MODE.TABLE) {
-                view.setTreeId(id);
-            }
+            view = new DetailTreeGraphicView({ el: el });
+            view.setTreeId(id);
             return view;
         };
         DetailTreeViewFractory._instance = new DetailTreeViewFractory();

@@ -16,6 +16,7 @@ var FoodParent;
             var self = View._instance;
             self.bDebug = true;
             self._viewStatus = new Array();
+            self._popupViews = new Array();
             $(window).resize(_.debounce(self.resize, FoodParent.Setting.getResizeTimeout()));
             $(document).bind("keydown", function (event) {
                 FoodParent.EventHandler.handleKeyCode(event.keyCode);
@@ -102,11 +103,14 @@ var FoodParent;
         View.getNavView = function () {
             return View._instance._navView;
         };
-        View.setPopupView = function (view) {
-            View._instance._popupView = view;
+        View.addPopupView = function (view) {
+            View._instance._popupViews.push(view);
         };
         View.getPopupView = function () {
-            return View._instance._popupView;
+            return View._instance._popupViews[View._instance._popupViews.length - 1];
+        };
+        View.removePopupView = function () {
+            View._instance._popupViews.pop();
         };
         View.setManageDonationsView = function (view) {
             View._instance._manageDonationsView = view;

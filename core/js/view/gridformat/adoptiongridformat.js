@@ -1,3 +1,20 @@
+var AdoptionDateCell = Backgrid.Cell.extend({
+    template: _.template('<div class="text-date btn-date"><%= date %></div>'),
+    events: {
+        "click .btn-date": "_updateDate",
+    },
+    _updateDate: function (e) {
+    },
+    render: function () {
+        var self = this;
+        var person = this.model;
+        $(self.el).html(self.template({
+            date: person.getUpdatedDate(),
+        }));
+        this.delegateEvents();
+        return this;
+    }
+});
 var AdoptionAuthCell = Backgrid.Cell.extend({
     template: _.template('<div><%= auth %></div>'),
     render: function () {
@@ -43,9 +60,9 @@ var AdoptionNeighborhoodCell = Backgrid.Cell.extend({
     }
 });
 var AdoptionAddCell = Backgrid.Cell.extend({
-    template: _.template('<div class="marker-control-item marker-add-adoption"><i class="fa fa-plus-square fa-2x"></i></div>'),
+    template: _.template('<div class="btn-table"><i class="fa fa-plus-square"></i></div>'),
     events: {
-        "click .marker-control-item": "_addAdoption",
+        "click .btn-table": "_addAdoption",
     },
     _addAdoption: function (e) {
         var tree = FoodParent.Model.getTrees().findWhere({ id: parseInt($('.list-adoption').attr('data-target')) });
@@ -68,7 +85,7 @@ var AdoptionAddCell = Backgrid.Cell.extend({
         var person = this.model;
         var treeId = parseInt($('.list-adoption').attr('data-target'));
         if (FoodParent.Model.getAdopts().checkAdoption(treeId, person.getId())) {
-            $(self.el).html('<div class="blank-marker-control-item"></div>');
+            $(self.el).html('<div class="btn-table blank-marker-control-item"></div>');
         }
         else {
             $(self.el).html(self.template());
@@ -78,9 +95,9 @@ var AdoptionAddCell = Backgrid.Cell.extend({
     }
 });
 var AdoptionDeleteCell = Backgrid.Cell.extend({
-    template: _.template('<div class="marker-control-item marker-remove-adoption"><i class="fa fa-minus-square fa-2x"></i></div>'),
+    template: _.template('<div class="btn-table"><i class="fa fa-minus-square"></i></div>'),
     events: {
-        "click .marker-control-item": "_removeAdoption",
+        "click .btn-table": "_removeAdoption",
     },
     _removeAdoption: function (e) {
         var tree = FoodParent.Model.getTrees().findWhere({ id: parseInt($('.list-adoption').attr('data-target')) });
@@ -88,9 +105,7 @@ var AdoptionDeleteCell = Backgrid.Cell.extend({
         var person = this.model;
         FoodParent.EventHandler.handleAdoptionData(tree, person, FoodParent.DATA_MODE.DELETE, {}, function () {
             FoodParent.EventHandler.handleDataChange("<strong><i>" + person.getName() + "</i></strong> has unadopted <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> successfully.", false);
-            if (FoodParent.View.getPopupView()) {
-                FoodParent.View.getPopupView()._applyFilter();
-            }
+            new FoodParent.RefreshCurrentViewCommand().execute();
             //if (FoodParent.View.getManageTreesView()) {
             //    (<FoodParent.ManageTreesView>FoodParent.View.getManageTreesView()).renderTreeInfo(tree);
             //}
@@ -98,12 +113,7 @@ var AdoptionDeleteCell = Backgrid.Cell.extend({
             FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
         }, function () {
             FoodParent.EventHandler.handleDataChange("<strong><i>" + person.getName() + "</i></strong> has adopted <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> successfully.", false);
-            if (FoodParent.View.getPopupView()) {
-                FoodParent.View.getPopupView()._applyFilter();
-            }
-            //if (FoodParent.View.getManageTreesView()) {
-            //    (<FoodParent.ManageTreesView>FoodParent.View.getManageTreesView()).renderTreeInfo(tree);
-            //}
+            new FoodParent.RefreshCurrentViewCommand().execute();
         });
     },
     render: function () {
@@ -114,8 +124,26 @@ var AdoptionDeleteCell = Backgrid.Cell.extend({
             $(self.el).html(self.template());
         }
         else {
-            $(self.el).html('<div class="blank-marker-control-item"></div>');
+            $(self.el).html('<div class="btn-table-blank"></div>');
         }
+        this.delegateEvents();
+        return this;
+    }
+});
+var AdoptionListCell = Backgrid.Cell.extend({
+    events: {
+        "click .btn-tree": "_panToTree",
+    },
+    _panToTree: function (event) {
+        new FoodParent.RemovePopupViewCommand({ delay: FoodParent.Setting.getRemovePopupDuration() }).execute();
+        FoodParent.Router.getInstance().navigate("trees/" + $(event.currentTarget).attr('data-target'), { trigger: true, replace: true });
+    },
+    render: function () {
+        this.template = _.template(FoodParent.Template.getAdoptTreeCellTemplate());
+        var trees = new FoodParent.Trees(FoodParent.Model.getTrees().filterByIds(this.model.get('trees')));
+        $(this.el).html(this.template({
+            trees: trees,
+        }));
         this.delegateEvents();
         return this;
     }
@@ -145,7 +173,7 @@ var AdoptionColumn = [
         name: "trees",
         label: "Adoption",
         editable: false,
-        cell: PersonAdoptionCell,
+        cell: AdoptionListCell,
     }, {
         label: "",
         sortable: false,

@@ -559,12 +559,11 @@ var FoodParent;
             // Setup Router parameters
             this.routes = {
                 "": "home",
-                "trees/:viewMode/:id": "trees",
-                "mtree/:viewMode/:id": "manageTree",
-                "mpeople/:viewMode/:id": "managePeople",
-                "mdonations/:viewMode/:id": "manageDonations",
-                "mdonation/:viewMode/:id": "manageDonation",
-                "ptrees": "parentTrees",
+                "trees/:id": "trees",
+                "mtree/:id": "manageTree",
+                "mpeople/:id": "managePeople",
+                "mdonations/:id": "manageDonations",
+                "mdonation/:id": "manageDonation",
             };
             _super.call(this, options);
         }
@@ -574,20 +573,20 @@ var FoodParent;
         Router.prototype.home = function () {
             FoodParent.EventHandler.handleNavigate(FoodParent.VIEW_STATUS.HOME);
         };
-        Router.prototype.trees = function (viewMode, id) {
-            FoodParent.EventHandler.handleNavigate(FoodParent.VIEW_STATUS.TREES, { viewMode: viewMode, id: id });
+        Router.prototype.trees = function (id) {
+            FoodParent.EventHandler.handleNavigate(FoodParent.VIEW_STATUS.TREES, { id: id });
         };
-        Router.prototype.manageTree = function (viewMode, id) {
-            FoodParent.EventHandler.handleNavigate(FoodParent.VIEW_STATUS.DETAIL_TREE, { viewMode: viewMode, id: id });
+        Router.prototype.manageTree = function (id) {
+            FoodParent.EventHandler.handleNavigate(FoodParent.VIEW_STATUS.DETAIL_TREE, { id: id });
         };
-        Router.prototype.managePeople = function (viewMode, id) {
-            FoodParent.EventHandler.handleNavigate(FoodParent.VIEW_STATUS.MANAGE_PEOPLE, { viewMode: viewMode, id: id });
+        Router.prototype.managePeople = function (id) {
+            FoodParent.EventHandler.handleNavigate(FoodParent.VIEW_STATUS.MANAGE_PEOPLE, { id: id });
         };
-        Router.prototype.manageDonations = function (viewMode, id) {
-            FoodParent.EventHandler.handleNavigate(FoodParent.VIEW_STATUS.MANAGE_DONATIONS, { viewMode: viewMode, id: id });
+        Router.prototype.manageDonations = function (id) {
+            FoodParent.EventHandler.handleNavigate(FoodParent.VIEW_STATUS.MANAGE_DONATIONS, { id: id });
         };
-        Router.prototype.manageDonation = function (viewMode, id) {
-            FoodParent.EventHandler.handleNavigate(FoodParent.VIEW_STATUS.DETAIL_DONATION, { viewMode: viewMode, id: id });
+        Router.prototype.manageDonation = function (id) {
+            FoodParent.EventHandler.handleNavigate(FoodParent.VIEW_STATUS.DETAIL_DONATION, { id: id });
         };
         Router._instance = new Router();
         Router.TAG = "Router - ";

@@ -3,9 +3,8 @@
         private static _instance: View = new View();
         private static TAG: string = "View - ";
         private _viewStatus: Array<VIEW_STATUS>;
-        //private _actionStatus: ACTION_STATUS = ACTION_STATUS.NONE;
         private _navView: NavView;
-        private _popupView: PopupView;
+        private _popupViews: Array<PopupView>;
         private _messageView: MessageView;
         private _treesView: TreesView;
         private _managePeopleView: ManagePeopleView;
@@ -22,6 +21,7 @@
             var self: View = View._instance;
             self.bDebug = true;
             self._viewStatus = new Array<VIEW_STATUS>();
+            self._popupViews = new Array<PopupView>();
             $(window).resize(_.debounce(self.resize, Setting.getResizeTimeout()));
             $(document).bind("keydown", function (event) {
                 EventHandler.handleKeyCode(event.keyCode);
@@ -111,11 +111,14 @@
         public static getNavView(): NavView {
             return View._instance._navView;
         }
-        public static setPopupView(view: PopupView): void {
-            View._instance._popupView = view;
+        public static addPopupView(view: PopupView): void {
+            View._instance._popupViews.push(view);
         }
         public static getPopupView(): PopupView {
-            return View._instance._popupView;
+            return View._instance._popupViews[View._instance._popupViews.length - 1];
+        }
+        public static removePopupView(): void {
+            View._instance._popupViews.pop();
         }
         public static setManageDonationsView(view: ManageDonationsView): void {
             View._instance._manageDonationsView = view;

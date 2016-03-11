@@ -16,16 +16,10 @@ module FoodParent {
         public static getInstance(): ManageDonationsViewFractory {
             return ManageDonationsViewFractory._instance;
         }
-        public static create(el: JQuery, viewMode: VIEW_MODE, id: number): ManageDonationsView {
+        public static create(el: JQuery, id: number): ManageDonationsView {
             var view: ManageDonationsView;
-            if (viewMode == VIEW_MODE.MAP) {
-                //view = new ManageTreesMapView({ el: el });
-                //view.setTreeId(id);
-            } else if (viewMode == VIEW_MODE.TABLE) {
-                view = new ManageDonationsTableView({ el: el });
-                view.setTreeId(id);
-            }
-
+            view = new ManageDonationsTableView({ el: el });
+            view.setTreeId(id);
             return view;
         }
     }

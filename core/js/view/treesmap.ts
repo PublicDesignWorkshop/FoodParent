@@ -1,4 +1,56 @@
 ﻿module FoodParent {
+    export class TreesViewFractory {
+        private static _instance: TreesViewFractory = new TreesViewFractory();
+        private baseUrl: string;
+        constructor(args?: any) {
+            if (TreesViewFractory._instance) {
+                throw new Error("Error: Instantiation failed: Use TreesViewFractory.getInstance() instead of new.");
+            }
+            TreesViewFractory._instance = this;
+        }
+        public static getInstance(): TreesViewFractory {
+            return TreesViewFractory._instance;
+        }
+        public static create(el: JQuery, id: number, credential: CREDENTIAL_MODE): TreesView {
+            var view: TreesView;
+            if (credential == CREDENTIAL_MODE.GUEST) {
+                view = new TreesMapViewForGuest({ el: el });
+            } else if (credential == CREDENTIAL_MODE.PARENT) {
+                view = new TreesMapViewForParent({ el: el });
+            } else if (credential == CREDENTIAL_MODE.ADMIN) {
+                view = new TreesMapViewForAdmin({ el: el });
+            }
+            view.setTreeId(id);
+            return view;
+        }
+    }
+
+    export class TreesView extends BaseView {
+        protected _id: number;
+        public render(args?: any): any {
+            super.render(args);
+            var self: TreesView = this;
+            return self;
+        }
+        public update(args?: any): any {
+            super.update(args);
+            var self: TreesView = this;
+            return self;
+        }
+        public resize(): any {
+            super.resize();
+            var self: TreesView = this;
+        }
+        public setTreeId(id: number) {
+            this._id = id;
+        }
+        public renderTreeInfo = (tree?: Tree) => { }
+        public removeTreeInfo = () => { }
+        public renderFilterList = () => { }
+        public _applyFilter(event?: Event) { }
+        public closeMapFilter = () => { }
+        public panToCurrentLocation = () => { }
+    }
     export class TreesMapView extends TreesView {
         protected _map: L.Map;
         protected _location: L.LatLng;
@@ -19,6 +71,7 @@
             self.events = <any>{
                 "click .evt-close": "removeTreeInfo",
                 "click .btn-mapfilter": "_toggleMapFilter",
+                "click .evt-marker-lock": "_toggleMarkerLock",
             };
             self.delegateEvents();
         }
@@ -139,7 +192,7 @@
                         self.closeMapFilter();
                     }
                     
-                    Router.getInstance().navigate("trees/" + VIEW_MODE.MAP + "/" + tree.getId(), { trigger: false, replace: true });
+                    Router.getInstance().navigate("trees/" + tree.getId(), { trigger: false, replace: true });
                 });
                 self._map.on('popupclose', function (event: any) {
                     var marker: L.Marker = event.popup._source;
@@ -147,7 +200,7 @@
                     $(marker.label._container).removeClass('active');
                     self.$('#wrapper-treeinfo').addClass('hidden');
                     self._selectedMarker = null;
-                    Router.getInstance().navigate("trees/" + VIEW_MODE.MAP + "/0", { trigger: false, replace: true });
+                    Router.getInstance().navigate("trees/0", { trigger: false, replace: true });
                 });
             }
         }
@@ -263,7 +316,7 @@
             }
         }
 
-        private removeMarker(marker: L.Marker): void {
+        protected removeMarker(marker: L.Marker): void {
             var self: TreesMapView = this;
             self._map.removeLayer(marker);
         }
@@ -818,6 +871,25 @@
                 }, function () {
                     EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
                 });
+            }
+        }
+
+        /**
+         * Toggle marker draggable
+         * @param event click event of marker popup control
+         */
+        protected _toggleMarkerLock(event: Event): void {
+            var self: TreesMapView = this;
+            if (!self._selectedMarker.options.draggable) {
+                self._selectedMarker.options.draggable = true;
+                self._selectedMarker.dragging.enable();
+                $(event.target).html('<i class="fa fa-unlock-alt fa-2x"></i>');
+                self._selectedMarker._popup.setContent('<div class="marker-control-wrapper">' + $('.marker-control-wrapper').html() + '</div>');
+            } else {
+                self._selectedMarker.options.draggable = false;
+                self._selectedMarker.dragging.disable();
+                $(event.target).html('<i class="fa fa-lock fa-2x"></i>');
+                self._selectedMarker._popup.setContent('<div class="marker-control-wrapper">' + $('.marker-control-wrapper').html() + '</div>');
             }
         }
     }

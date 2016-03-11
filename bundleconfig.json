@@ -78,11 +78,11 @@
       "core/js/view/postview.js",
 
       // View - Trees
-      "core/js/view/treesbase.js",
       "core/js/view/treesmap.js",
       "core/js/view/treesmapguest.js",
       "core/js/view/treesmapparent.js",
       "core/js/view/treesmapadmin.js",
+      "core/js/view/treestable.js",
 
 
 
@@ -158,7 +158,8 @@
       "core/css/password.css",
 
       // View - Trees
-      "core/css/trees.css",
+      "core/css/treesmap.css",
+      "core/css/treestable.css",
 
       // Print (not working for safari)
       "core/css/print.css",

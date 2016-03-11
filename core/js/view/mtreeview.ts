@@ -11,15 +11,10 @@
         public static getInstance(): DetailTreeViewFractory {
             return DetailTreeViewFractory._instance;
         }
-        public static create(el: JQuery, viewMode: VIEW_MODE, id: number): DetailTreeView {
+        public static create(el: JQuery, id: number): DetailTreeView {
             var view: DetailTreeView;
-            if (viewMode == VIEW_MODE.GRAPHIC) {
-                view = new DetailTreeGraphicView({ el: el });
-                view.setTreeId(id);
-            } else if (viewMode == VIEW_MODE.TABLE) {
-                view.setTreeId(id);
-            }
-
+            view = new DetailTreeGraphicView({ el: el });
+            view.setTreeId(id);
             return view;
         }
     }

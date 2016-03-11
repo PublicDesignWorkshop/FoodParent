@@ -47,4 +47,116 @@
     #wrapper-tree-adopt .text-label {
         padding: 2px 8px;
     }
+
+    /*
+        CSS for Manage Adoptions
+    */
+    #wrapper-manage-adoption {
+        width: 100%;
+        height: 100%;
+    }
+    #wrapper-manage-adoption #content-header {
+        display: -webkit-flex;
+        display: flex;
+        margin: 0 0 8px 0;
+        color: #5e4e51;
+        font-size: xx-large;
+    }
+    #wrapper-manage-adoption hr {
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        margin: 2px 0;
+    }
+    #wrapper-manage-adoption #content-header .text-header {
+        -webkit-flex-grow: 1;
+        flex-grow: 1;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        -webkit-user-select: none;
+        user-select: none;
+        font-weight: 700;
+    }
+    #wrapper-manage-adoption .info-group, #wrapper-login label {
+        -moz-user-select: none;
+        -ms-user-select: none;
+        -webkit-user-select: none;
+        user-select: none;
+        color: #5e4e51;
+        margin: 4px 0;
+        text-align: left;
+        font-size: medium;
+        font-weight: 700;
+    }
+
+    #wrapper-manage-adoption .info-button-group {
+        margin: 4px 0;
+    }
+
+    #wrapper-manage-adoption .text-label {
+        padding: 2px 8px;
+    }
+
+    #wrapper-manage-adoption .frame-flex-group {
+        display: -webkit-flex;
+        display: flex;
+        overflow-x: auto;
+        height: 88%;
+    }
+    #content-manage-adoption {
+        padding-left: 8px;
+        -webkit-flex-grow: 1;
+        flex-grow: 1;
+        overflow-y: auto;
+    }
+    .adoption-filter {
+        max-width: 25%;
+        overflow-y: auto;
+    }
+    #content-adoptionfilter {
+        overflow-y: auto;
+        padding: 4px;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        -webkit-user-select: none;
+        user-select: none;
+    }
+    #content-adoptionfilter .text-label {
+        font-size: medium;
+        color: #5e4e51;
+        text-align: left;
+        padding: 2px 4px;
+        font-weight: 700;
+    }
+    #content-adoptionfilter .info-button-group {
+        display: -webkit-flex;
+        display: flex;
+        -ms-flex-wrap: wrap;
+        -webkit-flex-wrap: wrap;
+        flex-wrap: wrap;
+    }
+    #content-adoptionfilter .info-button-group div {
+        -webkit-flex-grow: 1;
+        flex-grow: 1;
+    }
+    #wrapper-manage-adoption .adoption-filter .text-header {
+        -moz-user-select: none;
+        -ms-user-select: none;
+        -webkit-user-select: none;
+        user-select: none;
+        font-weight: 700;
+        font-size: x-large;
+        color: #5e4e51;
+        padding: 2px 0 4px 0;
+    }
+    #wrapper-manage-adoption .adoption-filter .icon-header {
+        position: relative;
+        top: -6px;
+        left: 4px;
+        font-size: medium;
+        cursor: pointer;
+    }
+
+    #content-manage-adoption .list-adoption {
+        margin-top: 16px;
+    }
+    
 }

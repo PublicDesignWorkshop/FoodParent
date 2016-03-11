@@ -14,16 +14,8 @@ module FoodParent {
         public static getInstance(): ManageTreesViewFractory {
             return ManageTreesViewFractory._instance;
         }
-        public static create(el: JQuery, viewMode: VIEW_MODE, id: number): ManageTreesView {
+        public static create(el: JQuery, id: number): ManageTreesView {
             var view: ManageTreesView;
-            if (viewMode == VIEW_MODE.MAP) {
-                view = new ManageTreesMapView({ el: el });
-                view.setTreeId(id);
-            } else if (viewMode == VIEW_MODE.TABLE) {
-                view = new ManageTreesTableView({ el: el });
-                view.setTreeId(id);
-            }
-            
             return view;
         }
     }
@@ -862,7 +854,7 @@ module FoodParent {
                     if (View.getMessageView()) {
                         View.getMessageView().setInvisible();
                     }
-                    Router.getInstance().navigate("mtrees/" + VIEW_MODE.MAP + "/" + tree.getId(), { trigger: false, replace: true });
+                    Router.getInstance().navigate("mtrees/" + tree.getId(), { trigger: false, replace: true });
                 });
                 self._map.on('popupclose', function (event: any) {
                     var marker: L.Marker = event.popup._source;

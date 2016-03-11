@@ -1,4 +1,10 @@
 ﻿@media all {
+    table {
+        -moz-user-select: all;
+        -ms-user-select: all;
+        -webkit-user-select: all;
+        user-select: all;
+    }
     input, .form-control {
         -webkit-box-shadow: none;
         box-shadow: none;

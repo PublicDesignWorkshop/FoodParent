@@ -7,6 +7,7 @@
             self.events = <any>{
                 "click .evt-close": "removeTreeInfo",
                 "click .btn-mapfilter": "_toggleMapFilter",
+                "click .evt-marker-lock": "_toggleMarkerLock",
                 "click .btn-filter": "_clickFilter",
                 "keydown #wrapper-food-search": "_searchFood",
                 "click #input-search-food": "_searchFood",
@@ -112,6 +113,42 @@
                         break;
                     }
                 }
+            }
+        }
+
+        protected updateMarkers = (trees: Trees) => {
+            var self: TreesMapViewForAdmin = this;
+            console.log(TreesMapView.TAG + "updateMarkers()");
+            // Add new markers
+            $.each(trees.models, function (index: number, tree: Tree) {
+                var bFound: boolean = false;
+                for (var j = 0; j < self._markers.length && !bFound; j++) {
+                    if (tree.getId() == self._markers[j].options.id) {
+                        bFound = true;
+                    }
+                }
+                if (!bFound) {
+                    self.addMarker(tree, true);
+                }
+            });
+            // Remove unnecessary markers
+            for (var j = 0; j < self._markers.length;) {
+                var bFound: boolean = false;
+                $.each(trees.models, function (index: number, tree: Tree) {
+                    if (tree.getId() == self._markers[j].options.id) {
+                        bFound = true;
+                    }
+                });
+                if (!bFound) {
+                    // close popup if the marker is selected
+                    if (self._markers[j] == self._selectedMarker) {
+                        self._selectedMarker.closePopup();
+                    }
+                    self.removeMarker(self._markers[j]);
+                    self._markers = _.without(self._markers, self._markers[j]);
+                    j--;
+                }
+                j++;
             }
         }
 

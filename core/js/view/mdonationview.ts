@@ -11,16 +11,10 @@
         public static getInstance(): DetailDonationViewFractory {
             return DetailDonationViewFractory._instance;
         }
-        public static create(el: JQuery, viewMode: VIEW_MODE, id: number): DetailDonationView {
+        public static create(el: JQuery, id: number): DetailDonationView {
             var view: DetailDonationView;
-            if (viewMode == VIEW_MODE.GRAPHIC) {
-                view = new DetailDonationGraphicView({ el: el });
-                view.setPlaceId(id);
-            } else if (viewMode == VIEW_MODE.TABLE) {
-                //view = new ManageDonationsTableView({ el: el });
-                //view.setTreeId(id);
-            }
-
+            view = new DetailDonationGraphicView({ el: el });
+            view.setPlaceId(id);
             return view;
         }
     }

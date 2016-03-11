@@ -169,6 +169,10 @@ var FoodParent;
             var self = this;
             self.attributes.parents = FoodParent.Model.getAdopts().getParentIds(self.id);
         };
+        Tree.prototype.getUpdatedDate = function () {
+            var self = this;
+            return moment(this.get('updated')).format(FoodParent.Setting.getDateFormat());
+        };
         return Tree;
     })(Backbone.Model);
     FoodParent.Tree = Tree;

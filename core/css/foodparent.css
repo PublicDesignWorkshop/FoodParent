@@ -13192,8 +13192,7 @@ button.close {
         left: 0;
         width: 100%;
         height: 100%;
-        margin: 52px 0 0 0;
-        padding: 20px 32px 104px 32px;
+        padding: 70px 24px 20px 24px;
         background-color: rgba(255, 255, 255, 0.9);
         overflow-y: auto;
     }
@@ -13232,6 +13231,10 @@ button.close {
     }
 }
 @media all {
+    .btn-action {
+        pointer-events: all;
+        cursor: pointer;
+    }
     .btn-small {
         border-width: 2px;
         padding: 4px 8px;
@@ -13321,7 +13324,53 @@ button.close {
         box-shadow: inset 0 0 1px 1px rgba(0, 0, 0, 0.15);
     }
     
-    
+    /*
+        Button for table
+    */
+    .btn-table {
+        width: 30px;
+        height: 30px;
+        margin: 2px;
+        text-align: center;
+        border-radius: 2px;
+        padding: 2px;
+        cursor: pointer;
+        color: rgba(0, 0, 0, 0.75);
+        font-size: x-large;
+    }
+    .btn-table:hover {
+        box-shadow: inset 0 0 1px 1px rgba(0,0,0,0.25);
+        background-color: rgba(0, 0, 0, 0.05);
+    }
+    .btn-table-blank {
+        display: block;
+        width: 30px;
+        height: 30px;
+        margin: 2px;
+        padding: 2px;
+        pointer-events: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        -webkit-user-select: none;
+        user-select: none;
+    }
+    /*
+        Button for tree item on a table form
+    */
+
+    .btn-tree {
+        margin: 2px;
+        padding: 2px;
+        text-align: center;
+        border-radius: 2px;
+        cursor: pointer;
+        color: rgba(0, 0, 0, 0.75);
+    }
+
+    .btn-tree:hover {
+        box-shadow: inset 0 0 1px 1px rgba(0,0,0,0.25);
+        background-color: rgba(0, 0, 0, 0.05);
+    }
 
 
 
@@ -13513,8 +13562,14 @@ button.close {
     }
 }
 @media all {
+    td.editable {
+        cursor: pointer;
+    }
+
+    
+
     .list-tree td, .new-tree td, .list-people td, .list-people th, .new-person td, .list-adoption td, .list-location td, .list-location th, .new-location td, .new-location th, .list-donation td, .list-donation th, .new-donation td {
-        color: #222222;
+        color: rgba(0, 0, 0, 0.75);
         font-size: small;
     }
 
@@ -13600,7 +13655,11 @@ button.close {
         width: 20%;
     }
 
-
+    .list-adoption td {
+        padding-left: 8px;
+        padding-right: 8px;
+        border-bottom: 1px solid rgba(94, 78, 81, 0.15);
+    }
     .list-adoption .backgrid .auth {
         width: 15%;
     }
@@ -13608,7 +13667,7 @@ button.close {
         width: 15%;
     }
     .list-adoption .backgrid .contact {
-        width: 25%;
+        width: 30%;
     }
     .list-adoption .backgrid .neighborhood {
         width: 20%;
@@ -13617,27 +13676,9 @@ button.close {
         width: 20%;
     }
 
-    td.editable {
-        cursor: pointer;
-    }
+    
 
-    .cell-link {
-        margin: 2px;
-        padding: 2px;
-        text-align: center;
-        border-radius: 2px;
-        cursor: pointer;
-        color: rgba(0, 0, 0, 0.75);
-    }
-
-    .cell-link:hover {
-        box-shadow: inset 0 0 1px 1px rgba(0,0,0,0.25);
-        background-color: rgba(0, 0, 0, 0.05);
-    }
-
-    .list-adoption td {
-        border-bottom: 1px solid rgba(94, 78, 81, 0.15);
-    }
+    
 
     .list-location .backgrid .name {
         width: 15%;
@@ -13701,6 +13742,70 @@ button.close {
     }
 
 }
+
+
+@media only screen and (orientation: portrait) {
+    
+}
+@media only screen and (max-height: 480px) and (orientation: portrait) {
+    
+}
+@media only screen and (min-height: 481px) and (max-height: 568px) and (orientation: portrait) {
+    
+}
+@media only screen and (min-height: 569px) and (max-height: 627px) and (orientation: portrait) {
+    
+}
+@media only screen and (min-height: 628px) and (max-height: 736px) and (orientation: portrait) {
+    
+}
+
+@media only screen and (max-width: 767px) and (orientation: portrait) {
+    
+}
+
+@media only screen and (min-width: 768px) and (orientation: portrait) {
+    
+}
+
+@media only screen and (orientation: landscape) {
+    
+}
+@media only screen and (max-width: 480px) and (orientation: landscape) {
+    
+}
+@media only screen and (min-width: 481px) and (max-width: 568px) and (orientation: landscape) {
+    
+}
+    
+@media only screen and (min-width: 569px) and (max-width: 667px) and (orientation: landscape) {
+    
+}
+
+@media only screen and (min-width: 668px) and (max-width: 736px) and (orientation: landscape) {
+    
+}
+
+@media only screen and (min-width: 737px) and (max-width: 1280px) and (orientation: landscape) {
+    .list-tree td, .new-tree td, .list-people td, .list-people th, .new-person td, .list-adoption td, .list-location td, .list-location th, .new-location td, .new-location th, .list-donation td, .list-donation th, .new-donation td {
+        font-size: medium;
+    }
+    .list-tree a, .new-tree a, .list-tree a, .new-person a, .list-adoption a {
+        font-size: medium;
+    }
+}
+
+
+@media only screen and (min-width: 1281px) and (max-width: 1920px) and (orientation: landscape) {
+    .list-tree td, .new-tree td, .list-people td, .list-people th, .new-person td, .list-adoption td, .list-location td, .list-location th, .new-location td, .new-location th, .list-donation td, .list-donation th, .new-donation td {
+        font-size: large;
+        padding-top: 4px;
+        padding-bottom: 4px;
+    }
+    .list-tree a, .new-tree a, .list-tree a, .new-person a, .list-adoption a {
+        font-size: large;
+    }
+}
 @media all {
     #wrapper-pop .outer-frame {
         background-color: rgba(212, 208, 207, 0.6);
@@ -13719,7 +13824,7 @@ button.close {
         align-items: center;
     }
 
-    #wrapper-manage-adoption, #wrapper-note {
+    #wrapper-note {
         width: 100%;
         height: 100%;
         overflow: hidden;
@@ -14395,14 +14500,6 @@ button.close {
         align-items: center;
     }
 
-    .blank-marker-control-item {
-        display: block;
-        width: 30px;
-        height: 30px;
-        margin: 2px;
-        padding: 2px;
-    }
-
     .marker-control-item {
         width: 30px;
         height: 30px;
@@ -14424,6 +14521,8 @@ button.close {
         background-color: rgba(0, 0, 0, 0.05);
     }
 
+    
+
     .leaflet-label {
         color: rgba(0, 0, 0, 0.5);
         background-color: rgba(255, 255, 255, 0.5);
@@ -14437,6 +14536,12 @@ button.close {
 }
 
 @media all {
+    table {
+        -moz-user-select: all;
+        -ms-user-select: all;
+        -webkit-user-select: all;
+        user-select: all;
+    }
     input, .form-control {
         -webkit-box-shadow: none;
         box-shadow: none;
@@ -15032,6 +15137,118 @@ button.close {
     #wrapper-tree-adopt .text-label {
         padding: 2px 8px;
     }
+
+    /*
+        CSS for Manage Adoptions
+    */
+    #wrapper-manage-adoption {
+        width: 100%;
+        height: 100%;
+    }
+    #wrapper-manage-adoption #content-header {
+        display: -webkit-flex;
+        display: flex;
+        margin: 0 0 8px 0;
+        color: #5e4e51;
+        font-size: xx-large;
+    }
+    #wrapper-manage-adoption hr {
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        margin: 2px 0;
+    }
+    #wrapper-manage-adoption #content-header .text-header {
+        -webkit-flex-grow: 1;
+        flex-grow: 1;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        -webkit-user-select: none;
+        user-select: none;
+        font-weight: 700;
+    }
+    #wrapper-manage-adoption .info-group, #wrapper-login label {
+        -moz-user-select: none;
+        -ms-user-select: none;
+        -webkit-user-select: none;
+        user-select: none;
+        color: #5e4e51;
+        margin: 4px 0;
+        text-align: left;
+        font-size: medium;
+        font-weight: 700;
+    }
+
+    #wrapper-manage-adoption .info-button-group {
+        margin: 4px 0;
+    }
+
+    #wrapper-manage-adoption .text-label {
+        padding: 2px 8px;
+    }
+
+    #wrapper-manage-adoption .frame-flex-group {
+        display: -webkit-flex;
+        display: flex;
+        overflow-x: auto;
+        height: 88%;
+    }
+    #content-manage-adoption {
+        padding-left: 8px;
+        -webkit-flex-grow: 1;
+        flex-grow: 1;
+        overflow-y: auto;
+    }
+    .adoption-filter {
+        max-width: 25%;
+        overflow-y: auto;
+    }
+    #content-adoptionfilter {
+        overflow-y: auto;
+        padding: 4px;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        -webkit-user-select: none;
+        user-select: none;
+    }
+    #content-adoptionfilter .text-label {
+        font-size: medium;
+        color: #5e4e51;
+        text-align: left;
+        padding: 2px 4px;
+        font-weight: 700;
+    }
+    #content-adoptionfilter .info-button-group {
+        display: -webkit-flex;
+        display: flex;
+        -ms-flex-wrap: wrap;
+        -webkit-flex-wrap: wrap;
+        flex-wrap: wrap;
+    }
+    #content-adoptionfilter .info-button-group div {
+        -webkit-flex-grow: 1;
+        flex-grow: 1;
+    }
+    #wrapper-manage-adoption .adoption-filter .text-header {
+        -moz-user-select: none;
+        -ms-user-select: none;
+        -webkit-user-select: none;
+        user-select: none;
+        font-weight: 700;
+        font-size: x-large;
+        color: #5e4e51;
+        padding: 2px 0 4px 0;
+    }
+    #wrapper-manage-adoption .adoption-filter .icon-header {
+        position: relative;
+        top: -6px;
+        left: 4px;
+        font-size: medium;
+        cursor: pointer;
+    }
+
+    #content-manage-adoption .list-adoption {
+        margin-top: 16px;
+    }
+    
 }
 @media all {
     .wrapper-change-password-content {
@@ -15176,6 +15393,7 @@ button.close {
         font-size: small;
         text-align: left;
         padding: 4px 24px;
+        min-height: 26px;
     }
     #wrapper-treeinfo #content-header {
         display: -webkit-flex;
@@ -15199,7 +15417,7 @@ button.close {
         display: flex;
         font-size: x-large;
         font-weight: 700;
-        padding: 4px 0 2px 0;
+        padding: 4px 0 2px 20px;
         margin: 0;
         -webkit-justify-content: center;
         justify-content: center;
@@ -15382,15 +15600,34 @@ button.close {
         pointer-events: all;
         border-color: rgba(255, 255, 255, 1);
         border-right: 2px solid rgba(255, 255, 255, 1);
-        border-bottom: 2px solid rgba(255, 255, 255, 1);
         cursor: pointer;
     }
     #wrapper-mapfilter .btn-location .icon-location {
-        padding-top: 2px;
+        padding-top: 4px;
         font-size: x-large;
         color: rgba(255, 255, 255, 1);
     }
     #wrapper-mapfilter .btn-location .icon-location:hover {
+        color: #84a756;
+        text-shadow: -1px -1px 1px rgba(0, 0, 0, 0.25);
+    }
+    #wrapper-mapfilter .btn-tree-table {
+        width: 48px;
+        height: 48px;
+        padding-top: 2px;
+        background-color: rgba(94, 78, 81, 0.95);
+        pointer-events: all;
+        border-color: rgba(255, 255, 255, 1);
+        border-right: 2px solid rgba(255, 255, 255, 1);
+        border-bottom: 2px solid rgba(255, 255, 255, 1);
+        cursor: pointer;
+    }
+    #wrapper-mapfilter .btn-tree-table .icon-tree-table {
+        padding-top: 8px;
+        font-size: large;
+        color: rgba(255, 255, 255, 1);
+    }
+    #wrapper-mapfilter .btn-tree-table .icon-tree-table:hover {
         color: #84a756;
         text-shadow: -1px -1px 1px rgba(0, 0, 0, 0.25);
     }
@@ -15517,6 +15754,118 @@ button.close {
 @media only screen and (min-width: 1281px) and (max-width: 1920px) and (orientation: landscape) {
     #wrapper-treeinfo {
         max-width: 480px;
+    }
+}
+@media all {
+    
+    /*
+        CSS for Manage Adoptions
+    */
+    #wrapper-tree-list {
+        width: 100%;
+        height: 100%;
+    }
+    #wrapper-tree-list #content-header {
+        display: -webkit-flex;
+        display: flex;
+        margin: 0 0 8px 0;
+        color: #5e4e51;
+        font-size: xx-large;
+    }
+    #wrapper-tree-list hr {
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        margin: 2px 0;
+    }
+    #wrapper-tree-list #content-header .text-header {
+        -webkit-flex-grow: 1;
+        flex-grow: 1;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        -webkit-user-select: none;
+        user-select: none;
+        font-weight: 700;
+    }
+    #wrapper-tree-list .info-group, #wrapper-login label {
+        -moz-user-select: none;
+        -ms-user-select: none;
+        -webkit-user-select: none;
+        user-select: none;
+        color: #5e4e51;
+        margin: 4px 0;
+        text-align: left;
+        font-size: medium;
+        font-weight: 700;
+    }
+
+    #wrapper-tree-list .info-button-group {
+        margin: 4px 0;
+    }
+
+    #wrapper-tree-list .text-label {
+        padding: 2px 8px;
+    }
+
+    #wrapper-tree-list .frame-flex-group {
+        display: -webkit-flex;
+        display: flex;
+        overflow-x: auto;
+        height: 88%;
+    }
+    #content-tree-list {
+        padding-left: 8px;
+        -webkit-flex-grow: 1;
+        flex-grow: 1;
+        overflow-y: auto;
+    }
+    #content-tree-list .list-tree {
+        margin-top: 16px;
+    }
+    #wrapper-tree-list #content-filter-list {
+        overflow-y: auto;
+        padding: 4px;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        -webkit-user-select: none;
+        user-select: none;
+    }
+    #wrapper-tree-list #content-filter-list .text-label {
+        font-size: medium;
+        color: #5e4e51;
+        text-align: left;
+        padding: 2px 4px;
+        font-weight: 700;
+    }
+    #wrapper-tree-list #content-filter-list .info-button-group {
+        display: -webkit-flex;
+        display: flex;
+        -ms-flex-wrap: wrap;
+        -webkit-flex-wrap: wrap;
+        flex-wrap: wrap;
+    }
+    #wrapper-tree-list #content-filter-list .info-button-group div {
+        -webkit-flex-grow: 1;
+        flex-grow: 1;
+    }
+    #wrapper-tree-list .tree-filter {
+        max-width: 25%;
+        overflow-y: auto;
+    }
+    #wrapper-tree-list .tree-filter .text-header {
+        -moz-user-select: none;
+        -ms-user-select: none;
+        -webkit-user-select: none;
+        user-select: none;
+        font-weight: 700;
+        font-size: x-large;
+        color: #5e4e51;
+        padding: 2px 0 4px 0;
+    }
+    #wrapper-tree-list .tree-filter .icon-header {
+        position: relative;
+        top: -6px;
+        left: 4px;
+        font-size: medium;
+        cursor: pointer;
     }
 }
 @media print {

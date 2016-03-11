@@ -11,11 +11,10 @@
         ADD_DONATION_TREE, REMOVE_DONATION_TREE, UPDATE_DONATION_AMOUNT,
     }
     export enum VIEW_STATUS {
-        NONE, HOME, TREES, PARENT_TREES, GEO_ERROR, NETWORK_ERROR, CONFIRM, MANAGE_PEOPLE, MANAGE_ADOPTION, DETAIL_TREE, IMAGENOTE_TREE, POST_NOTE, MANAGE_DONATIONS, ADD_DONATION, DETAIL_DONATION, EDIT_DONATION, LOGIN, SERVER_RESPONSE_ERROR, SIGNUP, ADOPT_TREE, UNADOPT_TREE,
+        NONE, HOME, 
+        TREES, TREES_TABLE,
+        PARENT_TREES, GEO_ERROR, NETWORK_ERROR, CONFIRM, MANAGE_PEOPLE, MANAGE_ADOPTION, DETAIL_TREE, IMAGENOTE_TREE, POST_NOTE, MANAGE_DONATIONS, ADD_DONATION, DETAIL_DONATION, EDIT_DONATION, LOGIN, SERVER_RESPONSE_ERROR, SIGNUP, ADOPT_TREE, UNADOPT_TREE,
         CHANGE_PASSWORD
-    }
-    export enum VIEW_MODE {
-        NONE, MAP, GRAPHIC, TABLE
     }
     export enum CREDENTIAL_MODE {
         NONE, GUEST, PARENT, ADMIN
@@ -77,20 +76,16 @@
                     Controller.checkIsLoggedIn(function () {
                         Controller.checkIsAdmin(function () {
                             if (self.bDebug) console.log(EventHandler.TAG + "Logged in as admin");
-                            if (option.viewMode == VIEW_MODE.TABLE) {
-                                new NavigateCommand({ hash: 'trees', viewMode: VIEW_MODE.MAP, id: 0 }).execute();
-                            } else {
-                                new RenderTreesViewCommand({ el: Setting.getMainWrapperElement(), viewMode: option.viewMode, id: option.id, credential: CREDENTIAL_MODE.ADMIN }).execute();
-                            }
+                            new RenderTreesViewCommand({ el: Setting.getMainWrapperElement(), id: option.id, credential: CREDENTIAL_MODE.ADMIN }).execute();
                         }, function () {
                             if (self.bDebug) console.log(EventHandler.TAG + "Logged in as parent");
-                            new RenderTreesViewCommand({ el: Setting.getMainWrapperElement(), viewMode: option.viewMode, id: option.id, credential: CREDENTIAL_MODE.PARENT }).execute();
+                            new RenderTreesViewCommand({ el: Setting.getMainWrapperElement(), id: option.id, credential: CREDENTIAL_MODE.PARENT }).execute();
                         }, function () {
                             if (self.bDebug) console.log(EventHandler.TAG + "Error occured");
                         });
                     }, function () {
                         if (self.bDebug) console.log(EventHandler.TAG + "Not logged in");
-                        new RenderTreesViewCommand({ el: Setting.getMainWrapperElement(), viewMode: option.viewMode, id: option.id, credential: CREDENTIAL_MODE.GUEST }).execute();
+                        new RenderTreesViewCommand({ el: Setting.getMainWrapperElement(), id: option.id, credential: CREDENTIAL_MODE.GUEST }).execute();
                     }, function () {
                         if (self.bDebug) console.log(EventHandler.TAG + "Error occured");
                     });
@@ -172,20 +167,20 @@
             // Handle navigation view mouse click event
             if (view instanceof NavView) {
                 if (el.hasClass('evt-title')) {
-                    new NavigateCommand({ hash: 'trees', viewMode: VIEW_MODE.MAP, id: 0 }).execute();
+                    new NavigateCommand({ hash: 'trees', id: 0 }).execute();
                     Backbone.history.loadUrl(Backbone.history.fragment);
                 } else if (el.hasClass('evt-trees')) {
                     if (View.getViewStatus() != VIEW_STATUS.TREES) {
-                        new NavigateCommand({ hash: 'trees', viewMode: VIEW_MODE.MAP, id: 0 }).execute();
+                        new NavigateCommand({ hash: 'trees', id: 0 }).execute();
                         new RemovePopupViewCommand({ delay: Setting.getRemovePopupDuration() }).execute();
                         new RefreshCurrentViewCommand().execute();
                     }
                 } else if (el.hasClass('people')) {
                     Controller.checkAdmin(function (response) {
                         if (response.result == true || response.result == 'true') {   // Admin
-                            new NavigateCommand({ hash: 'mpeople', viewMode: VIEW_MODE.TABLE, id: 0 }).execute();
+                            new NavigateCommand({ hash: 'mpeople', id: 0 }).execute();
                         } else if (response.result == false || response.result == 'false') {   // Not admin
-                            new NavigateCommand({ hash: 'mtrees', viewMode: VIEW_MODE.MAP, id: 0 }).execute();
+                            new NavigateCommand({ hash: 'mtrees', id: 0 }).execute();
                         }
                     }, function () {
                         EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
@@ -194,9 +189,9 @@
                 } else if (el.hasClass('donations')) {
                     Controller.checkAdmin(function (response) {
                         if (response.result == true || response.result == 'true') {   // Admin
-                            new NavigateCommand({ hash: 'mdonations', viewMode: VIEW_MODE.TABLE, id: 0 }).execute();
+                            new NavigateCommand({ hash: 'mdonations', id: 0 }).execute();
                         } else if (response.result == false || response.result == 'false') {   // Not admin
-                            new NavigateCommand({ hash: 'mtrees', viewMode: VIEW_MODE.MAP, id: 0 }).execute();
+                            new NavigateCommand({ hash: 'mtrees', id: 0 }).execute();
                         }
                     }, function () {
                         EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
@@ -233,7 +228,7 @@
                     break;
                 case VIEW_STATUS.HOME:
                     if (el.hasClass('button-logo')) {
-                        new NavigateCommand({ hash: 'trees', viewMode: VIEW_MODE.MAP, id: 0 }).execute();
+                        new NavigateCommand({ hash: 'trees', id: 0 }).execute();
                     }
                     break;
                 case VIEW_STATUS.GEO_ERROR:
@@ -248,35 +243,25 @@
                     }
                     break;
                 case VIEW_STATUS.TREES:
-                    if (el.hasClass('marker-control-lock')) {
-                        if (!options.marker.options.draggable) {
-                            options.marker.options.draggable = true;
-                            options.marker.dragging.enable();
-                            el.html('<i class="fa fa-unlock-alt fa-2x"></i>');
-                            options.marker._popup.setContent('<div class="marker-control-wrapper">' + $('.marker-control-wrapper').html() + '</div>');
-                        } else {
-                            options.marker.options.draggable = false;
-                            options.marker.dragging.disable();
-                            el.html('<i class="fa fa-lock fa-2x"></i>');
-                            options.marker._popup.setContent('<div class="marker-control-wrapper">' + $('.marker-control-wrapper').html() + '</div>');
-                        }
-                    } else if (el.hasClass('marker-control-adoption') || el.hasClass('button-manage-adoption')) {
+                    if (el.hasClass('marker-control-adoption') || el.hasClass('button-manage-adoption')) {
                         new RenderManageAdoptionViewCommand({ el: Setting.getPopWrapperElement(), tree: options.tree }).execute();
                     } else if (el.hasClass('marker-control-info') || el.hasClass('button-tree-detail')) {
-                        new NavigateCommand({ hash: 'mtree', viewMode: VIEW_MODE.GRAPHIC, id: options.tree }).execute();
+                        new NavigateCommand({ hash: 'mtree', id: options.tree }).execute();
                     } else if (el.hasClass('marker-control-delete')) {
                         var tree: Tree = Model.getTrees().findWhere({ id: options.marker.options.id });
                         (<ManageTreesMapView>view).deleteTree(tree);
                     } else if (el.hasClass('switch-table')) {   // Switch to table view.
-                        new NavigateCommand({ hash: 'mtrees', viewMode: VIEW_MODE.TABLE, id: 0 }).execute();
+                        new NavigateCommand({ hash: 'mtrees', id: 0 }).execute();
                     } else if (el.hasClass('switch-map')) {   // Switch to table view.
-                        new NavigateCommand({ hash: 'mtrees', viewMode: VIEW_MODE.MAP, id: 0 }).execute();
+                        new NavigateCommand({ hash: 'mtrees', id: 0 }).execute();
                     } else if (el.hasClass('mapview-item')) {   // Switch to map item view.
-                        new NavigateCommand({ hash: 'mtrees', viewMode: VIEW_MODE.MAP, id: options.id }).execute();
-                    } else if (el.hasClass('manage-adoption-item')) {
+                        new NavigateCommand({ hash: 'mtrees', id: options.id }).execute();
+                    } else if (el.hasClass('evt-manage-adopt')) {
                         new RenderManageAdoptionViewCommand({ el: Setting.getPopWrapperElement(), tree: options.tree }).execute();
+                    } else if (el.hasClass('evt-tree-table')) {
+                        new RenderTreesTableViewCommand({ el: Setting.getPopWrapperElement() }).execute();
                     } else if (el.hasClass('tree-detail')) {
-                        new NavigateCommand({ hash: 'mtree', viewMode: VIEW_MODE.GRAPHIC, id: options.tree }).execute();
+                        new NavigateCommand({ hash: 'mtree', id: options.tree }).execute();
                     } else if (el.hasClass('evt-adopt')) {
                         Controller.checkIsLoggedIn(function (response) {
                             new RenderAdoptTreeViewCommand({ el: Setting.getPopWrapperElement(), tree: options.tree }).execute();
@@ -300,9 +285,16 @@
                         new RenderPostNoteViewCommand({ el: Setting.getPopWrapperElement(), tree: tree }).execute();
                     }
                     break;
+                case VIEW_STATUS.TREES_TABLE:
+                    if (el.hasClass('evt-close')) {
+                        new RemovePopupViewCommand({ delay: Setting.getRemovePopupDuration() }).execute();
+                        new RefreshCurrentViewCommand().execute();
+                    }
+                    break;
                 case VIEW_STATUS.MANAGE_ADOPTION:
-                    if (el.hasClass('button-close')) {
-                        new RemoveAlertViewCommand({ delay: Setting.getRemovePopupDuration() }).execute();
+                    if (el.hasClass('evt-close')) {
+                        new RemovePopupViewCommand({ delay: Setting.getRemovePopupDuration() }).execute();
+                        new RefreshCurrentViewCommand().execute();
                     }
                     break;
                 case VIEW_STATUS.DETAIL_TREE:
@@ -360,7 +352,7 @@
                             new RenderAddDonationViewCommand({ el: Setting.getPopWrapperElement(), place: options.place }).execute();
                         }
                     } else if (el.hasClass('location-detail')) {
-                        new NavigateCommand({ hash: 'mdonation', viewMode: VIEW_MODE.GRAPHIC, id: options.place.getId() }).execute();
+                        new NavigateCommand({ hash: 'mdonation', id: options.place.getId() }).execute();
                         //new NavigateCommand({ hash: 'mtree', viewMode: VIEW_MODE.GRAPHIC, id: options.tree }).execute();
                     }
                     break;
@@ -383,7 +375,6 @@
                         if (options.place) {
                             new RenderAddDonationViewCommand({ el: Setting.getPopWrapperElement(), place: options.place }).execute();
                         }
-                        //new NavigateCommand({ hash: 'mtree', viewMode: VIEW_MODE.GRAPHIC, id: options.tree }).execute();
                     }
                     break;
                 case VIEW_STATUS.EDIT_DONATION:
@@ -439,6 +430,7 @@
                                     EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
                                 }, function () {
                                     EventHandler.handleDataChange("<strong><i>" + person.getName() + "</i></strong> has unadopted <strong><i>" + food.getName() + " " + options.tree.getName() + "</i></strong> successfully.", false);
+                                    new RefreshCurrentViewCommand().execute();
                                 });
                             }, function (response) {
                                 new RenderMessageViewCommand({ el: Setting.getMessageWrapperElement(), message: Setting.getErrorMessage(response.code), undoable: false }).execute();

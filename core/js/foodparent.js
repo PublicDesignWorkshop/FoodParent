@@ -42618,12 +42618,11 @@ var FoodParent;
             // Setup Router parameters
             this.routes = {
                 "": "home",
-                "trees/:viewMode/:id": "trees",
-                "mtree/:viewMode/:id": "manageTree",
-                "mpeople/:viewMode/:id": "managePeople",
-                "mdonations/:viewMode/:id": "manageDonations",
-                "mdonation/:viewMode/:id": "manageDonation",
-                "ptrees": "parentTrees",
+                "trees/:id": "trees",
+                "mtree/:id": "manageTree",
+                "mpeople/:id": "managePeople",
+                "mdonations/:id": "manageDonations",
+                "mdonation/:id": "manageDonation",
             };
             _super.call(this, options);
         }
@@ -42633,20 +42632,20 @@ var FoodParent;
         Router.prototype.home = function () {
             FoodParent.EventHandler.handleNavigate(FoodParent.VIEW_STATUS.HOME);
         };
-        Router.prototype.trees = function (viewMode, id) {
-            FoodParent.EventHandler.handleNavigate(FoodParent.VIEW_STATUS.TREES, { viewMode: viewMode, id: id });
+        Router.prototype.trees = function (id) {
+            FoodParent.EventHandler.handleNavigate(FoodParent.VIEW_STATUS.TREES, { id: id });
         };
-        Router.prototype.manageTree = function (viewMode, id) {
-            FoodParent.EventHandler.handleNavigate(FoodParent.VIEW_STATUS.DETAIL_TREE, { viewMode: viewMode, id: id });
+        Router.prototype.manageTree = function (id) {
+            FoodParent.EventHandler.handleNavigate(FoodParent.VIEW_STATUS.DETAIL_TREE, { id: id });
         };
-        Router.prototype.managePeople = function (viewMode, id) {
-            FoodParent.EventHandler.handleNavigate(FoodParent.VIEW_STATUS.MANAGE_PEOPLE, { viewMode: viewMode, id: id });
+        Router.prototype.managePeople = function (id) {
+            FoodParent.EventHandler.handleNavigate(FoodParent.VIEW_STATUS.MANAGE_PEOPLE, { id: id });
         };
-        Router.prototype.manageDonations = function (viewMode, id) {
-            FoodParent.EventHandler.handleNavigate(FoodParent.VIEW_STATUS.MANAGE_DONATIONS, { viewMode: viewMode, id: id });
+        Router.prototype.manageDonations = function (id) {
+            FoodParent.EventHandler.handleNavigate(FoodParent.VIEW_STATUS.MANAGE_DONATIONS, { id: id });
         };
-        Router.prototype.manageDonation = function (viewMode, id) {
-            FoodParent.EventHandler.handleNavigate(FoodParent.VIEW_STATUS.DETAIL_DONATION, { viewMode: viewMode, id: id });
+        Router.prototype.manageDonation = function (id) {
+            FoodParent.EventHandler.handleNavigate(FoodParent.VIEW_STATUS.DETAIL_DONATION, { id: id });
         };
         Router._instance = new Router();
         Router.TAG = "Router - ";
@@ -42690,34 +42689,28 @@ var FoodParent;
         VIEW_STATUS[VIEW_STATUS["NONE"] = 0] = "NONE";
         VIEW_STATUS[VIEW_STATUS["HOME"] = 1] = "HOME";
         VIEW_STATUS[VIEW_STATUS["TREES"] = 2] = "TREES";
-        VIEW_STATUS[VIEW_STATUS["PARENT_TREES"] = 3] = "PARENT_TREES";
-        VIEW_STATUS[VIEW_STATUS["GEO_ERROR"] = 4] = "GEO_ERROR";
-        VIEW_STATUS[VIEW_STATUS["NETWORK_ERROR"] = 5] = "NETWORK_ERROR";
-        VIEW_STATUS[VIEW_STATUS["CONFIRM"] = 6] = "CONFIRM";
-        VIEW_STATUS[VIEW_STATUS["MANAGE_PEOPLE"] = 7] = "MANAGE_PEOPLE";
-        VIEW_STATUS[VIEW_STATUS["MANAGE_ADOPTION"] = 8] = "MANAGE_ADOPTION";
-        VIEW_STATUS[VIEW_STATUS["DETAIL_TREE"] = 9] = "DETAIL_TREE";
-        VIEW_STATUS[VIEW_STATUS["IMAGENOTE_TREE"] = 10] = "IMAGENOTE_TREE";
-        VIEW_STATUS[VIEW_STATUS["POST_NOTE"] = 11] = "POST_NOTE";
-        VIEW_STATUS[VIEW_STATUS["MANAGE_DONATIONS"] = 12] = "MANAGE_DONATIONS";
-        VIEW_STATUS[VIEW_STATUS["ADD_DONATION"] = 13] = "ADD_DONATION";
-        VIEW_STATUS[VIEW_STATUS["DETAIL_DONATION"] = 14] = "DETAIL_DONATION";
-        VIEW_STATUS[VIEW_STATUS["EDIT_DONATION"] = 15] = "EDIT_DONATION";
-        VIEW_STATUS[VIEW_STATUS["LOGIN"] = 16] = "LOGIN";
-        VIEW_STATUS[VIEW_STATUS["SERVER_RESPONSE_ERROR"] = 17] = "SERVER_RESPONSE_ERROR";
-        VIEW_STATUS[VIEW_STATUS["SIGNUP"] = 18] = "SIGNUP";
-        VIEW_STATUS[VIEW_STATUS["ADOPT_TREE"] = 19] = "ADOPT_TREE";
-        VIEW_STATUS[VIEW_STATUS["UNADOPT_TREE"] = 20] = "UNADOPT_TREE";
-        VIEW_STATUS[VIEW_STATUS["CHANGE_PASSWORD"] = 21] = "CHANGE_PASSWORD";
+        VIEW_STATUS[VIEW_STATUS["TREES_TABLE"] = 3] = "TREES_TABLE";
+        VIEW_STATUS[VIEW_STATUS["PARENT_TREES"] = 4] = "PARENT_TREES";
+        VIEW_STATUS[VIEW_STATUS["GEO_ERROR"] = 5] = "GEO_ERROR";
+        VIEW_STATUS[VIEW_STATUS["NETWORK_ERROR"] = 6] = "NETWORK_ERROR";
+        VIEW_STATUS[VIEW_STATUS["CONFIRM"] = 7] = "CONFIRM";
+        VIEW_STATUS[VIEW_STATUS["MANAGE_PEOPLE"] = 8] = "MANAGE_PEOPLE";
+        VIEW_STATUS[VIEW_STATUS["MANAGE_ADOPTION"] = 9] = "MANAGE_ADOPTION";
+        VIEW_STATUS[VIEW_STATUS["DETAIL_TREE"] = 10] = "DETAIL_TREE";
+        VIEW_STATUS[VIEW_STATUS["IMAGENOTE_TREE"] = 11] = "IMAGENOTE_TREE";
+        VIEW_STATUS[VIEW_STATUS["POST_NOTE"] = 12] = "POST_NOTE";
+        VIEW_STATUS[VIEW_STATUS["MANAGE_DONATIONS"] = 13] = "MANAGE_DONATIONS";
+        VIEW_STATUS[VIEW_STATUS["ADD_DONATION"] = 14] = "ADD_DONATION";
+        VIEW_STATUS[VIEW_STATUS["DETAIL_DONATION"] = 15] = "DETAIL_DONATION";
+        VIEW_STATUS[VIEW_STATUS["EDIT_DONATION"] = 16] = "EDIT_DONATION";
+        VIEW_STATUS[VIEW_STATUS["LOGIN"] = 17] = "LOGIN";
+        VIEW_STATUS[VIEW_STATUS["SERVER_RESPONSE_ERROR"] = 18] = "SERVER_RESPONSE_ERROR";
+        VIEW_STATUS[VIEW_STATUS["SIGNUP"] = 19] = "SIGNUP";
+        VIEW_STATUS[VIEW_STATUS["ADOPT_TREE"] = 20] = "ADOPT_TREE";
+        VIEW_STATUS[VIEW_STATUS["UNADOPT_TREE"] = 21] = "UNADOPT_TREE";
+        VIEW_STATUS[VIEW_STATUS["CHANGE_PASSWORD"] = 22] = "CHANGE_PASSWORD";
     })(FoodParent.VIEW_STATUS || (FoodParent.VIEW_STATUS = {}));
     var VIEW_STATUS = FoodParent.VIEW_STATUS;
-    (function (VIEW_MODE) {
-        VIEW_MODE[VIEW_MODE["NONE"] = 0] = "NONE";
-        VIEW_MODE[VIEW_MODE["MAP"] = 1] = "MAP";
-        VIEW_MODE[VIEW_MODE["GRAPHIC"] = 2] = "GRAPHIC";
-        VIEW_MODE[VIEW_MODE["TABLE"] = 3] = "TABLE";
-    })(FoodParent.VIEW_MODE || (FoodParent.VIEW_MODE = {}));
-    var VIEW_MODE = FoodParent.VIEW_MODE;
     (function (CREDENTIAL_MODE) {
         CREDENTIAL_MODE[CREDENTIAL_MODE["NONE"] = 0] = "NONE";
         CREDENTIAL_MODE[CREDENTIAL_MODE["GUEST"] = 1] = "GUEST";
@@ -42781,16 +42774,11 @@ var FoodParent;
                         FoodParent.Controller.checkIsAdmin(function () {
                             if (self.bDebug)
                                 console.log(EventHandler.TAG + "Logged in as admin");
-                            if (option.viewMode == VIEW_MODE.TABLE) {
-                                new FoodParent.NavigateCommand({ hash: 'trees', viewMode: VIEW_MODE.MAP, id: 0 }).execute();
-                            }
-                            else {
-                                new FoodParent.RenderTreesViewCommand({ el: FoodParent.Setting.getMainWrapperElement(), viewMode: option.viewMode, id: option.id, credential: CREDENTIAL_MODE.ADMIN }).execute();
-                            }
+                            new FoodParent.RenderTreesViewCommand({ el: FoodParent.Setting.getMainWrapperElement(), id: option.id, credential: CREDENTIAL_MODE.ADMIN }).execute();
                         }, function () {
                             if (self.bDebug)
                                 console.log(EventHandler.TAG + "Logged in as parent");
-                            new FoodParent.RenderTreesViewCommand({ el: FoodParent.Setting.getMainWrapperElement(), viewMode: option.viewMode, id: option.id, credential: CREDENTIAL_MODE.PARENT }).execute();
+                            new FoodParent.RenderTreesViewCommand({ el: FoodParent.Setting.getMainWrapperElement(), id: option.id, credential: CREDENTIAL_MODE.PARENT }).execute();
                         }, function () {
                             if (self.bDebug)
                                 console.log(EventHandler.TAG + "Error occured");
@@ -42798,7 +42786,7 @@ var FoodParent;
                     }, function () {
                         if (self.bDebug)
                             console.log(EventHandler.TAG + "Not logged in");
-                        new FoodParent.RenderTreesViewCommand({ el: FoodParent.Setting.getMainWrapperElement(), viewMode: option.viewMode, id: option.id, credential: CREDENTIAL_MODE.GUEST }).execute();
+                        new FoodParent.RenderTreesViewCommand({ el: FoodParent.Setting.getMainWrapperElement(), id: option.id, credential: CREDENTIAL_MODE.GUEST }).execute();
                     }, function () {
                         if (self.bDebug)
                             console.log(EventHandler.TAG + "Error occured");
@@ -42879,12 +42867,12 @@ var FoodParent;
             // Handle navigation view mouse click event
             if (view instanceof FoodParent.NavView) {
                 if (el.hasClass('evt-title')) {
-                    new FoodParent.NavigateCommand({ hash: 'trees', viewMode: VIEW_MODE.MAP, id: 0 }).execute();
+                    new FoodParent.NavigateCommand({ hash: 'trees', id: 0 }).execute();
                     Backbone.history.loadUrl(Backbone.history.fragment);
                 }
                 else if (el.hasClass('evt-trees')) {
                     if (FoodParent.View.getViewStatus() != VIEW_STATUS.TREES) {
-                        new FoodParent.NavigateCommand({ hash: 'trees', viewMode: VIEW_MODE.MAP, id: 0 }).execute();
+                        new FoodParent.NavigateCommand({ hash: 'trees', id: 0 }).execute();
                         new FoodParent.RemovePopupViewCommand({ delay: FoodParent.Setting.getRemovePopupDuration() }).execute();
                         new FoodParent.RefreshCurrentViewCommand().execute();
                     }
@@ -42892,10 +42880,10 @@ var FoodParent;
                 else if (el.hasClass('people')) {
                     FoodParent.Controller.checkAdmin(function (response) {
                         if (response.result == true || response.result == 'true') {
-                            new FoodParent.NavigateCommand({ hash: 'mpeople', viewMode: VIEW_MODE.TABLE, id: 0 }).execute();
+                            new FoodParent.NavigateCommand({ hash: 'mpeople', id: 0 }).execute();
                         }
                         else if (response.result == false || response.result == 'false') {
-                            new FoodParent.NavigateCommand({ hash: 'mtrees', viewMode: VIEW_MODE.MAP, id: 0 }).execute();
+                            new FoodParent.NavigateCommand({ hash: 'mtrees', id: 0 }).execute();
                         }
                     }, function () {
                         EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
@@ -42904,10 +42892,10 @@ var FoodParent;
                 else if (el.hasClass('donations')) {
                     FoodParent.Controller.checkAdmin(function (response) {
                         if (response.result == true || response.result == 'true') {
-                            new FoodParent.NavigateCommand({ hash: 'mdonations', viewMode: VIEW_MODE.TABLE, id: 0 }).execute();
+                            new FoodParent.NavigateCommand({ hash: 'mdonations', id: 0 }).execute();
                         }
                         else if (response.result == false || response.result == 'false') {
-                            new FoodParent.NavigateCommand({ hash: 'mtrees', viewMode: VIEW_MODE.MAP, id: 0 }).execute();
+                            new FoodParent.NavigateCommand({ hash: 'mtrees', id: 0 }).execute();
                         }
                     }, function () {
                         EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
@@ -42944,7 +42932,7 @@ var FoodParent;
                     break;
                 case VIEW_STATUS.HOME:
                     if (el.hasClass('button-logo')) {
-                        new FoodParent.NavigateCommand({ hash: 'trees', viewMode: VIEW_MODE.MAP, id: 0 }).execute();
+                        new FoodParent.NavigateCommand({ hash: 'trees', id: 0 }).execute();
                     }
                     break;
                 case VIEW_STATUS.GEO_ERROR:
@@ -42959,44 +42947,33 @@ var FoodParent;
                     }
                     break;
                 case VIEW_STATUS.TREES:
-                    if (el.hasClass('marker-control-lock')) {
-                        if (!options.marker.options.draggable) {
-                            options.marker.options.draggable = true;
-                            options.marker.dragging.enable();
-                            el.html('<i class="fa fa-unlock-alt fa-2x"></i>');
-                            options.marker._popup.setContent('<div class="marker-control-wrapper">' + $('.marker-control-wrapper').html() + '</div>');
-                        }
-                        else {
-                            options.marker.options.draggable = false;
-                            options.marker.dragging.disable();
-                            el.html('<i class="fa fa-lock fa-2x"></i>');
-                            options.marker._popup.setContent('<div class="marker-control-wrapper">' + $('.marker-control-wrapper').html() + '</div>');
-                        }
-                    }
-                    else if (el.hasClass('marker-control-adoption') || el.hasClass('button-manage-adoption')) {
+                    if (el.hasClass('marker-control-adoption') || el.hasClass('button-manage-adoption')) {
                         new FoodParent.RenderManageAdoptionViewCommand({ el: FoodParent.Setting.getPopWrapperElement(), tree: options.tree }).execute();
                     }
                     else if (el.hasClass('marker-control-info') || el.hasClass('button-tree-detail')) {
-                        new FoodParent.NavigateCommand({ hash: 'mtree', viewMode: VIEW_MODE.GRAPHIC, id: options.tree }).execute();
+                        new FoodParent.NavigateCommand({ hash: 'mtree', id: options.tree }).execute();
                     }
                     else if (el.hasClass('marker-control-delete')) {
                         var tree = FoodParent.Model.getTrees().findWhere({ id: options.marker.options.id });
                         view.deleteTree(tree);
                     }
                     else if (el.hasClass('switch-table')) {
-                        new FoodParent.NavigateCommand({ hash: 'mtrees', viewMode: VIEW_MODE.TABLE, id: 0 }).execute();
+                        new FoodParent.NavigateCommand({ hash: 'mtrees', id: 0 }).execute();
                     }
                     else if (el.hasClass('switch-map')) {
-                        new FoodParent.NavigateCommand({ hash: 'mtrees', viewMode: VIEW_MODE.MAP, id: 0 }).execute();
+                        new FoodParent.NavigateCommand({ hash: 'mtrees', id: 0 }).execute();
                     }
                     else if (el.hasClass('mapview-item')) {
-                        new FoodParent.NavigateCommand({ hash: 'mtrees', viewMode: VIEW_MODE.MAP, id: options.id }).execute();
+                        new FoodParent.NavigateCommand({ hash: 'mtrees', id: options.id }).execute();
                     }
-                    else if (el.hasClass('manage-adoption-item')) {
+                    else if (el.hasClass('evt-manage-adopt')) {
                         new FoodParent.RenderManageAdoptionViewCommand({ el: FoodParent.Setting.getPopWrapperElement(), tree: options.tree }).execute();
                     }
+                    else if (el.hasClass('evt-tree-table')) {
+                        new FoodParent.RenderTreesTableViewCommand({ el: FoodParent.Setting.getPopWrapperElement() }).execute();
+                    }
                     else if (el.hasClass('tree-detail')) {
-                        new FoodParent.NavigateCommand({ hash: 'mtree', viewMode: VIEW_MODE.GRAPHIC, id: options.tree }).execute();
+                        new FoodParent.NavigateCommand({ hash: 'mtree', id: options.tree }).execute();
                     }
                     else if (el.hasClass('evt-adopt')) {
                         FoodParent.Controller.checkIsLoggedIn(function (response) {
@@ -43024,9 +43001,16 @@ var FoodParent;
                         new FoodParent.RenderPostNoteViewCommand({ el: FoodParent.Setting.getPopWrapperElement(), tree: tree }).execute();
                     }
                     break;
+                case VIEW_STATUS.TREES_TABLE:
+                    if (el.hasClass('evt-close')) {
+                        new FoodParent.RemovePopupViewCommand({ delay: FoodParent.Setting.getRemovePopupDuration() }).execute();
+                        new FoodParent.RefreshCurrentViewCommand().execute();
+                    }
+                    break;
                 case VIEW_STATUS.MANAGE_ADOPTION:
-                    if (el.hasClass('button-close')) {
-                        new FoodParent.RemoveAlertViewCommand({ delay: FoodParent.Setting.getRemovePopupDuration() }).execute();
+                    if (el.hasClass('evt-close')) {
+                        new FoodParent.RemovePopupViewCommand({ delay: FoodParent.Setting.getRemovePopupDuration() }).execute();
+                        new FoodParent.RefreshCurrentViewCommand().execute();
                     }
                     break;
                 case VIEW_STATUS.DETAIL_TREE:
@@ -43092,7 +43076,7 @@ var FoodParent;
                         }
                     }
                     else if (el.hasClass('location-detail')) {
-                        new FoodParent.NavigateCommand({ hash: 'mdonation', viewMode: VIEW_MODE.GRAPHIC, id: options.place.getId() }).execute();
+                        new FoodParent.NavigateCommand({ hash: 'mdonation', id: options.place.getId() }).execute();
                     }
                     break;
                 case VIEW_STATUS.ADD_DONATION:
@@ -43173,6 +43157,7 @@ var FoodParent;
                                     EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
                                 }, function () {
                                     EventHandler.handleDataChange("<strong><i>" + person.getName() + "</i></strong> has unadopted <strong><i>" + food.getName() + " " + options.tree.getName() + "</i></strong> successfully.", false);
+                                    new FoodParent.RefreshCurrentViewCommand().execute();
                                 });
                             }, function (response) {
                                 new FoodParent.RenderMessageViewCommand({ el: FoodParent.Setting.getMessageWrapperElement(), message: FoodParent.Setting.getErrorMessage(response.code), undoable: false }).execute();
@@ -43559,7 +43544,6 @@ var FoodParent;
         function RenderTreesViewCommand(args) {
             var self = this;
             self._el = args.el;
-            self._viewMode = args.viewMode;
             self._id = args.id;
             self._credential = args.credential;
         }
@@ -43569,7 +43553,7 @@ var FoodParent;
                 FoodParent.View.getTreesView().render();
             }
             else {
-                var view = FoodParent.TreesViewFractory.create(self._el, self._viewMode, self._id, self._credential).render();
+                var view = FoodParent.TreesViewFractory.create(self._el, self._id, self._credential).render();
                 FoodParent.View.addChild(view);
                 FoodParent.View.setTreesView(view);
             }
@@ -43583,7 +43567,6 @@ var FoodParent;
         function RenderManagePeopleViewCommand(args) {
             var self = this;
             self._el = args.el;
-            self._viewMode = args.viewMode;
             self._id = args.id;
         }
         RenderManagePeopleViewCommand.prototype.execute = function () {
@@ -43591,7 +43574,7 @@ var FoodParent;
             if (FoodParent.View.getManagePeopleView()) {
             }
             else {
-                var view = FoodParent.ManagePeopleViewFractory.create(self._el, self._viewMode, self._id).render();
+                var view = FoodParent.ManagePeopleViewFractory.create(self._el, self._id).render();
                 FoodParent.View.addChild(view);
                 FoodParent.View.setManagePeopleView(view);
             }
@@ -43605,7 +43588,6 @@ var FoodParent;
         function RenderDetailTreeViewCommand(args) {
             var self = this;
             self._el = args.el;
-            self._viewMode = args.viewMode;
             self._id = args.id;
         }
         RenderDetailTreeViewCommand.prototype.execute = function () {
@@ -43613,7 +43595,7 @@ var FoodParent;
             if (FoodParent.View.getDetailTreeView()) {
             }
             else {
-                var view = FoodParent.DetailTreeViewFractory.create(self._el, self._viewMode, self._id).render();
+                var view = FoodParent.DetailTreeViewFractory.create(self._el, self._id).render();
                 FoodParent.View.addChild(view);
                 FoodParent.View.setDetailTreeView(view);
             }
@@ -43650,14 +43632,34 @@ var FoodParent;
         RenderManageAdoptionViewCommand.prototype.execute = function () {
             var self = this;
             var view = FoodParent.AdoptionManageViewFactory.create(self._el, self._tree).render();
-            FoodParent.View.setPopupView(view);
+            if (FoodParent.View.getPopupView()) {
+                FoodParent.View.popViewStatus();
+            }
+            FoodParent.View.addPopupView(view);
             FoodParent.View.setViewStatus(FoodParent.VIEW_STATUS.MANAGE_ADOPTION);
         };
-        RenderManageAdoptionViewCommand.prototype.undo = function () {
-        };
+        RenderManageAdoptionViewCommand.prototype.undo = function () { };
         return RenderManageAdoptionViewCommand;
     })();
     FoodParent.RenderManageAdoptionViewCommand = RenderManageAdoptionViewCommand;
+    var RenderTreesTableViewCommand = (function () {
+        function RenderTreesTableViewCommand(args) {
+            var self = this;
+            self._el = args.el;
+        }
+        RenderTreesTableViewCommand.prototype.execute = function () {
+            var self = this;
+            var view = FoodParent.TreesTableViewFactory.create(self._el).render();
+            if (FoodParent.View.getPopupView()) {
+                FoodParent.View.popViewStatus();
+            }
+            FoodParent.View.setPopupView(view);
+            FoodParent.View.setViewStatus(FoodParent.VIEW_STATUS.TREES_TABLE);
+        };
+        RenderTreesTableViewCommand.prototype.undo = function () { };
+        return RenderTreesTableViewCommand;
+    })();
+    FoodParent.RenderTreesTableViewCommand = RenderTreesTableViewCommand;
     var RenderAdoptTreeViewCommand = (function () {
         function RenderAdoptTreeViewCommand(args) {
             var self = this;
@@ -43771,8 +43773,8 @@ var FoodParent;
                     FoodParent.View.getPopupView().setInvisible();
                     FoodParent.Setting.getPopWrapperElement().html("");
                 }, self._delay);
+                FoodParent.View.popViewStatus();
             }
-            FoodParent.View.popViewStatus();
         };
         RemoveAlertViewCommand.prototype.undo = function () {
         };
@@ -43795,9 +43797,10 @@ var FoodParent;
                 setTimeout(function () {
                     FoodParent.View.getPopupView().setInvisible();
                     FoodParent.Setting.getPopWrapperElement().html("");
+                    FoodParent.View.removePopupView();
                 }, self._delay);
+                FoodParent.View.popViewStatus();
             }
-            FoodParent.View.popViewStatus();
         };
         RemovePopupViewCommand.prototype.undo = function () { };
         return RemovePopupViewCommand;
@@ -43818,6 +43821,11 @@ var FoodParent;
             else if (FoodParent.View.getViewStatus() == FoodParent.VIEW_STATUS.DETAIL_TREE) {
                 if (FoodParent.View.getDetailTreeView()) {
                     FoodParent.View.getDetailTreeView().renderMenu();
+                }
+            }
+            else if (FoodParent.View.getViewStatus() == FoodParent.VIEW_STATUS.MANAGE_ADOPTION) {
+                if (FoodParent.View.getPopupView()) {
+                    FoodParent.View.getPopupView()._applyFilter();
                 }
             }
             new SetActiveNavItemCommand({ el: FoodParent.Setting.getNavWrapperElement(), viewStatus: FoodParent.View.getViewStatus() }).execute();
@@ -43849,16 +43857,10 @@ var FoodParent;
             if (args.id != undefined) {
                 self._id = args.id;
             }
-            if (args.viewMode != undefined) {
-                self._viewMode = args.viewMode;
-            }
         }
         NavigateCommand.prototype.execute = function () {
             var self = this;
-            if (self._viewMode != undefined && self._id != undefined) {
-                FoodParent.Router.getInstance().navigate(self._hash + "/" + self._viewMode + "/" + self._id, { trigger: true, replace: false });
-            }
-            else if (self._id != undefined) {
+            if (self._id != undefined) {
                 FoodParent.Router.getInstance().navigate(self._hash + "/" + self._id, { trigger: true, replace: false });
             }
             else {
@@ -43928,7 +43930,6 @@ var FoodParent;
         function RenderManageDonationsViewCommand(args) {
             var self = this;
             self._el = args.el;
-            self._viewMode = args.viewMode;
             self._id = args.id;
         }
         RenderManageDonationsViewCommand.prototype.execute = function () {
@@ -43936,7 +43937,7 @@ var FoodParent;
             if (FoodParent.View.getManageDonationsView()) {
             }
             else {
-                var view = FoodParent.ManageDonationsViewFractory.create(self._el, self._viewMode, self._id).render();
+                var view = FoodParent.ManageDonationsViewFractory.create(self._el, self._id).render();
                 FoodParent.View.addChild(view);
                 FoodParent.View.setManageDonationsView(view);
             }
@@ -43967,7 +43968,6 @@ var FoodParent;
         function RenderDetailDonationViewCommand(args) {
             var self = this;
             self._el = args.el;
-            self._viewMode = args.viewMode;
             self._id = args.id;
         }
         RenderDetailDonationViewCommand.prototype.execute = function () {
@@ -43975,7 +43975,7 @@ var FoodParent;
             if (FoodParent.View.getDetailDonationView()) {
             }
             else {
-                var view = FoodParent.DetailDonationViewFractory.create(self._el, self._viewMode, self._id).render();
+                var view = FoodParent.DetailDonationViewFractory.create(self._el, self._id).render();
                 FoodParent.View.addChild(view);
                 FoodParent.View.setDetailDonationView(view);
             }
@@ -44009,7 +44009,10 @@ var FoodParent;
         RenderAccountViewCommand.prototype.execute = function () {
             var self = this;
             var view = FoodParent.AccountViewFactory.create(self._el).render();
-            FoodParent.View.setPopupView(view);
+            if (FoodParent.View.getPopupView()) {
+                FoodParent.View.popViewStatus();
+            }
+            FoodParent.View.addPopupView(view);
             FoodParent.View.setViewStatus(FoodParent.VIEW_STATUS.LOGIN);
             new SetActiveNavItemCommand({ el: FoodParent.Setting.getNavWrapperElement(), viewStatus: FoodParent.VIEW_STATUS.LOGIN }).execute();
         };
@@ -44026,7 +44029,7 @@ var FoodParent;
         RenderLogInViewCommand.prototype.execute = function () {
             var self = this;
             var view = FoodParent.LogInViewFactory.create(self._el).render();
-            FoodParent.View.setPopupView(view);
+            FoodParent.View.addPopupView(view);
             FoodParent.View.setViewStatus(FoodParent.VIEW_STATUS.LOGIN);
             new SetActiveNavItemCommand({ el: FoodParent.Setting.getNavWrapperElement(), viewStatus: FoodParent.VIEW_STATUS.LOGIN }).execute();
         };
@@ -46396,6 +46399,23 @@ var DatePickerCellEditor = Backgrid.InputCellEditor.extend({
     },
 });
 
+var TreeDateCell = Backgrid.Cell.extend({
+    template: _.template('<div class="text-date btn-date"><%= date %></div>'),
+    events: {
+        "click .btn-date": "_updateDate",
+    },
+    _updateDate: function (e) {
+    },
+    render: function () {
+        var self = this;
+        var tree = this.model;
+        $(self.el).html(self.template({
+            date: tree.getUpdatedDate(),
+        }));
+        this.delegateEvents();
+        return this;
+    }
+});
 var TreeDescriptionCellEditor = Backgrid.Cell.extend({
     tagName: "input",
     attributes: {
@@ -46729,9 +46749,9 @@ var TreeAddressCellEditor = Backgrid.Cell.extend({
     }
 });
 var TreeMapViewCell = Backgrid.Cell.extend({
-    template: _.template('<div class="marker-control-item mapview-item" data-target="<%= treeid %>"><i class="fa fa-map-marker fa-2x"></i></div>'),
+    template: _.template('<div class="btn-table" data-target="<%= treeid %>"><i class="fa fa-map-marker"></i></div>'),
     events: {
-        "click .mapview-item": "_showMapView"
+        "click .btn-table": "_showMapView"
     },
     _showMapView: function (event) {
         var tree = parseInt($(event.target).attr('data-target'));
@@ -46748,9 +46768,9 @@ var TreeMapViewCell = Backgrid.Cell.extend({
     }
 });
 var ManageAdoptionViewCell = Backgrid.Cell.extend({
-    template: _.template('<div class="marker-control-item manage-adoption-item" data-target="<%= treeid %>"><i class="fa fa-user-plus fa-2x"></i></div>'),
+    template: _.template('<div class="btn-table" data-target="<%= treeid %>"><i class="fa fa-users"></i></div>'),
     events: {
-        "click .marker-control-item": "_manageAdoption"
+        "click .btn-table": "_manageAdoption"
     },
     _manageAdoption: function (event) {
         var tree = parseInt($(event.target).attr('data-target'));
@@ -46766,9 +46786,9 @@ var ManageAdoptionViewCell = Backgrid.Cell.extend({
     }
 });
 var TreeDetailCell = Backgrid.Cell.extend({
-    template: _.template('<div class="marker-control-item tree-detail" data-target="<%= treeid %>"><i class="fa fa-heartbeat fa-2x"></i></div>'),
+    template: _.template('<div class="btn-table" data-target="<%= treeid %>"><i class="fa fa-heartbeat"></i></div>'),
     events: {
-        "click .marker-control-item": "_showDetail"
+        "click .btn-table": "_showDetail"
     },
     _showDetail: function (event) {
         var tree = parseInt($(event.target).attr('data-target'));
@@ -46784,9 +46804,9 @@ var TreeDetailCell = Backgrid.Cell.extend({
     }
 });
 var TreeCreateCell = Backgrid.Cell.extend({
-    template: _.template('<div class="marker-control-item create-item"><i class="fa fa-save fa-2x"></i></div>'),
+    template: _.template('<div class="btn-table"><i class="fa fa-save"></i></div>'),
     events: {
-        "click": "_createRow"
+        "click .btn-table": "_createRow"
     },
     _createRow: function (e) {
         var tree = this.model;
@@ -46811,9 +46831,9 @@ var TreeCreateCell = Backgrid.Cell.extend({
     }
 });
 var TreeDeleteCell = Backgrid.Cell.extend({
-    template: _.template('<div class="marker-control-item"><i class="fa fa-remove fa-2x"></i></div>'),
+    template: _.template('<div class="btn-table"><i class="fa fa-trash-o"></i></div>'),
     events: {
-        "click": "_deleteRow"
+        "click .btn-table": "_deleteRow"
     },
     _deleteRow: function (e) {
         var tree = this.model;
@@ -46853,7 +46873,7 @@ var TreeDeleteCell = Backgrid.Cell.extend({
 });
 var TreeAdoptionCell = Backgrid.Cell.extend({
     events: {
-        "click .cell-link": "_linkTreeDetail",
+        "click .btn-tree": "_linkTreeDetail",
     },
     _linkTreeDetail: function (e) {
         //FoodParent.Router.getInstance().navigate("tree/" + this.model.getId(), { trigger: true });
@@ -47024,6 +47044,11 @@ var TreeColumn = [
         label: "Adoption",
         editable: false,
         cell: TreeAdoptionCell,
+    }, {
+        name: "updated",
+        label: "Last Updated",
+        editable: false,
+        cell: TreeDateCell,
     }, {
         label: "",
         sortable: false,
@@ -47743,6 +47768,23 @@ var NewPersonColumn = [
     }
 ];
 
+var AdoptionDateCell = Backgrid.Cell.extend({
+    template: _.template('<div class="text-date btn-date"><%= date %></div>'),
+    events: {
+        "click .btn-date": "_updateDate",
+    },
+    _updateDate: function (e) {
+    },
+    render: function () {
+        var self = this;
+        var person = this.model;
+        $(self.el).html(self.template({
+            date: person.getUpdatedDate(),
+        }));
+        this.delegateEvents();
+        return this;
+    }
+});
 var AdoptionAuthCell = Backgrid.Cell.extend({
     template: _.template('<div><%= auth %></div>'),
     render: function () {
@@ -47788,9 +47830,9 @@ var AdoptionNeighborhoodCell = Backgrid.Cell.extend({
     }
 });
 var AdoptionAddCell = Backgrid.Cell.extend({
-    template: _.template('<div class="marker-control-item marker-add-adoption"><i class="fa fa-plus-square fa-2x"></i></div>'),
+    template: _.template('<div class="btn-table"><i class="fa fa-plus-square"></i></div>'),
     events: {
-        "click .marker-control-item": "_addAdoption",
+        "click .btn-table": "_addAdoption",
     },
     _addAdoption: function (e) {
         var tree = FoodParent.Model.getTrees().findWhere({ id: parseInt($('.list-adoption').attr('data-target')) });
@@ -47813,7 +47855,7 @@ var AdoptionAddCell = Backgrid.Cell.extend({
         var person = this.model;
         var treeId = parseInt($('.list-adoption').attr('data-target'));
         if (FoodParent.Model.getAdopts().checkAdoption(treeId, person.getId())) {
-            $(self.el).html('<div class="blank-marker-control-item"></div>');
+            $(self.el).html('<div class="btn-table blank-marker-control-item"></div>');
         }
         else {
             $(self.el).html(self.template());
@@ -47823,9 +47865,9 @@ var AdoptionAddCell = Backgrid.Cell.extend({
     }
 });
 var AdoptionDeleteCell = Backgrid.Cell.extend({
-    template: _.template('<div class="marker-control-item marker-remove-adoption"><i class="fa fa-minus-square fa-2x"></i></div>'),
+    template: _.template('<div class="btn-table"><i class="fa fa-minus-square"></i></div>'),
     events: {
-        "click .marker-control-item": "_removeAdoption",
+        "click .btn-table": "_removeAdoption",
     },
     _removeAdoption: function (e) {
         var tree = FoodParent.Model.getTrees().findWhere({ id: parseInt($('.list-adoption').attr('data-target')) });
@@ -47833,9 +47875,7 @@ var AdoptionDeleteCell = Backgrid.Cell.extend({
         var person = this.model;
         FoodParent.EventHandler.handleAdoptionData(tree, person, FoodParent.DATA_MODE.DELETE, {}, function () {
             FoodParent.EventHandler.handleDataChange("<strong><i>" + person.getName() + "</i></strong> has unadopted <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> successfully.", false);
-            if (FoodParent.View.getPopupView()) {
-                FoodParent.View.getPopupView()._applyFilter();
-            }
+            new FoodParent.RefreshCurrentViewCommand().execute();
             //if (FoodParent.View.getManageTreesView()) {
             //    (<FoodParent.ManageTreesView>FoodParent.View.getManageTreesView()).renderTreeInfo(tree);
             //}
@@ -47843,12 +47883,7 @@ var AdoptionDeleteCell = Backgrid.Cell.extend({
             FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
         }, function () {
             FoodParent.EventHandler.handleDataChange("<strong><i>" + person.getName() + "</i></strong> has adopted <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> successfully.", false);
-            if (FoodParent.View.getPopupView()) {
-                FoodParent.View.getPopupView()._applyFilter();
-            }
-            //if (FoodParent.View.getManageTreesView()) {
-            //    (<FoodParent.ManageTreesView>FoodParent.View.getManageTreesView()).renderTreeInfo(tree);
-            //}
+            new FoodParent.RefreshCurrentViewCommand().execute();
         });
     },
     render: function () {
@@ -47859,8 +47894,26 @@ var AdoptionDeleteCell = Backgrid.Cell.extend({
             $(self.el).html(self.template());
         }
         else {
-            $(self.el).html('<div class="blank-marker-control-item"></div>');
+            $(self.el).html('<div class="btn-table-blank"></div>');
         }
+        this.delegateEvents();
+        return this;
+    }
+});
+var AdoptionListCell = Backgrid.Cell.extend({
+    events: {
+        "click .btn-tree": "_panToTree",
+    },
+    _panToTree: function (event) {
+        new FoodParent.RemovePopupViewCommand({ delay: FoodParent.Setting.getRemovePopupDuration() }).execute();
+        FoodParent.Router.getInstance().navigate("trees/" + $(event.currentTarget).attr('data-target'), { trigger: true, replace: true });
+    },
+    render: function () {
+        this.template = _.template(FoodParent.Template.getAdoptTreeCellTemplate());
+        var trees = new FoodParent.Trees(FoodParent.Model.getTrees().filterByIds(this.model.get('trees')));
+        $(this.el).html(this.template({
+            trees: trees,
+        }));
         this.delegateEvents();
         return this;
     }
@@ -47890,7 +47943,7 @@ var AdoptionColumn = [
         name: "trees",
         label: "Adoption",
         editable: false,
-        cell: PersonAdoptionCell,
+        cell: AdoptionListCell,
     }, {
         label: "",
         sortable: false,
@@ -48998,7 +49051,43 @@ var FoodParent;
             return template;
         };
         Template.getTreesMapViewTemplateForAdmin = function () {
-            return Template.getTreesMapViewTemplateForParent();
+            var template = '';
+            template += '<div id="content-map">';
+            template += '</div>'; // end of #content-map
+            template += '<div id="wrapper-mapfilter">';
+            template += '<div id="content-mapfilter">';
+            template += '</div>';
+            template += '<div id="wrapper-btn-mapfilter">';
+            template += '<div class="btn-mapfilter">';
+            template += '<div class="icon-mapfilter-status"><i class="fa fa-filter"></i></div>';
+            template += '<div class="text-mapfilter-status">off</div>';
+            template += '</div>';
+            template += '<div class="btn-location btn-action evt-location">';
+            template += '<div class="icon-location"><i class="fa fa-location-arrow"></i></div>';
+            template += '</div>';
+            template += '<div class="btn-tree-table btn-action evt-tree-table">';
+            template += '<div class="icon-tree-table"><i class="fa fa-th-list"></i></div>';
+            template += '</div>';
+            template += '<div class="deco-mapfilter">';
+            template += '</div>';
+            template += '</div>'; // end of #wrapper-treeinfo
+            template += '</div>'; // end of #wrapper-mapfilter
+            template += '<div id="wrapper-treeinfo" class="hidden">';
+            template += '</div>'; // end of #wrapper-treeinfo
+            template += '<div id="wrapper-mapmenu">';
+            template += '<div id="wrapper-food-search">';
+            template += '<div id="wrapper-list-food" class="hidden">';
+            template += '<div id="list-food" class=""></div>';
+            template += '</div>'; // end of #wrapper-list-food
+            template += '<div class="bottom-filters">';
+            template += '<input id="checkbox-mytrees" type="checkbox" data-toggle="toggle" />';
+            template += '<div class="search-box form-group">';
+            template += '<input type="text" class="form-control" id="input-search-food" type="search" placeholder="Search by Food Name" value=""/>';
+            template += '</div>'; // end of .form-group
+            template += '</div>'; // end of .bottom-filters
+            template += '</div>'; // end of #wrapper-food-search
+            template += '</div>'; // end of #wrapper-mapmenu
+            return template;
         };
         Template.getFoodItemTemplate = function () {
             var template = "";
@@ -49096,20 +49185,20 @@ var FoodParent;
             template += '</div>';
             return template;
         };
-        Template.getManageTreesPopupTemplate = function () {
+        Template.getManageTreesPopupTemplateForAdmin = function () {
             var template = '';
             template += '<div class="marker-control-wrapper">';
-            template += '<div class="marker-control-item marker-control-lock">';
+            template += '<div class="marker-control-item btn-action evt-marker-lock">';
             template += '<i class="fa fa-lock fa-2x"></i>';
             template += '</div>';
-            template += '<div class="marker-control-item marker-control-adoption">';
-            template += '<i class="fa fa-user-plus fa-2x"></i>';
+            template += '<div class="marker-control-item btn-action evt-manage-adopt">';
+            template += '<i class="fa fa-users fa-2x"></i>';
             template += '</div>';
-            template += '<div class="marker-control-item marker-control-info">';
+            template += '<div class="marker-control-item btn-action evt-tree-detail">';
             template += '<i class="fa fa-heartbeat fa-2x"></i>';
             template += '</div>';
-            template += '<div class="marker-control-item marker-control-delete">';
-            template += '<i class="fa fa-remove fa-2x"></i>';
+            template += '<div class="marker-control-item btn-action evt-tree-remove">';
+            template += '<i class="fa fa-trash-o fa-2x"></i>';
             template += '</div>';
             template += '</div>';
             return template;
@@ -49452,7 +49541,7 @@ var FoodParent;
             template += '</div>';
             template += '<div class="hr"><hr /></div>';
             template += '<div class="info-header"><i class="fa fa-user fa-1x"></i> Parents</div>';
-            template += '<div class="info-group info-group-flex">';
+            template += '<div class="info-group info-group-flex btn-action evt-manage-adopt">';
             template += '<% _.each(persons.models, function (person, index) { %>';
             template += '<% if (index < persons.models.length - 1) { %>';
             template += '<div><%= person.getName() %>,&nbsp;</div>';
@@ -49521,7 +49610,7 @@ var FoodParent;
             template += '</div>';
             template += '<div class="hr"><hr /></div>';
             template += '<div class="info-header"><i class="fa fa-user fa-1x"></i> Parents</div>';
-            template += '<div class="info-group info-group-flex">';
+            template += '<div class="info-group info-group-flex  btn-action evt-manage-adopt">';
             template += '<% _.each(persons.models, function (person, index) { %>';
             template += '<% if (index < persons.models.length - 1) { %>';
             template += '<div><%= person.getName() %>,&nbsp;</div>';
@@ -49928,56 +50017,32 @@ var FoodParent;
         };
         Template.getAdoptionFilterListTemplate = function () {
             var template = '';
-            template += '<div data-toggle="buttons">';
-            template += '<label class="btn filter-checkbox active list-hiearchy1">';
-            template += '<input type="checkbox" name="adoptsall" checked>';
-            template += '<i class="fa fa-square-o fa-1x"></i>';
-            template += '<i class="fa fa-check-square-o fa-1x"></i>';
-            template += ' Parenting Status (show all / hide)</label>';
-            template += '</div>';
-            template += '<div data-toggle="buttons">';
-            template += '<label class="btn filter-checkbox filter-adopt active list-hiearchy2">';
-            template += '<input type="checkbox" name="1" checked>';
-            template += '<i class="fa fa-square-o fa-1x"></i>';
-            template += '<i class="fa fa-check-square-o fa-1x"></i>';
-            template += ' Parenting</label>';
-            template += '</div>';
-            template += '<div data-toggle="buttons">';
-            template += '<label class="btn filter-checkbox filter-adopt active list-hiearchy2">';
-            template += '<input type="checkbox" name="0" checked>';
-            template += '<i class="fa fa-square-o fa-1x"></i>';
-            template += '<i class="fa fa-check-square-o fa-1x"></i>';
-            template += ' Non-Parenting</label>';
+            template += '<div class="text-header"><%= header %> <span class="icon-header evt-reset-filter"><i class="fa fa-refresh"></i></span></div>';
+            template += '<div id="content-adoptionfilter">';
+            template += '<div class="text-label"><i class="fa fa-caret-right"></i> Parenting</div>';
+            template += '<div class="btn-green btn-medium btn-filter filter-parenting-all active">Parenting & Non-Parenting</div>';
+            template += '<div class="info-button-group">';
+            template += '<div class="btn-green btn-medium btn-filter filter-parenting-item" data-id="1">Parenting</div>';
+            template += '<div class="btn-green btn-medium btn-filter filter-parenting-item" data-id="0">Non-Parenting</div>';
             template += '</div>';
             template += '<hr />';
-            template += '<div data-toggle="buttons">';
-            template += '<label class="btn filter-checkbox active list-hiearchy1">';
-            template += '<input type="checkbox" name="authsall" checked>';
-            template += '<i class="fa fa-square-o fa-1x"></i>';
-            template += '<i class="fa fa-check-square-o fa-1x"></i>';
-            template += ' Auth Type (show all / hide)</label>';
-            template += '</div>';
+            template += '<div class="text-label"><i class="fa fa-caret-right"></i> Authorization</div>';
+            template += '<div class="btn-green btn-medium btn-filter filter-auth-all active">All Authorizations</div>';
+            template += '<div class="info-button-group">';
             template += '<% _.each(auths.models, function (auth) { %>';
-            template += '<div data-toggle="buttons">';
-            template += '<label class="btn filter-checkbox filter-auth active list-hiearchy2">';
-            template += '<input type="checkbox" name="<%= auth.getId() %>" checked>';
-            template += '<i class="fa fa-square-o fa-1x"></i>';
-            template += '<i class="fa fa-check-square-o fa-1x"></i>';
-            template += ' <%= auth.getName() %></label>';
-            template += '</div>';
+            template += '<div class="btn-green btn-medium btn-filter filter-auth-item" data-id="<%= auth.getId() %>"><%= auth.getName() %></div>';
             template += '<% }); %>';
+            template += '</div>';
+            template += '</div>'; //end of #content-adoptionfilter
             return template;
         };
         Template.getAdoptTreeCellTemplate = function () {
-            //<%= address %>
             var template = "";
-            // template += '<div class="cell-group">';
             template += '<% _.each(trees.models, function (tree) { %>';
             template += '<% var food = FoodParent.Model.getFoods().findWhere({ id: tree.getFoodId() }); %>';
-            template += '<div class="cell-link cell-tree-detail" data-target="<%= tree.getId() %>"><%= food.getName() + " " + tree.getName() %></div>';
+            template += '<% var name = food.getName() + tree.getName(); %>';
+            template += '<div class="btn-tree" data-target="<%= tree.getId() %>"><%= name %></div>';
             template += '<% }); %>';
-            //template += '<div class="cell-button cell-edit"><i class="fa fa-edit fa-1x"></i></div>';
-            //template += '</div>';
             return template;
         };
         Template.getAdoptPersonCellTemplate = function () {
@@ -49985,39 +50050,62 @@ var FoodParent;
             var template = "";
             // template += '<div class="cell-group">';
             template += '<% _.each(persons.models, function (person) { %>';
-            template += '<div class="cell-link cell-person-detail" data-target="<%= person.getId() %>"><%= person.getName() %></div>';
+            template += '<div class="btn-tree" data-target="<%= person.getId() %>"><%= person.getName() %></div>';
             template += '<% }); %>';
             //template += '<div class="cell-button cell-edit"><i class="fa fa-edit fa-1x"></i></div>';
             //template += '</div>';
             return template;
         };
-        Template.getManageAdoptionViewTemplate = function () {
+        Template.getTreesTableViewTemplateForAdmin = function () {
+            var template = '';
+            template += '<div id="wrapper-tree-list">';
+            template += '<div id="content-header">';
+            template += '<div class="text-header"><%= header %></div>';
+            template += '<div class="btn-close evt-close">';
+            template += '<i class="fa fa-remove"></i>';
+            template += '</div>'; // end of top-right-button button-close
+            template += '</div>'; // end of #wrapper-header
+            template += '<hr />';
+            template += '<div class="frame-flex-group">';
+            template += '<div class="tree-filter">';
+            template += '</div>'; // end of .adoption-filter
+            template += '<div id="content-tree-list">';
+            template += '<div class="info-group">';
+            template += '<div class="new-tree"></div>';
+            template += '</div>'; // end of .info-group
+            template += '<div class="info-group">';
+            template += '<div class="list-tree">';
+            template += '</div>';
+            template += '</div>'; // end of .info-button-group
+            template += '</div>'; // end of #content-tree-list
+            template += '</div>'; // end of .frame-flex-group
+            template += '</div>'; // end of #wrapper-tree-list
+            return template;
+        };
+        Template.getAdoptionManageViewTemplateForAdmin = function () {
             var template = '';
             template += '<div id="wrapper-manage-adoption">';
-            template += '<div class="outer-frame">';
-            template += '<div class="inner-frame">';
-            template += '<div id="wrapper-manage-adoption-table">';
-            template += '<div id="wrapper-tablemenu">';
-            template += '<div class="button-outer-frame2 button3"><div class="button-inner-frame2 collapsible-button" data-target="#filter-list">Filter List</div></div>';
-            template += '<div id="filter-list" class="collapsible-list">';
-            template += '</div>';
-            template += '<div class="button-outer-frame2 button3"><div class="button-inner-frame2 collapsible-button" data-target="#forage-list">Foragable List</div></div>';
-            template += '<div id="forage-list" class="collapsible-list hidden">';
-            template += '</div>';
-            template += '</div>';
-            template += '<div id="content-manage-adoption-table">';
-            template += '<div class="view-title">Tree Adoption</div>';
-            template += '<div class="view-description">Click <i class="fa fa-plus-square fa-1x"></i> icon to assign a new parent for <strong><i><%= treename %></i></strong>.</div>';
+            template += '<div id="content-header">';
+            template += '<div class="text-header"><%= header %></div>';
+            template += '<div class="btn-close evt-close">';
+            template += '<i class="fa fa-remove"></i>';
+            template += '</div>'; // end of top-right-button button-close
+            template += '</div>'; // end of #wrapper-header
+            template += '<hr />';
+            template += '<div class="frame-flex-group">';
+            template += '<div class="adoption-filter">';
+            template += '</div>'; // end of .adoption-filter
+            template += '<div id="content-manage-adoption">';
+            template += '<div class="info-group">';
+            template += '<div class="text-label"><i class="fa fa-caret-right"></i>  Click <i class="fa fa-plus-square fa-1x"></i> or <i class="fa fa-minus-square fa-1x"></i> icon to assign (or unassign) a parent for <strong><i><%= treename %></i></strong>.</div>';
+            template += '</div>'; // end of .info-group
+            template += '<div class="info-group">';
             template += '<div class="list-adoption" data-target="<%= treeId %>">';
             template += '</div>';
-            template += '</div>';
-            template += '</div>';
-            template += '<div class="top-right-button button-close">';
-            template += '<i class="fa fa-remove fa-2x"></i>';
-            template += '</div>';
-            template += '</div>';
-            template += '</div>';
-            template += '</div>';
+            template += '</div>'; // end of .info-button-group
+            template += '</div>'; // end of #content-manage-adoption
+            template += '</div>'; // end of .frame-flex-group
+            template += '</div>'; // end of #wrapper-manage-adoption
             return template;
         };
         Template.getDetailMenuTemplate = function () {
@@ -50946,6 +51034,7 @@ var FoodParent;
             var self = View._instance;
             self.bDebug = true;
             self._viewStatus = new Array();
+            self._popupViews = new Array();
             $(window).resize(_.debounce(self.resize, FoodParent.Setting.getResizeTimeout()));
             $(document).bind("keydown", function (event) {
                 FoodParent.EventHandler.handleKeyCode(event.keyCode);
@@ -51032,11 +51121,14 @@ var FoodParent;
         View.getNavView = function () {
             return View._instance._navView;
         };
-        View.setPopupView = function (view) {
-            View._instance._popupView = view;
+        View.addPopupView = function (view) {
+            View._instance._popupViews.push(view);
         };
         View.getPopupView = function () {
-            return View._instance._popupView;
+            return View._instance._popupViews[View._instance._popupViews.length - 1];
+        };
+        View.removePopupView = function () {
+            View._instance._popupViews.pop();
         };
         View.setManageDonationsView = function (view) {
             View._instance._manageDonationsView = view;
@@ -51565,26 +51657,6 @@ var FoodParent;
         return ImageNoteViewFactory;
     })();
     FoodParent.ImageNoteViewFactory = ImageNoteViewFactory;
-    var AdoptionManageViewFactory = (function () {
-        function AdoptionManageViewFactory(args) {
-            if (AdoptionManageViewFactory._instance) {
-                throw new Error("Error: Instantiation failed: Use AdoptionManageViewFactory.getInstance() instead of new.");
-            }
-            AdoptionManageViewFactory._instance = this;
-        }
-        AdoptionManageViewFactory.getInstance = function () {
-            return AdoptionManageViewFactory._instance;
-        };
-        AdoptionManageViewFactory.create = function (el, tree) {
-            var view = new AdoptionManageView({ el: el });
-            console.log(tree);
-            view.setTree(tree);
-            return view;
-        };
-        AdoptionManageViewFactory._instance = new AdoptionManageViewFactory();
-        return AdoptionManageViewFactory;
-    })();
-    FoodParent.AdoptionManageViewFactory = AdoptionManageViewFactory;
     var ConfirmViewFractory = (function () {
         function ConfirmViewFractory(args) {
             if (ConfirmViewFractory._instance) {
@@ -52140,168 +52212,6 @@ var FoodParent;
         return ConfirmView;
     })(FoodParent.PopupView);
     FoodParent.ConfirmView = ConfirmView;
-    var AdoptionManageView = (function (_super) {
-        __extends(AdoptionManageView, _super);
-        function AdoptionManageView(options) {
-            var _this = this;
-            _super.call(this, options);
-            this.renderPersons = function () {
-                var self = _this;
-                FoodParent.Controller.fetchAllPersonsAndAuthsAndFoodAndTreesAndAdopts(function () {
-                    // add grid instance for existing data
-                    self.renderPersonsList(FoodParent.Model.getPersons());
-                    self.renderFilterList();
-                }, function () {
-                    FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
-                });
-            };
-            this.renderFilterList = function () {
-                var self = _this;
-                var template = _.template(FoodParent.Template.getAdoptionFilterListTemplate());
-                var data = {
-                    auths: FoodParent.Model.getAuths(),
-                };
-                self.$('#filter-list').html(template(data));
-            };
-            this.renderPersonsList = function (persons) {
-                var self = _this;
-                var grid = new Backgrid.Grid({
-                    columns: AdoptionColumn,
-                    collection: persons,
-                    emptyText: FoodParent.Setting.getNoDataText(),
-                });
-                grid.render();
-                grid.sort("name", "ascending");
-                self.$(".list-adoption").html(grid.el);
-            };
-            var self = this;
-            self.bDebug = true;
-            //$(window).resize(_.debounce(that.customResize, Setting.getInstance().getResizeTimeout()));
-            self.events = {
-                "click .confirm-confirm": "_executeCommand",
-                "click .confirm-cancel": "_mouseClick",
-                "click .button-close": "_mouseClick",
-                "click .filter-checkbox": "_applyFilter",
-            };
-            self.delegateEvents();
-        }
-        AdoptionManageView.prototype.setTree = function (treeId) {
-            var self = this;
-            console.log(treeId);
-            self._tree = FoodParent.Model.getTrees().findWhere({ id: treeId });
-        };
-        AdoptionManageView.prototype.getTree = function () {
-            var self = this;
-            return self._tree;
-        };
-        AdoptionManageView.prototype.render = function (args) {
-            if (this.bRendered) {
-                this.update(args);
-                return;
-            }
-            this.bRendered = true;
-            /////
-            var self = this;
-            if (self.bDebug)
-                console.log(AdoptionManageView.TAG + "render()");
-            var food = FoodParent.Model.getFoods().findWhere({ id: self._tree.getFoodId() });
-            var template = _.template(FoodParent.Template.getManageAdoptionViewTemplate());
-            var data = {
-                treename: food.getName() + " " + self._tree.getName(),
-                treeId: self._tree.getId(),
-            };
-            self.$el.html(template(data));
-            self.setElement(self.$('#wrapper-manage-adoption'));
-            self.renderPersons();
-            self.setVisible();
-            self.resize();
-            return self;
-        };
-        AdoptionManageView.prototype.update = function (args) {
-            if (!this.bRendered) {
-                this.render(args);
-                return;
-            }
-            /////
-            var self = this;
-            if (self.bDebug)
-                console.log(AdoptionManageView.TAG + "update()");
-            return self;
-        };
-        AdoptionManageView.prototype.resize = function () {
-            var self = this;
-            $('#content-manage-adoption-table').css({ width: self.getWidth() - $('#wrapper-tablemenu').outerWidth() });
-            $('#wrapper-main').css({ height: FoodParent.View.getHeight() - 60 });
-            $('#wrapper-mtrees').css({ height: FoodParent.View.getHeight() - 60 });
-            $('.collapsible-list').css({ height: self.getHeight() - 34 * 2 - 30 });
-        };
-        AdoptionManageView.prototype._mouseClick = function (event) {
-            var self = this;
-            FoodParent.EventHandler.handleMouseClick($(event.currentTarget), self);
-        };
-        AdoptionManageView.prototype.setVisible = function () {
-            var self = this;
-            FoodParent.Setting.getPopWrapperElement().removeClass('hidden');
-        };
-        AdoptionManageView.prototype.setInvisible = function () {
-            var self = this;
-            FoodParent.Setting.getPopWrapperElement().addClass('hidden');
-        };
-        AdoptionManageView.prototype._applyFilter = function (event) {
-            var self = this;
-            var persons = FoodParent.Model.getPersons();
-            setTimeout(function () {
-                // Filtering food type.
-                if (event != undefined) {
-                    if ($(event.target).find('input').prop('name') == 'authsall') {
-                        if ($(event.target).find('input').prop('checked') == true) {
-                            $('.filter-auth').addClass('active');
-                            $('.filter-auth input').prop({ 'checked': 'checked' });
-                        }
-                        else {
-                            $('.filter-auth').removeClass('active');
-                            $('.filter-auth input').prop({ 'checked': '' });
-                        }
-                    }
-                }
-                // Apply auth filtering
-                var authIds = new Array();
-                $.each(self.$('.filter-auth input'), function (index, item) {
-                    if ($(item).prop('checked') == true) {
-                        authIds.push(Math.floor($(item).prop('name')));
-                    }
-                });
-                persons = persons.filterByAuthIds(authIds);
-                // Filtering adoption status.
-                if (event != undefined) {
-                    if ($(event.target).find('input').prop('name') == 'adoptsall') {
-                        if ($(event.target).find('input').prop('checked') == true) {
-                            $('.filter-adopt').addClass('active');
-                            $('.filter-adopt input').prop({ 'checked': 'checked' });
-                        }
-                        else {
-                            $('.filter-adopt').removeClass('active');
-                            $('.filter-adopt input').prop({ 'checked': '' });
-                        }
-                    }
-                }
-                // Apply adopt filtering
-                var adoptIds = new Array();
-                $.each(self.$('.filter-adopt input'), function (index, item) {
-                    console.log($(item).prop('checked'));
-                    if ($(item).prop('checked') == true) {
-                        adoptIds.push(Math.floor($(item).prop('name')));
-                    }
-                });
-                persons = persons.filterByAdoptStatusForTree(adoptIds, self._tree.getId());
-                // update markers
-                self.renderPersonsList(persons);
-            }, 1);
-        };
-        AdoptionManageView.TAG = "AdoptionManageView - ";
-        return AdoptionManageView;
-    })(FoodParent.PopupView);
-    FoodParent.AdoptionManageView = AdoptionManageView;
 })(FoodParent || (FoodParent = {}));
 
 var __extends = (this && this.__extends) || function (d, b) {
@@ -52851,24 +52761,18 @@ var FoodParent;
         TreesViewFractory.getInstance = function () {
             return TreesViewFractory._instance;
         };
-        TreesViewFractory.create = function (el, viewMode, id, credential) {
+        TreesViewFractory.create = function (el, id, credential) {
             var view;
-            if (viewMode == FoodParent.VIEW_MODE.MAP) {
-                if (credential == FoodParent.CREDENTIAL_MODE.GUEST) {
-                    view = new FoodParent.TreesMapViewForGuest({ el: el });
-                }
-                else if (credential == FoodParent.CREDENTIAL_MODE.PARENT) {
-                    view = new FoodParent.TreesMapViewForParent({ el: el });
-                }
-                else if (credential == FoodParent.CREDENTIAL_MODE.ADMIN) {
-                    view = new FoodParent.TreesMapViewForAdmin({ el: el });
-                }
-                view.setTreeId(id);
+            if (credential == FoodParent.CREDENTIAL_MODE.GUEST) {
+                view = new FoodParent.TreesMapViewForGuest({ el: el });
             }
-            else if (viewMode == FoodParent.VIEW_MODE.TABLE) {
-                //view = new ManageTreesTableView({ el: el });
-                view.setTreeId(id);
+            else if (credential == FoodParent.CREDENTIAL_MODE.PARENT) {
+                view = new FoodParent.TreesMapViewForParent({ el: el });
             }
+            else if (credential == FoodParent.CREDENTIAL_MODE.ADMIN) {
+                view = new FoodParent.TreesMapViewForAdmin({ el: el });
+            }
+            view.setTreeId(id);
             return view;
         };
         TreesViewFractory._instance = new TreesViewFractory();
@@ -52906,15 +52810,6 @@ var FoodParent;
         return TreesView;
     })(FoodParent.BaseView);
     FoodParent.TreesView = TreesView;
-})(FoodParent || (FoodParent = {}));
-
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
-var FoodParent;
-(function (FoodParent) {
     var TreesMapView = (function (_super) {
         __extends(TreesMapView, _super);
         function TreesMapView(options) {
@@ -52998,7 +52893,7 @@ var FoodParent;
                         if (FoodParent.View.getWidth() < FoodParent.View.getHeight()) {
                             self.closeMapFilter();
                         }
-                        FoodParent.Router.getInstance().navigate("trees/" + FoodParent.VIEW_MODE.MAP + "/" + tree.getId(), { trigger: false, replace: true });
+                        FoodParent.Router.getInstance().navigate("trees/" + tree.getId(), { trigger: false, replace: true });
                     });
                     self._map.on('popupclose', function (event) {
                         var marker = event.popup._source;
@@ -53006,7 +52901,7 @@ var FoodParent;
                         $(marker.label._container).removeClass('active');
                         self.$('#wrapper-treeinfo').addClass('hidden');
                         self._selectedMarker = null;
-                        FoodParent.Router.getInstance().navigate("trees/" + FoodParent.VIEW_MODE.MAP + "/0", { trigger: false, replace: true });
+                        FoodParent.Router.getInstance().navigate("trees/0", { trigger: false, replace: true });
                     });
                 }
             };
@@ -53120,6 +53015,7 @@ var FoodParent;
             self.events = {
                 "click .evt-close": "removeTreeInfo",
                 "click .btn-mapfilter": "_toggleMapFilter",
+                "click .evt-marker-lock": "_toggleMarkerLock",
             };
             self.delegateEvents();
         }
@@ -53723,9 +53619,28 @@ var FoodParent;
                 });
             }
         };
+        /**
+         * Toggle marker draggable
+         * @param event click event of marker popup control
+         */
+        TreesMapView.prototype._toggleMarkerLock = function (event) {
+            var self = this;
+            if (!self._selectedMarker.options.draggable) {
+                self._selectedMarker.options.draggable = true;
+                self._selectedMarker.dragging.enable();
+                $(event.target).html('<i class="fa fa-unlock-alt fa-2x"></i>');
+                self._selectedMarker._popup.setContent('<div class="marker-control-wrapper">' + $('.marker-control-wrapper').html() + '</div>');
+            }
+            else {
+                self._selectedMarker.options.draggable = false;
+                self._selectedMarker.dragging.disable();
+                $(event.target).html('<i class="fa fa-lock fa-2x"></i>');
+                self._selectedMarker._popup.setContent('<div class="marker-control-wrapper">' + $('.marker-control-wrapper').html() + '</div>');
+            }
+        };
         TreesMapView.TAG = "TreesMapView - ";
         return TreesMapView;
-    })(FoodParent.TreesView);
+    })(TreesView);
     FoodParent.TreesMapView = TreesMapView;
 })(FoodParent || (FoodParent = {}));
 
@@ -54134,6 +54049,41 @@ var FoodParent;
                     }
                 }
             };
+            this.updateMarkers = function (trees) {
+                var self = _this;
+                console.log(FoodParent.TreesMapView.TAG + "updateMarkers()");
+                // Add new markers
+                $.each(trees.models, function (index, tree) {
+                    var bFound = false;
+                    for (var j = 0; j < self._markers.length && !bFound; j++) {
+                        if (tree.getId() == self._markers[j].options.id) {
+                            bFound = true;
+                        }
+                    }
+                    if (!bFound) {
+                        self.addMarker(tree, true);
+                    }
+                });
+                // Remove unnecessary markers
+                for (var j = 0; j < self._markers.length;) {
+                    var bFound = false;
+                    $.each(trees.models, function (index, tree) {
+                        if (tree.getId() == self._markers[j].options.id) {
+                            bFound = true;
+                        }
+                    });
+                    if (!bFound) {
+                        // close popup if the marker is selected
+                        if (self._markers[j] == self._selectedMarker) {
+                            self._selectedMarker.closePopup();
+                        }
+                        self.removeMarker(self._markers[j]);
+                        self._markers = _.without(self._markers, self._markers[j]);
+                        j--;
+                    }
+                    j++;
+                }
+            };
             this.renderTreeInfo = function (tree) {
                 var self = _this;
                 if (tree == undefined && self._selectedMarker != undefined) {
@@ -54279,6 +54229,7 @@ var FoodParent;
             self.events = {
                 "click .evt-close": "removeTreeInfo",
                 "click .btn-mapfilter": "_toggleMapFilter",
+                "click .evt-marker-lock": "_toggleMarkerLock",
                 "click .btn-filter": "_clickFilter",
                 "keydown #wrapper-food-search": "_searchFood",
                 "click #input-search-food": "_searchFood",
@@ -54394,6 +54345,229 @@ var __extends = (this && this.__extends) || function (d, b) {
 };
 var FoodParent;
 (function (FoodParent) {
+    var TreesTableViewFactory = (function () {
+        function TreesTableViewFactory(args) {
+            if (TreesTableViewFactory._instance) {
+                throw new Error("Error: Instantiation failed: Use TreesTableViewFactory.getInstance() instead of new.");
+            }
+            TreesTableViewFactory._instance = this;
+        }
+        TreesTableViewFactory.getInstance = function () {
+            return TreesTableViewFactory._instance;
+        };
+        TreesTableViewFactory.create = function (el) {
+            var view = new TreesTableView({ el: el });
+            return view;
+        };
+        TreesTableViewFactory._instance = new TreesTableViewFactory();
+        return TreesTableViewFactory;
+    })();
+    FoodParent.TreesTableViewFactory = TreesTableViewFactory;
+    var TreesTableView = (function (_super) {
+        __extends(TreesTableView, _super);
+        function TreesTableView(options) {
+            var _this = this;
+            _super.call(this, options);
+            this.renderTrees = function () {
+                var self = _this;
+                FoodParent.Controller.fetchAllTrees(function () {
+                    self.renderTreeList(FoodParent.Model.getTrees());
+                    self.renderFilterList();
+                }, function () {
+                    FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+                });
+            };
+            this.renderTreeList = function (trees) {
+                var self = _this;
+                var optionValues = new Array();
+                optionValues.push({ name: "Food", values: FoodParent.Model.getFoods().toArray() });
+                TreeColumn[0].cell = Backgrid.SelectCell.extend({
+                    editor: Backgrid.FoodSelectCellEditor,
+                    optionValues: optionValues,
+                });
+                var grid = new Backgrid.Grid({
+                    columns: TreeColumn,
+                    collection: trees,
+                    emptyText: FoodParent.Setting.getNoDataText(),
+                });
+                grid.render();
+                grid.sort("id", "ascending");
+                self.$(".list-tree").html(grid.el);
+            };
+            this.renderFilterList = function () {
+                var self = _this;
+                var template = _.template(FoodParent.Template.getTreesFilterListTemplateForAdmin());
+                var data = {
+                    header: "Filter List",
+                    flags: FoodParent.Model.getFlags(),
+                    ownerships: FoodParent.Model.getOwnerships(),
+                };
+                self.$('.tree-filter').html(template(data));
+            };
+            this.renderParentsList = function (parents) {
+                var self = _this;
+                var grid = new Backgrid.Grid({
+                    columns: AdoptionColumn,
+                    collection: parents,
+                    emptyText: FoodParent.Setting.getNoDataText(),
+                });
+                grid.render();
+                grid.sort("name", "ascending");
+                self.$(".list-adoption").html(grid.el);
+            };
+            var self = this;
+            self.bDebug = true;
+            self.events = {
+                "click .evt-close": "_mouseClick",
+                "click .btn-filter": "_clickFilter",
+                "click .evt-reset-filter": "_resetFilter",
+            };
+            self.delegateEvents();
+        }
+        TreesTableView.prototype.render = function (args) {
+            _super.prototype.render.call(this, args);
+            var self = this;
+            if (self.bDebug)
+                console.log(TreesTableView.TAG + "render()");
+            var template = _.template(FoodParent.Template.getTreesTableViewTemplateForAdmin());
+            var data = {
+                header: "Tree List",
+            };
+            self.$el.html(template(data));
+            self.setElement(self.$('#wrapper-tree-list'));
+            self.renderTrees();
+            self.setVisible();
+            self.resize();
+            return self;
+        };
+        TreesTableView.prototype.update = function (args) {
+            _super.prototype.update.call(this, args);
+            var self = this;
+            if (self.bDebug)
+                console.log(TreesTableView.TAG + "update()");
+            return self;
+        };
+        TreesTableView.prototype.resize = function () {
+            var self = this;
+        };
+        TreesTableView.prototype._mouseClick = function (event) {
+            var self = this;
+            FoodParent.EventHandler.handleMouseClick($(event.currentTarget), self);
+        };
+        TreesTableView.prototype._clickFilter = function (event) {
+            var self = this;
+            // Parenting filter
+            if ($(event.currentTarget).hasClass('filter-parenting-item')) {
+                if ($(event.currentTarget).hasClass('active')) {
+                    $(event.currentTarget).removeClass('active');
+                }
+                else {
+                    $(event.currentTarget).addClass('active');
+                }
+                if (self.$('.filter-parenting-item').length == self.$('.filter-parenting-item.active').length) {
+                    self.$('.filter-parenting-all').addClass('active');
+                }
+                else {
+                    self.$('.filter-parenting-all').removeClass('active');
+                }
+            }
+            if ($(event.currentTarget).hasClass('filter-parenting-all')) {
+                if ($(event.currentTarget).hasClass('active')) {
+                    $(event.currentTarget).removeClass('active');
+                    self.$('.filter-parenting-item').removeClass('active');
+                }
+                else {
+                    $(event.currentTarget).addClass('active');
+                    self.$('.filter-parenting-item').addClass('active');
+                }
+            }
+            // Authorization filter
+            if ($(event.currentTarget).hasClass('filter-auth-item')) {
+                if ($(event.currentTarget).hasClass('active')) {
+                    $(event.currentTarget).removeClass('active');
+                }
+                else {
+                    $(event.currentTarget).addClass('active');
+                }
+                if (self.$('.filter-auth-item').length == self.$('.filter-auth-item.active').length) {
+                    self.$('.filter-auth-all').addClass('active');
+                }
+                else {
+                    self.$('.filter-auth-all').removeClass('active');
+                }
+            }
+            if ($(event.currentTarget).hasClass('filter-auth-all')) {
+                if ($(event.currentTarget).hasClass('active')) {
+                    $(event.currentTarget).removeClass('active');
+                    self.$('.filter-auth-item').removeClass('active');
+                }
+                else {
+                    $(event.currentTarget).addClass('active');
+                    self.$('.filter-auth-item').addClass('active');
+                }
+            }
+            // Apply filter
+            self._applyFilter();
+        };
+        TreesTableView.prototype._resetFilter = function (event) {
+            var self = this;
+            // Set the status of right corner button based on filter on / off status
+            self.$('.filter-parenting-all').addClass('active');
+            self.$('.filter-auth-all').addClass('active');
+            self.$('.filter-parenting-item').removeClass('active');
+            self.$('.filter-auth-item').removeClass('active');
+            // Apply filter
+            self._applyFilter();
+        };
+        TreesTableView.prototype._applyFilter = function (event) {
+            var self = this;
+            var persons = FoodParent.Model.getPersons();
+            // Apply parenting filtering
+            var adoptIds = new Array();
+            if (self.$('.filter-parenting-all').hasClass('active')) {
+                $.each(self.$('.filter-parenting-item'), function (index, element) {
+                    adoptIds.push(parseInt($(element).attr('data-id')));
+                });
+            }
+            else {
+                $.each(self.$('.filter-parenting-item'), function (index, element) {
+                    if ($(element).hasClass('active')) {
+                        adoptIds.push(parseInt($(element).attr('data-id')));
+                    }
+                });
+            }
+            persons = persons.filterByAdoptStatusForTree(adoptIds, self._tree.getId());
+            // Apply authorization filtering
+            var authIds = new Array();
+            if (self.$('.filter-auth-all').hasClass('active')) {
+                $.each(self.$('.filter-auth-item'), function (index, element) {
+                    authIds.push(parseInt($(element).attr('data-id')));
+                });
+            }
+            else {
+                $.each(self.$('.filter-auth-item'), function (index, element) {
+                    if ($(element).hasClass('active')) {
+                        authIds.push(parseInt($(element).attr('data-id')));
+                    }
+                });
+            }
+            persons = persons.filterByAuthIds(authIds);
+            // update markers
+            self.renderParentsList(persons);
+        };
+        TreesTableView.TAG = "TreesTableView - ";
+        return TreesTableView;
+    })(FoodParent.PopupView);
+    FoodParent.TreesTableView = TreesTableView;
+})(FoodParent || (FoodParent = {}));
+
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var FoodParent;
+(function (FoodParent) {
     var ManageTreesViewFractory = (function () {
         function ManageTreesViewFractory(args) {
             if (ManageTreesViewFractory._instance) {
@@ -54404,16 +54578,8 @@ var FoodParent;
         ManageTreesViewFractory.getInstance = function () {
             return ManageTreesViewFractory._instance;
         };
-        ManageTreesViewFractory.create = function (el, viewMode, id) {
+        ManageTreesViewFractory.create = function (el, id) {
             var view;
-            if (viewMode == FoodParent.VIEW_MODE.MAP) {
-                view = new ManageTreesMapView({ el: el });
-                view.setTreeId(id);
-            }
-            else if (viewMode == FoodParent.VIEW_MODE.TABLE) {
-                view = new ManageTreesTableView({ el: el });
-                view.setTreeId(id);
-            }
             return view;
         };
         ManageTreesViewFractory._instance = new ManageTreesViewFractory();
@@ -55019,7 +55185,7 @@ var FoodParent;
                         if (FoodParent.View.getMessageView()) {
                             FoodParent.View.getMessageView().setInvisible();
                         }
-                        FoodParent.Router.getInstance().navigate("mtrees/" + FoodParent.VIEW_MODE.MAP + "/" + tree.getId(), { trigger: false, replace: true });
+                        FoodParent.Router.getInstance().navigate("mtrees/" + tree.getId(), { trigger: false, replace: true });
                     });
                     self._map.on('popupclose', function (event) {
                         var marker = event.popup._source;
@@ -55629,15 +55795,10 @@ var FoodParent;
         DetailTreeViewFractory.getInstance = function () {
             return DetailTreeViewFractory._instance;
         };
-        DetailTreeViewFractory.create = function (el, viewMode, id) {
+        DetailTreeViewFractory.create = function (el, id) {
             var view;
-            if (viewMode == FoodParent.VIEW_MODE.GRAPHIC) {
-                view = new DetailTreeGraphicView({ el: el });
-                view.setTreeId(id);
-            }
-            else if (viewMode == FoodParent.VIEW_MODE.TABLE) {
-                view.setTreeId(id);
-            }
+            view = new DetailTreeGraphicView({ el: el });
+            view.setTreeId(id);
             return view;
         };
         DetailTreeViewFractory._instance = new DetailTreeViewFractory();
@@ -56297,7 +56458,7 @@ var FoodParent;
                 popupAnchor: new L.Point(0, 48),
             });
             if (editable) {
-                var template = _.template(FoodParent.Template.getManageTreesPopupTemplate());
+                var template = _.template(FoodParent.Template.getManageTreesPopupTemplateForAdmin());
                 var data = {
                     id: tree.getId()
                 };
@@ -56387,12 +56548,10 @@ var FoodParent;
         ManagePeopleViewFractory.getInstance = function () {
             return ManagePeopleViewFractory._instance;
         };
-        ManagePeopleViewFractory.create = function (el, viewMode, id) {
+        ManagePeopleViewFractory.create = function (el, id) {
             var view;
-            if (viewMode == FoodParent.VIEW_MODE.TABLE) {
-                view = new ManagePeopleTableView({ el: el });
-                view.setPeopleId(id);
-            }
+            view = new ManagePeopleTableView({ el: el });
+            view.setPeopleId(id);
             return view;
         };
         ManagePeopleViewFractory._instance = new ManagePeopleViewFractory();
@@ -56582,14 +56741,10 @@ var FoodParent;
         ManageDonationsViewFractory.getInstance = function () {
             return ManageDonationsViewFractory._instance;
         };
-        ManageDonationsViewFractory.create = function (el, viewMode, id) {
+        ManageDonationsViewFractory.create = function (el, id) {
             var view;
-            if (viewMode == FoodParent.VIEW_MODE.MAP) {
-            }
-            else if (viewMode == FoodParent.VIEW_MODE.TABLE) {
-                view = new ManageDonationsTableView({ el: el });
-                view.setTreeId(id);
-            }
+            view = new ManageDonationsTableView({ el: el });
+            view.setTreeId(id);
             return view;
         };
         ManageDonationsViewFractory._instance = new ManageDonationsViewFractory();
@@ -57417,14 +57572,10 @@ var FoodParent;
         DetailDonationViewFractory.getInstance = function () {
             return DetailDonationViewFractory._instance;
         };
-        DetailDonationViewFractory.create = function (el, viewMode, id) {
+        DetailDonationViewFractory.create = function (el, id) {
             var view;
-            if (viewMode == FoodParent.VIEW_MODE.GRAPHIC) {
-                view = new DetailDonationGraphicView({ el: el });
-                view.setPlaceId(id);
-            }
-            else if (viewMode == FoodParent.VIEW_MODE.TABLE) {
-            }
+            view = new DetailDonationGraphicView({ el: el });
+            view.setPlaceId(id);
             return view;
         };
         DetailDonationViewFractory._instance = new DetailDonationViewFractory();
@@ -58175,46 +58326,222 @@ var FoodParent;
                 FoodParent.EventHandler.handleMouseClick($(event.currentTarget), self);
             }
         };
-        UnadoptTreeView.prototype._submitAdopt = function (event) {
-            var self = this;
-            FoodParent.Controller.checkLogin(function (response) {
-                if (response.result == true || response.result == 'true') {
-                    var food = FoodParent.Model.getFoods().findWhere({ id: self._tree.getFoodId() });
-                    var person = FoodParent.Model.getPersons().findWhere({ id: parseInt(response.id) });
-                    FoodParent.EventHandler.handleAdoptionData(self._tree, person, FoodParent.DATA_MODE.DELETE, {}, function () {
-                        FoodParent.EventHandler.handleDataChange("<strong><i>" + person.getName() + "</i></strong> has unadopted <strong><i>" + food.getName() + " " + self._tree.getName() + "</i></strong> successfully.", false);
-                        //if (View.getManageTreesView()) {
-                        //    (<ManageTreesView>View.getManageTreesView()).renderTreeInfo(self._tree);
-                        //    (<ManageTreesView>View.getManageTreesView())._applyFilter();
-                        //}
-                        if (FoodParent.View.getDetailTreeView()) {
-                            FoodParent.View.getDetailTreeView().renderMenu();
-                        }
-                        new FoodParent.RemoveAlertViewCommand({ delay: FoodParent.Setting.getRemovePopupDuration() }).execute();
-                    }, function () {
-                        FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
-                    }, function () {
-                        FoodParent.EventHandler.handleDataChange("<strong><i>" + person.getName() + "</i></strong> has adopted <strong><i>" + food.getName() + " " + self._tree.getName() + "</i></strong> successfully.", false);
-                        //if (View.getManageTreesView()) {
-                        //    (<ManageTreesView>View.getManageTreesView()).renderTreeInfo(self._tree);
-                        //    (<ManageTreesView>View.getManageTreesView())._applyFilter();
-                        //}
-                        if (FoodParent.View.getDetailTreeView()) {
-                            FoodParent.View.getDetailTreeView().renderMenu();
-                        }
-                    });
-                }
-                else {
-                    new FoodParent.RenderMessageViewCommand({ el: FoodParent.Setting.getMessageWrapperElement(), message: FoodParent.Setting.getErrorMessage(response.code), undoable: false }).execute();
-                }
-            }, function (response) {
-                FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
-            });
-        };
         UnadoptTreeView.TAG = "UnadoptTreeView - ";
         return UnadoptTreeView;
     })(FoodParent.PopupView);
     FoodParent.UnadoptTreeView = UnadoptTreeView;
+    /**
+     * Factory for AdoptionManageView
+     */
+    var AdoptionManageViewFactory = (function () {
+        function AdoptionManageViewFactory(args) {
+            if (AdoptionManageViewFactory._instance) {
+                throw new Error("Error: Instantiation failed: Use AdoptionManageViewFactory.getInstance() instead of new.");
+            }
+            AdoptionManageViewFactory._instance = this;
+        }
+        AdoptionManageViewFactory.getInstance = function () {
+            return AdoptionManageViewFactory._instance;
+        };
+        AdoptionManageViewFactory.create = function (el, tree) {
+            var view = new AdoptionManageView({ el: el });
+            view.setTree(tree);
+            return view;
+        };
+        AdoptionManageViewFactory._instance = new AdoptionManageViewFactory();
+        return AdoptionManageViewFactory;
+    })();
+    FoodParent.AdoptionManageViewFactory = AdoptionManageViewFactory;
+    var AdoptionManageView = (function (_super) {
+        __extends(AdoptionManageView, _super);
+        function AdoptionManageView(options) {
+            var _this = this;
+            _super.call(this, options);
+            this.renderManageAdoption = function () {
+                var self = _this;
+                FoodParent.Controller.fetchAllPersonsAndAuthsAndFoodAndTreesAndAdopts(function () {
+                    // add grid instance for existing data
+                    self.renderParentsList(FoodParent.Model.getPersons());
+                    self.renderFilterList();
+                }, function () {
+                    FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+                });
+            };
+            this.renderFilterList = function () {
+                var self = _this;
+                var template = _.template(FoodParent.Template.getAdoptionFilterListTemplate());
+                var data = {
+                    header: "Filter List",
+                    auths: FoodParent.Model.getAuths(),
+                };
+                self.$('.adoption-filter').html(template(data));
+            };
+            this.renderParentsList = function (parents) {
+                var self = _this;
+                var grid = new Backgrid.Grid({
+                    columns: AdoptionColumn,
+                    collection: parents,
+                    emptyText: FoodParent.Setting.getNoDataText(),
+                });
+                grid.render();
+                grid.sort("name", "ascending");
+                self.$(".list-adoption").html(grid.el);
+            };
+            var self = this;
+            self.bDebug = true;
+            self.events = {
+                "click .evt-close": "_mouseClick",
+                "click .btn-filter": "_clickFilter",
+                "click .evt-reset-filter": "_resetFilter",
+            };
+            self.delegateEvents();
+        }
+        AdoptionManageView.prototype.setTree = function (treeId) {
+            var self = this;
+            self._tree = FoodParent.Model.getTrees().findWhere({ id: treeId });
+        };
+        AdoptionManageView.prototype.getTree = function () {
+            var self = this;
+            return self._tree;
+        };
+        AdoptionManageView.prototype.render = function (args) {
+            _super.prototype.render.call(this, args);
+            var self = this;
+            if (self.bDebug)
+                console.log(AdoptionManageView.TAG + "render()");
+            var food = FoodParent.Model.getFoods().findWhere({ id: self._tree.getFoodId() });
+            var template = _.template(FoodParent.Template.getAdoptionManageViewTemplateForAdmin());
+            var data = {
+                header: "Manage Adoptions",
+                treename: food.getName() + " " + self._tree.getName(),
+                treeId: self._tree.getId(),
+            };
+            self.$el.html(template(data));
+            self.setElement(self.$('#wrapper-manage-adoption'));
+            self.renderManageAdoption();
+            self.setVisible();
+            self.resize();
+            return self;
+        };
+        AdoptionManageView.prototype.update = function (args) {
+            _super.prototype.update.call(this, args);
+            var self = this;
+            if (self.bDebug)
+                console.log(AdoptionManageView.TAG + "update()");
+            return self;
+        };
+        AdoptionManageView.prototype.resize = function () {
+            var self = this;
+        };
+        AdoptionManageView.prototype._mouseClick = function (event) {
+            var self = this;
+            FoodParent.EventHandler.handleMouseClick($(event.currentTarget), self);
+        };
+        AdoptionManageView.prototype._clickFilter = function (event) {
+            var self = this;
+            // Parenting filter
+            if ($(event.currentTarget).hasClass('filter-parenting-item')) {
+                if ($(event.currentTarget).hasClass('active')) {
+                    $(event.currentTarget).removeClass('active');
+                }
+                else {
+                    $(event.currentTarget).addClass('active');
+                }
+                if (self.$('.filter-parenting-item').length == self.$('.filter-parenting-item.active').length) {
+                    self.$('.filter-parenting-all').addClass('active');
+                }
+                else {
+                    self.$('.filter-parenting-all').removeClass('active');
+                }
+            }
+            if ($(event.currentTarget).hasClass('filter-parenting-all')) {
+                if ($(event.currentTarget).hasClass('active')) {
+                    $(event.currentTarget).removeClass('active');
+                    self.$('.filter-parenting-item').removeClass('active');
+                }
+                else {
+                    $(event.currentTarget).addClass('active');
+                    self.$('.filter-parenting-item').addClass('active');
+                }
+            }
+            // Authorization filter
+            if ($(event.currentTarget).hasClass('filter-auth-item')) {
+                if ($(event.currentTarget).hasClass('active')) {
+                    $(event.currentTarget).removeClass('active');
+                }
+                else {
+                    $(event.currentTarget).addClass('active');
+                }
+                if (self.$('.filter-auth-item').length == self.$('.filter-auth-item.active').length) {
+                    self.$('.filter-auth-all').addClass('active');
+                }
+                else {
+                    self.$('.filter-auth-all').removeClass('active');
+                }
+            }
+            if ($(event.currentTarget).hasClass('filter-auth-all')) {
+                if ($(event.currentTarget).hasClass('active')) {
+                    $(event.currentTarget).removeClass('active');
+                    self.$('.filter-auth-item').removeClass('active');
+                }
+                else {
+                    $(event.currentTarget).addClass('active');
+                    self.$('.filter-auth-item').addClass('active');
+                }
+            }
+            // Apply filter
+            self._applyFilter();
+        };
+        AdoptionManageView.prototype._resetFilter = function (event) {
+            var self = this;
+            // Set the status of right corner button based on filter on / off status
+            self.$('.filter-parenting-all').addClass('active');
+            self.$('.filter-auth-all').addClass('active');
+            self.$('.filter-parenting-item').removeClass('active');
+            self.$('.filter-auth-item').removeClass('active');
+            // Apply filter
+            self._applyFilter();
+        };
+        AdoptionManageView.prototype._applyFilter = function (event) {
+            var self = this;
+            var persons = FoodParent.Model.getPersons();
+            // Apply parenting filtering
+            var adoptIds = new Array();
+            if (self.$('.filter-parenting-all').hasClass('active')) {
+                $.each(self.$('.filter-parenting-item'), function (index, element) {
+                    adoptIds.push(parseInt($(element).attr('data-id')));
+                });
+            }
+            else {
+                $.each(self.$('.filter-parenting-item'), function (index, element) {
+                    if ($(element).hasClass('active')) {
+                        adoptIds.push(parseInt($(element).attr('data-id')));
+                    }
+                });
+            }
+            persons = persons.filterByAdoptStatusForTree(adoptIds, self._tree.getId());
+            // Apply authorization filtering
+            var authIds = new Array();
+            if (self.$('.filter-auth-all').hasClass('active')) {
+                $.each(self.$('.filter-auth-item'), function (index, element) {
+                    authIds.push(parseInt($(element).attr('data-id')));
+                });
+            }
+            else {
+                $.each(self.$('.filter-auth-item'), function (index, element) {
+                    if ($(element).hasClass('active')) {
+                        authIds.push(parseInt($(element).attr('data-id')));
+                    }
+                });
+            }
+            persons = persons.filterByAuthIds(authIds);
+            // update markers
+            self.renderParentsList(persons);
+        };
+        AdoptionManageView.TAG = "AdoptionManageView - ";
+        return AdoptionManageView;
+    })(FoodParent.PopupView);
+    FoodParent.AdoptionManageView = AdoptionManageView;
 })(FoodParent || (FoodParent = {}));
 
 var __extends = (this && this.__extends) || function (d, b) {
@@ -59347,6 +59674,10 @@ var FoodParent;
             var self = this;
             self.attributes.parents = FoodParent.Model.getAdopts().getParentIds(self.id);
         };
+        Tree.prototype.getUpdatedDate = function () {
+            var self = this;
+            return moment(this.get('updated')).format(FoodParent.Setting.getDateFormat());
+        };
         return Tree;
     })(Backbone.Model);
     FoodParent.Tree = Tree;
@@ -59874,6 +60205,10 @@ var FoodParent;
         Person.prototype.updateTrees = function () {
             var self = this;
             self.attributes.trees = FoodParent.Model.getAdopts().getTreeIds(self.id);
+        };
+        Person.prototype.getUpdatedDate = function () {
+            var self = this;
+            return moment(this.get('updated')).format(FoodParent.Setting.getDateFormat());
         };
         return Person;
     })(Backbone.Model);

@@ -33,34 +33,28 @@ var FoodParent;
         VIEW_STATUS[VIEW_STATUS["NONE"] = 0] = "NONE";
         VIEW_STATUS[VIEW_STATUS["HOME"] = 1] = "HOME";
         VIEW_STATUS[VIEW_STATUS["TREES"] = 2] = "TREES";
-        VIEW_STATUS[VIEW_STATUS["PARENT_TREES"] = 3] = "PARENT_TREES";
-        VIEW_STATUS[VIEW_STATUS["GEO_ERROR"] = 4] = "GEO_ERROR";
-        VIEW_STATUS[VIEW_STATUS["NETWORK_ERROR"] = 5] = "NETWORK_ERROR";
-        VIEW_STATUS[VIEW_STATUS["CONFIRM"] = 6] = "CONFIRM";
-        VIEW_STATUS[VIEW_STATUS["MANAGE_PEOPLE"] = 7] = "MANAGE_PEOPLE";
-        VIEW_STATUS[VIEW_STATUS["MANAGE_ADOPTION"] = 8] = "MANAGE_ADOPTION";
-        VIEW_STATUS[VIEW_STATUS["DETAIL_TREE"] = 9] = "DETAIL_TREE";
-        VIEW_STATUS[VIEW_STATUS["IMAGENOTE_TREE"] = 10] = "IMAGENOTE_TREE";
-        VIEW_STATUS[VIEW_STATUS["POST_NOTE"] = 11] = "POST_NOTE";
-        VIEW_STATUS[VIEW_STATUS["MANAGE_DONATIONS"] = 12] = "MANAGE_DONATIONS";
-        VIEW_STATUS[VIEW_STATUS["ADD_DONATION"] = 13] = "ADD_DONATION";
-        VIEW_STATUS[VIEW_STATUS["DETAIL_DONATION"] = 14] = "DETAIL_DONATION";
-        VIEW_STATUS[VIEW_STATUS["EDIT_DONATION"] = 15] = "EDIT_DONATION";
-        VIEW_STATUS[VIEW_STATUS["LOGIN"] = 16] = "LOGIN";
-        VIEW_STATUS[VIEW_STATUS["SERVER_RESPONSE_ERROR"] = 17] = "SERVER_RESPONSE_ERROR";
-        VIEW_STATUS[VIEW_STATUS["SIGNUP"] = 18] = "SIGNUP";
-        VIEW_STATUS[VIEW_STATUS["ADOPT_TREE"] = 19] = "ADOPT_TREE";
-        VIEW_STATUS[VIEW_STATUS["UNADOPT_TREE"] = 20] = "UNADOPT_TREE";
-        VIEW_STATUS[VIEW_STATUS["CHANGE_PASSWORD"] = 21] = "CHANGE_PASSWORD";
+        VIEW_STATUS[VIEW_STATUS["TREES_TABLE"] = 3] = "TREES_TABLE";
+        VIEW_STATUS[VIEW_STATUS["PARENT_TREES"] = 4] = "PARENT_TREES";
+        VIEW_STATUS[VIEW_STATUS["GEO_ERROR"] = 5] = "GEO_ERROR";
+        VIEW_STATUS[VIEW_STATUS["NETWORK_ERROR"] = 6] = "NETWORK_ERROR";
+        VIEW_STATUS[VIEW_STATUS["CONFIRM"] = 7] = "CONFIRM";
+        VIEW_STATUS[VIEW_STATUS["MANAGE_PEOPLE"] = 8] = "MANAGE_PEOPLE";
+        VIEW_STATUS[VIEW_STATUS["MANAGE_ADOPTION"] = 9] = "MANAGE_ADOPTION";
+        VIEW_STATUS[VIEW_STATUS["DETAIL_TREE"] = 10] = "DETAIL_TREE";
+        VIEW_STATUS[VIEW_STATUS["IMAGENOTE_TREE"] = 11] = "IMAGENOTE_TREE";
+        VIEW_STATUS[VIEW_STATUS["POST_NOTE"] = 12] = "POST_NOTE";
+        VIEW_STATUS[VIEW_STATUS["MANAGE_DONATIONS"] = 13] = "MANAGE_DONATIONS";
+        VIEW_STATUS[VIEW_STATUS["ADD_DONATION"] = 14] = "ADD_DONATION";
+        VIEW_STATUS[VIEW_STATUS["DETAIL_DONATION"] = 15] = "DETAIL_DONATION";
+        VIEW_STATUS[VIEW_STATUS["EDIT_DONATION"] = 16] = "EDIT_DONATION";
+        VIEW_STATUS[VIEW_STATUS["LOGIN"] = 17] = "LOGIN";
+        VIEW_STATUS[VIEW_STATUS["SERVER_RESPONSE_ERROR"] = 18] = "SERVER_RESPONSE_ERROR";
+        VIEW_STATUS[VIEW_STATUS["SIGNUP"] = 19] = "SIGNUP";
+        VIEW_STATUS[VIEW_STATUS["ADOPT_TREE"] = 20] = "ADOPT_TREE";
+        VIEW_STATUS[VIEW_STATUS["UNADOPT_TREE"] = 21] = "UNADOPT_TREE";
+        VIEW_STATUS[VIEW_STATUS["CHANGE_PASSWORD"] = 22] = "CHANGE_PASSWORD";
     })(FoodParent.VIEW_STATUS || (FoodParent.VIEW_STATUS = {}));
     var VIEW_STATUS = FoodParent.VIEW_STATUS;
-    (function (VIEW_MODE) {
-        VIEW_MODE[VIEW_MODE["NONE"] = 0] = "NONE";
-        VIEW_MODE[VIEW_MODE["MAP"] = 1] = "MAP";
-        VIEW_MODE[VIEW_MODE["GRAPHIC"] = 2] = "GRAPHIC";
-        VIEW_MODE[VIEW_MODE["TABLE"] = 3] = "TABLE";
-    })(FoodParent.VIEW_MODE || (FoodParent.VIEW_MODE = {}));
-    var VIEW_MODE = FoodParent.VIEW_MODE;
     (function (CREDENTIAL_MODE) {
         CREDENTIAL_MODE[CREDENTIAL_MODE["NONE"] = 0] = "NONE";
         CREDENTIAL_MODE[CREDENTIAL_MODE["GUEST"] = 1] = "GUEST";
@@ -124,16 +118,11 @@ var FoodParent;
                         FoodParent.Controller.checkIsAdmin(function () {
                             if (self.bDebug)
                                 console.log(EventHandler.TAG + "Logged in as admin");
-                            if (option.viewMode == VIEW_MODE.TABLE) {
-                                new FoodParent.NavigateCommand({ hash: 'trees', viewMode: VIEW_MODE.MAP, id: 0 }).execute();
-                            }
-                            else {
-                                new FoodParent.RenderTreesViewCommand({ el: FoodParent.Setting.getMainWrapperElement(), viewMode: option.viewMode, id: option.id, credential: CREDENTIAL_MODE.ADMIN }).execute();
-                            }
+                            new FoodParent.RenderTreesViewCommand({ el: FoodParent.Setting.getMainWrapperElement(), id: option.id, credential: CREDENTIAL_MODE.ADMIN }).execute();
                         }, function () {
                             if (self.bDebug)
                                 console.log(EventHandler.TAG + "Logged in as parent");
-                            new FoodParent.RenderTreesViewCommand({ el: FoodParent.Setting.getMainWrapperElement(), viewMode: option.viewMode, id: option.id, credential: CREDENTIAL_MODE.PARENT }).execute();
+                            new FoodParent.RenderTreesViewCommand({ el: FoodParent.Setting.getMainWrapperElement(), id: option.id, credential: CREDENTIAL_MODE.PARENT }).execute();
                         }, function () {
                             if (self.bDebug)
                                 console.log(EventHandler.TAG + "Error occured");
@@ -141,7 +130,7 @@ var FoodParent;
                     }, function () {
                         if (self.bDebug)
                             console.log(EventHandler.TAG + "Not logged in");
-                        new FoodParent.RenderTreesViewCommand({ el: FoodParent.Setting.getMainWrapperElement(), viewMode: option.viewMode, id: option.id, credential: CREDENTIAL_MODE.GUEST }).execute();
+                        new FoodParent.RenderTreesViewCommand({ el: FoodParent.Setting.getMainWrapperElement(), id: option.id, credential: CREDENTIAL_MODE.GUEST }).execute();
                     }, function () {
                         if (self.bDebug)
                             console.log(EventHandler.TAG + "Error occured");
@@ -222,12 +211,12 @@ var FoodParent;
             // Handle navigation view mouse click event
             if (view instanceof FoodParent.NavView) {
                 if (el.hasClass('evt-title')) {
-                    new FoodParent.NavigateCommand({ hash: 'trees', viewMode: VIEW_MODE.MAP, id: 0 }).execute();
+                    new FoodParent.NavigateCommand({ hash: 'trees', id: 0 }).execute();
                     Backbone.history.loadUrl(Backbone.history.fragment);
                 }
                 else if (el.hasClass('evt-trees')) {
                     if (FoodParent.View.getViewStatus() != VIEW_STATUS.TREES) {
-                        new FoodParent.NavigateCommand({ hash: 'trees', viewMode: VIEW_MODE.MAP, id: 0 }).execute();
+                        new FoodParent.NavigateCommand({ hash: 'trees', id: 0 }).execute();
                         new FoodParent.RemovePopupViewCommand({ delay: FoodParent.Setting.getRemovePopupDuration() }).execute();
                         new FoodParent.RefreshCurrentViewCommand().execute();
                     }
@@ -235,10 +224,10 @@ var FoodParent;
                 else if (el.hasClass('people')) {
                     FoodParent.Controller.checkAdmin(function (response) {
                         if (response.result == true || response.result == 'true') {
-                            new FoodParent.NavigateCommand({ hash: 'mpeople', viewMode: VIEW_MODE.TABLE, id: 0 }).execute();
+                            new FoodParent.NavigateCommand({ hash: 'mpeople', id: 0 }).execute();
                         }
                         else if (response.result == false || response.result == 'false') {
-                            new FoodParent.NavigateCommand({ hash: 'mtrees', viewMode: VIEW_MODE.MAP, id: 0 }).execute();
+                            new FoodParent.NavigateCommand({ hash: 'mtrees', id: 0 }).execute();
                         }
                     }, function () {
                         EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
@@ -247,10 +236,10 @@ var FoodParent;
                 else if (el.hasClass('donations')) {
                     FoodParent.Controller.checkAdmin(function (response) {
                         if (response.result == true || response.result == 'true') {
-                            new FoodParent.NavigateCommand({ hash: 'mdonations', viewMode: VIEW_MODE.TABLE, id: 0 }).execute();
+                            new FoodParent.NavigateCommand({ hash: 'mdonations', id: 0 }).execute();
                         }
                         else if (response.result == false || response.result == 'false') {
-                            new FoodParent.NavigateCommand({ hash: 'mtrees', viewMode: VIEW_MODE.MAP, id: 0 }).execute();
+                            new FoodParent.NavigateCommand({ hash: 'mtrees', id: 0 }).execute();
                         }
                     }, function () {
                         EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
@@ -287,7 +276,7 @@ var FoodParent;
                     break;
                 case VIEW_STATUS.HOME:
                     if (el.hasClass('button-logo')) {
-                        new FoodParent.NavigateCommand({ hash: 'trees', viewMode: VIEW_MODE.MAP, id: 0 }).execute();
+                        new FoodParent.NavigateCommand({ hash: 'trees', id: 0 }).execute();
                     }
                     break;
                 case VIEW_STATUS.GEO_ERROR:
@@ -302,44 +291,33 @@ var FoodParent;
                     }
                     break;
                 case VIEW_STATUS.TREES:
-                    if (el.hasClass('marker-control-lock')) {
-                        if (!options.marker.options.draggable) {
-                            options.marker.options.draggable = true;
-                            options.marker.dragging.enable();
-                            el.html('<i class="fa fa-unlock-alt fa-2x"></i>');
-                            options.marker._popup.setContent('<div class="marker-control-wrapper">' + $('.marker-control-wrapper').html() + '</div>');
-                        }
-                        else {
-                            options.marker.options.draggable = false;
-                            options.marker.dragging.disable();
-                            el.html('<i class="fa fa-lock fa-2x"></i>');
-                            options.marker._popup.setContent('<div class="marker-control-wrapper">' + $('.marker-control-wrapper').html() + '</div>');
-                        }
-                    }
-                    else if (el.hasClass('marker-control-adoption') || el.hasClass('button-manage-adoption')) {
+                    if (el.hasClass('marker-control-adoption') || el.hasClass('button-manage-adoption')) {
                         new FoodParent.RenderManageAdoptionViewCommand({ el: FoodParent.Setting.getPopWrapperElement(), tree: options.tree }).execute();
                     }
                     else if (el.hasClass('marker-control-info') || el.hasClass('button-tree-detail')) {
-                        new FoodParent.NavigateCommand({ hash: 'mtree', viewMode: VIEW_MODE.GRAPHIC, id: options.tree }).execute();
+                        new FoodParent.NavigateCommand({ hash: 'mtree', id: options.tree }).execute();
                     }
                     else if (el.hasClass('marker-control-delete')) {
                         var tree = FoodParent.Model.getTrees().findWhere({ id: options.marker.options.id });
                         view.deleteTree(tree);
                     }
                     else if (el.hasClass('switch-table')) {
-                        new FoodParent.NavigateCommand({ hash: 'mtrees', viewMode: VIEW_MODE.TABLE, id: 0 }).execute();
+                        new FoodParent.NavigateCommand({ hash: 'mtrees', id: 0 }).execute();
                     }
                     else if (el.hasClass('switch-map')) {
-                        new FoodParent.NavigateCommand({ hash: 'mtrees', viewMode: VIEW_MODE.MAP, id: 0 }).execute();
+                        new FoodParent.NavigateCommand({ hash: 'mtrees', id: 0 }).execute();
                     }
                     else if (el.hasClass('mapview-item')) {
-                        new FoodParent.NavigateCommand({ hash: 'mtrees', viewMode: VIEW_MODE.MAP, id: options.id }).execute();
+                        new FoodParent.NavigateCommand({ hash: 'mtrees', id: options.id }).execute();
                     }
-                    else if (el.hasClass('manage-adoption-item')) {
+                    else if (el.hasClass('evt-manage-adopt')) {
                         new FoodParent.RenderManageAdoptionViewCommand({ el: FoodParent.Setting.getPopWrapperElement(), tree: options.tree }).execute();
                     }
+                    else if (el.hasClass('evt-tree-table')) {
+                        new FoodParent.RenderTreesTableViewCommand({ el: FoodParent.Setting.getPopWrapperElement() }).execute();
+                    }
                     else if (el.hasClass('tree-detail')) {
-                        new FoodParent.NavigateCommand({ hash: 'mtree', viewMode: VIEW_MODE.GRAPHIC, id: options.tree }).execute();
+                        new FoodParent.NavigateCommand({ hash: 'mtree', id: options.tree }).execute();
                     }
                     else if (el.hasClass('evt-adopt')) {
                         FoodParent.Controller.checkIsLoggedIn(function (response) {
@@ -367,9 +345,16 @@ var FoodParent;
                         new FoodParent.RenderPostNoteViewCommand({ el: FoodParent.Setting.getPopWrapperElement(), tree: tree }).execute();
                     }
                     break;
+                case VIEW_STATUS.TREES_TABLE:
+                    if (el.hasClass('evt-close')) {
+                        new FoodParent.RemovePopupViewCommand({ delay: FoodParent.Setting.getRemovePopupDuration() }).execute();
+                        new FoodParent.RefreshCurrentViewCommand().execute();
+                    }
+                    break;
                 case VIEW_STATUS.MANAGE_ADOPTION:
-                    if (el.hasClass('button-close')) {
-                        new FoodParent.RemoveAlertViewCommand({ delay: FoodParent.Setting.getRemovePopupDuration() }).execute();
+                    if (el.hasClass('evt-close')) {
+                        new FoodParent.RemovePopupViewCommand({ delay: FoodParent.Setting.getRemovePopupDuration() }).execute();
+                        new FoodParent.RefreshCurrentViewCommand().execute();
                     }
                     break;
                 case VIEW_STATUS.DETAIL_TREE:
@@ -435,7 +420,7 @@ var FoodParent;
                         }
                     }
                     else if (el.hasClass('location-detail')) {
-                        new FoodParent.NavigateCommand({ hash: 'mdonation', viewMode: VIEW_MODE.GRAPHIC, id: options.place.getId() }).execute();
+                        new FoodParent.NavigateCommand({ hash: 'mdonation', id: options.place.getId() }).execute();
                     }
                     break;
                 case VIEW_STATUS.ADD_DONATION:
@@ -516,6 +501,7 @@ var FoodParent;
                                     EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
                                 }, function () {
                                     EventHandler.handleDataChange("<strong><i>" + person.getName() + "</i></strong> has unadopted <strong><i>" + food.getName() + " " + options.tree.getName() + "</i></strong> successfully.", false);
+                                    new FoodParent.RefreshCurrentViewCommand().execute();
                                 });
                             }, function (response) {
                                 new FoodParent.RenderMessageViewCommand({ el: FoodParent.Setting.getMessageWrapperElement(), message: FoodParent.Setting.getErrorMessage(response.code), undoable: false }).execute();

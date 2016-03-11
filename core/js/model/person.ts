@@ -77,6 +77,10 @@
             var self: Person = this;
             self.attributes.trees = Model.getAdopts().getTreeIds(self.id);
         }
+        public getUpdatedDate(): string {
+            var self: Person = this;
+            return moment(this.get('updated')).format(Setting.getDateFormat());
+        }
     }
     export class Persons extends Backbone.Collection<Person> {
         url: string = "persons.php";
