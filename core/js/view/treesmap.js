@@ -158,6 +158,18 @@ var FoodParent;
                                 if (FoodParent.View.getWidth() < FoodParent.View.getHeight()) {
                                     self.closeMapFilter();
                                 }
+                                // Refresh rating of a tree in popup control panel
+                                FoodParent.Controller.fetchLatestCommentOfTrees([tree], function () {
+                                    var note = FoodParent.Model.getNotes().getLatestImageNoteOfDate(tree.getId(), new Date().valueOf(), FoodParent.NoteType.IMAGE);
+                                    if (note == null) {
+                                        self.$('#text-rating').html("0");
+                                    }
+                                    else {
+                                        self.$('#text-rating').html(note.getRate().toString());
+                                    }
+                                }, function (errorMode) {
+                                    FoodParent.EventHandler.handleError(errorMode);
+                                });
                                 FoodParent.Router.getInstance().navigate("trees/" + tree.getId(), { trigger: false, replace: true });
                             });
                             self._map.on('popupclose', function (event) {
@@ -221,6 +233,18 @@ var FoodParent;
                             if (FoodParent.View.getWidth() < FoodParent.View.getHeight()) {
                                 self.closeMapFilter();
                             }
+                            // Refresh rating of a tree in popup control panel
+                            FoodParent.Controller.fetchLatestCommentOfTrees([tree], function () {
+                                var note = FoodParent.Model.getNotes().getLatestImageNoteOfDate(tree.getId(), new Date().valueOf(), FoodParent.NoteType.IMAGE);
+                                if (note == null) {
+                                    self.$('#text-rating').html("0");
+                                }
+                                else {
+                                    self.$('#text-rating').html(note.getRate().toString());
+                                }
+                            }, function (errorMode) {
+                                FoodParent.EventHandler.handleError(errorMode);
+                            });
                             FoodParent.Router.getInstance().navigate("trees/" + tree.getId(), { trigger: false, replace: true });
                         });
                         self._map.on('popupclose', function (event) {

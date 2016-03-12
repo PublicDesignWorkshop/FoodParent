@@ -202,6 +202,18 @@
                                 self.closeMapFilter();
                             }
 
+                            // Refresh rating of a tree in popup control panel
+                            Controller.fetchLatestCommentOfTrees([tree], function () {
+                                var note: Note = Model.getNotes().getLatestImageNoteOfDate(tree.getId(), new Date().valueOf(), NoteType.IMAGE);
+                                if (note == null) {
+                                    self.$('#text-rating').html("0");
+                                } else {
+                                    self.$('#text-rating').html(note.getRate().toString());
+                                }
+                            }, function (errorMode: ERROR_MODE) {
+                                EventHandler.handleError(errorMode);
+                            });
+
                             Router.getInstance().navigate("trees/" + tree.getId(), { trigger: false, replace: true });
                         });
                         self._map.on('popupclose', function (event: any) {
@@ -209,7 +221,7 @@
                             marker._resetZIndex();
                             $(marker.label._container).removeClass('active');
                             self.$('#wrapper-treeinfo').addClass('hidden');
-                            self._selectedMarker = null;
+                            self._selectedMarker = null;    
                             Router.getInstance().navigate("trees/0", { trigger: false, replace: true });
                         });
                     }
@@ -265,6 +277,18 @@
                         if (View.getWidth() < View.getHeight()) {
                             self.closeMapFilter();
                         }
+
+                        // Refresh rating of a tree in popup control panel
+                        Controller.fetchLatestCommentOfTrees([tree], function () {
+                            var note: Note = Model.getNotes().getLatestImageNoteOfDate(tree.getId(), new Date().valueOf(), NoteType.IMAGE);
+                            if (note == null) {
+                                self.$('#text-rating').html("0");
+                            } else {
+                                self.$('#text-rating').html(note.getRate().toString());
+                            }
+                        }, function (errorMode: ERROR_MODE) {
+                            EventHandler.handleError(errorMode);
+                        });
 
                         Router.getInstance().navigate("trees/" + tree.getId(), { trigger: false, replace: true });
                     });

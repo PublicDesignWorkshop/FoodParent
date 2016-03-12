@@ -271,10 +271,6 @@
                         },
                     }
                 );
-                
-
-
-
             }, function () {
                 EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
             });

@@ -58,6 +58,7 @@
     <Content Include="core\css\pop.css" />
     <Content Include="core\css\leaflet.css" />
     <Content Include="core\css\print.css" />
+    <Content Include="core\css\treegraph.css" />
     <Content Include="core\css\treesmap.css" />
     <Content Include="core\css\treestable.css" />
     <Content Include="core\image\logo-green-32x32.png" />
@@ -276,6 +277,7 @@
     <TypeScriptCompile Include="core\js\view\popupview.ts" />
     <TypeScriptCompile Include="core\js\view\postview.ts" />
     <TypeScriptCompile Include="core\js\view\template.ts" />
+    <TypeScriptCompile Include="core\js\view\treegraphicview.ts" />
     <TypeScriptCompile Include="core\js\view\treesmapadmin.ts" />
     <TypeScriptCompile Include="core\js\view\treesmapguest.ts" />
     <TypeScriptCompile Include="core\js\view\treesmap.ts" />

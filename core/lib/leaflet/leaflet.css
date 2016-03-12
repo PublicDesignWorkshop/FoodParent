@@ -391,7 +391,6 @@
     cursor: pointer;
 	}
 .leaflet-popup-content-wrapper {
-	padding: 1px;
 	text-align: left;
 	border-radius: 12px;
 	}
@@ -411,8 +410,8 @@
     pointer-events: none;
 	}
 .leaflet-popup-tip {
-	width: 17px;
-	height: 17px;
+	width: 18px;
+	height: 18px;
 	padding: 1px;
     pointer-events: none;
 	margin: 14px auto 0;

@@ -128,7 +128,7 @@ var FoodParent;
                     self.$el.addClass('hidden');
                     break;
                 case FoodParent.VIEW_STATUS.TREES:
-                case FoodParent.VIEW_STATUS.DETAIL_TREE:
+                case FoodParent.VIEW_STATUS.TREE:
                     self.$el.removeClass('hidden');
                     self.$('.item-nav').removeClass('active');
                     self.$('.evt-trees').addClass('active');

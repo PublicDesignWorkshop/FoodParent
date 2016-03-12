@@ -36136,7 +36136,7 @@ L.Popup = L.Class.extend({
 		width = Math.min(width, this.options.maxWidth);
 		width = Math.max(width, this.options.minWidth);
 
-		style.width = (width + 1) + 'px';
+		style.width = (width + 10) + 'px';
 		style.whiteSpace = '';
 
 		style.height = '';
@@ -42220,13 +42220,32 @@ var FoodParent;
                 }
             });
         };
-        Controller.fetchImageNotesOfTreesDuringPeriod = function (trees, startDate, endDate, size, offset, success, error) {
+        Controller.fetchCommentsOfTreesDuringPeriod = function (trees, startDate, endDate, size, offset, success, error) {
             var ids = new Array();
             $.each(trees, function (index, tree) {
                 ids.push(tree.getId());
             });
-            var xhr1 = FoodParent.Model.fetchImageNotesOfTreesDuringPeriod(ids, startDate, endDate, size, offset);
+            var xhr1 = FoodParent.Model.fetchCommentsOfTreesDuringPeriod(ids, startDate, endDate, size, offset);
             //var xhr1: JQueryXHR = Model.fetchImageNotesOfTreesDuringPeriod(ids, moment(new Date()).subtract(2, 'years').startOf('day').format(Setting.getDateTimeFormat()), endDate, size, offset);
+            Controller.pushXHR(xhr1);
+            $.when(xhr1).then(function () {
+                Controller.removeXHR(xhr1);
+                if (success) {
+                    success();
+                }
+            }, function () {
+                Controller.removeXHR(xhr1);
+                if (error) {
+                    error(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+                }
+            });
+        };
+        Controller.fetchLatestCommentOfTrees = function (trees, success, error) {
+            var ids = new Array();
+            $.each(trees, function (index, tree) {
+                ids.push(tree.getId());
+            });
+            var xhr1 = FoodParent.Model.fetchLatestCommentOfTrees(ids);
             Controller.pushXHR(xhr1);
             $.when(xhr1).then(function () {
                 Controller.removeXHR(xhr1);
@@ -42619,7 +42638,7 @@ var FoodParent;
             this.routes = {
                 "": "home",
                 "trees/:id": "trees",
-                "mtree/:id": "manageTree",
+                "tree/:id": "tree",
                 "mpeople/:id": "managePeople",
                 "mdonations/:id": "manageDonations",
                 "mdonation/:id": "manageDonation",
@@ -42635,8 +42654,8 @@ var FoodParent;
         Router.prototype.trees = function (id) {
             FoodParent.EventHandler.handleNavigate(FoodParent.VIEW_STATUS.TREES, { id: id });
         };
-        Router.prototype.manageTree = function (id) {
-            FoodParent.EventHandler.handleNavigate(FoodParent.VIEW_STATUS.DETAIL_TREE, { id: id });
+        Router.prototype.tree = function (id) {
+            FoodParent.EventHandler.handleNavigate(FoodParent.VIEW_STATUS.TREE, { id: id });
         };
         Router.prototype.managePeople = function (id) {
             FoodParent.EventHandler.handleNavigate(FoodParent.VIEW_STATUS.MANAGE_PEOPLE, { id: id });
@@ -42691,12 +42710,12 @@ var FoodParent;
         VIEW_STATUS[VIEW_STATUS["CONFIRM"] = 2] = "CONFIRM";
         VIEW_STATUS[VIEW_STATUS["TREES"] = 3] = "TREES";
         VIEW_STATUS[VIEW_STATUS["TREES_TABLE"] = 4] = "TREES_TABLE";
-        VIEW_STATUS[VIEW_STATUS["PARENT_TREES"] = 5] = "PARENT_TREES";
-        VIEW_STATUS[VIEW_STATUS["GEO_ERROR"] = 6] = "GEO_ERROR";
-        VIEW_STATUS[VIEW_STATUS["NETWORK_ERROR"] = 7] = "NETWORK_ERROR";
-        VIEW_STATUS[VIEW_STATUS["MANAGE_PEOPLE"] = 8] = "MANAGE_PEOPLE";
-        VIEW_STATUS[VIEW_STATUS["MANAGE_ADOPTION"] = 9] = "MANAGE_ADOPTION";
-        VIEW_STATUS[VIEW_STATUS["DETAIL_TREE"] = 10] = "DETAIL_TREE";
+        VIEW_STATUS[VIEW_STATUS["TREE"] = 5] = "TREE";
+        VIEW_STATUS[VIEW_STATUS["PARENT_TREES"] = 6] = "PARENT_TREES";
+        VIEW_STATUS[VIEW_STATUS["GEO_ERROR"] = 7] = "GEO_ERROR";
+        VIEW_STATUS[VIEW_STATUS["NETWORK_ERROR"] = 8] = "NETWORK_ERROR";
+        VIEW_STATUS[VIEW_STATUS["MANAGE_PEOPLE"] = 9] = "MANAGE_PEOPLE";
+        VIEW_STATUS[VIEW_STATUS["MANAGE_ADOPTION"] = 10] = "MANAGE_ADOPTION";
         VIEW_STATUS[VIEW_STATUS["IMAGENOTE_TREE"] = 11] = "IMAGENOTE_TREE";
         VIEW_STATUS[VIEW_STATUS["POST_NOTE"] = 12] = "POST_NOTE";
         VIEW_STATUS[VIEW_STATUS["MANAGE_DONATIONS"] = 13] = "MANAGE_DONATIONS";
@@ -42792,6 +42811,9 @@ var FoodParent;
                             console.log(EventHandler.TAG + "Error occured");
                     });
                     break;
+                case VIEW_STATUS.TREE:
+                    new FoodParent.RenderTreeViewCommand({ el: FoodParent.Setting.getMainWrapperElement(), viewMode: option.viewMode, id: option.id }).execute();
+                    break;
             }
             /*
             if (viewStatus == VIEW_STATUS.HOME) {
@@ -42824,7 +42846,7 @@ var FoodParent;
                 }, function () {
                     EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
                 });
-            } else if (viewStatus == VIEW_STATUS.DETAIL_TREE) {
+            } else if (viewStatus == VIEW_STATUS.TREE) {
                 //new MovePaceBarToUnderNav().execute();
                 new RenderDetailTreeViewCommand({ el: Setting.getMainWrapperElement(), viewMode: option.viewMode, id: option.id }).execute();
             } else if (viewStatus == VIEW_STATUS.MANAGE_DONATIONS) {
@@ -43027,6 +43049,9 @@ var FoodParent;
                             EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
                         });
                     }
+                    else if (el.hasClass('evt-detail')) {
+                        new FoodParent.NavigateCommand({ hash: 'tree', id: options.tree }).execute();
+                    }
                     break;
                 case VIEW_STATUS.TREES_TABLE:
                     if (el.hasClass('evt-close')) {
@@ -43043,7 +43068,7 @@ var FoodParent;
                         new FoodParent.RefreshCurrentViewCommand().execute();
                     }
                     break;
-                case VIEW_STATUS.DETAIL_TREE:
+                case VIEW_STATUS.TREE:
                     if (el.hasClass('content-chart')) {
                         if (options.note) {
                             new FoodParent.RenderImageNoteViewCommand({ el: FoodParent.Setting.getPopWrapperElement(), note: options.note }).execute();
@@ -43616,27 +43641,27 @@ var FoodParent;
         return RenderManagePeopleViewCommand;
     })();
     FoodParent.RenderManagePeopleViewCommand = RenderManagePeopleViewCommand;
-    var RenderDetailTreeViewCommand = (function () {
-        function RenderDetailTreeViewCommand(args) {
+    var RenderTreeViewCommand = (function () {
+        function RenderTreeViewCommand(args) {
             var self = this;
             self._el = args.el;
             self._id = args.id;
         }
-        RenderDetailTreeViewCommand.prototype.execute = function () {
+        RenderTreeViewCommand.prototype.execute = function () {
             var self = this;
-            if (FoodParent.View.getDetailTreeView()) {
+            if (FoodParent.View.getTreeView()) {
             }
             else {
-                var view = FoodParent.DetailTreeViewFractory.create(self._el, self._id).render();
+                var view = FoodParent.TreeViewFractory.create(self._el, self._id).render();
                 FoodParent.View.addChild(view);
-                FoodParent.View.setDetailTreeView(view);
+                FoodParent.View.setTreeView(view);
             }
         };
-        RenderDetailTreeViewCommand.prototype.undo = function () {
+        RenderTreeViewCommand.prototype.undo = function () {
         };
-        return RenderDetailTreeViewCommand;
+        return RenderTreeViewCommand;
     })();
-    FoodParent.RenderDetailTreeViewCommand = RenderDetailTreeViewCommand;
+    FoodParent.RenderTreeViewCommand = RenderTreeViewCommand;
     var RenderConfirmViewCommand = (function () {
         function RenderConfirmViewCommand(args) {
             var self = this;
@@ -43849,9 +43874,9 @@ var FoodParent;
                         FoodParent.View.getPopupView()._applyFilter();
                     }
                 }
-                else if (FoodParent.View.getViewStatus() == FoodParent.VIEW_STATUS.DETAIL_TREE) {
-                    if (FoodParent.View.getDetailTreeView()) {
-                        FoodParent.View.getDetailTreeView().renderMenu();
+                else if (FoodParent.View.getViewStatus() == FoodParent.VIEW_STATUS.TREE) {
+                    if (FoodParent.View.getTreeView()) {
+                        FoodParent.View.getTreeView().renderMenu();
                     }
                 }
                 else if (FoodParent.View.getViewStatus() == FoodParent.VIEW_STATUS.MANAGE_ADOPTION) {
@@ -49203,7 +49228,7 @@ var FoodParent;
             template += '</div>'; // end of top-right-button button-close
             template += '</div>'; // end of #wrapper-header
             template += '<div class="info-group">';
-            template += '<div class="text-label"><%= message %><br/><i>This action cannot be undone.</i></div>';
+            template += '<div class="text-label"><%= message %><br/><i>*This action cannot be undone.</i></div>';
             template += '</div>'; // end of .info-group
             template += '<hr />';
             template += '<div class="info-button-group">';
@@ -49244,8 +49269,8 @@ var FoodParent;
             template += '<div class="marker-control-item btn-action evt-manage-adopt">';
             template += '<i class="fa fa-users fa-2x"></i>';
             template += '</div>';
-            template += '<div class="marker-control-item btn-action evt-tree-detail">';
-            template += '<i class="fa fa-heartbeat fa-2x"></i>';
+            template += '<div class="marker-control-text btn-action evt-detail">';
+            template += '<i class="fa fa-heartbeat fa-2x"></i><i class="fa fa-remove"></i><span id="text-rating" class="text-marker-control"></span>';
             template += '</div>';
             template += '<div class="marker-control-item btn-action evt-tree-remove">';
             template += '<i class="fa fa-trash-o fa-2x"></i>';
@@ -49262,11 +49287,11 @@ var FoodParent;
             template += '</div>';
             return template;
         };
-        Template.getManageTreesPopupTemplate3 = function () {
+        Template.getManageTreesPopupTemplateForGuestAndParent = function () {
             var template = '';
             template += '<div class="marker-control-wrapper">';
-            template += '<div class="marker-control-item marker-control-info">';
-            template += '<i class="fa fa-heartbeat fa-2x"></i>';
+            template += '<div class="marker-control-text btn-action evt-detail">';
+            template += '<i class="fa fa-heartbeat fa-2x"></i><i class="fa fa-remove"></i><span id="text-rating" class="text-marker-control"></span>';
             template += '</div>';
             template += '</div>';
             return template;
@@ -50229,6 +50254,45 @@ var FoodParent;
             template += '</div>'; // end of #wrapper-mtree
             return template;
         };
+        Template.getTreeGraphicViewTemplate = function () {
+            var template = '';
+            template += '<div id="wrapper-tree">';
+            template += '<div id="wrapper-graph">';
+            template += '<div id="wrapper-chart">';
+            template += '</div>'; // end of #wrapper-chart
+            template += '<div id="wrapper-tooltip" class="hidden">';
+            template += '</div>';
+            template += '<div id="content-treemenu">';
+            template += '</div>'; // end of #content-treeinfo
+            template += '<div id="wrapper-date-select">';
+            template += '<div class="wrapper-date-preset">';
+            template += '<div class="btn-brown btn-small btn-date 2years">2 Year</div>';
+            template += '<div class="btn-brown btn-small btn-date 1years">1 Year</div>';
+            template += '<div class="btn-brown btn-small btn-date 6months">6 months</div>';
+            template += '<div class="btn-brown btn-small btn-date 3months">3 months</div>';
+            template += '<div class="btn-brown btn-small btn-date 1month">1 month</div>';
+            template += '</div>';
+            template += '<div class="wrapper-date-select-item"><input type="text" class="form-control tree-graph-start" /></div>';
+            template += '<div class="wrapper-date-select-item"><span class="date-select-label">~</span><input type="text" class="form-control tree-graph-end" /></div>';
+            template += '</div>';
+            template += '</div>'; // end of #wrapper-graph
+            template += '<div id="wrapper-treedetail">';
+            template += '<div class="content-tree-basicinfo">';
+            template += '</div>'; // end of .content-tree-info
+            template += '<div class="content-tree-recentcomments">';
+            template += '<div class="text-header"><i class="fa fa-comments fa-1x"></i> Recent Comments</div>';
+            template += '<div id="list-comments" class="info-group">';
+            template += '</div>'; // end of #list-comments
+            template += '</div>'; // end of .content-tree-recentcomments
+            template += '<div class="content-tree-recentactivities">';
+            template += '<div class="text-header"><i class="fa fa-leaf fa-1x"></i> Recent Changes</div>';
+            template += '<div id="list-activities" class="info-group">';
+            template += '</div>'; // end of #list-activities
+            template += '</div>'; // end of .content-tree-recentactivities
+            template += '</div>'; // end of #wrapper-treeinfo
+            template += '</div>'; // end of #wrapper-tree
+            return template;
+        };
         Template.getToolTipTemplate = function () {
             var template = '';
             template += '<img src="<%= image %>" />';
@@ -51165,8 +51229,8 @@ var FoodParent;
                 });
             }
             View._instance._treesView = null;
+            View._instance._treeView = null;
             View._instance._managePeopleView = null;
-            View._instance._detailTreeView = null;
             View._instance._manageDonationsView = null;
             View._instance._detailDonationView = null;
         };
@@ -51215,17 +51279,17 @@ var FoodParent;
         View.getTreesView = function () {
             return View._instance._treesView;
         };
+        View.setTreeView = function (view) {
+            View._instance._treeView = view;
+        };
+        View.getTreeView = function () {
+            return View._instance._treeView;
+        };
         View.setManagePeopleView = function (view) {
             View._instance._managePeopleView = view;
         };
         View.getManagePeopleView = function () {
             return View._instance._managePeopleView;
-        };
-        View.setDetailTreeView = function (view) {
-            View._instance._detailTreeView = view;
-        };
-        View.getDetailTreeView = function () {
-            return View._instance._detailTreeView;
         };
         View.removeNavView = function () {
             var self = View._instance;
@@ -51464,7 +51528,7 @@ var FoodParent;
                     self.$el.addClass('hidden');
                     break;
                 case FoodParent.VIEW_STATUS.TREES:
-                case FoodParent.VIEW_STATUS.DETAIL_TREE:
+                case FoodParent.VIEW_STATUS.TREE:
                     self.$el.removeClass('hidden');
                     self.$('.item-nav').removeClass('active');
                     self.$('.evt-trees').addClass('active');
@@ -52938,6 +53002,18 @@ var FoodParent;
                                 if (FoodParent.View.getWidth() < FoodParent.View.getHeight()) {
                                     self.closeMapFilter();
                                 }
+                                // Refresh rating of a tree in popup control panel
+                                FoodParent.Controller.fetchLatestCommentOfTrees([tree], function () {
+                                    var note = FoodParent.Model.getNotes().getLatestImageNoteOfDate(tree.getId(), new Date().valueOf(), FoodParent.NoteType.IMAGE);
+                                    if (note == null) {
+                                        self.$('#text-rating').html("0");
+                                    }
+                                    else {
+                                        self.$('#text-rating').html(note.getRate().toString());
+                                    }
+                                }, function (errorMode) {
+                                    FoodParent.EventHandler.handleError(errorMode);
+                                });
                                 FoodParent.Router.getInstance().navigate("trees/" + tree.getId(), { trigger: false, replace: true });
                             });
                             self._map.on('popupclose', function (event) {
@@ -53001,6 +53077,18 @@ var FoodParent;
                             if (FoodParent.View.getWidth() < FoodParent.View.getHeight()) {
                                 self.closeMapFilter();
                             }
+                            // Refresh rating of a tree in popup control panel
+                            FoodParent.Controller.fetchLatestCommentOfTrees([tree], function () {
+                                var note = FoodParent.Model.getNotes().getLatestImageNoteOfDate(tree.getId(), new Date().valueOf(), FoodParent.NoteType.IMAGE);
+                                if (note == null) {
+                                    self.$('#text-rating').html("0");
+                                }
+                                else {
+                                    self.$('#text-rating').html(note.getRate().toString());
+                                }
+                            }, function (errorMode) {
+                                FoodParent.EventHandler.handleError(errorMode);
+                            });
                             FoodParent.Router.getInstance().navigate("trees/" + tree.getId(), { trigger: false, replace: true });
                         });
                         self._map.on('popupclose', function (event) {
@@ -54813,6 +54901,258 @@ var FoodParent;
         return TreesTableView;
     })(FoodParent.PopupView);
     FoodParent.TreesTableView = TreesTableView;
+})(FoodParent || (FoodParent = {}));
+
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var FoodParent;
+(function (FoodParent) {
+    var TreeViewFractory = (function () {
+        function TreeViewFractory(args) {
+            if (TreeViewFractory._instance) {
+                throw new Error("Error: Instantiation failed: Use TreeViewFractory.getInstance() instead of new.");
+            }
+            TreeViewFractory._instance = this;
+        }
+        TreeViewFractory.getInstance = function () {
+            return TreeViewFractory._instance;
+        };
+        TreeViewFractory.create = function (el, id) {
+            var view = new TreeGraphicView({ el: el });
+            view.setTreeId(id);
+            return view;
+        };
+        TreeViewFractory._instance = new TreeViewFractory();
+        return TreeViewFractory;
+    })();
+    FoodParent.TreeViewFractory = TreeViewFractory;
+    var TreeView = (function (_super) {
+        __extends(TreeView, _super);
+        function TreeView() {
+            _super.apply(this, arguments);
+            this._bAuthor = false;
+        }
+        TreeView.prototype.setTreeId = function (id) {
+            this._id = Math.floor(id);
+        };
+        return TreeView;
+    })(FoodParent.BaseView);
+    FoodParent.TreeView = TreeView;
+    var TreeGraphicView = (function (_super) {
+        __extends(TreeGraphicView, _super);
+        function TreeGraphicView(options) {
+            var _this = this;
+            _super.call(this, options);
+            /**
+                Render date picker in a chart view
+            */
+            this.renderChartDatePicker = function () {
+                var self = _this;
+                self._tree = FoodParent.Model.getTrees().findWhere({ id: self._id });
+                self.$('.tree-graph-start').attr({ 'data-value': moment(new Date()).subtract(3, 'month').format(FoodParent.Setting.getDateFormat()) });
+                self._startDate = moment(moment(new Date()).subtract(3, 'month').format(FoodParent.Setting.getDateFormat())).format(FoodParent.Setting.getDateTimeFormat());
+                self.$('.tree-graph-start').pickadate({
+                    format: "dd mmm yyyy",
+                    today: '',
+                    max: new Date(moment(new Date()).subtract('day', 2).valueOf()),
+                    clear: '',
+                    close: 'Close',
+                    onClose: function () {
+                        self._startDate = moment(this.get()).startOf('day').format(FoodParent.Setting.getDateTimeFormat());
+                        self.renderTreeChart(self._tree, self._startDate, self._endDate);
+                    }
+                });
+                var today = new Date();
+                self._endDate = moment(today).endOf('day').format(FoodParent.Setting.getDateTimeFormat());
+                self.$('.tree-graph-end').attr({ 'data-value': moment(new Date()).format(FoodParent.Setting.getDateFormat()) });
+                self.$('.tree-graph-end').pickadate({
+                    format: "dd mmm yyyy",
+                    today: 'Today',
+                    max: today,
+                    clear: '',
+                    close: 'Close',
+                    onClose: function () {
+                        self._endDate = moment(this.get()).endOf('day').format(FoodParent.Setting.getDateTimeFormat());
+                        self.renderTreeChart(self._tree, self._startDate, self._endDate);
+                    }
+                });
+                // Render tree chart
+                self.renderTreeChart(self._tree, self._startDate, self._endDate);
+            };
+            /**
+                Render tree chart using start and end dates
+            */
+            this.renderTreeChart = function (tree, startDate, endDate) {
+                var self = _this;
+                if (self.bDebug)
+                    console.log(TreeGraphicView.TAG + "renderTreeChart()");
+                FoodParent.Controller.fetchCommentsOfTreesDuringPeriod([self._tree], startDate, endDate, 10000, 0, function () {
+                    // Create a canvas for chart
+                    self.$('#wrapper-chart').html('<canvas id="content-chart" class="content-chart" />');
+                    var canvas = self.$('#content-chart')[0];
+                    self.$('#content-chart').attr({ 'width': self.$('#content-chart').innerWidth(), 'height': self.$('#content-chart').innerHeight() });
+                    var ctx = canvas.getContext("2d");
+                    // Tooltip event listener
+                    self.$('#wrapper-graph').on('mousemove', function (event) {
+                        if (event.clientX - 24 - $('#wrapper-tooltip').outerWidth() < 0) {
+                            self.$('#wrapper-tooltip').css({ top: event.clientY - 60, left: event.clientX + 24 });
+                        }
+                        else {
+                            self.$('#wrapper-tooltip').css({ top: event.clientY - 60, left: event.clientX - 24 - self.$('#wrapper-tooltip').outerWidth() });
+                        }
+                    });
+                    self.$('#wrapper-graph').on('mouseleave', function (event) {
+                        self.$('#wrapper-tooltip').addClass('hidden');
+                    });
+                    var labels = new Array();
+                    var notes = new Array();
+                    var start = moment(startDate).set('hour', 13).set('minute', 0).set('seconds', 0).set('milliseconds', 0);
+                    for (var i = moment(start).valueOf(); i < moment(endDate).add('day', 1).valueOf(); i += 1000 * 60 * 60 * 24) {
+                        labels.push(moment(i).format(FoodParent.Setting.getDateHourFormat()));
+                        var note = FoodParent.Model.getNotes().getLatestImageNoteOfDate(self._tree.getId(), i, FoodParent.NoteType.IMAGE);
+                        if (note) {
+                            notes.push(note);
+                        }
+                        else {
+                            notes.push(new FoodParent.Note({ type: FoodParent.NoteType.IMAGE, tree: self._tree.getId(), person: 0, comment: "", picture: "", rate: 0, cover: 0, date: moment(i).format(FoodParent.Setting.getDateTimeFormat()) }));
+                        }
+                    }
+                    if (self.bDebug)
+                        console.log(TreeGraphicView.TAG + "Graph Points Length: " + notes.length);
+                    var labelSkip = Math.floor(labels.length / (self.$('#content-chart').innerWidth() / 150));
+                    if (self._chart) {
+                        self._chart.destroy();
+                    }
+                    self._chart = new Chart(ctx).Line({
+                        labels: labels,
+                        datasets: [
+                            {
+                                label: "My First dataset",
+                                fillColor: "rgba(132,167,87,0.4)",
+                                strokeColor: "rgba(132,167,87,1)",
+                                pointColor: "rgba(132,167,87,1)",
+                                pointStrokeColor: "rgba(132,167,87,1)",
+                                pointHighlightFill: "rgba(220,220,220,1)",
+                                pointHighlightStroke: "rgba(132,167,87,1)",
+                                data: notes,
+                            },
+                        ]
+                    }, {
+                        scaleOverride: true,
+                        scaleSteps: 1,
+                        scaleStepWidth: 10,
+                        scaleStartValue: 0,
+                        pointDotRadius: 3,
+                        pointDotStrokeWidth: 2,
+                        bezierCurve: false,
+                        pointHitDetectionRadius: self.$('#content-chart').innerWidth() / notes.length * 0.5,
+                        pointDot: false,
+                        labelskip: labelSkip,
+                        customTooltips: function (tooltip) {
+                            // tooltip will be false if tooltip is not visible or should be hidden
+                            if (!tooltip || !tooltip.id) {
+                                self.$('#wrapper-tooltip').addClass('hidden');
+                                return;
+                            }
+                            self._note = FoodParent.Model.getNotes().findWhere({ id: tooltip.id });
+                            if (self._note) {
+                                var template = _.template(FoodParent.Template.getToolTipTemplate());
+                                var data = {
+                                    image: FoodParent.Setting.getBlankImagePath(),
+                                    value: self._note.getRate().toFixed(2) + " / " + FoodParent.Setting.getMaxRating().toFixed(2),
+                                    comment: htmlDecode(self._note.getComment()),
+                                    date: tooltip.label,
+                                };
+                                self.$('#wrapper-tooltip').html(template(data));
+                                if (self._note.getPictures().length > 0) {
+                                    self.$('#wrapper-tooltip img').attr('src', FoodParent.Setting.getContentPictureDir() + self._note.getPictures()[0]).load(function () {
+                                        $(this).removeClass('hidden');
+                                    }).error(function () {
+                                        $(this).attr('src', FoodParent.Setting.getBlankImagePath());
+                                        $(this).addClass('hidden');
+                                    });
+                                }
+                                else {
+                                    self.$('#wrapper-tooltip img').addClass('hidden');
+                                }
+                            }
+                            else {
+                                self.$('#wrapper-tooltip img').addClass('hidden');
+                            }
+                            self.$('#wrapper-tooltip').removeClass('hidden');
+                        },
+                    });
+                }, function () {
+                    FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+                });
+            };
+            this.renderTreeInfo = function (tree) {
+                var self = _this;
+                self._bAuthor = false;
+            };
+            var self = this;
+            self.bDebug = true;
+            self.events = {
+                "click .btn-date": "_applyDatePreset",
+            };
+            self.delegateEvents();
+        }
+        TreeGraphicView.prototype.resetNote = function () {
+            var self = this;
+            self._note = null;
+        };
+        TreeGraphicView.prototype.render = function (args) {
+            _super.prototype.render.call(this, args);
+            var self = this;
+            if (self.bDebug)
+                console.log(TreeGraphicView.TAG + "render()");
+            var template = _.template(FoodParent.Template.getTreeGraphicViewTemplate());
+            self.$el.html(template({}));
+            self.setElement(self.$('#wrapper-tree'));
+            self.resize();
+            FoodParent.Controller.fetchAllTrees(function () {
+                self.renderChartDatePicker();
+            }, function () {
+                FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+            });
+        };
+        TreeGraphicView.prototype.update = function (args) {
+            _super.prototype.update.call(this, args);
+            var self = this;
+        };
+        TreeGraphicView.prototype.resize = function () {
+            var self = this;
+        };
+        TreeGraphicView.prototype._applyDatePreset = function (event) {
+            var self = this;
+            if ($(event.currentTarget).hasClass('4years')) {
+                self._startDate = moment(self._endDate).subtract(4, 'years').startOf('day').format(FoodParent.Setting.getDateTimeFormat());
+            }
+            else if ($(event.currentTarget).hasClass('2years')) {
+                self._startDate = moment(self._endDate).subtract(2, 'years').startOf('day').format(FoodParent.Setting.getDateTimeFormat());
+            }
+            else if ($(event.currentTarget).hasClass('1year')) {
+                self._startDate = moment(self._endDate).subtract(1, 'years').startOf('day').format(FoodParent.Setting.getDateTimeFormat());
+            }
+            else if ($(event.currentTarget).hasClass('6months')) {
+                self._startDate = moment(self._endDate).subtract(6, 'months').startOf('day').format(FoodParent.Setting.getDateTimeFormat());
+            }
+            else if ($(event.currentTarget).hasClass('3months')) {
+                self._startDate = moment(self._endDate).subtract(3, 'months').startOf('day').format(FoodParent.Setting.getDateTimeFormat());
+            }
+            else if ($(event.currentTarget).hasClass('1month')) {
+                self._startDate = moment(self._endDate).subtract(1, 'months').startOf('day').format(FoodParent.Setting.getDateTimeFormat());
+            }
+            self.$('.tree-graph-start').pickadate('picker').set('select', moment(self._startDate).format(FoodParent.Setting.getDateFormat()), { format: 'dd mmm yyyy' });
+            self.renderTreeChart(self._tree, self._startDate, self._endDate);
+        };
+        TreeGraphicView.TAG = "TreeGraphicView - ";
+        return TreeGraphicView;
+    })(TreeView);
+    FoodParent.TreeGraphicView = TreeGraphicView;
 })(FoodParent || (FoodParent = {}));
 
 var __extends = (this && this.__extends) || function (d, b) {
@@ -56713,15 +57053,9 @@ var FoodParent;
             });
             if (editable) {
                 var template = _.template(FoodParent.Template.getManageTreesPopupTemplateForAdmin());
-                var data = {
-                    id: tree.getId()
-                };
             }
             else {
-                template = _.template(FoodParent.Template.getManageTreesPopupTemplate3());
-                data = {
-                    id: tree.getId()
-                };
+                template = _.template(FoodParent.Template.getManageTreesPopupTemplateForGuestAndParent());
             }
             var marker = new L.Marker(tree.getLocation(), {
                 id: tree.getId(),
@@ -56729,7 +57063,9 @@ var FoodParent;
                 draggable: false,
                 riseOnHover: true,
             })
-                .bindPopup(template(data), {
+                .bindPopup(template({
+                id: tree.getId()
+            }), {
                 closeButton: false,
                 closeOnClick: bCloseOnClick,
             })
@@ -59308,7 +59644,7 @@ var FoodParent;
             }
             return null;
         };
-        Model.fetchImageNotesOfTreesDuringPeriod = function (ids, start, end, size, offset) {
+        Model.fetchCommentsOfTreesDuringPeriod = function (ids, start, end, size, offset) {
             var self = Model._instance;
             if (self.notes == undefined) {
                 self.notes = new FoodParent.Notes();
@@ -59324,6 +59660,34 @@ var FoodParent;
                         end: end,
                         size: size,
                         offset: offset,
+                    },
+                    success: function (collection, response, options) {
+                        //console.log("success fetch with " + collection.models.length + " notes");
+                        //Controller.getInstance().renderTreesOnMap();
+                    },
+                    error: function (collection, jqxhr, options) {
+                        console.log("error while fetching item data from the server");
+                    }
+                });
+            }
+            return null;
+        };
+        Model.fetchLatestCommentOfTrees = function (ids) {
+            var self = Model._instance;
+            if (self.notes == undefined) {
+                self.notes = new FoodParent.Notes();
+            }
+            if (ids.length != 0) {
+                return self.notes.fetch({
+                    remove: false,
+                    processData: true,
+                    data: {
+                        mode: 4,
+                        trees: ids.toString(),
+                        start: "",
+                        end: "",
+                        size: 1,
+                        offset: 0,
                     },
                     success: function (collection, response, options) {
                         //console.log("success fetch with " + collection.models.length + " notes");

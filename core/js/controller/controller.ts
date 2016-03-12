@@ -176,13 +176,35 @@
             });
         }
 
-        public static fetchImageNotesOfTreesDuringPeriod(trees: Array<Tree>, startDate: string, endDate: string, size: number, offset: number, success?: any, error?: any) {
+        public static fetchCommentsOfTreesDuringPeriod(trees: Array<Tree>, startDate: string, endDate: string, size: number, offset: number, success?: any, error?: any) {
             var ids: Array<number> = new Array<number>();
             $.each(trees, function (index: number, tree: Tree) {
                 ids.push(tree.getId());
             });
-            var xhr1: JQueryXHR = Model.fetchImageNotesOfTreesDuringPeriod(ids, startDate, endDate, size, offset);
+            var xhr1: JQueryXHR = Model.fetchCommentsOfTreesDuringPeriod(ids, startDate, endDate, size, offset);
             //var xhr1: JQueryXHR = Model.fetchImageNotesOfTreesDuringPeriod(ids, moment(new Date()).subtract(2, 'years').startOf('day').format(Setting.getDateTimeFormat()), endDate, size, offset);
+            Controller.pushXHR(xhr1);
+            $.when(
+                xhr1
+            ).then(function () {
+                Controller.removeXHR(xhr1);
+                if (success) {
+                    success();
+                }
+            }, function () {
+                Controller.removeXHR(xhr1);
+                if (error) {
+                    error(ERROR_MODE.SEVER_CONNECTION_ERROR);
+                }
+            });
+        }
+
+        public static fetchLatestCommentOfTrees(trees: Array<Tree>, success?: any, error?: any) {
+            var ids: Array<number> = new Array<number>();
+            $.each(trees, function (index: number, tree: Tree) {
+                ids.push(tree.getId());
+            });
+            var xhr1: JQueryXHR = Model.fetchLatestCommentOfTrees(ids);
             Controller.pushXHR(xhr1);
             $.when(
                 xhr1
@@ -592,7 +614,7 @@
             this.routes = {
                 "": "home",
                 "trees/:id": "trees",
-                "mtree/:id": "manageTree",
+                "tree/:id": "tree",
                 "mpeople/:id": "managePeople",
                 "mdonations/:id": "manageDonations",
                 "mdonation/:id": "manageDonation",
@@ -608,8 +630,8 @@
         trees(id: number) {
             EventHandler.handleNavigate(VIEW_STATUS.TREES, { id: id });
         }
-        manageTree(id: number) {
-            EventHandler.handleNavigate(VIEW_STATUS.DETAIL_TREE, { id: id });
+        tree(id: number) {
+            EventHandler.handleNavigate(VIEW_STATUS.TREE, { id: id });
         }
         managePeople(id: number) {
             EventHandler.handleNavigate(VIEW_STATUS.MANAGE_PEOPLE, { id: id });

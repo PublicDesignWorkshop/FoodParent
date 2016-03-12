@@ -118,7 +118,7 @@
                     self.$el.addClass('hidden');
                     break;
                 case VIEW_STATUS.TREES:
-                case VIEW_STATUS.DETAIL_TREE:
+                case VIEW_STATUS.TREE:
                     self.$el.removeClass('hidden');
                     self.$('.item-nav').removeClass('active');
                     self.$('.evt-trees').addClass('active');

@@ -13,7 +13,8 @@
     export enum VIEW_STATUS {
         NONE, HOME, CONFIRM,
         TREES, TREES_TABLE,
-        PARENT_TREES, GEO_ERROR, NETWORK_ERROR, MANAGE_PEOPLE, MANAGE_ADOPTION, DETAIL_TREE, IMAGENOTE_TREE, POST_NOTE, MANAGE_DONATIONS, ADD_DONATION, DETAIL_DONATION, EDIT_DONATION, LOGIN, SERVER_RESPONSE_ERROR, SIGNUP, ADOPT_TREE, UNADOPT_TREE,
+        TREE,
+        PARENT_TREES, GEO_ERROR, NETWORK_ERROR, MANAGE_PEOPLE, MANAGE_ADOPTION, IMAGENOTE_TREE, POST_NOTE, MANAGE_DONATIONS, ADD_DONATION, DETAIL_DONATION, EDIT_DONATION, LOGIN, SERVER_RESPONSE_ERROR, SIGNUP, ADOPT_TREE, UNADOPT_TREE,
         CHANGE_PASSWORD
     }
     export enum CREDENTIAL_MODE {
@@ -90,6 +91,9 @@
                         if (self.bDebug) console.log(EventHandler.TAG + "Error occured");
                     });
                     break;
+                case VIEW_STATUS.TREE:
+                    new RenderTreeViewCommand({ el: Setting.getMainWrapperElement(), viewMode: option.viewMode, id: option.id }).execute();
+                    break;
             }
             /*
             if (viewStatus == VIEW_STATUS.HOME) {
@@ -122,7 +126,7 @@
                 }, function () {
                     EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
                 });
-            } else if (viewStatus == VIEW_STATUS.DETAIL_TREE) {
+            } else if (viewStatus == VIEW_STATUS.TREE) {
                 //new MovePaceBarToUnderNav().execute();
                 new RenderDetailTreeViewCommand({ el: Setting.getMainWrapperElement(), viewMode: option.viewMode, id: option.id }).execute();
             } else if (viewStatus == VIEW_STATUS.MANAGE_DONATIONS) {
@@ -308,6 +312,8 @@
                         }, function () {
                             EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
                         });
+                    } else if (el.hasClass('evt-detail')) {
+                        new NavigateCommand({ hash: 'tree', id: options.tree }).execute();
                     }
                     break;
                 case VIEW_STATUS.TREES_TABLE:
@@ -324,7 +330,7 @@
                         new RefreshCurrentViewCommand().execute();
                     }
                     break;
-                case VIEW_STATUS.DETAIL_TREE:
+                case VIEW_STATUS.TREE:
                     if (el.hasClass('content-chart')) {
                         if (options.note) {
                             new RenderImageNoteViewCommand({ el: Setting.getPopWrapperElement(), note: options.note }).execute();

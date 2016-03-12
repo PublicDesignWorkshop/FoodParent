@@ -161,13 +161,32 @@ var FoodParent;
                 }
             });
         };
-        Controller.fetchImageNotesOfTreesDuringPeriod = function (trees, startDate, endDate, size, offset, success, error) {
+        Controller.fetchCommentsOfTreesDuringPeriod = function (trees, startDate, endDate, size, offset, success, error) {
             var ids = new Array();
             $.each(trees, function (index, tree) {
                 ids.push(tree.getId());
             });
-            var xhr1 = FoodParent.Model.fetchImageNotesOfTreesDuringPeriod(ids, startDate, endDate, size, offset);
+            var xhr1 = FoodParent.Model.fetchCommentsOfTreesDuringPeriod(ids, startDate, endDate, size, offset);
             //var xhr1: JQueryXHR = Model.fetchImageNotesOfTreesDuringPeriod(ids, moment(new Date()).subtract(2, 'years').startOf('day').format(Setting.getDateTimeFormat()), endDate, size, offset);
+            Controller.pushXHR(xhr1);
+            $.when(xhr1).then(function () {
+                Controller.removeXHR(xhr1);
+                if (success) {
+                    success();
+                }
+            }, function () {
+                Controller.removeXHR(xhr1);
+                if (error) {
+                    error(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+                }
+            });
+        };
+        Controller.fetchLatestCommentOfTrees = function (trees, success, error) {
+            var ids = new Array();
+            $.each(trees, function (index, tree) {
+                ids.push(tree.getId());
+            });
+            var xhr1 = FoodParent.Model.fetchLatestCommentOfTrees(ids);
             Controller.pushXHR(xhr1);
             $.when(xhr1).then(function () {
                 Controller.removeXHR(xhr1);
@@ -560,7 +579,7 @@ var FoodParent;
             this.routes = {
                 "": "home",
                 "trees/:id": "trees",
-                "mtree/:id": "manageTree",
+                "tree/:id": "tree",
                 "mpeople/:id": "managePeople",
                 "mdonations/:id": "manageDonations",
                 "mdonation/:id": "manageDonation",
@@ -576,8 +595,8 @@ var FoodParent;
         Router.prototype.trees = function (id) {
             FoodParent.EventHandler.handleNavigate(FoodParent.VIEW_STATUS.TREES, { id: id });
         };
-        Router.prototype.manageTree = function (id) {
-            FoodParent.EventHandler.handleNavigate(FoodParent.VIEW_STATUS.DETAIL_TREE, { id: id });
+        Router.prototype.tree = function (id) {
+            FoodParent.EventHandler.handleNavigate(FoodParent.VIEW_STATUS.TREE, { id: id });
         };
         Router.prototype.managePeople = function (id) {
             FoodParent.EventHandler.handleNavigate(FoodParent.VIEW_STATUS.MANAGE_PEOPLE, { id: id });

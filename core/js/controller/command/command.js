@@ -122,27 +122,27 @@ var FoodParent;
         return RenderManagePeopleViewCommand;
     })();
     FoodParent.RenderManagePeopleViewCommand = RenderManagePeopleViewCommand;
-    var RenderDetailTreeViewCommand = (function () {
-        function RenderDetailTreeViewCommand(args) {
+    var RenderTreeViewCommand = (function () {
+        function RenderTreeViewCommand(args) {
             var self = this;
             self._el = args.el;
             self._id = args.id;
         }
-        RenderDetailTreeViewCommand.prototype.execute = function () {
+        RenderTreeViewCommand.prototype.execute = function () {
             var self = this;
-            if (FoodParent.View.getDetailTreeView()) {
+            if (FoodParent.View.getTreeView()) {
             }
             else {
-                var view = FoodParent.DetailTreeViewFractory.create(self._el, self._id).render();
+                var view = FoodParent.TreeViewFractory.create(self._el, self._id).render();
                 FoodParent.View.addChild(view);
-                FoodParent.View.setDetailTreeView(view);
+                FoodParent.View.setTreeView(view);
             }
         };
-        RenderDetailTreeViewCommand.prototype.undo = function () {
+        RenderTreeViewCommand.prototype.undo = function () {
         };
-        return RenderDetailTreeViewCommand;
+        return RenderTreeViewCommand;
     })();
-    FoodParent.RenderDetailTreeViewCommand = RenderDetailTreeViewCommand;
+    FoodParent.RenderTreeViewCommand = RenderTreeViewCommand;
     var RenderConfirmViewCommand = (function () {
         function RenderConfirmViewCommand(args) {
             var self = this;
@@ -355,9 +355,9 @@ var FoodParent;
                         FoodParent.View.getPopupView()._applyFilter();
                     }
                 }
-                else if (FoodParent.View.getViewStatus() == FoodParent.VIEW_STATUS.DETAIL_TREE) {
-                    if (FoodParent.View.getDetailTreeView()) {
-                        FoodParent.View.getDetailTreeView().renderMenu();
+                else if (FoodParent.View.getViewStatus() == FoodParent.VIEW_STATUS.TREE) {
+                    if (FoodParent.View.getTreeView()) {
+                        FoodParent.View.getTreeView().renderMenu();
                     }
                 }
                 else if (FoodParent.View.getViewStatus() == FoodParent.VIEW_STATUS.MANAGE_ADOPTION) {

@@ -125,22 +125,22 @@
         }
     }
 
-    export class RenderDetailTreeViewCommand implements Command {
+    export class RenderTreeViewCommand implements Command {
         private _el: JQuery;
         private _id: number;
         constructor(args?: any) {
-            var self: RenderDetailTreeViewCommand = this;
+            var self: RenderTreeViewCommand = this;
             self._el = args.el;
             self._id = args.id;
         }
         public execute(): any {
-            var self: RenderDetailTreeViewCommand = this;
-            if (View.getDetailTreeView()) {
+            var self: RenderTreeViewCommand = this;
+            if (View.getTreeView()) {
 
             } else {
-                var view: DetailTreeView = DetailTreeViewFractory.create(self._el, self._id).render();
+                var view: TreeView = TreeViewFractory.create(self._el, self._id).render();
                 View.addChild(view);
-                View.setDetailTreeView(view);
+                View.setTreeView(view);
             }
         }
         public undo(): any {
@@ -372,9 +372,9 @@
                     if (FoodParent.View.getPopupView()) {
                         (<FoodParent.TreesTableView>FoodParent.View.getPopupView())._applyFilter();
                     }
-                } else if (View.getViewStatus() == VIEW_STATUS.DETAIL_TREE) {
-                    if (View.getDetailTreeView()) {
-                        View.getDetailTreeView().renderMenu();
+                } else if (View.getViewStatus() == VIEW_STATUS.TREE) {
+                    if (View.getTreeView()) {
+                        View.getTreeView().renderMenu();
                     }
                 } else if (View.getViewStatus() == VIEW_STATUS.MANAGE_ADOPTION) {
                     if (FoodParent.View.getPopupView()) {

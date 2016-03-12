@@ -286,7 +286,7 @@ var FoodParent;
             template += '</div>'; // end of top-right-button button-close
             template += '</div>'; // end of #wrapper-header
             template += '<div class="info-group">';
-            template += '<div class="text-label"><%= message %><br/><i>This action cannot be undone.</i></div>';
+            template += '<div class="text-label"><%= message %><br/><i>*This action cannot be undone.</i></div>';
             template += '</div>'; // end of .info-group
             template += '<hr />';
             template += '<div class="info-button-group">';
@@ -327,8 +327,8 @@ var FoodParent;
             template += '<div class="marker-control-item btn-action evt-manage-adopt">';
             template += '<i class="fa fa-users fa-2x"></i>';
             template += '</div>';
-            template += '<div class="marker-control-item btn-action evt-tree-detail">';
-            template += '<i class="fa fa-heartbeat fa-2x"></i>';
+            template += '<div class="marker-control-text btn-action evt-detail">';
+            template += '<i class="fa fa-heartbeat fa-2x"></i><i class="fa fa-remove"></i><span id="text-rating" class="text-marker-control"></span>';
             template += '</div>';
             template += '<div class="marker-control-item btn-action evt-tree-remove">';
             template += '<i class="fa fa-trash-o fa-2x"></i>';
@@ -345,11 +345,11 @@ var FoodParent;
             template += '</div>';
             return template;
         };
-        Template.getManageTreesPopupTemplate3 = function () {
+        Template.getManageTreesPopupTemplateForGuestAndParent = function () {
             var template = '';
             template += '<div class="marker-control-wrapper">';
-            template += '<div class="marker-control-item marker-control-info">';
-            template += '<i class="fa fa-heartbeat fa-2x"></i>';
+            template += '<div class="marker-control-text btn-action evt-detail">';
+            template += '<i class="fa fa-heartbeat fa-2x"></i><i class="fa fa-remove"></i><span id="text-rating" class="text-marker-control"></span>';
             template += '</div>';
             template += '</div>';
             return template;
@@ -1310,6 +1310,45 @@ var FoodParent;
             */
             template += '</div>'; // end of #wrapper-tree-detail
             template += '</div>'; // end of #wrapper-mtree
+            return template;
+        };
+        Template.getTreeGraphicViewTemplate = function () {
+            var template = '';
+            template += '<div id="wrapper-tree">';
+            template += '<div id="wrapper-graph">';
+            template += '<div id="wrapper-chart">';
+            template += '</div>'; // end of #wrapper-chart
+            template += '<div id="wrapper-tooltip" class="hidden">';
+            template += '</div>';
+            template += '<div id="content-treemenu">';
+            template += '</div>'; // end of #content-treeinfo
+            template += '<div id="wrapper-date-select">';
+            template += '<div class="wrapper-date-preset">';
+            template += '<div class="btn-brown btn-small btn-date 2years">2 Year</div>';
+            template += '<div class="btn-brown btn-small btn-date 1years">1 Year</div>';
+            template += '<div class="btn-brown btn-small btn-date 6months">6 months</div>';
+            template += '<div class="btn-brown btn-small btn-date 3months">3 months</div>';
+            template += '<div class="btn-brown btn-small btn-date 1month">1 month</div>';
+            template += '</div>';
+            template += '<div class="wrapper-date-select-item"><input type="text" class="form-control tree-graph-start" /></div>';
+            template += '<div class="wrapper-date-select-item"><span class="date-select-label">~</span><input type="text" class="form-control tree-graph-end" /></div>';
+            template += '</div>';
+            template += '</div>'; // end of #wrapper-graph
+            template += '<div id="wrapper-treedetail">';
+            template += '<div class="content-tree-basicinfo">';
+            template += '</div>'; // end of .content-tree-info
+            template += '<div class="content-tree-recentcomments">';
+            template += '<div class="text-header"><i class="fa fa-comments fa-1x"></i> Recent Comments</div>';
+            template += '<div id="list-comments" class="info-group">';
+            template += '</div>'; // end of #list-comments
+            template += '</div>'; // end of .content-tree-recentcomments
+            template += '<div class="content-tree-recentactivities">';
+            template += '<div class="text-header"><i class="fa fa-leaf fa-1x"></i> Recent Changes</div>';
+            template += '<div id="list-activities" class="info-group">';
+            template += '</div>'; // end of #list-activities
+            template += '</div>'; // end of .content-tree-recentactivities
+            template += '</div>'; // end of #wrapper-treeinfo
+            template += '</div>'; // end of #wrapper-tree
             return template;
         };
         Template.getToolTipTemplate = function () {

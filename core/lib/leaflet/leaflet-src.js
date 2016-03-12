@@ -4020,7 +4020,7 @@ L.Popup = L.Class.extend({
 		width = Math.min(width, this.options.maxWidth);
 		width = Math.max(width, this.options.minWidth);
 
-		style.width = (width + 1) + 'px';
+		style.width = (width + 10) + 'px';
 		style.whiteSpace = '';
 
 		style.height = '';

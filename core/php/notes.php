@@ -62,6 +62,8 @@
             $sql = "SELECT * FROM `note` WHERE (`tree` IN (".$params["trees"].")) AND (`type` = '1') ORDER BY `date` DESC LIMIT ".$params["size"]." OFFSET ".$params["offset"]."";
         } else if ($params["mode"] == 3 || $params["mode"] == "3") {
             $sql = "SELECT * FROM `note` WHERE (`tree` IN (".$params["trees"].")) AND (`type` = '2') ORDER BY `date` DESC LIMIT ".$params["size"]." OFFSET ".$params["offset"]."";
+        } else if ($params["mode"] == 4 || $params["mode"] == "4") {
+            $sql = "SELECT * FROM `note` WHERE (`tree` IN (".$params["trees"].")) AND (`type` = '1') ORDER BY `date` DESC LIMIT ".$params["size"]." OFFSET ".$params["offset"]."";
         }
         
         try {

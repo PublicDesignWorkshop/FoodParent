@@ -86,8 +86,8 @@ var FoodParent;
                 });
             }
             View._instance._treesView = null;
+            View._instance._treeView = null;
             View._instance._managePeopleView = null;
-            View._instance._detailTreeView = null;
             View._instance._manageDonationsView = null;
             View._instance._detailDonationView = null;
         };
@@ -136,17 +136,17 @@ var FoodParent;
         View.getTreesView = function () {
             return View._instance._treesView;
         };
+        View.setTreeView = function (view) {
+            View._instance._treeView = view;
+        };
+        View.getTreeView = function () {
+            return View._instance._treeView;
+        };
         View.setManagePeopleView = function (view) {
             View._instance._managePeopleView = view;
         };
         View.getManagePeopleView = function () {
             return View._instance._managePeopleView;
-        };
-        View.setDetailTreeView = function (view) {
-            View._instance._detailTreeView = view;
-        };
-        View.getDetailTreeView = function () {
-            return View._instance._detailTreeView;
         };
         View.removeNavView = function () {
             var self = View._instance;

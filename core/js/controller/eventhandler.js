@@ -35,12 +35,12 @@ var FoodParent;
         VIEW_STATUS[VIEW_STATUS["CONFIRM"] = 2] = "CONFIRM";
         VIEW_STATUS[VIEW_STATUS["TREES"] = 3] = "TREES";
         VIEW_STATUS[VIEW_STATUS["TREES_TABLE"] = 4] = "TREES_TABLE";
-        VIEW_STATUS[VIEW_STATUS["PARENT_TREES"] = 5] = "PARENT_TREES";
-        VIEW_STATUS[VIEW_STATUS["GEO_ERROR"] = 6] = "GEO_ERROR";
-        VIEW_STATUS[VIEW_STATUS["NETWORK_ERROR"] = 7] = "NETWORK_ERROR";
-        VIEW_STATUS[VIEW_STATUS["MANAGE_PEOPLE"] = 8] = "MANAGE_PEOPLE";
-        VIEW_STATUS[VIEW_STATUS["MANAGE_ADOPTION"] = 9] = "MANAGE_ADOPTION";
-        VIEW_STATUS[VIEW_STATUS["DETAIL_TREE"] = 10] = "DETAIL_TREE";
+        VIEW_STATUS[VIEW_STATUS["TREE"] = 5] = "TREE";
+        VIEW_STATUS[VIEW_STATUS["PARENT_TREES"] = 6] = "PARENT_TREES";
+        VIEW_STATUS[VIEW_STATUS["GEO_ERROR"] = 7] = "GEO_ERROR";
+        VIEW_STATUS[VIEW_STATUS["NETWORK_ERROR"] = 8] = "NETWORK_ERROR";
+        VIEW_STATUS[VIEW_STATUS["MANAGE_PEOPLE"] = 9] = "MANAGE_PEOPLE";
+        VIEW_STATUS[VIEW_STATUS["MANAGE_ADOPTION"] = 10] = "MANAGE_ADOPTION";
         VIEW_STATUS[VIEW_STATUS["IMAGENOTE_TREE"] = 11] = "IMAGENOTE_TREE";
         VIEW_STATUS[VIEW_STATUS["POST_NOTE"] = 12] = "POST_NOTE";
         VIEW_STATUS[VIEW_STATUS["MANAGE_DONATIONS"] = 13] = "MANAGE_DONATIONS";
@@ -136,6 +136,9 @@ var FoodParent;
                             console.log(EventHandler.TAG + "Error occured");
                     });
                     break;
+                case VIEW_STATUS.TREE:
+                    new FoodParent.RenderTreeViewCommand({ el: FoodParent.Setting.getMainWrapperElement(), viewMode: option.viewMode, id: option.id }).execute();
+                    break;
             }
             /*
             if (viewStatus == VIEW_STATUS.HOME) {
@@ -168,7 +171,7 @@ var FoodParent;
                 }, function () {
                     EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
                 });
-            } else if (viewStatus == VIEW_STATUS.DETAIL_TREE) {
+            } else if (viewStatus == VIEW_STATUS.TREE) {
                 //new MovePaceBarToUnderNav().execute();
                 new RenderDetailTreeViewCommand({ el: Setting.getMainWrapperElement(), viewMode: option.viewMode, id: option.id }).execute();
             } else if (viewStatus == VIEW_STATUS.MANAGE_DONATIONS) {
@@ -371,6 +374,9 @@ var FoodParent;
                             EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
                         });
                     }
+                    else if (el.hasClass('evt-detail')) {
+                        new FoodParent.NavigateCommand({ hash: 'tree', id: options.tree }).execute();
+                    }
                     break;
                 case VIEW_STATUS.TREES_TABLE:
                     if (el.hasClass('evt-close')) {
@@ -387,7 +393,7 @@ var FoodParent;
                         new FoodParent.RefreshCurrentViewCommand().execute();
                     }
                     break;
-                case VIEW_STATUS.DETAIL_TREE:
+                case VIEW_STATUS.TREE:
                     if (el.hasClass('content-chart')) {
                         if (options.note) {
                             new FoodParent.RenderImageNoteViewCommand({ el: FoodParent.Setting.getPopWrapperElement(), note: options.note }).execute();

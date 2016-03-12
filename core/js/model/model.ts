@@ -408,7 +408,7 @@
             return null;
         }
 
-        public static fetchImageNotesOfTreesDuringPeriod(ids: Array<number>, start: string, end: string, size: number, offset: number): JQueryXHR {
+        public static fetchCommentsOfTreesDuringPeriod(ids: Array<number>, start: string, end: string, size: number, offset: number): JQueryXHR {
             var self: Model = Model._instance;
             if (self.notes == undefined) {
                 self.notes = new Notes();
@@ -424,6 +424,35 @@
                         end: end,
                         size: size,
                         offset: offset,
+                    },
+                    success(collection?: any, response?: any, options?: any): void {
+                        //console.log("success fetch with " + collection.models.length + " notes");
+                        //Controller.getInstance().renderTreesOnMap();
+                    },
+                    error(collection?: any, jqxhr?: JQueryXHR, options?: any): void {
+                        console.log("error while fetching item data from the server");
+                    }
+                });
+            }
+            return null;
+        }
+
+        public static fetchLatestCommentOfTrees(ids: Array<number>): JQueryXHR {
+            var self: Model = Model._instance;
+            if (self.notes == undefined) {
+                self.notes = new Notes();
+            }
+            if (ids.length != 0) {
+                return self.notes.fetch({
+                    remove: false,	// if remove == false, it only adds new items, not removing old items.
+                    processData: true,
+                    data: {
+                        mode: 4,    // 0: fetch only the number of the size from offset, 1: fetch image notes between start and end, 2: fetch only image note the number of the size from offset, 3: fetch only info note the number of the size from offset, 4: fetch the lastest image note
+                        trees: ids.toString(),
+                        start: "",
+                        end: "",
+                        size: 1,
+                        offset: 0,
                     },
                     success(collection?: any, response?: any, options?: any): void {
                         //console.log("success fetch with " + collection.models.length + " notes");

@@ -8,7 +8,7 @@
         private _messageView: MessageView;
         private _treesView: TreesView;
         private _managePeopleView: ManagePeopleView;
-        private _detailTreeView: DetailTreeView;
+        private _treeView: TreeView;
         private _manageDonationsView: ManageDonationsView;
         private _detailDonationView: DetailDonationView;
 
@@ -93,8 +93,9 @@
                 });
             }
             View._instance._treesView = null;
+            View._instance._treeView = null;
             View._instance._managePeopleView = null;
-            View._instance._detailTreeView = null;
+            
             View._instance._manageDonationsView = null;
             View._instance._detailDonationView = null;
         }
@@ -144,18 +145,19 @@
         public static getTreesView(): TreesView {
             return View._instance._treesView;
         }
+        public static setTreeView(view: TreeView): void {
+            View._instance._treeView = view;
+        }
+        public static getTreeView(): TreeView {
+            return View._instance._treeView;
+        }
         public static setManagePeopleView(view: ManagePeopleView): void {
             View._instance._managePeopleView = view;
         }
         public static getManagePeopleView(): ManagePeopleView {
             return View._instance._managePeopleView;
         }
-        public static setDetailTreeView(view: DetailTreeView): void {
-            View._instance._detailTreeView = view;
-        }
-        public static getDetailTreeView(): DetailTreeView {
-            return View._instance._detailTreeView;
-        }
+        
         public static removeNavView(): void {
             var self: View = View._instance;
             self._navView.destroy();

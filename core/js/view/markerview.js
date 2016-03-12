@@ -32,15 +32,9 @@ var FoodParent;
             });
             if (editable) {
                 var template = _.template(FoodParent.Template.getManageTreesPopupTemplateForAdmin());
-                var data = {
-                    id: tree.getId()
-                };
             }
             else {
-                template = _.template(FoodParent.Template.getManageTreesPopupTemplate3());
-                data = {
-                    id: tree.getId()
-                };
+                template = _.template(FoodParent.Template.getManageTreesPopupTemplateForGuestAndParent());
             }
             var marker = new L.Marker(tree.getLocation(), {
                 id: tree.getId(),
@@ -48,7 +42,9 @@ var FoodParent;
                 draggable: false,
                 riseOnHover: true,
             })
-                .bindPopup(template(data), {
+                .bindPopup(template({
+                id: tree.getId()
+            }), {
                 closeButton: false,
                 closeOnClick: bCloseOnClick,
             })

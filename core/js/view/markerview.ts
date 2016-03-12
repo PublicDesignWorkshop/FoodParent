@@ -35,14 +35,8 @@
             });
             if (editable) {
                 var template = _.template(Template.getManageTreesPopupTemplateForAdmin());
-                var data = {
-                    id: tree.getId()
-                }
             } else {
-                template = _.template(Template.getManageTreesPopupTemplate3());
-                data = {
-                    id: tree.getId()
-                }
+                template = _.template(Template.getManageTreesPopupTemplateForGuestAndParent());
             }
             
             var marker: L.Marker = new L.Marker(
@@ -53,7 +47,9 @@
                     draggable: false,
                     riseOnHover: true,
                 })
-                .bindPopup(template(data),
+                .bindPopup(template({
+                    id: tree.getId()
+                }),
                 {
                     closeButton: false,
                     closeOnClick: bCloseOnClick,
