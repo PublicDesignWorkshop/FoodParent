@@ -5,60 +5,7 @@
 
     
 
-    .list-tree td, .new-tree td, .list-people td, .list-people th, .new-person td, .list-adoption td, .list-location td, .list-location th, .new-location td, .new-location th, .list-donation td, .list-donation th, .new-donation td {
-        color: rgba(0, 0, 0, 0.75);
-        font-size: small;
-    }
-
-    .list-tree a, .new-tree a, .list-tree a, .new-person a, .list-adoption a {
-        font-size: small;
-    }
-
-    .list-tree .backgrid .select-cell, .new-tree .backgrid .select-cell, .list-people .backgrid .select-cell, .new-person .backgrid .select-cell, .list-adoption .backgrid .select-cell {
-        text-align: left;
-    }
-
-    .list-tree td {
-        padding-left: 4px;
-        padding-right: 4px;
-        border-bottom: 1px solid rgba(94, 78, 81, 0.15);
-    }
-    .list-tree .backgrid .food {
-        width: 20%;
-    }
-    .list-tree .backgrid .description {
-        width: 20%;
-    }
-    .list-tree .backgrid .address {
-        width: 25%;
-        text-align: center;
-    }
-    .list-tree .backgrid .parents {
-        width: 20%;
-    }
-    .list-tree .backgrid .lat {
-        width: 72px;
-    }
-    .list-tree .backgrid .lng {
-        width: 72px;
-    }
-
-    .new-tree .backgrid .food {
-        width: 15%;
-    }
-    .new-tree .backgrid .description {
-        width: 35%;
-    }
-    .new-tree .backgrid .address {
-        width: 35%;
-        text-align: center;
-    }
-    .new-tree .backgrid .lat {
-        width: 72px;
-    }
-    .new-tree .backgrid .lng {
-        width: 72px;
-    }
+    
 
     .list-people .backgrid .auth {
         width: 15%;
@@ -97,26 +44,7 @@
         width: 20%;
     }
 
-    .list-adoption td {
-        padding-left: 4px;
-        padding-right: 4px;
-        border-bottom: 1px solid rgba(94, 78, 81, 0.15);
-    }
-    .list-adoption .backgrid .auth {
-        width: 15%;
-    }
-    .list-adoption .backgrid .name {
-        width: 15%;
-    }
-    .list-adoption .backgrid .contact {
-        width: 30%;
-    }
-    .list-adoption .backgrid .neighborhood {
-        width: 20%;
-    }
-    .list-adoption .backgrid .trees {
-        width: 20%;
-    }
+    
 
     
 
@@ -187,7 +115,75 @@
 
 
 @media only screen and (orientation: portrait) {
-    
+    /* Force table to not be like tables anymore */
+	table, thead, tbody, th, td, tr, .backgrid th.renderable, .backgrid td.renderable { 
+		display: block;
+        width: 100%;
+        text-align: left;
+        font-size: medium;
+	}
+
+    table .btn-tree {
+        text-align: left;
+    }
+    table .btn-table {
+        font-size: large;
+    }
+	
+	/* Hide table headers (but not display: none;, for accessibility) */
+	thead tr { 
+		position: absolute;
+		top: -9999px;
+		left: -9999px;
+	}
+	
+	tr { border: 1px solid #ccc; }
+	
+	td { 
+		/* Behave  like a "row" */
+		border: none;
+		border-bottom: 1px solid #eee; 
+		position: relative;
+		padding-left: 30%; 
+        min-height: 24px;
+	}
+	
+	td:before { 
+		/* Now like a table header */
+		position: absolute;
+		/* Top/left values mimic padding */
+		top: 0;
+		left: 8px;
+		padding-right: 10px; 
+		white-space: nowrap;
+	}
+
+    /**
+	    Label the data
+	*/
+	.list-tree td:nth-of-type(1):before { content: "Food Type"; }
+    .list-tree td:nth-of-type(2):before { content: "#"; }
+    .list-tree td:nth-of-type(3):before { content: "Description"; }
+    .list-tree td:nth-of-type(4):before { content: "Address"; }
+    .list-tree td:nth-of-type(5):before { content: "Latitude"; }
+    .list-tree td:nth-of-type(6):before { content: "Longitude"; }
+    .list-tree td:nth-of-type(7):before { content: "Adoption"; }
+    .list-tree td:nth-of-type(8):before { content: "Updated"; }
+    .list-tree td:nth-of-type(9):before { content: "Actions"; }
+
+    .new-tree td:nth-of-type(1):before { content: "Food Type"; }
+    .new-tree td:nth-of-type(2):before { content: "Description"; }
+    .new-tree td:nth-of-type(3):before { content: "Address"; }
+    .new-tree td:nth-of-type(4):before { content: "Latitude"; }
+    .new-tree td:nth-of-type(5):before { content: "Longitude"; }
+    .new-tree td:nth-of-type(6):before { content: "Actions"; }
+
+    .list-adoption td:nth-of-type(1):before { content: "Auth"; }
+    .list-adoption td:nth-of-type(2):before { content: "Name"; }
+    .list-adoption td:nth-of-type(3):before { content: "Contact"; }
+    .list-adoption td:nth-of-type(4):before { content: "Neighborhood"; }
+    .list-adoption td:nth-of-type(5):before { content: "Adoption"; }
+    .list-adoption td:nth-of-type(6):before { content: "Actions"; }
 }
 @media only screen and (max-height: 480px) and (orientation: portrait) {
     
@@ -211,7 +207,97 @@
 }
 
 @media only screen and (orientation: landscape) {
-    
+    .backgrid th, .backgrid td {
+        display: none;
+        height: 20px;
+        max-width: 250px;
+        padding: 2px 2px;
+        overflow: hidden;
+        line-height: 20px;
+        text-align: left;
+        text-overflow: ellipsis;
+        /* white-space: nowrap; */
+        vertical-align: middle;
+        border-bottom: 1px solid #cccccc;
+    }
+
+    .list-tree td, .new-tree td, .list-people td, .list-people th, .new-person td, .list-adoption td, .list-location td, .list-location th, .new-location td, .new-location th, .list-donation td, .list-donation th, .new-donation td {
+        color: rgba(0, 0, 0, 0.75);
+        font-size: small;
+    }
+
+    .list-tree a, .new-tree a, .list-tree a, .new-person a, .list-adoption a {
+        font-size: small;
+    }
+
+    .list-tree .backgrid .select-cell, .new-tree .backgrid .select-cell, .list-people .backgrid .select-cell, .new-person .backgrid .select-cell, .list-adoption .backgrid .select-cell {
+        text-align: left;
+    }
+
+    .list-tree td {
+        padding-left: 4px;
+        padding-right: 4px;
+        border-bottom: 1px solid rgba(94, 78, 81, 0.15);
+    }
+    .list-tree .backgrid .food {
+        width: 20%;
+    }
+    .list-tree .backgrid .description {
+        width: 20%;
+    }
+    .list-tree .backgrid .address {
+        width: 25%;
+        text-align: center;
+    }
+    .list-tree .backgrid .parents {
+        width: 20%;
+    }
+    .list-tree .backgrid .lat {
+        width: 72px;
+    }
+    .list-tree .backgrid .lng {
+        width: 72px;
+    }
+
+    .new-tree .backgrid .food {
+        width: 15%;
+    }
+    .new-tree .backgrid .description {
+        width: 35%;
+    }
+    .new-tree .backgrid .address {
+        width: 35%;
+        text-align: center;
+    }
+    .new-tree .backgrid .lat {
+        width: 72px;
+    }
+    .new-tree .backgrid .lng {
+        width: 72px;
+    }
+    /**
+        CSS of list-adoption for landscape view
+    */
+    .list-adoption td {
+        padding-left: 4px;
+        padding-right: 4px;
+        border-bottom: 1px solid rgba(94, 78, 81, 0.15);
+    }
+    .list-adoption .backgrid .auth {
+        width: 15%;
+    }
+    .list-adoption .backgrid .name {
+        width: 15%;
+    }
+    .list-adoption .backgrid .contact {
+        width: 30%;
+    }
+    .list-adoption .backgrid .neighborhood {
+        width: 20%;
+    }
+    .list-adoption .backgrid .trees {
+        width: 20%;
+    }
 }
 @media only screen and (max-width: 480px) and (orientation: landscape) {
     

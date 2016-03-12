@@ -42965,7 +42965,6 @@ var FoodParent;
                 case VIEW_STATUS.GEO_ERROR:
                 case VIEW_STATUS.NETWORK_ERROR:
                     if (el.hasClass('alert-confirm')) {
-                        new RemoveAlertViewCommand({ delay: FoodParent.Setting.getRemovePopupDuration() }).execute();
                     }
                     break;
                 case VIEW_STATUS.CONFIRM:
@@ -43881,7 +43880,6 @@ var FoodParent;
                 }
                 else if (FoodParent.View.getViewStatus() == FoodParent.VIEW_STATUS.TREE) {
                     if (FoodParent.View.getTreeView()) {
-                        FoodParent.View.getTreeView().renderMenu();
                     }
                 }
                 else if (FoodParent.View.getViewStatus() == FoodParent.VIEW_STATUS.MANAGE_ADOPTION) {
@@ -46811,52 +46809,39 @@ var TreeAddressCellEditor = Backgrid.Cell.extend({
         return this;
     }
 });
-var TreeMapViewCell = Backgrid.Cell.extend({
-    template: _.template('<div class="btn-table" data-target="<%= treeid %>"><i class="fa fa-map-marker"></i></div>'),
+var TreeActionsCell = Backgrid.Cell.extend({
+    template: _.template('<div class="info-group-flex"><div class="btn-table evt-mapview" data-target="<%= treeid %>"><i class="fa fa-map-marker"></i></div><div class="btn-table evt-manage-adopt" data-target="<%= treeid %>"><i class="fa fa-users"></i></div><div class="btn-table evt-detail" data-target="<%= treeid %>"><i class="fa fa-heartbeat"></i></div><div class="btn-table evt-delete-tree" data-target="<%= treeid %>"><i class="fa fa-trash-o"></i></div></div>'),
     events: {
-        "click .btn-table": "_panToTree"
+        "click .evt-mapview": "_panToTree",
+        "click .evt-manage-adopt": "_manageAdoption",
+        "click .evt-detail": "_showDetail",
+        "click .evt-delete-tree": "_deleteTree",
     },
     _panToTree: function (event) {
         var tree = parseInt($(event.currentTarget).attr('data-target'));
         new FoodParent.ResetPopupViewCommand().execute();
         FoodParent.Router.getInstance().navigate("trees/" + $(event.currentTarget).attr('data-target'), { trigger: true, replace: true });
     },
-    render: function () {
-        $(this.el).html(this.template({
-            treeid: this.model.getId(),
-        }));
-        this.delegateEvents();
-        return this;
-    }
-});
-var ManageAdoptionViewCell = Backgrid.Cell.extend({
-    template: _.template('<div class="btn-table evt-manage-adopt" data-target="<%= treeid %>"><i class="fa fa-users"></i></div>'),
-    events: {
-        "click .btn-table": "_manageAdoption"
-    },
     _manageAdoption: function (event) {
         var tree = parseInt($(event.currentTarget).attr('data-target'));
         FoodParent.EventHandler.handleMouseClick($(event.currentTarget), this, { tree: tree });
         //FoodParent.Router.getInstance().navigate("tree/" + this.model.getId(), { trigger: true });
-    },
-    render: function () {
-        $(this.el).html(this.template({
-            treeid: this.model.getId(),
-        }));
-        this.delegateEvents();
-        return this;
-    }
-});
-var TreeDetailCell = Backgrid.Cell.extend({
-    template: _.template('<div class="btn-table" data-target="<%= treeid %>"><i class="fa fa-heartbeat"></i></div>'),
-    events: {
-        "click .btn-table": "_showDetail"
     },
     _showDetail: function (event) {
         var tree = parseInt($(event.target).attr('data-target'));
         FoodParent.EventHandler.handleMouseClick($(event.currentTarget), this, { tree: tree });
         //FoodParent.Router.getInstance().navigate("tree/" + this.model.getId(), { trigger: true });
     },
+    _deleteTree: function (event) {
+        var tree = this.model;
+        FoodParent.EventHandler.handleTreeData(tree, FoodParent.DATA_MODE.DELETE, {}, function () {
+            var food = FoodParent.Model.getFoods().findWhere({ id: tree.getFoodId() });
+            new FoodParent.RefreshCurrentViewCommand().execute();
+            FoodParent.EventHandler.handleDataChange("<strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has deleted successfully.", false);
+        }, function () {
+            FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+        });
+    },
     render: function () {
         $(this.el).html(this.template({
             treeid: this.model.getId(),
@@ -46865,10 +46850,11 @@ var TreeDetailCell = Backgrid.Cell.extend({
         return this;
     }
 });
-var TreeCreateCell = Backgrid.Cell.extend({
-    template: _.template('<div class="btn-table"><i class="fa fa-save"></i></div>'),
+var NewTreeActionsCell = Backgrid.Cell.extend({
+    template: _.template('<div class="info-group-flex"><div class="btn-table evt-submit"><i class="fa fa-save"></i></div><div class="btn-table evt-cancel"><i class="fa fa-trash-o"></i></div></div>'),
     events: {
-        "click .btn-table": "_createRow"
+        "click .evt-submit": "_createRow",
+        "click .evt-cancel": "_deleteRow"
     },
     _createRow: function (event) {
         var tree = this.model;
@@ -46905,17 +46891,6 @@ var TreeCreateCell = Backgrid.Cell.extend({
                 new FoodParent.RefreshCurrentViewCommand().execute();
             });
         }
-    },
-    render: function () {
-        $(this.el).html(this.template());
-        this.delegateEvents();
-        return this;
-    }
-});
-var TreeDeleteCell = Backgrid.Cell.extend({
-    template: _.template('<div class="btn-table"><i class="fa fa-trash-o"></i></div>'),
-    events: {
-        "click .btn-table": "_deleteRow"
     },
     _deleteRow: function (event) {
         var tree = this.model;
@@ -47120,23 +47095,8 @@ var TreeColumn = [
         label: "",
         sortable: false,
         editable: false,
-        cell: TreeMapViewCell,
-    }, {
-        label: "",
-        sortable: false,
-        editable: false,
-        cell: ManageAdoptionViewCell,
-    }, {
-        label: "",
-        sortable: false,
-        editable: false,
-        cell: TreeDetailCell,
-    }, {
-        label: "",
-        sortable: false,
-        editable: false,
-        cell: TreeDeleteCell,
-    }
+        cell: TreeActionsCell,
+    },
 ];
 var NewTreeColumn = [
     {
@@ -47171,12 +47131,7 @@ var NewTreeColumn = [
         label: "",
         sortable: false,
         editable: false,
-        cell: TreeCreateCell,
-    }, {
-        label: "",
-        sortable: false,
-        editable: false,
-        cell: TreeDeleteCell,
+        cell: NewTreeActionsCell,
     }
 ];
 
@@ -47896,10 +47851,11 @@ var AdoptionNeighborhoodCell = Backgrid.Cell.extend({
         return this;
     }
 });
-var AdoptionAddCell = Backgrid.Cell.extend({
-    template: _.template('<div class="btn-table"><i class="fa fa-plus-square"></i></div>'),
+var AdoptionActionsCell = Backgrid.Cell.extend({
+    template: _.template('<div class="info-group-flex"><div class="btn-table evt-adopt"><i class="fa fa-plus-square"></i></div><div class="btn-table evt-unadopt"><i class="fa fa-minus-square"></i></div></div>'),
     events: {
-        "click .btn-table": "_addAdoption",
+        "click .evt-adopt": "_addAdoption",
+        "click .evt-unadopt": "_removeAdoption",
     },
     _addAdoption: function (e) {
         var tree = FoodParent.Model.getTrees().findWhere({ id: parseInt($('.list-adoption').attr('data-target')) });
@@ -47916,25 +47872,6 @@ var AdoptionAddCell = Backgrid.Cell.extend({
             FoodParent.View.getPopupView()._applyFilter();
             //(<FoodParent.ManageTreesView>FoodParent.View.getManageTreesView()).renderTreeInfo(tree);
         });
-    },
-    render: function () {
-        var self = this;
-        var person = this.model;
-        var treeId = parseInt($('.list-adoption').attr('data-target'));
-        if (FoodParent.Model.getAdopts().checkAdoption(treeId, person.getId())) {
-            $(self.el).html('<div class="blank-marker-control-item"></div>');
-        }
-        else {
-            $(self.el).html(self.template());
-        }
-        this.delegateEvents();
-        return this;
-    }
-});
-var AdoptionDeleteCell = Backgrid.Cell.extend({
-    template: _.template('<div class="btn-table"><i class="fa fa-minus-square"></i></div>'),
-    events: {
-        "click .btn-table": "_removeAdoption",
     },
     _removeAdoption: function (e) {
         var tree = FoodParent.Model.getTrees().findWhere({ id: parseInt($('.list-adoption').attr('data-target')) });
@@ -47955,10 +47892,11 @@ var AdoptionDeleteCell = Backgrid.Cell.extend({
         var person = this.model;
         var treeId = parseInt($('.list-adoption').attr('data-target'));
         if (FoodParent.Model.getAdopts().checkAdoption(treeId, person.getId())) {
-            $(self.el).html(self.template());
+            $(self.el).html('<div class="blank-marker-control-item"></div>');
+            $(self.el).html('<div class="info-group-flex"><div class="blank-marker-control-item"></div><div class="btn-table evt-unadopt"><i class="fa fa-minus-square"></i></div></div>');
         }
         else {
-            $(self.el).html('<div class="btn-table-blank"></div>');
+            $(self.el).html('<div class="info-group-flex"><div class="btn-table evt-adopt"><i class="fa fa-plus-square"></i></div><div class="blank-marker-control-item"></div></div>');
         }
         this.delegateEvents();
         return this;
@@ -47974,6 +47912,7 @@ var AdoptionListCell = Backgrid.Cell.extend({
     },
     render: function () {
         this.template = _.template(FoodParent.Template.getAdoptTreeCellTemplate());
+        console.log(this.model.get('trees'));
         var trees = new FoodParent.Trees(FoodParent.Model.getTrees().filterByIds(this.model.get('trees')));
         $(this.el).html(this.template({
             trees: trees,
@@ -48012,12 +47951,7 @@ var AdoptionColumn = [
         label: "",
         sortable: false,
         editable: false,
-        cell: AdoptionAddCell,
-    }, {
-        label: "",
-        sortable: false,
-        editable: false,
-        cell: AdoptionDeleteCell,
+        cell: AdoptionActionsCell,
     }
 ];
 
@@ -50107,8 +50041,7 @@ var FoodParent;
             var template = "";
             template += '<% _.each(trees.models, function (tree) { %>';
             template += '<% var food = FoodParent.Model.getFoods().findWhere({ id: tree.getFoodId() }); %>';
-            template += '<% var name = food.getName() + tree.getName(); %>';
-            template += '<div class="btn-tree" data-target="<%= tree.getId() %>"><%= name %></div>';
+            template += '<div class="btn-tree" data-target="<%= tree.getId() %>"><%= food.getName() + tree.getName() %></div>';
             template += '<% }); %>';
             return template;
         };
@@ -60555,7 +60488,13 @@ var FoodParent;
         Trees.prototype.filterByIds = function (idArray) {
             var self = this;
             var trees = new Trees(self.models);
-            return trees.reset(_.map(idArray, function (id) { return this.get(id); }, this));
+            return new Trees(trees.filter(function (tree, index) {
+                if ($.inArray(tree.getId(), idArray) > -1 && tree.getId() != null) {
+                    return true;
+                }
+                return false;
+            })).models;
+            //return trees.reset(_.map(idArray, function (id) { return this.get(id); }, this));
         };
         Trees.prototype.filterByFoodIds = function (idArray) {
             var self = this;

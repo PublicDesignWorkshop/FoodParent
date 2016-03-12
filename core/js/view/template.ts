@@ -1363,8 +1363,7 @@
             var template = "";
             template += '<% _.each(trees.models, function (tree) { %>';
             template +=     '<% var food = FoodParent.Model.getFoods().findWhere({ id: tree.getFoodId() }); %>';
-            template +=     '<% var name = food.getName() + tree.getName(); %>';
-            template +=     '<div class="btn-tree" data-target="<%= tree.getId() %>"><%= name %></div>';
+            template +=     '<div class="btn-tree" data-target="<%= tree.getId() %>"><%= food.getName() + tree.getName() %></div>';
             template += '<% }); %>';
             return template;
         }

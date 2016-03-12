@@ -376,7 +376,7 @@
                     }
                 } else if (View.getViewStatus() == VIEW_STATUS.TREE) {
                     if (View.getTreeView()) {
-                        View.getTreeView().renderMenu();
+                        //View.getTreeView().renderMenu();
                     }
                 } else if (View.getViewStatus() == VIEW_STATUS.MANAGE_ADOPTION) {
                     if (FoodParent.View.getPopupView()) {

@@ -358,7 +358,6 @@ var FoodParent;
                 }
                 else if (FoodParent.View.getViewStatus() == FoodParent.VIEW_STATUS.TREE) {
                     if (FoodParent.View.getTreeView()) {
-                        FoodParent.View.getTreeView().renderMenu();
                     }
                 }
                 else if (FoodParent.View.getViewStatus() == FoodParent.VIEW_STATUS.MANAGE_ADOPTION) {

@@ -219,7 +219,13 @@ var FoodParent;
         Trees.prototype.filterByIds = function (idArray) {
             var self = this;
             var trees = new Trees(self.models);
-            return trees.reset(_.map(idArray, function (id) { return this.get(id); }, this));
+            return new Trees(trees.filter(function (tree, index) {
+                if ($.inArray(tree.getId(), idArray) > -1 && tree.getId() != null) {
+                    return true;
+                }
+                return false;
+            })).models;
+            //return trees.reset(_.map(idArray, function (id) { return this.get(id); }, this));
         };
         Trees.prototype.filterByFoodIds = function (idArray) {
             var self = this;

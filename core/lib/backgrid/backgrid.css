@@ -25,7 +25,7 @@
      -moz-border-radius: 4px;
           border-radius: 4px;
 }
-
+/*
 .backgrid th,
 .backgrid td {
   display: none;
@@ -36,14 +36,17 @@
   line-height: 20px;
   text-align: left;
   text-overflow: ellipsis;
-  /*white-space: nowrap;*/
+  white-space: nowrap;
   vertical-align: middle;
   border-bottom: 1px solid #cccccc;
 }
+*/
 
+/*
 .backgrid td:first-child {
     padding-left: 8px;
 }
+*/
 
 .backgrid th.renderable,
 .backgrid td.renderable {
