@@ -327,8 +327,8 @@
                     break;
                 case VIEW_STATUS.TREES_TABLE:
                     if (el.hasClass('evt-close')) {
-                        new RemovePopupViewCommand({ delay: Setting.getRemovePopupDuration() }).execute();
-                        new RefreshCurrentViewCommand().execute();
+                        new ResetPopupViewCommand().execute();
+                        Backbone.history.loadUrl(Backbone.history.fragment);
                     } else if (el.hasClass('evt-manage-adopt')) {
                         new RenderManageAdoptionViewCommand({ el: Setting.getPopWrapperElement(), tree: options.tree }).execute();
                     }

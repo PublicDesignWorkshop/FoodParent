@@ -383,8 +383,8 @@ var FoodParent;
                     break;
                 case VIEW_STATUS.TREES_TABLE:
                     if (el.hasClass('evt-close')) {
-                        new FoodParent.RemovePopupViewCommand({ delay: FoodParent.Setting.getRemovePopupDuration() }).execute();
-                        new FoodParent.RefreshCurrentViewCommand().execute();
+                        new FoodParent.ResetPopupViewCommand().execute();
+                        Backbone.history.loadUrl(Backbone.history.fragment);
                     }
                     else if (el.hasClass('evt-manage-adopt')) {
                         new FoodParent.RenderManageAdoptionViewCommand({ el: FoodParent.Setting.getPopWrapperElement(), tree: options.tree }).execute();
