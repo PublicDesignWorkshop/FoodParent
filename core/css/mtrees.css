@@ -44,15 +44,7 @@
 
     
 
-    #wrapper-treeinfo .item-activity i {
-        padding: 2px 2px 0 0;
-    }
-
-    #wrapper-treeinfo .item-activity {
-        padding: 2px;
-        font-weight: 400;
-        display: flex;
-    }
+    
     #wrapper-treeinfo div.input-lat, #wrapper-treeinfo div.input-lng, #wrapper-treeinfo div.input-food {
         cursor: pointer;
     }
@@ -100,9 +92,7 @@
         right: 4px;
     }
 
-    .treeinfocomment {
-        font-weight: 600;
-    }
+    
 }
 
 @media only screen and (orientation: portrait) {

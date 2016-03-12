@@ -68,7 +68,8 @@
                     if ($db_password == $password) {
                         // Password is correct!
                         // Get the user-agent string of the user.
-                        $user_browser = $_SERVER['HTTP_USER_AGENT'];
+                        //$user_browser = $_SERVER['HTTP_USER_AGENT'];
+                        $user_browser = "HTTP_USER_AGENT";
                         // XSS protection as we might print this value
                         $id = preg_replace("/[^0-9]+/", "", $id);
                         $_SESSION['user_id'] = $id;
@@ -99,7 +100,8 @@
             $login_string = $_SESSION['login_string'];
             $username = $_SESSION['contact'];
             // Get the user-agent string of the user.
-            $user_browser = $_SERVER['HTTP_USER_AGENT'];
+            //$user_browser = $_SERVER['HTTP_USER_AGENT'];
+            $user_browser = "HTTP_USER_AGENT";
             
             $pdo = getConnection();
             $sql = "SELECT `password` FROM `person` WHERE (`id` = :id)";
@@ -151,7 +153,8 @@
             $username = $_SESSION['contact'];
             $auth = $_SESSION['user_auth'];
             // Get the user-agent string of the user.
-            $user_browser = $_SERVER['HTTP_USER_AGENT'];
+            //$user_browser = $_SERVER['HTTP_USER_AGENT'];
+            $user_browser = "HTTP_USER_AGENT";
             
             $pdo = getConnection();
             $sql = "SELECT `password` FROM `person` WHERE (`id` = :id)";

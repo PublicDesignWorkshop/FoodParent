@@ -15,8 +15,17 @@ var FoodParent;
         TreeViewFractory.getInstance = function () {
             return TreeViewFractory._instance;
         };
-        TreeViewFractory.create = function (el, id) {
-            var view = new TreeGraphicView({ el: el });
+        TreeViewFractory.create = function (el, id, credential) {
+            var view;
+            if (credential == FoodParent.CREDENTIAL_MODE.GUEST) {
+                view = new FoodParent.TreeGraphicViewForGuest({ el: el });
+            }
+            else if (credential == FoodParent.CREDENTIAL_MODE.PARENT) {
+                view = new FoodParent.TreeGraphicViewForParent({ el: el });
+            }
+            else if (credential == FoodParent.CREDENTIAL_MODE.ADMIN) {
+                view = new FoodParent.TreeGraphicViewForAdmin({ el: el });
+            }
             view.setTreeId(id);
             return view;
         };
@@ -28,7 +37,7 @@ var FoodParent;
         __extends(TreeView, _super);
         function TreeView() {
             _super.apply(this, arguments);
-            this._bAuthor = false;
+            this.renderTreeInfo = function () { };
         }
         TreeView.prototype.setTreeId = function (id) {
             this._id = Math.floor(id);
@@ -184,10 +193,6 @@ var FoodParent;
                     FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
                 });
             };
-            this.renderTreeInfo = function (tree) {
-                var self = _this;
-                self._bAuthor = false;
-            };
             var self = this;
             self.bDebug = true;
             self.events = {
@@ -195,10 +200,6 @@ var FoodParent;
             };
             self.delegateEvents();
         }
-        TreeGraphicView.prototype.resetNote = function () {
-            var self = this;
-            self._note = null;
-        };
         TreeGraphicView.prototype.render = function (args) {
             _super.prototype.render.call(this, args);
             var self = this;
@@ -210,6 +211,7 @@ var FoodParent;
             self.resize();
             FoodParent.Controller.fetchAllTrees(function () {
                 self.renderChartDatePicker();
+                self.renderTreeInfo();
             }, function () {
                 FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
             });
@@ -243,6 +245,116 @@ var FoodParent;
             }
             self.$('.tree-graph-start').pickadate('picker').set('select', moment(self._startDate).format(FoodParent.Setting.getDateFormat()), { format: 'dd mmm yyyy' });
             self.renderTreeChart(self._tree, self._startDate, self._endDate);
+        };
+        TreeGraphicView.prototype.renderFlagInfo = function (flags) {
+            var self = this;
+            FoodParent.Controller.checkIsAdmin(function (response) {
+                $.each(self.$('.flag-radio'), function (index, item) {
+                    var bFound = false;
+                    $.each(flags, function (index2, flag) {
+                        if (parseInt($(item).attr('data-target')) == flag) {
+                            bFound = true;
+                        }
+                    });
+                    if (bFound) {
+                        $(item).addClass('active');
+                        $(item).find('input').prop({ 'checked': 'checked' });
+                    }
+                    else {
+                        $(item).removeClass('active');
+                        $(item).find('input').prop({ 'checked': '' });
+                    }
+                    if (parseInt($(item).attr('data-target')) == 0) {
+                        $(this).attr('disabled', 'disabled');
+                        $(item).addClass('disabled');
+                    }
+                });
+            }, function (response) {
+                $.each(self.$('.flag-radio'), function (index, item) {
+                    var bFound = false;
+                    $.each(flags, function (index2, flag) {
+                        if (parseInt($(item).attr('data-target')) == flag) {
+                            bFound = true;
+                        }
+                    });
+                    if (bFound) {
+                        $(item).addClass('active');
+                        $(item).find('input').prop({ 'checked': 'checked' });
+                        $(item).removeClass('hidden');
+                    }
+                    else {
+                        $(item).removeClass('active');
+                        $(item).find('input').prop({ 'checked': '' });
+                        $(item).addClass('hidden');
+                    }
+                    if (parseInt($(item).attr('data-target')) == 0) {
+                        $(this).attr('disabled', 'disabled');
+                        $(item).addClass('disabled');
+                    }
+                    $(item).css({ 'pointer-events': 'none' });
+                });
+            }, function () {
+                FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+            });
+        };
+        TreeGraphicView.prototype.renderOwnershipInfo = function (ownership) {
+            var self = this;
+            FoodParent.Controller.checkIsAdmin(function (response) {
+                $.each(self.$('.ownership-radio'), function (index, item) {
+                    if (ownership != undefined) {
+                        if (parseInt($(item).attr('data-target')) == ownership.getId()) {
+                            $(item).addClass('active');
+                            $(item).find('input').prop({ 'checked': 'checked' });
+                        }
+                        else {
+                            $(item).removeClass('active');
+                            $(item).find('input').prop({ 'checked': '' });
+                        }
+                        if (parseInt($(item).attr('data-target')) == 0) {
+                            $(this).attr('disabled', 'disabled');
+                            $(item).addClass('disabled');
+                        }
+                    }
+                });
+            }, function (response) {
+                $.each(self.$('.ownership-radio'), function (index, item) {
+                    if (ownership != undefined) {
+                        if (parseInt($(item).attr('data-target')) == ownership.getId()) {
+                            $(item).addClass('active');
+                            $(item).find('input').prop({ 'checked': 'checked' });
+                        }
+                        else {
+                            $(item).removeClass('active');
+                            $(item).find('input').prop({ 'checked': '' });
+                            $(item).addClass('hidden');
+                        }
+                        if (parseInt($(item).attr('data-target')) == 0) {
+                            $(this).attr('disabled', 'disabled');
+                            $(item).addClass('disabled');
+                        }
+                        $(item).css({ 'pointer-events': 'none' });
+                    }
+                });
+            }, function () {
+                FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+            });
+        };
+        TreeGraphicView.prototype.renderRecentComments = function (tree) {
+            var self = this;
+            var trees = new Array();
+            trees.push(tree);
+            FoodParent.Controller.fetchNotesOfTrees(trees, FoodParent.NoteType.IMAGE, FoodParent.Setting.getNumRecentActivitiesShown() * 2, 0, function () {
+                var notes = new FoodParent.Notes(FoodParent.Model.getNotes().where({ tree: tree.getId(), type: FoodParent.NoteType.IMAGE }));
+                notes.sortByDescendingDate();
+                var template = _.template(FoodParent.Template.getRecentCommentsTemplate());
+                var data = {
+                    notes: notes,
+                    size: FoodParent.Setting.getNumRecentActivitiesShown(),
+                };
+                self.$('#list-comments').html(template(data));
+            }, function () {
+                FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+            });
         };
         TreeGraphicView.TAG = "TreeGraphicView - ";
         return TreeGraphicView;

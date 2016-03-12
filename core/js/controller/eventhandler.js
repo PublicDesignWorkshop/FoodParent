@@ -116,28 +116,32 @@ var FoodParent;
                 case VIEW_STATUS.TREES:
                     FoodParent.Controller.checkIsLoggedIn(function () {
                         FoodParent.Controller.checkIsAdmin(function () {
-                            if (self.bDebug)
-                                console.log(EventHandler.TAG + "Logged in as admin");
                             new FoodParent.RenderTreesViewCommand({ el: FoodParent.Setting.getMainWrapperElement(), id: option.id, credential: CREDENTIAL_MODE.ADMIN }).execute();
                         }, function () {
-                            if (self.bDebug)
-                                console.log(EventHandler.TAG + "Logged in as parent");
                             new FoodParent.RenderTreesViewCommand({ el: FoodParent.Setting.getMainWrapperElement(), id: option.id, credential: CREDENTIAL_MODE.PARENT }).execute();
                         }, function () {
-                            if (self.bDebug)
-                                console.log(EventHandler.TAG + "Error occured");
+                            EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
                         });
                     }, function () {
-                        if (self.bDebug)
-                            console.log(EventHandler.TAG + "Not logged in");
                         new FoodParent.RenderTreesViewCommand({ el: FoodParent.Setting.getMainWrapperElement(), id: option.id, credential: CREDENTIAL_MODE.GUEST }).execute();
                     }, function () {
-                        if (self.bDebug)
-                            console.log(EventHandler.TAG + "Error occured");
+                        EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
                     });
                     break;
                 case VIEW_STATUS.TREE:
-                    new FoodParent.RenderTreeViewCommand({ el: FoodParent.Setting.getMainWrapperElement(), viewMode: option.viewMode, id: option.id }).execute();
+                    FoodParent.Controller.checkIsLoggedIn(function () {
+                        FoodParent.Controller.checkIsAdmin(function () {
+                            new FoodParent.RenderTreeViewCommand({ el: FoodParent.Setting.getMainWrapperElement(), id: option.id, credential: CREDENTIAL_MODE.ADMIN }).execute();
+                        }, function () {
+                            new FoodParent.RenderTreeViewCommand({ el: FoodParent.Setting.getMainWrapperElement(), id: option.id, credential: CREDENTIAL_MODE.PARENT }).execute();
+                        }, function () {
+                            EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
+                        });
+                    }, function () {
+                        new FoodParent.RenderTreeViewCommand({ el: FoodParent.Setting.getMainWrapperElement(), id: option.id, credential: CREDENTIAL_MODE.GUEST }).execute();
+                    }, function () {
+                        EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
+                    });
                     break;
             }
             /*

@@ -399,6 +399,22 @@
         height: 100%;
         border-left: 2px solid rgba(255, 255, 255, 1);
     }
+
+    #wrapper-treeinfo .item-activity {
+        padding: 4px 2px;
+        font-weight: 400;
+        display: -webkit-flex;
+        display: flex;
+    }
+    #wrapper-treeinfo .item-activity i {
+        padding: 2px 2px 0 0;
+    }
+    #wrapper-treeinfo .treeinfocomment {
+        font-weight: 500;
+        line-height: 150%;
+    }
+
+    
 }
 
 

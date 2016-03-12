@@ -11,8 +11,15 @@
         public static getInstance(): TreeViewFractory {
             return TreeViewFractory._instance;
         }
-        public static create(el: JQuery, id: number): TreeView {
-            var view: TreeView = new TreeGraphicView({ el: el });
+        public static create(el: JQuery, id: number, credential: CREDENTIAL_MODE): TreeView {
+            var view: TreeView;
+            if (credential == CREDENTIAL_MODE.GUEST) {
+                view = new TreeGraphicViewForGuest({ el: el });
+            } else if (credential == CREDENTIAL_MODE.PARENT) {
+                view = new TreeGraphicViewForParent({ el: el });
+            } else if (credential == CREDENTIAL_MODE.ADMIN) {
+                view = new TreeGraphicViewForAdmin({ el: el });
+            }
             view.setTreeId(id);
             return view;
         }
@@ -20,20 +27,19 @@
 
     export class TreeView extends BaseView {
         protected _id: number;
-        protected _bAuthor: boolean = false;
         public setTreeId(id: number) {
             this._id = Math.floor(id);
         }
+        public renderTreeInfo = () => { }
     }
 
     export class TreeGraphicView extends TreeView {
-        private static TAG: string = "TreeGraphicView - ";
-        private _tree: Tree;
-        private _note: Note;
-        private _startDate: string;
-        private _endDate: string;
-        private _chart: any;
-        private _timer: any;
+        protected static TAG: string = "TreeGraphicView - ";
+        protected _tree: Tree;
+        protected _note: Note;
+        protected _startDate: string;
+        protected _endDate: string;
+        protected _chart: any;
         constructor(options?: Backbone.ViewOptions<Backbone.Model>) {
             super(options);
             var self: TreeGraphicView = this;
@@ -42,11 +48,6 @@
                 "click .btn-date": "_applyDatePreset",
             };
             self.delegateEvents();
-        }
-
-        public resetNote(): void {
-            var self: TreeGraphicView = this;
-            self._note = null;
         }
         public render(args?: any): any {
             super.render(args);
@@ -59,6 +60,7 @@
 
             Controller.fetchAllTrees(function () {
                 self.renderChartDatePicker();
+                self.renderTreeInfo();
             }, function () {
                 EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
             });
@@ -74,7 +76,7 @@
         /**
             Render date picker in a chart view
         */
-        public renderChartDatePicker = () => {
+        protected renderChartDatePicker = () => {
             var self: TreeGraphicView = this;
             self._tree = Model.getTrees().findWhere({ id: self._id });
             self.$('.tree-graph-start').attr({ 'data-value': moment(new Date()).subtract(3, 'month').format(Setting.getDateFormat()) });
@@ -234,9 +236,113 @@
             self.renderTreeChart(self._tree, self._startDate, self._endDate);
         }
 
-        public renderTreeInfo = (tree: Tree) => {
+        protected renderFlagInfo(flags: Array<number>): void {
             var self: TreeGraphicView = this;
-            self._bAuthor = false;
+            Controller.checkIsAdmin(function (response) {
+                $.each(self.$('.flag-radio'), function (index: number, item: JQuery) {
+                    var bFound: boolean = false;
+                    $.each(flags, function (index2: number, flag: number) {
+                        if (parseInt($(item).attr('data-target')) == flag) {
+                            bFound = true;
+                        }
+                    });
+                    if (bFound) {
+                        $(item).addClass('active');
+                        $(item).find('input').prop({ 'checked': 'checked' });
+                    } else {
+                        $(item).removeClass('active');
+                        $(item).find('input').prop({ 'checked': '' });
+                    }
+                    if (parseInt($(item).attr('data-target')) == 0) {
+                        $(this).attr('disabled', 'disabled');
+                        $(item).addClass('disabled');
+                    }
+                });
+            }, function (response) {
+                $.each(self.$('.flag-radio'), function (index: number, item: JQuery) {
+                    var bFound: boolean = false;
+                    $.each(flags, function (index2: number, flag: number) {
+                        if (parseInt($(item).attr('data-target')) == flag) {
+                            bFound = true;
+                        }
+                    });
+                    if (bFound) {
+                        $(item).addClass('active');
+                        $(item).find('input').prop({ 'checked': 'checked' });
+                        $(item).removeClass('hidden');
+                    } else {
+                        $(item).removeClass('active');
+                        $(item).find('input').prop({ 'checked': '' });
+                        $(item).addClass('hidden');
+                    }
+                    if (parseInt($(item).attr('data-target')) == 0) {
+                        $(this).attr('disabled', 'disabled');
+                        $(item).addClass('disabled');
+                    }
+                    $(item).css({ 'pointer-events': 'none' });
+                });
+            }, function () {
+                EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
+            });
+        }
+
+        protected renderOwnershipInfo(ownership: Ownership): void {
+            var self: TreeGraphicView = this;
+            Controller.checkIsAdmin(function (response) {
+                $.each(self.$('.ownership-radio'), function (index: number, item: JQuery) {
+                    if (ownership != undefined) {
+                        if (parseInt($(item).attr('data-target')) == ownership.getId()) {
+                            $(item).addClass('active');
+                            $(item).find('input').prop({ 'checked': 'checked' });
+                        } else {
+                            $(item).removeClass('active');
+                            $(item).find('input').prop({ 'checked': '' });
+                        }
+                        if (parseInt($(item).attr('data-target')) == 0) {
+                            $(this).attr('disabled', 'disabled');
+                            $(item).addClass('disabled');
+                        }
+                    }
+                });
+            }, function (response) {
+                $.each(self.$('.ownership-radio'), function (index: number, item: JQuery) {
+                    if (ownership != undefined) {
+                        if (parseInt($(item).attr('data-target')) == ownership.getId()) {
+                            $(item).addClass('active');
+                            $(item).find('input').prop({ 'checked': 'checked' });
+                        } else {
+                            $(item).removeClass('active');
+                            $(item).find('input').prop({ 'checked': '' });
+                            $(item).addClass('hidden');
+                        }
+                        if (parseInt($(item).attr('data-target')) == 0) {
+                            $(this).attr('disabled', 'disabled');
+                            $(item).addClass('disabled');
+                        }
+                        $(item).css({ 'pointer-events': 'none' });
+                    }
+                });
+            }, function () {
+                EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
+            });
+        }
+
+        protected renderRecentComments(tree: Tree): void {
+            var self: TreeGraphicView = this;
+            var trees: Array<Tree> = new Array<Tree>();
+            trees.push(tree);
+            Controller.fetchNotesOfTrees(trees, NoteType.IMAGE, Setting.getNumRecentActivitiesShown() * 2, 0, function () {
+                var notes: Notes = new Notes(Model.getNotes().where({ tree: tree.getId(), type: NoteType.IMAGE }));
+                notes.sortByDescendingDate();
+                var template = _.template(Template.getRecentCommentsTemplate());
+                var data = {
+                    notes: notes,
+                    size: Setting.getNumRecentActivitiesShown(),
+                }
+                self.$('#list-comments').html(template(data));
+            }, function () {
+                EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
+            });
         }
     }
 }

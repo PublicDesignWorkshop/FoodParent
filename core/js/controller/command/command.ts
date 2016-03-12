@@ -128,17 +128,19 @@
     export class RenderTreeViewCommand implements Command {
         private _el: JQuery;
         private _id: number;
+        private _credential: CREDENTIAL_MODE;
         constructor(args?: any) {
             var self: RenderTreeViewCommand = this;
             self._el = args.el;
             self._id = args.id;
+            self._credential = args.credential;
         }
         public execute(): any {
             var self: RenderTreeViewCommand = this;
             if (View.getTreeView()) {
 
             } else {
-                var view: TreeView = TreeViewFractory.create(self._el, self._id).render();
+                var view: TreeView = TreeViewFractory.create(self._el, self._id, self._credential).render();
                 View.addChild(view);
                 View.setTreeView(view);
             }

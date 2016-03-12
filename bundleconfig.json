@@ -87,6 +87,9 @@
 
       // View - Tree
       "core/js/view/treegraphicview.js",
+      "core/js/view/treegraphicviewguest.js",
+      "core/js/view/treegraphicviewparent.js",
+      "core/js/view/treegraphicviewadmin.js",
 
 
 

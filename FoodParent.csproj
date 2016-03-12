@@ -278,6 +278,9 @@
     <TypeScriptCompile Include="core\js\view\postview.ts" />
     <TypeScriptCompile Include="core\js\view\template.ts" />
     <TypeScriptCompile Include="core\js\view\treegraphicview.ts" />
+    <TypeScriptCompile Include="core\js\view\treegraphicviewadmin.ts" />
+    <TypeScriptCompile Include="core\js\view\treegraphicviewguest.ts" />
+    <TypeScriptCompile Include="core\js\view\treegraphicviewparent.ts" />
     <TypeScriptCompile Include="core\js\view\treesmapadmin.ts" />
     <TypeScriptCompile Include="core\js\view\treesmapguest.ts" />
     <TypeScriptCompile Include="core\js\view\treesmap.ts" />

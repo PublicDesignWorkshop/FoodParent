@@ -123,18 +123,6 @@
         padding: 8px 0 0 0;
     }
 
-    .content-tree-recentcomments .item-activity i {
-        padding: 2px 2px 0 0;
-    }
-
-    .content-tree-recentcomments .item-activity {
-        padding: 2px;
-        font-weight: 400;
-        display: flex;
-        font-size: small;
-        justify-content: flex-start;
-    }
-
     .content-tree-recentcomments .item-activity div{
         text-align: left;
         width: 100%;
@@ -147,44 +135,7 @@
     
 
     
-    #wrapper-tooltip {
-        position: absolute;
-        width: 20%;
-        min-width: 120px;
-        max-width: 240px;
-        border: 2px solid rgba(64, 54, 56, 0.75);
-        background-color: rgba(94, 78, 81, 0.75);
-        padding: 4px;
-        pointer-events: none;
-        -moz-user-select: none;
-        -ms-user-select: none;
-        -webkit-user-select: none;
-        user-select: none;
-        text-align: left;
-    }
-
-    #wrapper-tooltip img {
-        width: 100%;
-        border-radius: 4px;
-    }
-
-    #wrapper-tooltip .rate {
-        padding: 0 6px 0 6px;
-        font-size: x-large;
-        font-weight: 700;
-    }
-    #wrapper-tooltip .comment {
-        padding: 0 6px 0 6px;
-        font-size: medium;
-        font-weight: 400;
-    }
-    #wrapper-tooltip .date {
-        font-size: small;
-        text-align: center;
-        background-color: rgba(64, 54, 56, 0.75);
-        color: rgba(255, 255, 255, 0.75);
-        margin-top: 4px;
-    }
+    
 
     .wrapper-note-content {
         display: flex;

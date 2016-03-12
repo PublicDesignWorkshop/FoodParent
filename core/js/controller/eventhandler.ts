@@ -76,23 +76,32 @@
                 case VIEW_STATUS.TREES:
                     Controller.checkIsLoggedIn(function () {
                         Controller.checkIsAdmin(function () {
-                            if (self.bDebug) console.log(EventHandler.TAG + "Logged in as admin");
                             new RenderTreesViewCommand({ el: Setting.getMainWrapperElement(), id: option.id, credential: CREDENTIAL_MODE.ADMIN }).execute();
                         }, function () {
-                            if (self.bDebug) console.log(EventHandler.TAG + "Logged in as parent");
                             new RenderTreesViewCommand({ el: Setting.getMainWrapperElement(), id: option.id, credential: CREDENTIAL_MODE.PARENT }).execute();
                         }, function () {
-                            if (self.bDebug) console.log(EventHandler.TAG + "Error occured");
+                            EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
                         });
                     }, function () {
-                        if (self.bDebug) console.log(EventHandler.TAG + "Not logged in");
                         new RenderTreesViewCommand({ el: Setting.getMainWrapperElement(), id: option.id, credential: CREDENTIAL_MODE.GUEST }).execute();
                     }, function () {
-                        if (self.bDebug) console.log(EventHandler.TAG + "Error occured");
+                        EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
                     });
                     break;
                 case VIEW_STATUS.TREE:
-                    new RenderTreeViewCommand({ el: Setting.getMainWrapperElement(), viewMode: option.viewMode, id: option.id }).execute();
+                    Controller.checkIsLoggedIn(function () {
+                        Controller.checkIsAdmin(function () {
+                            new RenderTreeViewCommand({ el: Setting.getMainWrapperElement(), id: option.id, credential: CREDENTIAL_MODE.ADMIN }).execute();
+                        }, function () {
+                            new RenderTreeViewCommand({ el: Setting.getMainWrapperElement(), id: option.id, credential: CREDENTIAL_MODE.PARENT }).execute();
+                        }, function () {
+                            EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
+                        });
+                    }, function () {
+                        new RenderTreeViewCommand({ el: Setting.getMainWrapperElement(), id: option.id, credential: CREDENTIAL_MODE.GUEST }).execute();
+                    }, function () {
+                        EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
+                    });
                     break;
             }
             /*

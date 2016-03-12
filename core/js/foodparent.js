@@ -42791,28 +42791,32 @@ var FoodParent;
                 case VIEW_STATUS.TREES:
                     FoodParent.Controller.checkIsLoggedIn(function () {
                         FoodParent.Controller.checkIsAdmin(function () {
-                            if (self.bDebug)
-                                console.log(EventHandler.TAG + "Logged in as admin");
                             new FoodParent.RenderTreesViewCommand({ el: FoodParent.Setting.getMainWrapperElement(), id: option.id, credential: CREDENTIAL_MODE.ADMIN }).execute();
                         }, function () {
-                            if (self.bDebug)
-                                console.log(EventHandler.TAG + "Logged in as parent");
                             new FoodParent.RenderTreesViewCommand({ el: FoodParent.Setting.getMainWrapperElement(), id: option.id, credential: CREDENTIAL_MODE.PARENT }).execute();
                         }, function () {
-                            if (self.bDebug)
-                                console.log(EventHandler.TAG + "Error occured");
+                            EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
                         });
                     }, function () {
-                        if (self.bDebug)
-                            console.log(EventHandler.TAG + "Not logged in");
                         new FoodParent.RenderTreesViewCommand({ el: FoodParent.Setting.getMainWrapperElement(), id: option.id, credential: CREDENTIAL_MODE.GUEST }).execute();
                     }, function () {
-                        if (self.bDebug)
-                            console.log(EventHandler.TAG + "Error occured");
+                        EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
                     });
                     break;
                 case VIEW_STATUS.TREE:
-                    new FoodParent.RenderTreeViewCommand({ el: FoodParent.Setting.getMainWrapperElement(), viewMode: option.viewMode, id: option.id }).execute();
+                    FoodParent.Controller.checkIsLoggedIn(function () {
+                        FoodParent.Controller.checkIsAdmin(function () {
+                            new FoodParent.RenderTreeViewCommand({ el: FoodParent.Setting.getMainWrapperElement(), id: option.id, credential: CREDENTIAL_MODE.ADMIN }).execute();
+                        }, function () {
+                            new FoodParent.RenderTreeViewCommand({ el: FoodParent.Setting.getMainWrapperElement(), id: option.id, credential: CREDENTIAL_MODE.PARENT }).execute();
+                        }, function () {
+                            EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
+                        });
+                    }, function () {
+                        new FoodParent.RenderTreeViewCommand({ el: FoodParent.Setting.getMainWrapperElement(), id: option.id, credential: CREDENTIAL_MODE.GUEST }).execute();
+                    }, function () {
+                        EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
+                    });
                     break;
             }
             /*
@@ -43646,13 +43650,14 @@ var FoodParent;
             var self = this;
             self._el = args.el;
             self._id = args.id;
+            self._credential = args.credential;
         }
         RenderTreeViewCommand.prototype.execute = function () {
             var self = this;
             if (FoodParent.View.getTreeView()) {
             }
             else {
-                var view = FoodParent.TreeViewFractory.create(self._el, self._id).render();
+                var view = FoodParent.TreeViewFractory.create(self._el, self._id, self._credential).render();
                 FoodParent.View.addChild(view);
                 FoodParent.View.setTreeView(view);
             }
@@ -49381,37 +49386,23 @@ var FoodParent;
             template += '<div class="button-outer-frame2 button5"><div class="button-inner-frame2 button-new-note"><i class="fa fa-sticky-note-o"></i> Post New Note</div></div>';
             return template;
         };
-        Template.getTreeInfoTemplate2 = function () {
+        Template.getTreeBasicInfoTemplateForGuest = function () {
             var template = '';
-            template += '<div class="tree-info-name"><div class="info-group-flex"><div class="input-food"><%= foodname %></div>&nbsp;<%= treename %></div>';
+            template += '<div id="content-header">';
+            template += '<div class="tree-info-name"><div class="input-food"><%= foodname %></div>&nbsp;<%= treename %></div>';
+            template += '</div>'; // end of #wrapper-header
+            template += '<div class="info-group-flex">';
+            template += '<i class="fa fa-at"></i>&nbsp<div class="tree-info-coordinate"><div class="input-lat"><%= lat %></div>,&nbsp;<div class="input-lng"><%= lng %></div></div>';
             template += '</div>';
-            template += '<div class="tree-info-coordinate">@&nbsp;&nbsp;&nbsp;&nbsp;<div class="input-lat"><%= lat %></div>,&nbsp;<div class="input-lng"><%= lng %></div></div>';
+            template += '<div class="info-group-flex">';
+            template += '<i class="fa fa-map-marker"></i>&nbsp&nbsp<div class="input-address">&nbsp;</div>';
+            template += '</div>';
+            template += '<div class="info-group-flex">';
+            template += '<i class="fa fa-sticky-note"></i>&nbsp&nbsp<div class="input-description"><%= description %></div>';
+            template += '</div>';
+            template += '<div class="content-status">';
             template += '<div class="info-group">';
-            template += '<div class="input-address">&nbsp;</div>';
-            template += '</div>';
-            template += '<div class="info-group info-group-flex">';
-            template += '<i class="fa fa-sticky-note fa-1x"></i>&nbsp;&nbsp;&nbsp;&nbsp;<div class="input-description"><%= description %></div>';
-            template += '</div>';
-            template += '<div class="info-group info-group-flex"><i class="fa fa-user fa-1x"></i>&nbsp;&nbsp;&nbsp;&nbsp;';
-            template += '<% _.each(persons.models, function (person, index) { %>';
-            template += '<% if (index < persons.models.length - 1) { %>';
-            template += '<div><%= person.getName() %>,&nbsp;</div>';
-            template += '<% } else { %>';
-            template += '<div><%= person.getName() %></div>';
-            template += '<% } %>';
-            template += '<% }); %>';
-            template += '</div>';
-            /*
-            template += '<div data-toggle="buttons">';
-            template += '<label class="btn filter-checkbox list-hiearchy1">';
-            template += '<input type="checkbox" name="onlymine" data-target="<%= userid %>">';
-            template += '<i class="fa fa-square-o fa-1x"></i>';
-            template += '<i class="fa fa-check-square-o fa-1x"></i>';
-            template += ' My children (only mine / show all)</label>';
-            template += '</div>';
-            */
-            template += '<div class="info-group info-group-flex"><div class="button-group-tag"><i class="fa fa-tag fa-1x"></i>&nbsp;</div>';
-            template += '<div data-toggle="buttons">';
+            template += '<div data-toggle="buttons"><i class="fa fa-tag"></i> ';
             template += '<% _.each(flags.models, function (flag) { %>';
             template += '<label class="btn flag-radio" data-target="<%= flag.getId() %>">';
             template += '<input type="checkbox" name="flag">';
@@ -49421,8 +49412,9 @@ var FoodParent;
             template += '<% }); %>';
             template += '</div>';
             template += '</div>';
-            template += '<div class="info-group info-group-flex"><div class="button-group-tag"><i class="fa fa-home fa-1x"></i>&nbsp;</div>';
-            template += '<div data-toggle="buttons">';
+            template += '</div>';
+            template += '<div class="info-group">';
+            template += '<div data-toggle="buttons"><i class="fa fa-home"></i> ';
             template += '<% _.each(ownerships.models, function (ownership) { %>';
             template += '<label class="btn ownership-radio" data-target="<%= ownership.getId() %>">';
             template += '<input type="radio" name="ownership">';
@@ -49808,12 +49800,12 @@ var FoodParent;
             template += '<% var person = FoodParent.Model.getPersons().findWhere({id: note.getPersonId() }); %>';
             template += '<% if (person != undefined) { %>';
             template += '<% if (person.getName() != "") { %>';
-            template += '<div class="item-activity"><i class="fa fa-caret-right fa-1x"></i> <div><span class="treeinfocomment">"<%= note.getComment() %>"</span> by <i><%= person.getName() %></i> (<%= note.getFormattedDate() %>)</div></div>';
+            template += '<div class="item-activity btn-comment" data-target="<%= note.getId() %>"><i class="fa fa-caret-right fa-1x"></i> <div><span class="treeinfocomment">"<%= note.getComment() %>"</span> by <i><%= person.getName() %></i> (<%= note.getFormattedDate() %>)</div></div>';
             template += '<% } else { %>';
-            template += '<div class="item-activity"><i class="fa fa-caret-right fa-1x"></i> <div><span class="treeinfocomment">"<%= note.getComment() %>"</span> by <i><%= person.getContact() %></i> (<%= note.getFormattedDate() %>)</div></div>';
+            template += '<div class="item-activity btn-comment" data-target="<%= note.getId() %>"><i class="fa fa-caret-right fa-1x"></i> <div><span class="treeinfocomment">"<%= note.getComment() %>"</span> by <i><%= person.getContact() %></i> (<%= note.getFormattedDate() %>)</div></div>';
             template += '<% } %>';
             template += '<% } else { %>';
-            template += '<div class="item-activity"><i class="fa fa-caret-right fa-1x"></i> <div><span class="treeinfocomment">"<%= note.getComment() %>"</span> (<%= note.getFormattedDate() %>)</div></div>';
+            template += '<div class="item-activity btn-comment" data-target="<%= note.getId() %>"><i class="fa fa-caret-right fa-1x"></i> <div><span class="treeinfocomment">"<%= note.getComment() %>"</span> (<%= note.getFormattedDate() %>)</div></div>';
             template += '<% } %>';
             template += '<% } %>';
             template += '<% }); %>';
@@ -54920,8 +54912,17 @@ var FoodParent;
         TreeViewFractory.getInstance = function () {
             return TreeViewFractory._instance;
         };
-        TreeViewFractory.create = function (el, id) {
-            var view = new TreeGraphicView({ el: el });
+        TreeViewFractory.create = function (el, id, credential) {
+            var view;
+            if (credential == FoodParent.CREDENTIAL_MODE.GUEST) {
+                view = new FoodParent.TreeGraphicViewForGuest({ el: el });
+            }
+            else if (credential == FoodParent.CREDENTIAL_MODE.PARENT) {
+                view = new FoodParent.TreeGraphicViewForParent({ el: el });
+            }
+            else if (credential == FoodParent.CREDENTIAL_MODE.ADMIN) {
+                view = new FoodParent.TreeGraphicViewForAdmin({ el: el });
+            }
             view.setTreeId(id);
             return view;
         };
@@ -54933,7 +54934,7 @@ var FoodParent;
         __extends(TreeView, _super);
         function TreeView() {
             _super.apply(this, arguments);
-            this._bAuthor = false;
+            this.renderTreeInfo = function () { };
         }
         TreeView.prototype.setTreeId = function (id) {
             this._id = Math.floor(id);
@@ -55089,10 +55090,6 @@ var FoodParent;
                     FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
                 });
             };
-            this.renderTreeInfo = function (tree) {
-                var self = _this;
-                self._bAuthor = false;
-            };
             var self = this;
             self.bDebug = true;
             self.events = {
@@ -55100,10 +55097,6 @@ var FoodParent;
             };
             self.delegateEvents();
         }
-        TreeGraphicView.prototype.resetNote = function () {
-            var self = this;
-            self._note = null;
-        };
         TreeGraphicView.prototype.render = function (args) {
             _super.prototype.render.call(this, args);
             var self = this;
@@ -55115,6 +55108,7 @@ var FoodParent;
             self.resize();
             FoodParent.Controller.fetchAllTrees(function () {
                 self.renderChartDatePicker();
+                self.renderTreeInfo();
             }, function () {
                 FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
             });
@@ -55149,10 +55143,229 @@ var FoodParent;
             self.$('.tree-graph-start').pickadate('picker').set('select', moment(self._startDate).format(FoodParent.Setting.getDateFormat()), { format: 'dd mmm yyyy' });
             self.renderTreeChart(self._tree, self._startDate, self._endDate);
         };
+        TreeGraphicView.prototype.renderFlagInfo = function (flags) {
+            var self = this;
+            FoodParent.Controller.checkIsAdmin(function (response) {
+                $.each(self.$('.flag-radio'), function (index, item) {
+                    var bFound = false;
+                    $.each(flags, function (index2, flag) {
+                        if (parseInt($(item).attr('data-target')) == flag) {
+                            bFound = true;
+                        }
+                    });
+                    if (bFound) {
+                        $(item).addClass('active');
+                        $(item).find('input').prop({ 'checked': 'checked' });
+                    }
+                    else {
+                        $(item).removeClass('active');
+                        $(item).find('input').prop({ 'checked': '' });
+                    }
+                    if (parseInt($(item).attr('data-target')) == 0) {
+                        $(this).attr('disabled', 'disabled');
+                        $(item).addClass('disabled');
+                    }
+                });
+            }, function (response) {
+                $.each(self.$('.flag-radio'), function (index, item) {
+                    var bFound = false;
+                    $.each(flags, function (index2, flag) {
+                        if (parseInt($(item).attr('data-target')) == flag) {
+                            bFound = true;
+                        }
+                    });
+                    if (bFound) {
+                        $(item).addClass('active');
+                        $(item).find('input').prop({ 'checked': 'checked' });
+                        $(item).removeClass('hidden');
+                    }
+                    else {
+                        $(item).removeClass('active');
+                        $(item).find('input').prop({ 'checked': '' });
+                        $(item).addClass('hidden');
+                    }
+                    if (parseInt($(item).attr('data-target')) == 0) {
+                        $(this).attr('disabled', 'disabled');
+                        $(item).addClass('disabled');
+                    }
+                    $(item).css({ 'pointer-events': 'none' });
+                });
+            }, function () {
+                FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+            });
+        };
+        TreeGraphicView.prototype.renderOwnershipInfo = function (ownership) {
+            var self = this;
+            FoodParent.Controller.checkIsAdmin(function (response) {
+                $.each(self.$('.ownership-radio'), function (index, item) {
+                    if (ownership != undefined) {
+                        if (parseInt($(item).attr('data-target')) == ownership.getId()) {
+                            $(item).addClass('active');
+                            $(item).find('input').prop({ 'checked': 'checked' });
+                        }
+                        else {
+                            $(item).removeClass('active');
+                            $(item).find('input').prop({ 'checked': '' });
+                        }
+                        if (parseInt($(item).attr('data-target')) == 0) {
+                            $(this).attr('disabled', 'disabled');
+                            $(item).addClass('disabled');
+                        }
+                    }
+                });
+            }, function (response) {
+                $.each(self.$('.ownership-radio'), function (index, item) {
+                    if (ownership != undefined) {
+                        if (parseInt($(item).attr('data-target')) == ownership.getId()) {
+                            $(item).addClass('active');
+                            $(item).find('input').prop({ 'checked': 'checked' });
+                        }
+                        else {
+                            $(item).removeClass('active');
+                            $(item).find('input').prop({ 'checked': '' });
+                            $(item).addClass('hidden');
+                        }
+                        if (parseInt($(item).attr('data-target')) == 0) {
+                            $(this).attr('disabled', 'disabled');
+                            $(item).addClass('disabled');
+                        }
+                        $(item).css({ 'pointer-events': 'none' });
+                    }
+                });
+            }, function () {
+                FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+            });
+        };
+        TreeGraphicView.prototype.renderRecentComments = function (tree) {
+            var self = this;
+            var trees = new Array();
+            trees.push(tree);
+            FoodParent.Controller.fetchNotesOfTrees(trees, FoodParent.NoteType.IMAGE, FoodParent.Setting.getNumRecentActivitiesShown() * 2, 0, function () {
+                var notes = new FoodParent.Notes(FoodParent.Model.getNotes().where({ tree: tree.getId(), type: FoodParent.NoteType.IMAGE }));
+                notes.sortByDescendingDate();
+                var template = _.template(FoodParent.Template.getRecentCommentsTemplate());
+                var data = {
+                    notes: notes,
+                    size: FoodParent.Setting.getNumRecentActivitiesShown(),
+                };
+                self.$('#list-comments').html(template(data));
+            }, function () {
+                FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+            });
+        };
         TreeGraphicView.TAG = "TreeGraphicView - ";
         return TreeGraphicView;
     })(TreeView);
     FoodParent.TreeGraphicView = TreeGraphicView;
+})(FoodParent || (FoodParent = {}));
+
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var FoodParent;
+(function (FoodParent) {
+    var TreeGraphicViewForGuest = (function (_super) {
+        __extends(TreeGraphicViewForGuest, _super);
+        function TreeGraphicViewForGuest(options) {
+            var _this = this;
+            _super.call(this, options);
+            this.renderTreeInfo = function () {
+                var self = _this;
+                self._tree = FoodParent.Model.getTrees().findWhere({ id: self._id });
+                FoodParent.Controller.fetchAllFlagsAndOwners(function () {
+                    var food = FoodParent.Model.getFoods().findWhere({ id: self._tree.getFoodId() });
+                    var ownership = FoodParent.Model.getOwnerships().findWhere({ id: self._tree.getOwnershipId() });
+                    var template = _.template(FoodParent.Template.getTreeBasicInfoTemplateForGuest());
+                    self.$('.content-tree-basicinfo').html(template({
+                        foodname: food.getName(),
+                        treename: self._tree.getName(),
+                        lat: self._tree.getLat().toFixed(4),
+                        lng: self._tree.getLng().toFixed(4),
+                        flags: FoodParent.Model.getFlags(),
+                        ownerships: FoodParent.Model.getOwnerships(),
+                        description: self._tree.getDescription(),
+                        parents: self._tree.getParents(),
+                    }));
+                    // Render address either from the reverse geo-coding server or stored address
+                    self.$('.input-address').replaceWith('<div class="input-address"></div>');
+                    if (self._tree.getAddress().trim() == '') {
+                        FoodParent.GeoLocation.reverseGeocoding(self._tree.getLocation(), function (data) {
+                            self.$(".input-address").html(data.road + ", " + data.county + ", " + data.state + ", " + data.country + ", " + data.postcode);
+                        }, function () {
+                            FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+                        });
+                    }
+                    else {
+                        self.$(".input-address").html(self._tree.getAddress());
+                    }
+                    self.renderFlagInfo(self._tree.getFlags());
+                    self.renderOwnershipInfo(ownership);
+                    self.renderRecentComments(self._tree);
+                }, function () {
+                    FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+                });
+            };
+            var self = this;
+            self.bDebug = true;
+            self.events = {
+                "click .btn-date": "_applyDatePreset",
+            };
+            self.delegateEvents();
+        }
+        TreeGraphicViewForGuest.TAG = "TreeGraphicViewForGuest - ";
+        return TreeGraphicViewForGuest;
+    })(FoodParent.TreeGraphicView);
+    FoodParent.TreeGraphicViewForGuest = TreeGraphicViewForGuest;
+})(FoodParent || (FoodParent = {}));
+
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var FoodParent;
+(function (FoodParent) {
+    var TreeGraphicViewForParent = (function (_super) {
+        __extends(TreeGraphicViewForParent, _super);
+        function TreeGraphicViewForParent(options) {
+            _super.call(this, options);
+            var self = this;
+            self.bDebug = true;
+            self.events = {
+                "click .btn-date": "_applyDatePreset",
+            };
+            self.delegateEvents();
+        }
+        TreeGraphicViewForParent.TAG = "TreeGraphicViewForGuest - ";
+        return TreeGraphicViewForParent;
+    })(FoodParent.TreeGraphicView);
+    FoodParent.TreeGraphicViewForParent = TreeGraphicViewForParent;
+})(FoodParent || (FoodParent = {}));
+
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var FoodParent;
+(function (FoodParent) {
+    var TreeGraphicViewForAdmin = (function (_super) {
+        __extends(TreeGraphicViewForAdmin, _super);
+        function TreeGraphicViewForAdmin(options) {
+            _super.call(this, options);
+            var self = this;
+            self.bDebug = true;
+            self.events = {
+                "click .btn-date": "_applyDatePreset",
+            };
+            self.delegateEvents();
+        }
+        TreeGraphicViewForAdmin.TAG = "TreeGraphicViewForGuest - ";
+        return TreeGraphicViewForAdmin;
+    })(FoodParent.TreeGraphicView);
+    FoodParent.TreeGraphicViewForAdmin = TreeGraphicViewForAdmin;
 })(FoodParent || (FoodParent = {}));
 
 var __extends = (this && this.__extends) || function (d, b) {

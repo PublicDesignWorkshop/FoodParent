@@ -495,70 +495,53 @@
             template += '<div class="button-outer-frame2 button5"><div class="button-inner-frame2 button-tree-detail"><i class="fa fa-heartbeat"></i> See Tree Detail</div></div>';
             template += '<div class="button-outer-frame2 button5"><div class="button-inner-frame2 button-manage-adoption"><i class="fa fa-user-plus"></i> Manage Adoption</div></div>';
             template += '<div class="button-outer-frame2 button5"><div class="button-inner-frame2 button-new-note"><i class="fa fa-sticky-note-o"></i> Post New Note</div></div>';
-            
-
-
             return template;
         }
 
-        public static getTreeInfoTemplate2(): string {
+        public static getTreeBasicInfoTemplateForGuest(): string {
             var template = '';
-            template += '<div class="tree-info-name"><div class="info-group-flex"><div class="input-food"><%= foodname %></div>&nbsp;<%= treename %></div>';
+            template += '<div id="content-header">';
+            template +=     '<div class="tree-info-name"><div class="input-food"><%= foodname %></div>&nbsp;<%= treename %></div>';
+            template += '</div>';   // end of #wrapper-header
+            
+
+            template += '<div class="info-group-flex">';
+            template +=     '<i class="fa fa-at"></i>&nbsp<div class="tree-info-coordinate"><div class="input-lat"><%= lat %></div>,&nbsp;<div class="input-lng"><%= lng %></div></div>';
             template += '</div>';
-            template += '<div class="tree-info-coordinate">@&nbsp;&nbsp;&nbsp;&nbsp;<div class="input-lat"><%= lat %></div>,&nbsp;<div class="input-lng"><%= lng %></div></div>';
+
+            template += '<div class="info-group-flex">';
+            template +=     '<i class="fa fa-map-marker"></i>&nbsp&nbsp<div class="input-address">&nbsp;</div>';
+            template += '</div>';
+
+            template += '<div class="info-group-flex">';
+            template +=     '<i class="fa fa-sticky-note"></i>&nbsp&nbsp<div class="input-description"><%= description %></div>';
+            template += '</div>';
+
+            template += '<div class="content-status">';
+            template +=     '<div class="info-group">';
+            template +=         '<div data-toggle="buttons"><i class="fa fa-tag"></i> ';
+            template +=         '<% _.each(flags.models, function (flag) { %>';
+            template +=             '<label class="btn flag-radio" data-target="<%= flag.getId() %>">';
+            template +=             '<input type="checkbox" name="flag">';
+            template +=             '<i class="fa fa-square-o fa-1x"></i>';
+            template +=             '<i class="fa fa-check-square-o fa-1x"></i>';
+            template +=             ' <%= flag.getName() %></label>';
+            template +=         '<% }); %>';
+            template +=         '</div>';
+            template +=     '</div>';
+            template += '</div>';
 
             template += '<div class="info-group">';
-            template +=     '<div class="input-address">&nbsp;</div>';
+            template +=     '<div data-toggle="buttons"><i class="fa fa-home"></i> ';
+            template +=     '<% _.each(ownerships.models, function (ownership) { %>';
+            template +=         '<label class="btn ownership-radio" data-target="<%= ownership.getId() %>">';
+            template +=         '<input type="radio" name="ownership">';
+            template +=         '<i class="fa fa-circle-o fa-1x"></i>';
+            template +=         '<i class="fa fa-check-circle-o fa-1x"></i>';
+            template +=         ' <%= ownership.getName() %></label>';
+            template +=     '<% }); %>';
+            template +=     '</div>';
             template += '</div>';
-
-            template += '<div class="info-group info-group-flex">';
-            template +=     '<i class="fa fa-sticky-note fa-1x"></i>&nbsp;&nbsp;&nbsp;&nbsp;<div class="input-description"><%= description %></div>';
-            template += '</div>';
-
-            template += '<div class="info-group info-group-flex"><i class="fa fa-user fa-1x"></i>&nbsp;&nbsp;&nbsp;&nbsp;';
-            template += '<% _.each(persons.models, function (person, index) { %>';
-            template += '<% if (index < persons.models.length - 1) { %>';
-            template += '<div><%= person.getName() %>,&nbsp;</div>';
-            template += '<% } else { %>';
-            template += '<div><%= person.getName() %></div>';
-            template += '<% } %>';
-            template += '<% }); %>';
-            template += '</div>';
-
-            /*
-            template += '<div data-toggle="buttons">';
-            template += '<label class="btn filter-checkbox list-hiearchy1">';
-            template += '<input type="checkbox" name="onlymine" data-target="<%= userid %>">';
-            template += '<i class="fa fa-square-o fa-1x"></i>';
-            template += '<i class="fa fa-check-square-o fa-1x"></i>';
-            template += ' My children (only mine / show all)</label>';
-            template += '</div>';
-            */
-
-            template += '<div class="info-group info-group-flex"><div class="button-group-tag"><i class="fa fa-tag fa-1x"></i>&nbsp;</div>';
-            template += '<div data-toggle="buttons">';
-            template += '<% _.each(flags.models, function (flag) { %>';
-            template += '<label class="btn flag-radio" data-target="<%= flag.getId() %>">';
-            template += '<input type="checkbox" name="flag">';
-            template += '<i class="fa fa-square-o fa-1x"></i>';
-            template += '<i class="fa fa-check-square-o fa-1x"></i>';
-            template += ' <%= flag.getName() %></label>';
-            template += '<% }); %>';
-            template += '</div>';
-            template += '</div>';
-
-            template += '<div class="info-group info-group-flex"><div class="button-group-tag"><i class="fa fa-home fa-1x"></i>&nbsp;</div>';
-            template += '<div data-toggle="buttons">';
-            template += '<% _.each(ownerships.models, function (ownership) { %>';
-            template += '<label class="btn ownership-radio" data-target="<%= ownership.getId() %>">';
-            template += '<input type="radio" name="ownership">';
-            template += '<i class="fa fa-circle-o fa-1x"></i>';
-            template += '<i class="fa fa-check-circle-o fa-1x"></i>';
-            template += ' <%= ownership.getName() %></label>';
-            template += '<% }); %>';
-            template += '</div>';
-            template += '</div>';
-
             return template;
         }
 
@@ -1002,13 +985,13 @@
             template +=         '<% if (person != undefined) { %>';
 
             template += '<% if (person.getName() != "") { %>';
-            template += '<div class="item-activity"><i class="fa fa-caret-right fa-1x"></i> <div><span class="treeinfocomment">"<%= note.getComment() %>"</span> by <i><%= person.getName() %></i> (<%= note.getFormattedDate() %>)</div></div>';
+            template += '<div class="item-activity btn-comment" data-target="<%= note.getId() %>"><i class="fa fa-caret-right fa-1x"></i> <div><span class="treeinfocomment">"<%= note.getComment() %>"</span> by <i><%= person.getName() %></i> (<%= note.getFormattedDate() %>)</div></div>';
             template += '<% } else { %>';
-            template += '<div class="item-activity"><i class="fa fa-caret-right fa-1x"></i> <div><span class="treeinfocomment">"<%= note.getComment() %>"</span> by <i><%= person.getContact() %></i> (<%= note.getFormattedDate() %>)</div></div>';
+            template += '<div class="item-activity btn-comment" data-target="<%= note.getId() %>"><i class="fa fa-caret-right fa-1x"></i> <div><span class="treeinfocomment">"<%= note.getComment() %>"</span> by <i><%= person.getContact() %></i> (<%= note.getFormattedDate() %>)</div></div>';
             template += '<% } %>';
             
             template +=         '<% } else { %>';
-            template +=             '<div class="item-activity"><i class="fa fa-caret-right fa-1x"></i> <div><span class="treeinfocomment">"<%= note.getComment() %>"</span> (<%= note.getFormattedDate() %>)</div></div>';
+            template +=             '<div class="item-activity btn-comment" data-target="<%= note.getId() %>"><i class="fa fa-caret-right fa-1x"></i> <div><span class="treeinfocomment">"<%= note.getComment() %>"</span> (<%= note.getFormattedDate() %>)</div></div>';
             template +=         '<% } %>';
             template +=     '<% } %>';
             template += '<% }); %>';

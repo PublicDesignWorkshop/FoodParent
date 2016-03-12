@@ -127,13 +127,14 @@ var FoodParent;
             var self = this;
             self._el = args.el;
             self._id = args.id;
+            self._credential = args.credential;
         }
         RenderTreeViewCommand.prototype.execute = function () {
             var self = this;
             if (FoodParent.View.getTreeView()) {
             }
             else {
-                var view = FoodParent.TreeViewFractory.create(self._el, self._id).render();
+                var view = FoodParent.TreeViewFractory.create(self._el, self._id, self._credential).render();
                 FoodParent.View.addChild(view);
                 FoodParent.View.setTreeView(view);
             }
