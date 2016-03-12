@@ -161,7 +161,7 @@
     /**
 	    Label the data
 	*/
-	.list-tree td:nth-of-type(1):before { content: "Food Type"; }
+	.list-tree td:nth-of-type(1):before { content: "Food Type"; z-index: -1000; }
     .list-tree td:nth-of-type(2):before { content: "#"; }
     .list-tree td:nth-of-type(3):before { content: "Description"; }
     .list-tree td:nth-of-type(4):before { content: "Address"; }
@@ -171,7 +171,7 @@
     .list-tree td:nth-of-type(8):before { content: "Updated"; }
     .list-tree td:nth-of-type(9):before { content: "Actions"; }
 
-    .new-tree td:nth-of-type(1):before { content: "Food Type"; }
+    .new-tree td:nth-of-type(1):before { content: "Food Type"; z-index: -1000; }
     .new-tree td:nth-of-type(2):before { content: "Description"; }
     .new-tree td:nth-of-type(3):before { content: "Address"; }
     .new-tree td:nth-of-type(4):before { content: "Latitude"; }

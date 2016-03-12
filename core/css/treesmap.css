@@ -193,8 +193,11 @@
         font-size: small;
         padding: 4px 4px 0 4px;
         margin: 0;
+        display: -webkit-flex;
         display: flex;
+        -webkit-justify-content: center;
         justify-content: center;
+        -webkit-align-items: center;
         align-items: center;
     }
     #wrapper-treeinfo .tree-info-address {
