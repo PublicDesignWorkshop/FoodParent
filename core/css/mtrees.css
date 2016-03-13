@@ -8,11 +8,7 @@
 
     
 
-    .info-group-flex {
-        display: flex;
-        justify-content: flex-start;
-        align-items: flex-start;
-    }
+    
 
     #wrapper-tablemenu {
         width: 280px;

@@ -12747,6 +12747,15 @@ button.close {
     .leaflet-popup-content {
         color: #222222;
     }
+
+    .info-group-flex {
+        display: -webkit-flex;
+        display: flex;
+        -webkit-justify-content: space-around;
+        justify-content: space-around;
+        -webkit-align-items: center;
+        align-items: center;
+    }
 }
 
 @media all {
@@ -13580,8 +13589,6 @@ button.close {
 
     
 
-    
-
     .list-people .backgrid .auth {
         width: 15%;
     }
@@ -13789,7 +13796,8 @@ button.close {
         padding: 2px 2px;
         overflow: hidden;
         line-height: 20px;
-        text-align: left;
+        -ms-text-overflow: ellipsis;
+        -o-text-overflow: ellipsis;
         text-overflow: ellipsis;
         /* white-space: nowrap; */
         vertical-align: middle;
@@ -13875,18 +13883,18 @@ button.close {
     }
 }
 @media only screen and (max-width: 480px) and (orientation: landscape) {
-    
+    .list-tree td:nth-of-type(8), .list-tree th:nth-of-type(8) { display: none; }
 }
 @media only screen and (min-width: 481px) and (max-width: 568px) and (orientation: landscape) {
-    
+    .list-tree td:nth-of-type(8), .list-tree th:nth-of-type(8) { display: none; }
 }
     
 @media only screen and (min-width: 569px) and (max-width: 667px) and (orientation: landscape) {
-    
+    .list-tree td:nth-of-type(8), .list-tree th:nth-of-type(8) { display: none; }
 }
 
 @media only screen and (min-width: 668px) and (max-width: 736px) and (orientation: landscape) {
-    
+    .list-tree td:nth-of-type(8), .list-tree th:nth-of-type(8) { display: none; }
 }
 
 @media only screen and (min-width: 737px) and (max-width: 1280px) and (orientation: landscape) {
@@ -13896,6 +13904,7 @@ button.close {
     .list-tree a, .new-tree a, .list-tree a, .new-person a, .list-adoption a {
         font-size: small;
     }
+    .list-tree td:nth-of-type(8), .list-tree th:nth-of-type(8) { display: none; }
 }
 
 
@@ -14012,11 +14021,7 @@ button.close {
 
     
 
-    .info-group-flex {
-        display: flex;
-        justify-content: flex-start;
-        align-items: flex-start;
-    }
+    
 
     #wrapper-tablemenu {
         width: 280px;
@@ -15490,7 +15495,6 @@ button.close {
         padding: 60px 8px 8px 8px;
         overflow-y: auto;
         color: #ffffff;
-        pointer-events: none;
     }
     #wrapper-treeinfo div {
         pointer-events: all;
