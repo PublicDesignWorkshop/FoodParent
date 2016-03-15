@@ -2417,7 +2417,7 @@
 
             template +=     '<div id="content-login">';
             template +=         '<div class="info-group">';
-            template +=             '<div class="text-label"><i class="fa fa-caret-right"></i> Please put your e-mail address to log in.</div>';
+            template +=             '<div class="text-label"><i class="fa fa-caret-right"></i> Please put your e-mail address to sign up.</div>';
             template +=         '</div>';   // end of .info-group
             
             template +=         '<div class="info-group">';

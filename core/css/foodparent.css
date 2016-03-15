@@ -15038,19 +15038,19 @@ button.close {
 }
 
 @media all {
-    #wrapper-login #frame-login {
+    #wrapper-login #frame-login, #wrapper-signup #frame-signup {
         float: right;
         max-width: 480px;
         min-width: 280px;
     }
-    #wrapper-login #content-header {
+    #wrapper-login #content-header, #wrapper-signup #content-header{
         display: -webkit-flex;
         display: flex;
         margin: 0 0 8px 0;
         color: #5e4e51;
         font-size: xx-large;
     }
-    #wrapper-login hr {
+    #wrapper-login hr, #wrapper-signup hr {
         border: 1px solid rgba(0, 0, 0, 0.05);
         margin: 2px 0;
     }
@@ -15067,7 +15067,7 @@ button.close {
         cursor: pointer;
     }
 
-    #wrapper-login .info-group, #wrapper-login label {
+    #wrapper-login .info-group, #wrapper-login label, #wrapper-signup .info-group, #wrapper-signup label {
         width: 100%;
         -moz-user-select: none;
         -ms-user-select: none;
@@ -15080,11 +15080,11 @@ button.close {
         font-weight: 700;
     }
 
-    #wrapper-login .info-button-group {
+    #wrapper-login .info-button-group, #wrapper-signup .info-button-group{
         margin: 4px 0;
     }
 
-    #wrapper-login .text-label {
+    #wrapper-login .text-label, #wrapper-login .text-label {
         padding: 2px 8px;
     }
 }
