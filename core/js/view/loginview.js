@@ -79,7 +79,7 @@ var FoodParent;
         LogInView.prototype._loginSubmit = function (event) {
             var self = this;
             if ($('input[type="checkbox"][name="manager"]').prop('checked') == true) {
-                if (!isValidEmailAddress($('.input-contact').val())) {
+                if (!isValidEmailAddress(self.$('.input-contact').val())) {
                     new FoodParent.RenderMessageViewCommand({ el: FoodParent.Setting.getMessageWrapperElement(), message: "Please put a valid <strong><i>e-mail address.", undoable: false }).execute();
                 }
                 else if (self.$('.input-password').val().trim() == '') {
@@ -214,19 +214,13 @@ var FoodParent;
             self.bDebug = true;
             //$(window).resize(_.debounce(that.customResize, Setting.getInstance().getResizeTimeout()));
             self.events = {
-                "click .top-right-button": "_mouseClick",
-                "click .signup-cancel": "_mouseClick",
-                "click .signup-submit": "_signupSubmit",
+                "click .evt-close": "_mouseClick",
+                "click .evt-submit": "_signupSubmit",
             };
             self.delegateEvents();
         }
         SignUpView.prototype.render = function (args) {
-            if (this.bRendered) {
-                this.update(args);
-                return;
-            }
-            this.bRendered = true;
-            /////
+            _super.prototype.render.call(this, args);
             var self = this;
             if (self.bDebug)
                 console.log(SignUpView.TAG + "render()");
@@ -258,29 +252,21 @@ var FoodParent;
         };
         SignUpView.prototype._signupSubmit = function (event) {
             var self = this;
-            if (!self.bProcessing) {
-                self.bProcessing = true;
-                if (!isValidEmailAddress($('.input-contact').val())) {
-                    new FoodParent.RenderMessageViewCommand({ el: FoodParent.Setting.getMessageWrapperElement(), message: FoodParent.Setting.getErrorMessage(803), undoable: false }).execute();
-                    self.bProcessing = false;
-                }
-                else if ($('.input-name').val().trim() == "") {
-                    new FoodParent.RenderMessageViewCommand({ el: FoodParent.Setting.getMessageWrapperElement(), message: FoodParent.Setting.getErrorMessage(604), undoable: false }).execute();
-                    self.bProcessing = false;
-                }
-                else if ($('.input-neighborhood').val().trim() == "") {
-                    new FoodParent.RenderMessageViewCommand({ el: FoodParent.Setting.getMessageWrapperElement(), message: FoodParent.Setting.getErrorMessage(605), undoable: false }).execute();
-                    self.bProcessing = false;
-                }
-                else {
-                    FoodParent.Controller.processSignup($('.input-contact').val().trim(), $('.input-name').val().trim(), $('.input-neighborhood').val().trim(), function (data) {
-                        Backbone.history.loadUrl(Backbone.history.fragment);
-                        self.bProcessing = false;
-                    }, function (data) {
-                        new FoodParent.RenderMessageViewCommand({ el: FoodParent.Setting.getMessageWrapperElement(), message: FoodParent.Setting.getErrorMessage(data.error), undoable: false }).execute();
-                        self.bProcessing = false;
-                    });
-                }
+            console.log(self.$('.input-contact').val());
+            if ((self.$('.input-contact').val() == "")) {
+                new FoodParent.RenderMessageViewCommand({ el: FoodParent.Setting.getMessageWrapperElement(), message: "Please enter your <strong><i>e-mail address.", undoable: false }).execute(); //blank name field
+            }
+            else if (!isValidEmailAddress(self.$('.input-contact').val())) {
+                new FoodParent.RenderMessageViewCommand({ el: FoodParent.Setting.getMessageWrapperElement(), message: "Please enter a valid <strong><i>e-mail address.", undoable: false }).execute(); //not a valid e-mail
+            }
+            else if ((self.$('.input-name').val().trim() == "")) {
+                new FoodParent.RenderMessageViewCommand({ el: FoodParent.Setting.getMessageWrapperElement(), message: "Please enter your name.", undoable: false }).execute(); //blank name field
+            }
+            else if ((self.$('.input-neighborhood').val().trim() == "")) {
+                new FoodParent.RenderMessageViewCommand({ el: FoodParent.Setting.getMessageWrapperElement(), message: "Please enter a nearby place", undoable: false }).execute(); //blank neighborhood field
+            }
+            else {
+                FoodParent.EventHandler.handleMouseClick(self.$('.evt-submit'), self, { contact: self.$('.input-contact').val().trim(), name: self.$('.input-name').val().trim(), neighborhood: self.$('.input-neighborhood').val().trim() });
             }
         };
         SignUpView.TAG = "SignUpView - ";

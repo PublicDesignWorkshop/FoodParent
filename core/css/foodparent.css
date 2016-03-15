@@ -15050,10 +15050,16 @@ button.close {
         color: #5e4e51;
         font-size: xx-large;
     }
-    #wrapper-login hr, #wrapper-signup hr {
+    #wrapper-login hr {
         border: 1px solid rgba(0, 0, 0, 0.05);
         margin: 2px 0;
     }
+
+    #wrapper-signup hr {
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        margin: 10px 0;
+    }
+
     #content-header .text-header {
         -webkit-flex-grow: 1;
         flex-grow: 1;
@@ -15080,7 +15086,7 @@ button.close {
         font-weight: 700;
     }
 
-    #wrapper-login .info-button-group, #wrapper-signup .info-button-group{
+    #wrapper-login .info-button-group, #wrapper-signup .info-button-group {
         margin: 4px 0;
     }
 

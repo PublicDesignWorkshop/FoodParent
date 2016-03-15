@@ -2003,18 +2003,19 @@ var FoodParent;
             template += '<div class="text-label"><i class="fa fa-caret-right"></i> Please put your e-mail address to sign up.</div>';
             template += '</div>'; // end of .info-group
             template += '<div class="info-group">';
-            template += '<input type="email" name="email" class="form-control input-contact" placeholder="e-mail address" autocomplete="on"/>';
+            template += '<input type="email" class="form-control input-contact" placeholder="e-mail address" autocomplete="on"/>';
             template += '</div>'; // end of .info-group for e-mail
             template += '<hr />';
             template += '<div class="info-group">';
             template += '<div class="text-label"><i class="fa fa-caret-right"></i> Personal Information</div>';
             template += '</div>'; // end of .info-group grab info
             template += '<div class="info-group">';
-            template += '<input type="text" name="name" class="form-control input-contact" placeholder="Name" autocomplete="on"/>';
+            template += '<input type="text" class="form-control input-name" placeholder="Name" autocomplete="on"/>';
             template += '</div>'; // end of .info-group for e-mail
             template += '<div class="info-group">';
-            template += '<input type="text" name="name" class="form-control input-contact" placeholder="Nearby place (street, park, etc)" autocomplete="on"/>';
+            template += '<input type="text" class="form-control input-neighborhood" placeholder="Nearby place (street, park, etc)" autocomplete="on"/>';
             template += '</div>'; // end of .info-group for e-mail
+            template += '<hr />';
             template += '<div class="info-button-group">';
             template += '<div class="btn-brown btn-medium evt-submit">Sign Up</div>';
             template += '</div>'; // end of .info-button-group submit button

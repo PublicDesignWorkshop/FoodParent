@@ -75,7 +75,7 @@
         private _loginSubmit(event?: Event): void {
             var self: LogInView = this;
             if ($('input[type="checkbox"][name="manager"]').prop('checked') == true) {
-                if (!isValidEmailAddress($('.input-contact').val())) {
+                if (!isValidEmailAddress(self.$('.input-contact').val())) {
                     new RenderMessageViewCommand({ el: Setting.getMessageWrapperElement(), message: "Please put a valid <strong><i>e-mail address.", undoable: false }).execute();
                 } else if (self.$('.input-password').val().trim() == '') {
                     new RenderMessageViewCommand({ el: Setting.getMessageWrapperElement(), message: "Please put a <strong>password</strong>, or uncheck <strong>manager option</strong>.", undoable: false }).execute();
@@ -203,19 +203,13 @@
             self.bDebug = true;
             //$(window).resize(_.debounce(that.customResize, Setting.getInstance().getResizeTimeout()));
             self.events = <any>{
-                "click .top-right-button": "_mouseClick",
-                "click .signup-cancel": "_mouseClick",
-                "click .signup-submit": "_signupSubmit",
+                "click .evt-close": "_mouseClick",
+                "click .evt-submit": "_signupSubmit",
             };
             self.delegateEvents();
         }
         public render(args?: any): any {
-            if (this.bRendered) {
-                this.update(args);
-                return;
-            }
-            this.bRendered = true;
-            /////
+            super.render(args);
             var self: SignUpView = this;
             if (self.bDebug) console.log(SignUpView.TAG + "render()");
             var template = _.template(Template.getSignUpViewTemplate());
@@ -250,28 +244,18 @@
 
         private _signupSubmit(event: Event): void {
             var self: SignUpView = this;
-            if (!self.bProcessing) {
-                self.bProcessing = true;
-                if (!isValidEmailAddress($('.input-contact').val())) {
-                    new RenderMessageViewCommand({ el: Setting.getMessageWrapperElement(), message: Setting.getErrorMessage(803), undoable: false }).execute();
-                    self.bProcessing = false;
-                } else if ($('.input-name').val().trim() == "") {
-                    new RenderMessageViewCommand({ el: Setting.getMessageWrapperElement(), message: Setting.getErrorMessage(604), undoable: false }).execute();
-                    self.bProcessing = false;
-                } else if ($('.input-neighborhood').val().trim() == "") {
-                    new RenderMessageViewCommand({ el: Setting.getMessageWrapperElement(), message: Setting.getErrorMessage(605), undoable: false }).execute();
-                    self.bProcessing = false;
-                } else {
-                    Controller.processSignup($('.input-contact').val().trim(), $('.input-name').val().trim(), $('.input-neighborhood').val().trim(), function (data) {
-                        Backbone.history.loadUrl(Backbone.history.fragment);
-                        self.bProcessing = false;
-                    }, function (data) {
-                        new RenderMessageViewCommand({ el: Setting.getMessageWrapperElement(), message: Setting.getErrorMessage(data.error), undoable: false }).execute();
-                        self.bProcessing = false;
-                    });
-                }
+            console.log(self.$('.input-contact').val());
+            if ((self.$('.input-contact').val() == "")) {
+                new RenderMessageViewCommand({ el: Setting.getMessageWrapperElement(), message: "Please enter your <strong><i>e-mail address.", undoable: false }).execute(); //blank name field
+            } else if (!isValidEmailAddress(self.$('.input-contact').val())) {
+                new RenderMessageViewCommand({ el: Setting.getMessageWrapperElement(), message: "Please enter a valid <strong><i>e-mail address.", undoable: false }).execute(); //not a valid e-mail
+            } else if ((self.$('.input-name').val().trim() == "")) {
+                new RenderMessageViewCommand({ el: Setting.getMessageWrapperElement(), message: "Please enter your name.", undoable: false }).execute(); //blank name field
+            } else if ((self.$('.input-neighborhood').val().trim() == "")) {
+                new RenderMessageViewCommand({ el: Setting.getMessageWrapperElement(), message: "Please enter a nearby place", undoable: false }).execute(); //blank neighborhood field
+            }else {
+                EventHandler.handleMouseClick(self.$('.evt-submit'), self, { contact: self.$('.input-contact').val().trim(), name: self.$('.input-name').val().trim(), neighborhood: self.$('.input-neighborhood').val().trim() });
             }
-            
         }
     }
 }
