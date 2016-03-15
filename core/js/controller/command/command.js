@@ -582,6 +582,7 @@ var FoodParent;
             var view = FoodParent.SignUpViewFactory.create(self._el).render();
             FoodParent.View.addPopupView(view);
             FoodParent.View.setViewStatus(FoodParent.VIEW_STATUS.SIGNUP);
+            new SetActiveNavItemCommand({ el: FoodParent.Setting.getNavWrapperElement(), viewStatus: FoodParent.VIEW_STATUS.SIGNUP }).execute();
         };
         RenderSignUpViewCommand.prototype.undo = function () {
         };

@@ -42947,11 +42947,6 @@ var FoodParent;
                 }
                 else if (el.hasClass('evt-logout')) {
                 }
-                else if (el.hasClass('signup')) {
-                    if (FoodParent.View.getViewStatus() != VIEW_STATUS.SIGNUP) {
-                        new FoodParent.RenderSignUpViewCommand({ el: FoodParent.Setting.getPopWrapperElement() }).execute();
-                    }
-                }
             }
             // Handle specific event on each view status.
             switch (FoodParent.View.getViewStatus()) {
@@ -43193,6 +43188,12 @@ var FoodParent;
                         }, function () {
                             EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
                         });
+                    }
+                    else if (el.hasClass('evt-signup')) {
+                        console.log("boohoo");
+                        if (FoodParent.View.getViewStatus() != VIEW_STATUS.SIGNUP) {
+                            new FoodParent.RenderSignUpViewCommand({ el: FoodParent.Setting.getPopWrapperElement() }).execute();
+                        }
                     }
                     break;
                 case VIEW_STATUS.SIGNUP:
@@ -44104,6 +44105,7 @@ var FoodParent;
             var view = FoodParent.SignUpViewFactory.create(self._el).render();
             FoodParent.View.addPopupView(view);
             FoodParent.View.setViewStatus(FoodParent.VIEW_STATUS.SIGNUP);
+            new SetActiveNavItemCommand({ el: FoodParent.Setting.getNavWrapperElement(), viewStatus: FoodParent.VIEW_STATUS.SIGNUP }).execute();
         };
         RenderSignUpViewCommand.prototype.undo = function () {
         };
@@ -50682,6 +50684,10 @@ var FoodParent;
             template += '<div class="info-button-group">';
             template += '<div class="btn-brown btn-medium evt-close">Cancel</div>';
             template += '</div>'; // end of .info-button-group
+            template += '<hr />';
+            template += '<div class="info-button-group">';
+            template += '<div class="btn-brown btn-medium evt-signup">Become a Parent!</div>';
+            template += '</div>'; // end of .info-button-group
             template += '</div>'; // end of .content-login
             template += '</div>'; // end of #frame-login
             template += '</div>'; // end of #wrapper-login
@@ -50813,54 +50819,94 @@ var FoodParent;
             template += '</div>'; // end of #wrapper-note
             return template;
         };
-        Template.getSignUpViewTemplate = function () {
+        /*
+
+        public static getSignUpViewTemplate(): string {
             var template = '';
             template += '<div id="wrapper-signup">';
             template += '<div class="outer-frame">';
             template += '<div class="inner-frame">';
             template += '<div class="wrapper-signup-content">';
+
             template += '<div class="info-group">';
             template += '<div class="name"><i>E-mail address</i></div>';
             template += '</div>';
+
             template += '<div class="info-group">';
             template += '<input type="email" name="email" class="form-control input-contact" placeholder="e-mail address" autocomplete="on"/>';
             template += '</div>';
+
             template += '<div class="hr"><hr /></div>';
+
             template += '<div class="info-group">';
             template += '<div class="name">Information</div>';
             template += '</div>';
+
             template += '<div class="info-group">';
             template += '<input type="text" class="form-control input-name" placeholder="first & last name"/>';
             template += '</div>';
-            //template += '<div class="info-group">';
-            //template += '<input type="text" class="form-control input-address" placeholder="address"/>';
-            //template += '</div>';
+
             template += '<div class="info-group">';
             template += '<input type="text" class="form-control input-neighborhood" placeholder="name of place near you (street, park)"/>';
             template += '</div>';
+            
             template += '<div class="hr"><hr /></div>';
+
             template += '<div class="info-button-group">';
             template += '<div class="button-outer-frame2 button3"><div class="button-inner-frame2 signup-submit">Sign Up</div></div>';
             template += '</div>';
+
             template += '<div class="info-button-group">';
             template += '<div class="button-outer-frame2 button3"><div class="button-inner-frame2 signup-cancel">Cancel</div></div>';
             template += '</div>';
-            /*
-            template += '<div class="hr"><hr /></div>';
 
-            template += '<br />';
-            template += '<div class="info-button-group">';
-            template += '<div class="button-outer-frame2 button3"><div class="button-inner-frame2 logged-delete">Delete Account*</div></div>';
-            template += '<div class="button-description2">* marked operation cannot be undone.</div>';
-            template += '</div>';
-            */
-            template += '</div>'; // end of .wrapper-login-content
-            template += '</div>'; // end of .inner-frame
+            template += '</div>';   // end of .wrapper-login-content
+            template += '</div>';   // end of .inner-frame
             template += '<div class="top-right-button button-close">';
             template += '<i class="fa fa-remove fa-2x"></i>';
+            template += '</div>';   // end of top-right-button button-close
+            template += '</div>';   // end of .outer-frame
+            template += '</div>';   // end of #wrapper-note
+            return template;
+        }
+        */
+        Template.getSignUpViewTemplate = function () {
+            var template = '';
+            template += '<div id="wrapper-signup" class="frame-pop">';
+            template += '<div id="frame-signup">';
+            template += '<div id="content-header">';
+            template += '<div class="text-header"><%= header %></div>';
+            template += '<div class="btn-close evt-close">';
+            template += '<i class="fa fa-remove"></i>';
             template += '</div>'; // end of top-right-button button-close
-            template += '</div>'; // end of .outer-frame
-            template += '</div>'; // end of #wrapper-note
+            template += '</div>'; // end of #wrapper-header
+            template += '<hr />';
+            template += '<div id="content-login">';
+            template += '<div class="info-group">';
+            template += '<div class="text-label"><i class="fa fa-caret-right"></i> Please put your e-mail address to log in.</div>';
+            template += '</div>'; // end of .info-group
+            template += '<div class="info-group">';
+            template += '<input type="email" name="email" class="form-control input-contact" placeholder="e-mail address" autocomplete="on"/>';
+            template += '</div>'; // end of .info-group for e-mail
+            template += '<hr />';
+            template += '<div class="info-group">';
+            template += '<div class="text-label"><i class="fa fa-caret-right"></i> Personal Information</div>';
+            template += '</div>'; // end of .info-group grab info
+            template += '<div class="info-group">';
+            template += '<input type="text" name="name" class="form-control input-contact" placeholder="Name" autocomplete="on"/>';
+            template += '</div>'; // end of .info-group for e-mail
+            template += '<div class="info-group">';
+            template += '<input type="text" name="name" class="form-control input-contact" placeholder="Nearby place (street, park, etc)" autocomplete="on"/>';
+            template += '</div>'; // end of .info-group for e-mail
+            template += '<div class="info-button-group">';
+            template += '<div class="btn-brown btn-medium evt-submit">Sign Up</div>';
+            template += '</div>'; // end of .info-button-group submit button
+            template += '<div class="info-button-group">';
+            template += '<div class="btn-brown btn-medium evt-close">Cancel</div>';
+            template += '</div>'; // end of .info-button-group cancel button
+            template += '</div>'; // end of .content-signup
+            template += '</div>'; // end of #frame-signup
+            template += '</div>'; // end of #wrapper-signup
             return template;
         };
         Template.getAdoptTreeViewTemplate = function () {
@@ -52175,6 +52221,7 @@ var FoodParent;
                 "click .evt-manager": "_toggleManagerLogIn",
                 "click .evt-close": "_mouseClick",
                 "click .evt-submit": "_loginSubmit",
+                "click .evt-signup": "_mouseClick",
                 "keydown .input-contact": "_keyDown",
             };
             self.delegateEvents();
@@ -52185,7 +52232,7 @@ var FoodParent;
             if (self.bDebug)
                 console.log(LogInView.TAG + "render()");
             var template = _.template(FoodParent.Template.getLogInViewTemplate());
-            self.$el.html(template({
+            self.$el.append(template({
                 header: 'Parent Sign-In',
             }));
             self.setElement($('#wrapper-login'));
@@ -52372,7 +52419,9 @@ var FoodParent;
             if (self.bDebug)
                 console.log(SignUpView.TAG + "render()");
             var template = _.template(FoodParent.Template.getSignUpViewTemplate());
-            $('#wrapper-pop').html(template({}));
+            $('#wrapper-pop').append(template({
+                header: 'Become a Parent',
+            }));
             self.setElement($('#wrapper-signup'));
             /*
             var place: Place = Model.getPlaces().findWhere({ id: self._donation.getPlaceId() });

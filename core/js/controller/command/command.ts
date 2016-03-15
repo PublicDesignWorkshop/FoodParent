@@ -613,6 +613,7 @@
             var view: PopupView = SignUpViewFactory.create(self._el).render();
             View.addPopupView(view);
             View.setViewStatus(VIEW_STATUS.SIGNUP);
+            new SetActiveNavItemCommand({ el: Setting.getNavWrapperElement(), viewStatus: VIEW_STATUS.SIGNUP }).execute();
         }
         public undo(): any {
 

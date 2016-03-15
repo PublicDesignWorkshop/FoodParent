@@ -27,6 +27,7 @@
                 "click .evt-manager": "_toggleManagerLogIn",
                 "click .evt-close": "_mouseClick",
                 "click .evt-submit": "_loginSubmit",
+                "click .evt-signup": "_mouseClick",
                 "keydown .input-contact": "_keyDown",
             };
             self.delegateEvents();
@@ -36,7 +37,7 @@
             var self: LogInView = this;
             if (self.bDebug) console.log(LogInView.TAG + "render()");
             var template = _.template(Template.getLogInViewTemplate());
-            self.$el.html(template({
+            self.$el.append(template({
                 header: 'Parent Sign-In',
             }));
             self.setElement($('#wrapper-login'));
@@ -217,14 +218,11 @@
             /////
             var self: SignUpView = this;
             if (self.bDebug) console.log(SignUpView.TAG + "render()");
-
             var template = _.template(Template.getSignUpViewTemplate());
-            $('#wrapper-pop').html(template({
-
+            $('#wrapper-pop').append(template({
+                header: 'Become a Parent',
             }));
             self.setElement($('#wrapper-signup'));
-
-            
 
             /*
             var place: Place = Model.getPlaces().findWhere({ id: self._donation.getPlaceId() });

@@ -229,10 +229,6 @@
                     //new NavigateCommand({ hash: 'mdonations', viewMode: VIEW_MODE.TABLE, id: 0 }).execute();
                 } else if (el.hasClass('evt-logout')) {
                     
-                } else if (el.hasClass('signup')) {
-                    if (View.getViewStatus() != VIEW_STATUS.SIGNUP) {
-                        new RenderSignUpViewCommand({ el: Setting.getPopWrapperElement() }).execute();
-                    }
                 }
             }
 
@@ -451,6 +447,11 @@
                         }, function () {
                             EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
                         });
+                    } else if (el.hasClass('evt-signup')) {
+                        console.log("boohoo");
+                        if (View.getViewStatus() != VIEW_STATUS.SIGNUP) {
+                            new RenderSignUpViewCommand({ el: Setting.getPopWrapperElement() }).execute();
+                        }
                     }
                     break;
                 case VIEW_STATUS.SIGNUP:
