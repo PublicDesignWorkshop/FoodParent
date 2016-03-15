@@ -42711,13 +42711,13 @@ var FoodParent;
         VIEW_STATUS[VIEW_STATUS["TREES"] = 3] = "TREES";
         VIEW_STATUS[VIEW_STATUS["TREES_TABLE"] = 4] = "TREES_TABLE";
         VIEW_STATUS[VIEW_STATUS["TREE"] = 5] = "TREE";
-        VIEW_STATUS[VIEW_STATUS["PARENT_TREES"] = 6] = "PARENT_TREES";
-        VIEW_STATUS[VIEW_STATUS["GEO_ERROR"] = 7] = "GEO_ERROR";
-        VIEW_STATUS[VIEW_STATUS["NETWORK_ERROR"] = 8] = "NETWORK_ERROR";
-        VIEW_STATUS[VIEW_STATUS["MANAGE_PEOPLE"] = 9] = "MANAGE_PEOPLE";
-        VIEW_STATUS[VIEW_STATUS["MANAGE_ADOPTION"] = 10] = "MANAGE_ADOPTION";
-        VIEW_STATUS[VIEW_STATUS["IMAGENOTE_TREE"] = 11] = "IMAGENOTE_TREE";
-        VIEW_STATUS[VIEW_STATUS["POST_NOTE"] = 12] = "POST_NOTE";
+        VIEW_STATUS[VIEW_STATUS["POST_NOTE"] = 6] = "POST_NOTE";
+        VIEW_STATUS[VIEW_STATUS["PARENT_TREES"] = 7] = "PARENT_TREES";
+        VIEW_STATUS[VIEW_STATUS["GEO_ERROR"] = 8] = "GEO_ERROR";
+        VIEW_STATUS[VIEW_STATUS["NETWORK_ERROR"] = 9] = "NETWORK_ERROR";
+        VIEW_STATUS[VIEW_STATUS["MANAGE_PEOPLE"] = 10] = "MANAGE_PEOPLE";
+        VIEW_STATUS[VIEW_STATUS["MANAGE_ADOPTION"] = 11] = "MANAGE_ADOPTION";
+        VIEW_STATUS[VIEW_STATUS["IMAGENOTE_TREE"] = 12] = "IMAGENOTE_TREE";
         VIEW_STATUS[VIEW_STATUS["MANAGE_DONATIONS"] = 13] = "MANAGE_DONATIONS";
         VIEW_STATUS[VIEW_STATUS["ADD_DONATION"] = 14] = "ADD_DONATION";
         VIEW_STATUS[VIEW_STATUS["DETAIL_DONATION"] = 15] = "DETAIL_DONATION";
@@ -43049,6 +43049,11 @@ var FoodParent;
                     }
                     else if (el.hasClass('evt-detail')) {
                         new FoodParent.NavigateCommand({ hash: 'tree', id: options.tree }).execute();
+                    }
+                    else if (el.hasClass('evt-post')) {
+                        var tree = FoodParent.Model.getTrees().findWhere({ id: parseInt(options.tree) });
+                        console.log(tree);
+                        new FoodParent.RenderPostNoteViewCommand({ el: FoodParent.Setting.getPopWrapperElement(), tree: tree }).execute();
                     }
                     break;
                 case VIEW_STATUS.TREES_TABLE:
@@ -43777,8 +43782,7 @@ var FoodParent;
             FoodParent.View.addPopupView(view);
             FoodParent.View.setViewStatus(FoodParent.VIEW_STATUS.POST_NOTE);
         };
-        RenderPostNoteViewCommand.prototype.undo = function () {
-        };
+        RenderPostNoteViewCommand.prototype.undo = function () { };
         return RenderPostNoteViewCommand;
     })();
     FoodParent.RenderPostNoteViewCommand = RenderPostNoteViewCommand;
@@ -49311,7 +49315,7 @@ var FoodParent;
             template += '</div>';
             template += '</div>';
             template += '<div class="hr"><hr /></div>';
-            template += '<div class="info-header"><i class="fa fa-leaf fa-1x"></i> Recent Comments</div>';
+            template += '<div class="info-header"><i class="fa fa-leaf fa-1x"></i> Recent Notes</div>';
             template += '<div id="list-activities" class="info-group">';
             template += '<div>&nbsp;</div>';
             template += '</div>';
@@ -49386,7 +49390,7 @@ var FoodParent;
             template += '<% }); %>';
             template += '</div>';
             template += '<div class="hr"><hr /></div>';
-            template += '<div class="info-header"><i class="fa fa-leaf fa-1x"></i> Recent Comments</div>';
+            template += '<div class="info-header"><i class="fa fa-leaf fa-1x"></i> Recent Notes</div>';
             template += '<div id="list-activities" class="info-group">';
             template += '<div>&nbsp;</div>';
             template += '</div>';
@@ -49426,7 +49430,7 @@ var FoodParent;
             template += '</div>';
             template += '</div>';
             template += '<div class="hr"><hr /></div>';
-            template += '<div class="info-header"><i class="fa fa-leaf fa-1x"></i> Recent Comments</div>';
+            template += '<div class="info-header"><i class="fa fa-leaf fa-1x"></i> Recent Notes</div>';
             template += '<div id="list-comments" class="info-group">';
             template += '<div>&nbsp;</div>';
             template += '</div>';
@@ -49469,7 +49473,7 @@ var FoodParent;
             template += '</div>';
             template += '</div>';
             template += '<div class="hr"><hr /></div>';
-            template += '<div class="info-header"><i class="fa fa-leaf fa-1x"></i> Recent Comments</div>';
+            template += '<div class="info-header"><i class="fa fa-leaf fa-1x"></i> Recent Notes</div>';
             template += '<div id="list-comments" class="info-group">';
             template += '<div>&nbsp;</div>';
             template += '</div>';
@@ -49513,7 +49517,7 @@ var FoodParent;
             template += '</div>';
             template += '</div>';
             template += '<div class="hr"><hr /></div>';
-            template += '<div class="info-header"><i class="fa fa-leaf fa-1x"></i> Recent Comments</div>';
+            template += '<div class="info-header"><i class="fa fa-leaf fa-1x"></i> Recent Notes</div>';
             template += '<div id="list-comments" class="info-group">';
             template += '<div>&nbsp;</div>';
             template += '</div>';
@@ -49582,7 +49586,7 @@ var FoodParent;
             template += '</div>';
             template += '</div>';
             template += '<div class="hr"><hr /></div>';
-            template += '<div class="info-header"><i class="fa fa-leaf fa-1x"></i> Recent Comments</div>';
+            template += '<div class="info-header"><i class="fa fa-leaf fa-1x"></i> Recent Notes</div>';
             template += '<div id="list-comments" class="info-group">';
             template += '<div>&nbsp;</div>';
             template += '</div>';
@@ -49649,7 +49653,7 @@ var FoodParent;
             template += '</div>';
             template += '</div>';
             template += '<div class="hr"><hr /></div>';
-            template += '<div class="info-header"><i class="fa fa-leaf fa-1x"></i> Recent Comments</div>';
+            template += '<div class="info-header"><i class="fa fa-leaf fa-1x"></i> Recent Notes</div>';
             template += '<div id="list-comments" class="info-group">';
             template += '<div>&nbsp;</div>';
             template += '</div>';
@@ -49674,7 +49678,7 @@ var FoodParent;
             template += '<div class="input-description"><%= description %></div>';
             template += '</div>';
             template += '<div class="hr"><hr /></div>';
-            template += '<div class="info-header"><i class="fa fa-leaf fa-1x"></i> Recent Comments</div>';
+            template += '<div class="info-header"><i class="fa fa-leaf fa-1x"></i> Recent Notes</div>';
             template += '<div id="list-activities" class="info-group">';
             template += '<div>&nbsp;</div>';
             template += '</div>';
@@ -49699,7 +49703,7 @@ var FoodParent;
             template += '<div class="input-description"><%= description %></div>';
             template += '</div>';
             template += '<div class="hr"><hr /></div>';
-            template += '<div class="info-header"><i class="fa fa-leaf fa-1x"></i> Recent Comments</div>';
+            template += '<div class="info-header"><i class="fa fa-leaf fa-1x"></i> Recent Notes</div>';
             template += '<div id="list-activities" class="info-group">';
             template += '<div>&nbsp;</div>';
             template += '</div>';
@@ -50160,7 +50164,7 @@ var FoodParent;
             template += '<div class="content-tree-info">';
             template += '</div>'; // end of .content-tree-info
             template += '<div class="content-tree-recentcomments">';
-            template += '<div class="info-header"><i class="fa fa-comments fa-1x"></i> Recent Comments</div>';
+            template += '<div class="info-header"><i class="fa fa-comments fa-1x"></i> Recent Notes</div>';
             template += '<div id="list-comments" class="info-group">';
             template += '</div>';
             template += '</div>'; // end of .content-tree-recentcomments
@@ -50207,7 +50211,7 @@ var FoodParent;
             template += '<div class="content-tree-basicinfo">';
             template += '</div>'; // end of .content-tree-info
             template += '<div class="content-tree-recentcomments">';
-            template += '<div class="text-header"><i class="fa fa-comments fa-1x"></i> Recent Comments</div>';
+            template += '<div class="text-header"><i class="fa fa-comments fa-1x"></i> Recent Notes</div>';
             template += '<div id="list-comments" class="info-group">';
             template += '</div>'; // end of #list-comments
             template += '</div>'; // end of .content-tree-recentcomments
@@ -51401,7 +51405,6 @@ var FoodParent;
             var self = this;
             self.bDebug = true;
             self._contact = "";
-            //$(window).resize(_.debounce(that.customResize, Setting.getInstance().getResizeTimeout()));
             self.events = {
                 "click .item-nav": "_mouseClick",
             };
@@ -51693,25 +51696,6 @@ var __extends = (this && this.__extends) || function (d, b) {
 };
 var FoodParent;
 (function (FoodParent) {
-    var PostNoteViewFactory = (function () {
-        function PostNoteViewFactory(args) {
-            if (PostNoteViewFactory._instance) {
-                throw new Error("Error: Instantiation failed: Use PostNoteViewFactory.getInstance() instead of new.");
-            }
-            PostNoteViewFactory._instance = this;
-        }
-        PostNoteViewFactory.getInstance = function () {
-            return PostNoteViewFactory._instance;
-        };
-        PostNoteViewFactory.create = function (el, tree) {
-            var view = new FoodParent.PostNoteView({ el: el });
-            view.setTree(tree);
-            return view;
-        };
-        PostNoteViewFactory._instance = new PostNoteViewFactory();
-        return PostNoteViewFactory;
-    })();
-    FoodParent.PostNoteViewFactory = PostNoteViewFactory;
     var ImageNoteViewFactory = (function () {
         function ImageNoteViewFactory(args) {
             if (ImageNoteViewFactory._instance) {
@@ -52491,7 +52475,6 @@ var FoodParent;
             this.bProcessing = false;
             var self = this;
             self.bDebug = true;
-            //$(window).resize(_.debounce(that.customResize, Setting.getInstance().getResizeTimeout()));
             self.events = {
                 "click .alert-confirm": "_mouseClick",
                 "click .top-right-button": "_mouseClick",

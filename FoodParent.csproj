@@ -273,6 +273,7 @@
     <TypeScriptCompile Include="core\js\view\mtreesview.ts" />
     <TypeScriptCompile Include="core\js\view\mtreeview.ts" />
     <TypeScriptCompile Include="core\js\view\navview.ts" />
+    <TypeScriptCompile Include="core\js\view\noteview.ts" />
     <TypeScriptCompile Include="core\js\view\passwordview.ts" />
     <TypeScriptCompile Include="core\js\view\popupview.ts" />
     <TypeScriptCompile Include="core\js\view\postview.ts" />

@@ -25,7 +25,6 @@
             var self: NavView = this;
             self.bDebug = true;
             self._contact = "";
-            //$(window).resize(_.debounce(that.customResize, Setting.getInstance().getResizeTimeout()));
             self.events = <any>{
                 "click .item-nav": "_mouseClick",
 

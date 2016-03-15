@@ -8,7 +8,6 @@
             super(options);
             var self: PostNoteView = this;
             self.bDebug = true;
-            //$(window).resize(_.debounce(that.customResize, Setting.getInstance().getResizeTimeout()));
             self.events = <any>{
                 "click .alert-confirm": "_mouseClick",
                 "click .top-right-button": "_mouseClick",

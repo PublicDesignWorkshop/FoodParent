@@ -12,7 +12,6 @@ var FoodParent;
             this.bProcessing = false;
             var self = this;
             self.bDebug = true;
-            //$(window).resize(_.debounce(that.customResize, Setting.getInstance().getResizeTimeout()));
             self.events = {
                 "click .alert-confirm": "_mouseClick",
                 "click .top-right-button": "_mouseClick",
