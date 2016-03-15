@@ -30,7 +30,6 @@ var FoodParent;
             var self = this;
             self.bDebug = true;
             self._contact = "";
-            //$(window).resize(_.debounce(that.customResize, Setting.getInstance().getResizeTimeout()));
             self.events = {
                 "click .item-nav": "_mouseClick",
             };
