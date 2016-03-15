@@ -178,6 +178,9 @@
       // View - Tree
       "core/css/treegraph.css",
 
+      // View - Note
+      "core/css/postnote.css",
+
       // Print (not working for safari)
       "core/css/print.css",
 

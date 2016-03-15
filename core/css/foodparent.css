@@ -16534,6 +16534,9 @@ button.close {
         max-width: 35%;
     }
 }
+@media all {
+
+}
 @media print {
     body * {
         visibility: hidden;

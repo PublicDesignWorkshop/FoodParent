@@ -45,9 +45,7 @@
             super.render();
             var self: PostNoteView = this;
             if (self.bDebug) console.log(PostNoteView.TAG + "render()");
-
-
-
+            
 
 
             /*

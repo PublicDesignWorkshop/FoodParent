@@ -43051,8 +43051,19 @@ var FoodParent;
                     }
                     else if (el.hasClass('evt-post')) {
                         var tree = FoodParent.Model.getTrees().findWhere({ id: parseInt(options.tree) });
-                        console.log(tree);
-                        new FoodParent.RenderPostNoteViewCommand({ el: FoodParent.Setting.getPopWrapperElement(), tree: tree }).execute();
+                        FoodParent.Controller.checkIsLoggedIn(function () {
+                            FoodParent.Controller.checkIsAdmin(function () {
+                                new FoodParent.RenderPostNoteViewCommand({ el: FoodParent.Setting.getPopWrapperElement(), tree: tree, credential: CREDENTIAL_MODE.ADMIN }).execute();
+                            }, function () {
+                                new FoodParent.RenderPostNoteViewCommand({ el: FoodParent.Setting.getPopWrapperElement(), tree: tree, credential: CREDENTIAL_MODE.PARENT }).execute();
+                            }, function () {
+                                EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
+                            });
+                        }, function () {
+                            new FoodParent.RenderPostNoteViewCommand({ el: FoodParent.Setting.getPopWrapperElement(), tree: tree, credential: CREDENTIAL_MODE.GUEST }).execute();
+                        }, function () {
+                            EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
+                        });
                     }
                     break;
                 case VIEW_STATUS.TREES_TABLE:
@@ -43785,10 +43796,11 @@ var FoodParent;
             var self = this;
             self._el = args.el;
             self._tree = args.tree;
+            self._credential = args.credential;
         }
         RenderPostNoteViewCommand.prototype.execute = function () {
             var self = this;
-            var view = FoodParent.PostNoteViewFactory.create(self._el, self._tree).render();
+            var view = FoodParent.PostNoteViewFactory.create(self._el, self._tree, self._credential).render();
             FoodParent.View.addPopupView(view);
             FoodParent.View.setViewStatus(FoodParent.VIEW_STATUS.POST_NOTE);
         };
@@ -50408,6 +50420,88 @@ var FoodParent;
             template += '</div>'; // end of #wrapper-note
             return template;
         };
+        Template.getPostNoteViewForGuest = function () {
+            var template = '';
+            template += '<div id="wrapper-post-note" class="frame-pop">';
+            template += '<div id="content-header">';
+            template += '<div class="text-header"><%= header %></div>';
+            template += '<div class="btn-close evt-close">';
+            template += '<i class="fa fa-remove"></i>';
+            template += '</div>'; // end of top-right-button button-close
+            template += '</div>'; // end of #wrapper-header
+            template += '<hr />';
+            template += '</div>'; // end of #wrapper-post-note
+            return template;
+            /*
+            template += '<div id="wrapper-note">';
+            template += '<div class="outer-frame">';
+            template += '<div class="inner-frame">';
+            template += '<div class="wrapper-post-note-content">';
+
+            template += '<div class="image-wrapper">';
+
+
+            template += '<div class="wrapper-input-upload-picture">';
+            template += '<input class="input-upload-picture fileupload" type="file" accept="image/*" capture="camera" />';
+            template += '</div>';
+            template += '<div class="wrapper-uploading-picture hidden">';
+            template += '<div class="uploading-picture">Uploading...</div>';
+            template += '</div>';
+            template += '<div class="info-header"><i class="fa fa-image"></i> Select Cover Picture</div>';
+            template += '<div class="image-group"></div>';
+
+            template += '</div>';   // end of .image-wrapper
+
+
+            template += '<div class="wrapper-note-info">';
+
+            template += '<div class="name"><%= name %></div>';
+
+            template += '<div class="hr"><hr /></div>';
+            template += '<div class="info-header"><i class="fa fa-star-half-o"></i> Rating</div>';
+            template += '<div class="info-group">';
+            template += '<div class="input-rating"></div>';
+            template += '<div class="input-rating-slider"></div>';
+            template += '</div>';
+
+            template += '<div class="hr"><hr /></div>';
+            template += '<div class="info-header"><i class="fa fa-comment"></i> Comment</div>';
+            template += '<div class="info-group">';
+            template += '<div class="input-comment">&nbsp;</div>';
+            template += '</div>';
+
+            template += '<div class="hr"><hr /></div>';
+            template += '<div class="info-header"><i class="fa fa-calendar-o"></i> Date</div>';
+            template += '<div class="info-group">';
+            template += '<input type="text" class="form-control input-date" />';
+            template += '</div>';
+
+            template += '<div class="hr"><hr /></div>';
+            template += '<div class="info-header"><i class="fa fa-user"></i> Author\'s E-mail Address</div>';
+            template += '<div class="info-group">';
+            template += '<input type="email" name="email" class="form-control input-author" placeholder="e-mail address" autocomplete="on"/>';
+            template += '<div class="button-description2">* The <strong>e-mail address</strong> that you enter will be stored as a perspective foodparent. You can <strong>become a parent</strong> using the same e-mail address that you provide.</div>';
+            template += '</div>';
+
+            template += '<div class="hr"><hr /></div>';
+            template += '<div class="info-button-group">';
+            template += '<div class="button-outer-frame2 button3"><div class="button-inner-frame2 create-note"><i class="fa fa-save"></i> Save</div></div>';
+            template += '</div>';
+
+            template += '</div>';   // .wrapper-note-info
+
+            template += '</div>';   // end of .wrapper-post-note-content
+
+            template += '</div>';   // end of .inner-frame
+            template += '<div class="top-right-button button-close">';
+            template += '<i class="fa fa-remove fa-2x"></i>';
+            template += '</div>';   // end of top-right-button button-close
+            template += '</div>';   // end of .outer-frame
+            template += '</div>';   // end of #wrapper-note
+
+            return template;
+            */
+        };
         Template.getPostNoteViewTemplate2 = function () {
             var template = '';
             template += '<div id="wrapper-note">';
@@ -55089,6 +55183,11 @@ var FoodParent;
     FoodParent.TreeGraphicViewForAdmin = TreeGraphicViewForAdmin;
 })(FoodParent || (FoodParent = {}));
 
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
 var FoodParent;
 (function (FoodParent) {
     var PostNoteViewFactory = (function () {
@@ -55101,8 +55200,17 @@ var FoodParent;
         PostNoteViewFactory.getInstance = function () {
             return PostNoteViewFactory._instance;
         };
-        PostNoteViewFactory.create = function (el, tree) {
-            var view = new FoodParent.PostNoteView({ el: el });
+        PostNoteViewFactory.create = function (el, tree, credential) {
+            var view;
+            if (credential == FoodParent.CREDENTIAL_MODE.GUEST) {
+                view = new FoodParent.PostNoteViewForGuest({ el: el });
+            }
+            else if (credential == FoodParent.CREDENTIAL_MODE.PARENT) {
+                view = new FoodParent.PostNoteViewForParent({ el: el });
+            }
+            else if (credential == FoodParent.CREDENTIAL_MODE.ADMIN) {
+                view = new FoodParent.PostNoteViewForAdmin({ el: el });
+            }
             view.setTree(tree);
             return view;
         };
@@ -55110,28 +55218,13 @@ var FoodParent;
         return PostNoteViewFactory;
     })();
     FoodParent.PostNoteViewFactory = PostNoteViewFactory;
-})(FoodParent || (FoodParent = {}));
-
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
-var FoodParent;
-(function (FoodParent) {
     var PostNoteView = (function (_super) {
         __extends(PostNoteView, _super);
         function PostNoteView(options) {
             _super.call(this, options);
-            this.bProcessing = false;
             var self = this;
             self.bDebug = true;
-            self.events = {
-                "click .alert-confirm": "_mouseClick",
-                "click .top-right-button": "_mouseClick",
-                "click .image-group img": "_selectCoverImage",
-                "click .create-note": "_createNote",
-            };
+            self.events = {};
             self.delegateEvents();
         }
         PostNoteView.prototype.setTree = function (tree) {
@@ -55139,47 +55232,45 @@ var FoodParent;
             self._tree = tree;
         };
         PostNoteView.prototype.render = function (args) {
-            if (this.bRendered) {
-                this.update(args);
-                return;
-            }
-            this.bRendered = true;
-            /////
+            _super.prototype.render.call(this);
             var self = this;
             if (self.bDebug)
                 console.log(PostNoteView.TAG + "render()");
-            FoodParent.Controller.checkLogin(function (response1) {
-                var bLogin = false;
-                if (response1.result == true || response1.result == 'true') {
+            /*
+            Controller.checkLogin(function (response1) {
+                var bLogin: boolean = false;
+                if (response1.result == true || response1.result == 'true') {   // Logged in
                     bLogin = true;
                 }
-                var food = FoodParent.Model.getFoods().findWhere({ id: self._tree.getFoodId() });
+
+                var food: Food = Model.getFoods().findWhere({ id: self._tree.getFoodId() });
                 if (bLogin) {
-                    var person = FoodParent.Model.getPersons().findWhere({ id: parseInt(response1.id) });
-                    var template = _.template(FoodParent.Template.getPostNoteViewTemplate());
+                    var person: Person = Model.getPersons().findWhere({ id: parseInt(response1.id) });
+                    var template = _.template(Template.getPostNoteViewTemplate());
                     self.$el.html(template({
                         name: food.getName() + " " + self._tree.getName(),
                         author: person.getName(),
                     }));
-                }
-                else {
-                    var template = _.template(FoodParent.Template.getPostNoteViewTemplate2());
+                } else {
+                    var template = _.template(Template.getPostNoteViewTemplate2());
                     self.$el.html(template({
                         name: food.getName() + " " + self._tree.getName(),
                     }));
                 }
                 self.setElement(self.$('#wrapper-note'));
                 self.setVisible();
+
                 // Create a new note.
-                self._note = new FoodParent.Note({ type: FoodParent.NoteType.IMAGE, tree: self._tree.getId(), person: parseInt(response1.id), comment: "", picture: "", rate: 0, date: moment(new Date()).format(FoodParent.Setting.getDateTimeFormat()) });
+                self._note = new Note({ type: NoteType.IMAGE, tree: self._tree.getId(), person: parseInt(response1.id), comment: "", picture: "", rate: 0, date: moment(new Date()).format(Setting.getDateTimeFormat()) });
+
                 // Event listener for uploading a file.
                 self.$('input[type=file]').off('change');
-                self.$('input[type=file]').on('change', function (event) {
+                self.$('input[type=file]').on('change', function (event: Event) {
                     self.$('.wrapper-input-upload-picture').addClass('hidden');
                     self.$('.wrapper-uploading-picture').removeClass('hidden');
-                    var files = event.target.files;
+                    var files = (<any>event.target).files;
                     if (files.length > 0) {
-                        FoodParent.Controller.uploadNotePictureFile(files[0], food.getName() + "_" + self._tree.getId(), function (fileName) {
+                        Controller.uploadNotePictureFile(files[0], food.getName() + "_" + self._tree.getId(), function (fileName: string) {
                             self._note.addPicture(fileName);
                             // Success
                             self.$('input[type=file]').val("");
@@ -55192,12 +55283,16 @@ var FoodParent;
                             self.$('.wrapper-input-upload-picture').removeClass('hidden');
                         });
                     }
+
                 });
+
                 self.renderNoteInfo();
                 self.resize();
             }, function (response1) {
-                FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+                EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
             });
+
+            */
             return self;
         };
         PostNoteView.prototype.resize = function () {
@@ -55351,6 +55446,86 @@ var FoodParent;
         return PostNoteView;
     })(FoodParent.PopupView);
     FoodParent.PostNoteView = PostNoteView;
+})(FoodParent || (FoodParent = {}));
+
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var FoodParent;
+(function (FoodParent) {
+    var PostNoteViewForAdmin = (function (_super) {
+        __extends(PostNoteViewForAdmin, _super);
+        function PostNoteViewForAdmin(options) {
+            _super.call(this, options);
+            var self = this;
+            self.bDebug = true;
+            self.events = {};
+            self.delegateEvents();
+        }
+        PostNoteViewForAdmin.TAG = "PostNoteViewForAdmin - ";
+        return PostNoteViewForAdmin;
+    })(FoodParent.PostNoteView);
+    FoodParent.PostNoteViewForAdmin = PostNoteViewForAdmin;
+})(FoodParent || (FoodParent = {}));
+
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var FoodParent;
+(function (FoodParent) {
+    var PostNoteViewForGuest = (function (_super) {
+        __extends(PostNoteViewForGuest, _super);
+        function PostNoteViewForGuest(options) {
+            _super.call(this, options);
+            var self = this;
+            self.bDebug = true;
+            self.events = {};
+            self.delegateEvents();
+        }
+        PostNoteViewForGuest.prototype.render = function (args) {
+            _super.prototype.render.call(this);
+            var self = this;
+            if (self.bDebug)
+                console.log(PostNoteViewForGuest.TAG + "render()");
+            var food = FoodParent.Model.getFoods().findWhere({ id: self._tree.getFoodId() });
+            var template = _.template(FoodParent.Template.getPostNoteViewForGuest());
+            self.$el.append(template({
+                header: "Post Note for " + food.getName() + " " + self._tree.getName(),
+            }));
+            self.setElement($('#wrapper-post-note'));
+            self.setVisible();
+            self.resize();
+        };
+        PostNoteViewForGuest.TAG = "PostNoteViewForGuest - ";
+        return PostNoteViewForGuest;
+    })(FoodParent.PostNoteView);
+    FoodParent.PostNoteViewForGuest = PostNoteViewForGuest;
+})(FoodParent || (FoodParent = {}));
+
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var FoodParent;
+(function (FoodParent) {
+    var PostNoteViewForParent = (function (_super) {
+        __extends(PostNoteViewForParent, _super);
+        function PostNoteViewForParent(options) {
+            _super.call(this, options);
+            var self = this;
+            self.bDebug = true;
+            self.events = {};
+            self.delegateEvents();
+        }
+        PostNoteViewForParent.TAG = "PostNoteViewForParent - ";
+        return PostNoteViewForParent;
+    })(FoodParent.PostNoteView);
+    FoodParent.PostNoteViewForParent = PostNoteViewForParent;
 })(FoodParent || (FoodParent = {}));
 
 var __extends = (this && this.__extends) || function (d, b) {

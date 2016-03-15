@@ -57,6 +57,7 @@
     <Content Include="core\css\password.css" />
     <Content Include="core\css\pop.css" />
     <Content Include="core\css\leaflet.css" />
+    <Content Include="core\css\postnote.css" />
     <Content Include="core\css\print.css" />
     <Content Include="core\css\treegraph.css" />
     <Content Include="core\css\treesmap.css" />
