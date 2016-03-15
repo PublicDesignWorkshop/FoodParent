@@ -114,7 +114,7 @@
 
 @media only screen and (orientation: portrait) {
     /* Force table to not be like tables anymore */
-	table, thead, tbody, th, td, tr, .backgrid th.renderable, .backgrid td.renderable { 
+	table:not(.picker__table), table:not(.picker__table) thead, table:not(.picker__table) tbody, table:not(.picker__table) th, table:not(.picker__table) td, table:not(.picker__table) tr, .backgrid th.renderable, .backgrid td.renderable { 
 		display: block;
         width: 100%;
         text-align: left;

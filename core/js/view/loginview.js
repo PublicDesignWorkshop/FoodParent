@@ -252,7 +252,6 @@ var FoodParent;
         };
         SignUpView.prototype._signupSubmit = function (event) {
             var self = this;
-            console.log(self.$('.input-contact').val());
             if ((self.$('.input-contact').val() == "")) {
                 new FoodParent.RenderMessageViewCommand({ el: FoodParent.Setting.getMessageWrapperElement(), message: "Please enter your <strong><i>e-mail address.", undoable: false }).execute(); //blank name field
             }

@@ -168,7 +168,10 @@
         height: 86%;
     }
     #wrapper-post-note #content-post {
-        max-width: 480px;
+        max-width: 40%;
+    }
+    #wrapper-post-note #content-image {
+        max-width: 60%;
     }
 }
 
@@ -181,6 +184,9 @@
         height: 86%;
     }
     #wrapper-post-note #content-post {
-        max-width: 600px;
+        max-width: 40%;
+    }
+    #wrapper-post-note #content-image {
+        max-width: 60%;
     }
 }

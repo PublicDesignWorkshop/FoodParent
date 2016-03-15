@@ -460,6 +460,38 @@ var FoodParent;
                         new FoodParent.RemovePopupViewCommand({ delay: FoodParent.Setting.getRemovePopupDuration() }).execute();
                         new FoodParent.RefreshCurrentViewCommand().execute();
                     }
+                    else if (el.hasClass('evt-submit')) {
+                        var note = options.note;
+                        var tree = options.tree;
+                        var food = FoodParent.Model.getFoods().findWhere({ id: tree.getFoodId() });
+                        FoodParent.Controller.checkIsLoggedIn(function (response) {
+                            note.setPersonId(parseInt(response.id));
+                            EventHandler.handleNoteData(note, DATA_MODE.CREATE, {}, function () {
+                                EventHandler.handleDataChange("Note for <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has been created.", false);
+                                new FoodParent.ResetPopupViewCommand().execute();
+                                new FoodParent.NavigateCommand({ hash: 'tree', id: options.tree.getId() }).execute();
+                            }, function () {
+                                EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
+                            });
+                        }, function (response) {
+                            FoodParent.Controller.processSignup(options.contact, "", "", function (response) {
+                                note.setPersonId(parseInt(response.id));
+                                EventHandler.handleNoteData(note, DATA_MODE.CREATE, {}, function () {
+                                    EventHandler.handleDataChange("Note for <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has been created.", false);
+                                    new FoodParent.ResetPopupViewCommand().execute();
+                                    new FoodParent.NavigateCommand({ hash: 'tree', id: options.tree.getId() }).execute();
+                                }, function () {
+                                    EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
+                                });
+                            }, function (response) {
+                                new FoodParent.RenderMessageViewCommand({ el: FoodParent.Setting.getMessageWrapperElement(), message: FoodParent.Setting.getErrorMessage(response.code), undoable: false }).execute();
+                            }, function (response) {
+                                EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
+                            });
+                        }, function () {
+                            EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
+                        });
+                    }
                     break;
                 case VIEW_STATUS.MANAGE_DONATIONS:
                     if (el.hasClass('manage-donation-item')) {

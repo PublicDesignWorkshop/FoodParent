@@ -1808,7 +1808,7 @@
             return template;
         }
 
-        public static getPostNoteViewForGuest(): string {
+        public static getPostNoteViewForParent(): string {
             var template = '';
             template += '<div id="wrapper-post-note" class="frame-pop">';
 
@@ -1863,8 +1863,7 @@
             template +=             '<hr />';
             template +=             '<div class="info-header"><i class="fa fa-user fa-1x"></i> Author</div>';
             template +=             '<div class="info-group">';
-            template +=                 '<input type="email" name="email" class="form-control input-contact" placeholder="e-mail address" autocomplete="on" />';
-            template +=                 '<div class="text-label">*The <strong>e-mail address</strong> that you enter will be stored as a perspective parent. You can <strong>become a parent</strong> later using the same e-mail address.</div>';            
+            template +=                 '<div class="input-contact">&nbsp;</div>';
             template +=             '</div>';
 
             template +=             '<hr />';
@@ -1951,6 +1950,85 @@
 
             return template;
             */
+        }
+
+        public static getPostNoteViewForGuest(): string {
+            var template = '';
+            template += '<div id="wrapper-post-note" class="frame-pop">';
+
+            template +=     '<div id="content-header">';
+            template +=         '<div class="text-header"><%= header %></div>';
+            template +=         '<div class="btn-close evt-close">';
+            template +=             '<i class="fa fa-remove"></i>';
+            template +=         '</div>';   // end of top-right-button button-close
+            template +=     '</div>';   // end of #wrapper-header
+
+            template +=     '<div class="info-group">';
+            template +=         '<div class="text-label center">Upload pictures, select a rating, enter a commment for \'<%= name %>\'.</div>';
+            template +=     '</div>';   // end of .info-group
+
+            template +=     '<hr />';
+
+            template +=     '<div class="frame-flex-group">';
+            template +=         '<div id="content-image">';
+            template +=             '<input class="input-upload-picture fileupload" type="file" accept="image/*" capture="camera" />';
+            template +=             '<div class="wrapper-uploading-picture hidden">';
+            template +=                 '<div class="uploading-picture">Uploading...</div>';
+            template +=             '</div>';   // end of .wrapper-uploading-picture
+
+            template +=             '<div class="info-group">';
+            template +=                 '<div class="text-label"><i class="fa fa-caret-right"></i> Click a picture to set as a cover picture.</div>';
+            template +=             '</div>';   // end of .info-group
+
+            template +=             '<div class="image-group">';
+            template +=             '</div>';   // end of .image-group
+
+            template +=         '</div>';   // end of #content-image
+
+            template +=         '<div id="content-post">';
+            template +=             '<div class="info-header"><i class="fa fa-star-half-o fa-1x"></i> Raiting</div>';
+            //template +=                 '<div class="info-group">';
+            template +=                     '<div class="input-rating"></div>';
+            template +=                     '<div class="input-rating-slider"></div>';
+            //template +=             '</div>';   // end of .info-header
+
+            template +=             '<hr />';
+            template +=             '<div class="info-header"><i class="fa fa-comment fa-1x"></i> Comment</div>';
+            template +=             '<div class="info-group">';
+            template +=                 '<div class="input-comment">&nbsp;</div>';
+            template +=             '</div>';
+
+            template +=             '<hr />';
+            template +=             '<div class="info-header"><i class="fa fa-calendar-o fa-1x"></i> Date</div>';
+            template +=             '<div class="info-group">';
+            template +=                 '<input type="text" class="form-control input-date" />';
+            template +=             '</div>';
+
+            template +=             '<hr />';
+            template +=             '<div class="info-header"><i class="fa fa-user fa-1x"></i> Author</div>';
+            template +=             '<div class="info-group">';
+            template +=                 '<input type="email" name="email" class="form-control input-contact" placeholder="e-mail address" autocomplete="on" />';
+            template +=                 '<div class="text-label">*The <strong>e-mail address</strong> that you enter will be stored as a perspective parent. You can <strong>become a parent</strong> later using the same e-mail address.</div>';            
+            template +=             '</div>';
+
+            template +=             '<hr />';
+            template +=             '<div class="info-button-group">';
+            template +=                 '<div class="btn-brown btn-medium evt-submit">Submit</div>';
+            template +=             '</div>';   // end of .info-button-group
+
+            template +=             '<div class="info-button-group">';
+            template +=                 '<div class="btn-brown btn-medium evt-close">Cancel</div>';
+            template +=             '</div>';   // end of .info-button-group
+
+            template +=         '</div>';   // end of #content-post
+            template +=     '</div>';   // end of .frame-flex-group
+            template += '</div>';   // end of #wrapper-post-note
+
+            return template;
+        }
+
+        public static getPostNoteViewForAdmin(): string {
+            return Template.getPostNoteViewForParent();
         }
 
         public static getPostNoteViewTemplate2(): string {

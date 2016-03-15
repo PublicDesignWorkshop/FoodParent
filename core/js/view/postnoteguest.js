@@ -13,6 +13,8 @@ var FoodParent;
             self.bDebug = true;
             self.events = {
                 "click .evt-close": "_mouseClick",
+                "click .evt-submit": "_submitNote",
+                "click .image-group img": "_applyCoverPicture",
             };
             self.delegateEvents();
         }

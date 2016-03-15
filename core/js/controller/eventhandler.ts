@@ -401,6 +401,37 @@
                     if (el.hasClass('evt-close')) {
                         new RemovePopupViewCommand({ delay: Setting.getRemovePopupDuration() }).execute();
                         new RefreshCurrentViewCommand().execute();
+                    } else if (el.hasClass('evt-submit')) {
+                        var note: Note = options.note;
+                        var tree: Tree = options.tree;
+                        var food: Food = Model.getFoods().findWhere({ id: tree.getFoodId() });
+                        Controller.checkIsLoggedIn(function (response) {
+                            note.setPersonId(parseInt(response.id));
+                            EventHandler.handleNoteData(note, DATA_MODE.CREATE, {}, function () {
+                                EventHandler.handleDataChange("Note for <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has been created.", false);
+                                new ResetPopupViewCommand().execute();
+                                new NavigateCommand({ hash: 'tree', id: options.tree.getId() }).execute();
+                            }, function () {
+                                EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
+                            });
+                        }, function (response) {
+                            Controller.processSignup(options.contact, "", "", function (response) {
+                                note.setPersonId(parseInt(response.id));
+                                EventHandler.handleNoteData(note, DATA_MODE.CREATE, {}, function () {
+                                    EventHandler.handleDataChange("Note for <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has been created.", false);
+                                    new ResetPopupViewCommand().execute();
+                                    new NavigateCommand({ hash: 'tree', id: options.tree.getId() }).execute();
+                                }, function () {
+                                    EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
+                                });
+                            }, function (response) {
+                                new RenderMessageViewCommand({ el: Setting.getMessageWrapperElement(), message: Setting.getErrorMessage(response.code), undoable: false }).execute();
+                            }, function (response) {
+                                EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
+                            });
+                        }, function () {
+                            EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
+                        });
                     }
                     break;
                 case VIEW_STATUS.MANAGE_DONATIONS:

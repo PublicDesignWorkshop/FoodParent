@@ -45,69 +45,8 @@
             super.render();
             var self: PostNoteView = this;
             if (self.bDebug) console.log(PostNoteView.TAG + "render()");
-            
-
-
-            /*
-            Controller.checkLogin(function (response1) {
-                var bLogin: boolean = false;
-                if (response1.result == true || response1.result == 'true') {   // Logged in
-                    bLogin = true;
-                }
-
-                var food: Food = Model.getFoods().findWhere({ id: self._tree.getFoodId() });
-                if (bLogin) {
-                    var person: Person = Model.getPersons().findWhere({ id: parseInt(response1.id) });
-                    var template = _.template(Template.getPostNoteViewTemplate());
-                    self.$el.html(template({
-                        name: food.getName() + " " + self._tree.getName(),
-                        author: person.getName(),
-                    }));
-                } else {
-                    var template = _.template(Template.getPostNoteViewTemplate2());
-                    self.$el.html(template({
-                        name: food.getName() + " " + self._tree.getName(),
-                    }));
-                }
-                self.setElement(self.$('#wrapper-note'));
-                self.setVisible();
-
-                // Create a new note.
-                self._note = new Note({ type: NoteType.IMAGE, tree: self._tree.getId(), person: parseInt(response1.id), comment: "", picture: "", rate: 0, date: moment(new Date()).format(Setting.getDateTimeFormat()) });
-
-                // Event listener for uploading a file.
-                self.$('input[type=file]').off('change');
-                self.$('input[type=file]').on('change', function (event: Event) {
-                    self.$('.wrapper-input-upload-picture').addClass('hidden');
-                    self.$('.wrapper-uploading-picture').removeClass('hidden');
-                    var files = (<any>event.target).files;
-                    if (files.length > 0) {
-                        Controller.uploadNotePictureFile(files[0], food.getName() + "_" + self._tree.getId(), function (fileName: string) {
-                            self._note.addPicture(fileName);
-                            // Success
-                            self.$('input[type=file]').val("");
-                            self.$('.wrapper-uploading-picture').addClass('hidden');
-                            self.$('.wrapper-input-upload-picture').removeClass('hidden');
-                            self.renderNoteImages();
-                        }, function () {
-                            // Error
-                            self.$('.wrapper-uploading-picture').addClass('hidden');
-                            self.$('.wrapper-input-upload-picture').removeClass('hidden');
-                        });
-                    }
-
-                });
-
-                self.renderNoteInfo();
-                self.resize();
-            }, function (response1) {
-                EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
-            });
-
-            */
             return self;
         }
-
         public resize(): any {
             var self: PostNoteView = this;
         }
@@ -202,7 +141,7 @@
             });
         }
 
-        private _selectCoverImage(event: Event) {
+        private _applyCoverPicture(event: Event) {
             var self: PostNoteView = this;
             $.each(self.$('.image-group img'), function (index: number, element: JQuery) {
                 $(element).removeClass('selected');
@@ -212,84 +151,22 @@
             self.renderNoteImages();
         }
 
-        private _createNote(event: Event) {
+        private _submitNote(event: Event) {
             var self: PostNoteView = this;
-            if (!self.bProcessing) {
-                self.bProcessing = true;
-                Controller.checkLogin(function (response1) {
-                    if (response1.result == true || response1.result == 'true') {   // Logged in
-                        var food: Food = Model.getFoods().findWhere({ id: self._tree.getFoodId() });
-                        self._note.setPersonId(parseInt(response1.id));
-                        EventHandler.handleNoteData(self._note, DATA_MODE.CREATE, {}, function () {
-                            EventHandler.handleDataChange("New note for <strong><i>" + food.getName() + " " + self._tree.getName() + "</i></strong> has been created.", false);
-                            new RemoveAlertViewCommand({ delay: Setting.getRemovePopupDuration() }).execute();
-                            if (View.getDetailTreeView()) {
-                                (<DetailTreeGraphicView>View.getDetailTreeView()).refreshTreeInfo();
-                            }
-                            self.bProcessing = false;
-                        }, function () {
-                            EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
-                            self.bProcessing = false;
-                        });
-                    } else {
-                        // Register user's e-mail address first & add data
-                        if (!isValidEmailAddress($('.input-author').val())) {
-                            new RenderMessageViewCommand({ el: Setting.getMessageWrapperElement(), message: "Please put a valid <strong><i>e-mail address.", undoable: false }).execute();
-                            self.bProcessing = false;
-                        } else {
-                            Controller.processSignup($('.input-author').val().trim(), '', '', function (response2) {
-                                var food: Food = Model.getFoods().findWhere({ id: self._tree.getFoodId() });
-                                self._note.setPersonId(parseInt(response2.id));
-                                EventHandler.handleNoteData(self._note, DATA_MODE.CREATE, {}, function () {
-                                    EventHandler.handleDataChange("New note for <strong><i>" + food.getName() + " " + self._tree.getName() + "</i></strong> has been created.", false);
-                                    new RemoveAlertViewCommand({ delay: Setting.getRemovePopupDuration() }).execute();
-                                    if (View.getDetailTreeView()) {
-                                        (<DetailTreeGraphicView>View.getDetailTreeView()).refreshTreeInfo();
-                                    }
-                                    self.bProcessing = false;
-                                }, function () {
-                                    EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
-                                    self.bProcessing = false;
-                                });
-                                Backbone.history.loadUrl(Backbone.history.fragment);
-                                self.bProcessing = false;
-                            }, function (response2) {
-                                new RenderMessageViewCommand({ el: Setting.getMessageWrapperElement(), message: Setting.getErrorMessage(response2.error), undoable: false }).execute();
-                                self.bProcessing = false;
-                            });
-                        }
-                    }
-                }, function (response1) {
-                    EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
-                });
+            if (self.$('.input-contact').html() != "") {
+                EventHandler.handleMouseClick($(event.currentTarget), self, { tree: self._tree, note: self._note });
+            } else {
+                if (!isValidEmailAddress(self.$('.input-contact').val().trim())) {
+                    new RenderMessageViewCommand({ el: Setting.getMessageWrapperElement(), message: "Please enter a valid <strong><i>e-mail address.", undoable: false }).execute(); //not a valid e-mail
+                } else {
+                    EventHandler.handleMouseClick($(event.currentTarget), self, { tree: self._tree, note: self._note, contact: self.$('.input-contact').val().trim() });
+                }
             }
         }
 
-        public update(args?: any): any {
-            if (!this.bRendered) {
-                this.render(args);
-                return self;
-            }
-            /////
-            return self;
-        }
-
-        private _mouseEnter(event: Event): void {
-            var self: PostNoteView = this;
-            EventHandler.handleMouseEnter($(event.currentTarget), self);
-        }
         private _mouseClick(event: Event): void {
             var self: PostNoteView = this;
             EventHandler.handleMouseClick($(event.currentTarget), self);
-        }
-
-        public setVisible(): void {
-            var self: PostNoteView = this;
-            Setting.getPopWrapperElement().removeClass('hidden');
-        }
-        public setInvisible(): void {
-            var self: PostNoteView = this;
-            Setting.getPopWrapperElement().addClass('hidden');
         }
     }
 }

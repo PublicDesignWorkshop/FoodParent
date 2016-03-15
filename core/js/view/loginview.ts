@@ -244,7 +244,6 @@
 
         private _signupSubmit(event: Event): void {
             var self: SignUpView = this;
-            console.log(self.$('.input-contact').val());
             if ((self.$('.input-contact').val() == "")) {
                 new RenderMessageViewCommand({ el: Setting.getMessageWrapperElement(), message: "Please enter your <strong><i>e-mail address.", undoable: false }).execute(); //blank name field
             } else if (!isValidEmailAddress(self.$('.input-contact').val())) {
@@ -253,7 +252,7 @@
                 new RenderMessageViewCommand({ el: Setting.getMessageWrapperElement(), message: "Please enter your name.", undoable: false }).execute(); //blank name field
             } else if ((self.$('.input-neighborhood').val().trim() == "")) {
                 new RenderMessageViewCommand({ el: Setting.getMessageWrapperElement(), message: "Please enter a nearby place", undoable: false }).execute(); //blank neighborhood field
-            }else {
+            } else {
                 EventHandler.handleMouseClick(self.$('.evt-submit'), self, { contact: self.$('.input-contact').val().trim(), name: self.$('.input-name').val().trim(), neighborhood: self.$('.input-neighborhood').val().trim() });
             }
         }

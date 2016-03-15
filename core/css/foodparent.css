@@ -13698,7 +13698,7 @@ button.close {
 
 @media only screen and (orientation: portrait) {
     /* Force table to not be like tables anymore */
-	table, thead, tbody, th, td, tr, .backgrid th.renderable, .backgrid td.renderable { 
+	table:not(.picker__table), table:not(.picker__table) thead, table:not(.picker__table) tbody, table:not(.picker__table) th, table:not(.picker__table) td, table:not(.picker__table) tr, .backgrid th.renderable, .backgrid td.renderable { 
 		display: block;
         width: 100%;
         text-align: left;
@@ -16106,11 +16106,9 @@ button.close {
         height: 40%;
         background-color: #5e4e51;
         overflow-y: auto;
-        display: flex;
-        justify-content: flex-start;
-        align-items: flex-start;
     }
     #wrapper-treedetail .content-tree-basicinfo {
+        -webkit-flex-grow: 1;
         flex-grow: 1;
         height: 100%;
         overflow-y: auto;
@@ -16118,6 +16116,7 @@ button.close {
     }
 
     #wrapper-treedetail .content-tree-recentactivities {
+        -webkit-flex-grow: 1;
         flex-grow: 1;
         height: 100%;
         overflow-y: auto;
@@ -16125,6 +16124,7 @@ button.close {
     }
 
     #wrapper-treedetail .content-tree-recentcomments {
+        -webkit-flex-grow: 1;
         flex-grow: 1;
         height: 100%;
         overflow-y: auto;
@@ -16231,6 +16231,11 @@ button.close {
         padding: 0 6px 0 6px;
         font-size: medium;
         font-weight: 400;
+        max-height: 50%;
+        -ms-text-overflow: ellipsis;
+        -o-text-overflow: ellipsis;
+        text-overflow: ellipsis;
+        overflow: hidden;
     }
     #wrapper-tooltip .date {
         font-size: small;
@@ -16368,16 +16373,15 @@ button.close {
 
 
 @media only screen and (orientation: portrait) {
-    
-}
-@media only screen and (max-height: 480px) and (orientation: portrait) {
-    #wrapper-date-select .wrapper-date-select-item {
-        display: none;
+    #wrapper-treedetail {
+        display: block;
     }
     #wrapper-treedetail .content-tree-recentactivities {
         display: none;
     }
-    #wrapper-treedetail .content-tree-recentcomments {
+}
+@media only screen and (max-height: 480px) and (orientation: portrait) {
+    #wrapper-date-select .wrapper-date-select-item {
         display: none;
     }
 }
@@ -16385,21 +16389,9 @@ button.close {
     #wrapper-date-select .wrapper-date-select-item {
         display: none;
     }
-    #wrapper-treedetail .content-tree-recentactivities {
-        display: none;
-    }
-    #wrapper-treedetail .content-tree-recentcomments {
-        display: none;
-    }
 }
 @media only screen and (min-height: 569px) and (max-height: 627px) and (orientation: portrait) {
     #wrapper-date-select .wrapper-date-select-item {
-        display: none;
-    }
-    #wrapper-treedetail .content-tree-recentactivities {
-        display: none;
-    }
-    #wrapper-treedetail .content-tree-recentcomments {
         display: none;
     }
 }
@@ -16407,41 +16399,38 @@ button.close {
     #wrapper-date-select .wrapper-date-select-item {
         display: none;
     }
-    #wrapper-treedetail .content-tree-recentactivities {
-        display: none;
-    }
-    #wrapper-treedetail .content-tree-recentcomments {
-        display: none;
-    }
 }
 @media only screen and (min-height: 737px) and (max-height: 960px) and (orientation: portrait) {
     #wrapper-date-select .wrapper-date-select-item {
         display: none;
     }
-    #wrapper-treedetail .content-tree-recentactivities {
-        display: none;
-    }
-    #wrapper-treedetail .content-tree-recentcomments {
-        display: none;
-    }
 }
 
 @media only screen and (max-width: 767px) and (orientation: portrait) {
-    
+
 }
 
 @media only screen and (min-width: 768px) and (orientation: portrait) {
-    
+
 }
 
 @media only screen and (orientation: landscape) {
-    
+    #wrapper-treedetail {
+        width: 100%;
+        height: 40%;
+        background-color: #5e4e51;
+        overflow-y: auto;
+        display: -webkit-flex;
+        display: flex;
+        justify-content: flex-start;
+        align-items: flex-start;
+    }
 }
 @media only screen and (max-width: 480px) and (orientation: landscape) {
-    #wrapper-treedetail .content-tree-recentactivities {
-        display: none;
+    #wrapper-treedetail {
+        display: block;
     }
-    #wrapper-treedetail .content-tree-recentcomments {
+    #wrapper-treedetail .content-tree-recentactivities {
         display: none;
     }
 }
@@ -16675,7 +16664,10 @@ button.close {
         height: 86%;
     }
     #wrapper-post-note #content-post {
-        max-width: 480px;
+        max-width: 40%;
+    }
+    #wrapper-post-note #content-image {
+        max-width: 60%;
     }
 }
 
@@ -16688,7 +16680,10 @@ button.close {
         height: 86%;
     }
     #wrapper-post-note #content-post {
-        max-width: 600px;
+        max-width: 40%;
+    }
+    #wrapper-post-note #content-image {
+        max-width: 60%;
     }
 }
 @media print {

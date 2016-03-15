@@ -43134,6 +43134,38 @@ var FoodParent;
                         new FoodParent.RemovePopupViewCommand({ delay: FoodParent.Setting.getRemovePopupDuration() }).execute();
                         new FoodParent.RefreshCurrentViewCommand().execute();
                     }
+                    else if (el.hasClass('evt-submit')) {
+                        var note = options.note;
+                        var tree = options.tree;
+                        var food = FoodParent.Model.getFoods().findWhere({ id: tree.getFoodId() });
+                        FoodParent.Controller.checkIsLoggedIn(function (response) {
+                            note.setPersonId(parseInt(response.id));
+                            EventHandler.handleNoteData(note, DATA_MODE.CREATE, {}, function () {
+                                EventHandler.handleDataChange("Note for <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has been created.", false);
+                                new FoodParent.ResetPopupViewCommand().execute();
+                                new FoodParent.NavigateCommand({ hash: 'tree', id: options.tree.getId() }).execute();
+                            }, function () {
+                                EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
+                            });
+                        }, function (response) {
+                            FoodParent.Controller.processSignup(options.contact, "", "", function (response) {
+                                note.setPersonId(parseInt(response.id));
+                                EventHandler.handleNoteData(note, DATA_MODE.CREATE, {}, function () {
+                                    EventHandler.handleDataChange("Note for <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has been created.", false);
+                                    new FoodParent.ResetPopupViewCommand().execute();
+                                    new FoodParent.NavigateCommand({ hash: 'tree', id: options.tree.getId() }).execute();
+                                }, function () {
+                                    EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
+                                });
+                            }, function (response) {
+                                new FoodParent.RenderMessageViewCommand({ el: FoodParent.Setting.getMessageWrapperElement(), message: FoodParent.Setting.getErrorMessage(response.code), undoable: false }).execute();
+                            }, function (response) {
+                                EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
+                            });
+                        }, function () {
+                            EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
+                        });
+                    }
                     break;
                 case VIEW_STATUS.MANAGE_DONATIONS:
                     if (el.hasClass('manage-donation-item')) {
@@ -50418,7 +50450,7 @@ var FoodParent;
             template += '</div>'; // end of #wrapper-note
             return template;
         };
-        Template.getPostNoteViewForGuest = function () {
+        Template.getPostNoteViewForParent = function () {
             var template = '';
             template += '<div id="wrapper-post-note" class="frame-pop">';
             template += '<div id="content-header">';
@@ -50462,8 +50494,7 @@ var FoodParent;
             template += '<hr />';
             template += '<div class="info-header"><i class="fa fa-user fa-1x"></i> Author</div>';
             template += '<div class="info-group">';
-            template += '<input type="email" name="email" class="form-control input-contact" placeholder="e-mail address" autocomplete="on" />';
-            template += '<div class="text-label">*The <strong>e-mail address</strong> that you enter will be stored as a perspective parent. You can <strong>become a parent</strong> later using the same e-mail address.</div>';
+            template += '<div class="input-contact">&nbsp;</div>';
             template += '</div>';
             template += '<hr />';
             template += '<div class="info-button-group">';
@@ -50545,6 +50576,68 @@ var FoodParent;
 
             return template;
             */
+        };
+        Template.getPostNoteViewForGuest = function () {
+            var template = '';
+            template += '<div id="wrapper-post-note" class="frame-pop">';
+            template += '<div id="content-header">';
+            template += '<div class="text-header"><%= header %></div>';
+            template += '<div class="btn-close evt-close">';
+            template += '<i class="fa fa-remove"></i>';
+            template += '</div>'; // end of top-right-button button-close
+            template += '</div>'; // end of #wrapper-header
+            template += '<div class="info-group">';
+            template += '<div class="text-label center">Upload pictures, select a rating, enter a commment for \'<%= name %>\'.</div>';
+            template += '</div>'; // end of .info-group
+            template += '<hr />';
+            template += '<div class="frame-flex-group">';
+            template += '<div id="content-image">';
+            template += '<input class="input-upload-picture fileupload" type="file" accept="image/*" capture="camera" />';
+            template += '<div class="wrapper-uploading-picture hidden">';
+            template += '<div class="uploading-picture">Uploading...</div>';
+            template += '</div>'; // end of .wrapper-uploading-picture
+            template += '<div class="info-group">';
+            template += '<div class="text-label"><i class="fa fa-caret-right"></i> Click a picture to set as a cover picture.</div>';
+            template += '</div>'; // end of .info-group
+            template += '<div class="image-group">';
+            template += '</div>'; // end of .image-group
+            template += '</div>'; // end of #content-image
+            template += '<div id="content-post">';
+            template += '<div class="info-header"><i class="fa fa-star-half-o fa-1x"></i> Raiting</div>';
+            //template +=                 '<div class="info-group">';
+            template += '<div class="input-rating"></div>';
+            template += '<div class="input-rating-slider"></div>';
+            //template +=             '</div>';   // end of .info-header
+            template += '<hr />';
+            template += '<div class="info-header"><i class="fa fa-comment fa-1x"></i> Comment</div>';
+            template += '<div class="info-group">';
+            template += '<div class="input-comment">&nbsp;</div>';
+            template += '</div>';
+            template += '<hr />';
+            template += '<div class="info-header"><i class="fa fa-calendar-o fa-1x"></i> Date</div>';
+            template += '<div class="info-group">';
+            template += '<input type="text" class="form-control input-date" />';
+            template += '</div>';
+            template += '<hr />';
+            template += '<div class="info-header"><i class="fa fa-user fa-1x"></i> Author</div>';
+            template += '<div class="info-group">';
+            template += '<input type="email" name="email" class="form-control input-contact" placeholder="e-mail address" autocomplete="on" />';
+            template += '<div class="text-label">*The <strong>e-mail address</strong> that you enter will be stored as a perspective parent. You can <strong>become a parent</strong> later using the same e-mail address.</div>';
+            template += '</div>';
+            template += '<hr />';
+            template += '<div class="info-button-group">';
+            template += '<div class="btn-brown btn-medium evt-submit">Submit</div>';
+            template += '</div>'; // end of .info-button-group
+            template += '<div class="info-button-group">';
+            template += '<div class="btn-brown btn-medium evt-close">Cancel</div>';
+            template += '</div>'; // end of .info-button-group
+            template += '</div>'; // end of #content-post
+            template += '</div>'; // end of .frame-flex-group
+            template += '</div>'; // end of #wrapper-post-note
+            return template;
+        };
+        Template.getPostNoteViewForAdmin = function () {
+            return Template.getPostNoteViewForParent();
         };
         Template.getPostNoteViewTemplate2 = function () {
             var template = '';
@@ -52573,7 +52666,6 @@ var FoodParent;
         };
         SignUpView.prototype._signupSubmit = function (event) {
             var self = this;
-            console.log(self.$('.input-contact').val());
             if ((self.$('.input-contact').val() == "")) {
                 new FoodParent.RenderMessageViewCommand({ el: FoodParent.Setting.getMessageWrapperElement(), message: "Please enter your <strong><i>e-mail address.", undoable: false }).execute(); //blank name field
             }
@@ -55280,63 +55372,6 @@ var FoodParent;
             var self = this;
             if (self.bDebug)
                 console.log(PostNoteView.TAG + "render()");
-            /*
-            Controller.checkLogin(function (response1) {
-                var bLogin: boolean = false;
-                if (response1.result == true || response1.result == 'true') {   // Logged in
-                    bLogin = true;
-                }
-
-                var food: Food = Model.getFoods().findWhere({ id: self._tree.getFoodId() });
-                if (bLogin) {
-                    var person: Person = Model.getPersons().findWhere({ id: parseInt(response1.id) });
-                    var template = _.template(Template.getPostNoteViewTemplate());
-                    self.$el.html(template({
-                        name: food.getName() + " " + self._tree.getName(),
-                        author: person.getName(),
-                    }));
-                } else {
-                    var template = _.template(Template.getPostNoteViewTemplate2());
-                    self.$el.html(template({
-                        name: food.getName() + " " + self._tree.getName(),
-                    }));
-                }
-                self.setElement(self.$('#wrapper-note'));
-                self.setVisible();
-
-                // Create a new note.
-                self._note = new Note({ type: NoteType.IMAGE, tree: self._tree.getId(), person: parseInt(response1.id), comment: "", picture: "", rate: 0, date: moment(new Date()).format(Setting.getDateTimeFormat()) });
-
-                // Event listener for uploading a file.
-                self.$('input[type=file]').off('change');
-                self.$('input[type=file]').on('change', function (event: Event) {
-                    self.$('.wrapper-input-upload-picture').addClass('hidden');
-                    self.$('.wrapper-uploading-picture').removeClass('hidden');
-                    var files = (<any>event.target).files;
-                    if (files.length > 0) {
-                        Controller.uploadNotePictureFile(files[0], food.getName() + "_" + self._tree.getId(), function (fileName: string) {
-                            self._note.addPicture(fileName);
-                            // Success
-                            self.$('input[type=file]').val("");
-                            self.$('.wrapper-uploading-picture').addClass('hidden');
-                            self.$('.wrapper-input-upload-picture').removeClass('hidden');
-                            self.renderNoteImages();
-                        }, function () {
-                            // Error
-                            self.$('.wrapper-uploading-picture').addClass('hidden');
-                            self.$('.wrapper-input-upload-picture').removeClass('hidden');
-                        });
-                    }
-
-                });
-
-                self.renderNoteInfo();
-                self.resize();
-            }, function (response1) {
-                EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
-            });
-
-            */
             return self;
         };
         PostNoteView.prototype.resize = function () {
@@ -55428,7 +55463,7 @@ var FoodParent;
                 });
             });
         };
-        PostNoteView.prototype._selectCoverImage = function (event) {
+        PostNoteView.prototype._applyCoverPicture = function (event) {
             var self = this;
             $.each(self.$('.image-group img'), function (index, element) {
                 $(element).removeClass('selected');
@@ -55437,83 +55472,23 @@ var FoodParent;
             self._note.setCover(parseInt($(event.target).attr('data-target')));
             self.renderNoteImages();
         };
-        PostNoteView.prototype._createNote = function (event) {
+        PostNoteView.prototype._submitNote = function (event) {
             var self = this;
-            if (!self.bProcessing) {
-                self.bProcessing = true;
-                FoodParent.Controller.checkLogin(function (response1) {
-                    if (response1.result == true || response1.result == 'true') {
-                        var food = FoodParent.Model.getFoods().findWhere({ id: self._tree.getFoodId() });
-                        self._note.setPersonId(parseInt(response1.id));
-                        FoodParent.EventHandler.handleNoteData(self._note, FoodParent.DATA_MODE.CREATE, {}, function () {
-                            FoodParent.EventHandler.handleDataChange("New note for <strong><i>" + food.getName() + " " + self._tree.getName() + "</i></strong> has been created.", false);
-                            new RemoveAlertViewCommand({ delay: FoodParent.Setting.getRemovePopupDuration() }).execute();
-                            if (FoodParent.View.getDetailTreeView()) {
-                                FoodParent.View.getDetailTreeView().refreshTreeInfo();
-                            }
-                            self.bProcessing = false;
-                        }, function () {
-                            FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
-                            self.bProcessing = false;
-                        });
-                    }
-                    else {
-                        // Register user's e-mail address first & add data
-                        if (!isValidEmailAddress($('.input-author').val())) {
-                            new FoodParent.RenderMessageViewCommand({ el: FoodParent.Setting.getMessageWrapperElement(), message: "Please put a valid <strong><i>e-mail address.", undoable: false }).execute();
-                            self.bProcessing = false;
-                        }
-                        else {
-                            FoodParent.Controller.processSignup($('.input-author').val().trim(), '', '', function (response2) {
-                                var food = FoodParent.Model.getFoods().findWhere({ id: self._tree.getFoodId() });
-                                self._note.setPersonId(parseInt(response2.id));
-                                FoodParent.EventHandler.handleNoteData(self._note, FoodParent.DATA_MODE.CREATE, {}, function () {
-                                    FoodParent.EventHandler.handleDataChange("New note for <strong><i>" + food.getName() + " " + self._tree.getName() + "</i></strong> has been created.", false);
-                                    new RemoveAlertViewCommand({ delay: FoodParent.Setting.getRemovePopupDuration() }).execute();
-                                    if (FoodParent.View.getDetailTreeView()) {
-                                        FoodParent.View.getDetailTreeView().refreshTreeInfo();
-                                    }
-                                    self.bProcessing = false;
-                                }, function () {
-                                    FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
-                                    self.bProcessing = false;
-                                });
-                                Backbone.history.loadUrl(Backbone.history.fragment);
-                                self.bProcessing = false;
-                            }, function (response2) {
-                                new FoodParent.RenderMessageViewCommand({ el: FoodParent.Setting.getMessageWrapperElement(), message: FoodParent.Setting.getErrorMessage(response2.error), undoable: false }).execute();
-                                self.bProcessing = false;
-                            });
-                        }
-                    }
-                }, function (response1) {
-                    FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
-                });
+            if (self.$('.input-contact').html() != "") {
+                FoodParent.EventHandler.handleMouseClick($(event.currentTarget), self, { tree: self._tree, note: self._note });
             }
-        };
-        PostNoteView.prototype.update = function (args) {
-            if (!this.bRendered) {
-                this.render(args);
-                return self;
+            else {
+                if (!isValidEmailAddress(self.$('.input-contact').val().trim())) {
+                    new FoodParent.RenderMessageViewCommand({ el: FoodParent.Setting.getMessageWrapperElement(), message: "Please enter a valid <strong><i>e-mail address.", undoable: false }).execute(); //not a valid e-mail
+                }
+                else {
+                    FoodParent.EventHandler.handleMouseClick($(event.currentTarget), self, { tree: self._tree, note: self._note, contact: self.$('.input-contact').val().trim() });
+                }
             }
-            /////
-            return self;
-        };
-        PostNoteView.prototype._mouseEnter = function (event) {
-            var self = this;
-            FoodParent.EventHandler.handleMouseEnter($(event.currentTarget), self);
         };
         PostNoteView.prototype._mouseClick = function (event) {
             var self = this;
             FoodParent.EventHandler.handleMouseClick($(event.currentTarget), self);
-        };
-        PostNoteView.prototype.setVisible = function () {
-            var self = this;
-            FoodParent.Setting.getPopWrapperElement().removeClass('hidden');
-        };
-        PostNoteView.prototype.setInvisible = function () {
-            var self = this;
-            FoodParent.Setting.getPopWrapperElement().addClass('hidden');
         };
         PostNoteView.TAG = "PostNoteView - ";
         return PostNoteView;
@@ -55534,9 +55509,45 @@ var FoodParent;
             _super.call(this, options);
             var self = this;
             self.bDebug = true;
-            self.events = {};
+            self.events = {
+                "click .evt-close": "_mouseClick",
+                "click .evt-submit": "_submitNote",
+                "click .image-group img": "_applyCoverPicture",
+            };
             self.delegateEvents();
         }
+        PostNoteViewForAdmin.prototype.render = function (args) {
+            _super.prototype.render.call(this);
+            var self = this;
+            if (self.bDebug)
+                console.log(PostNoteViewForAdmin.TAG + "render()");
+            var food = FoodParent.Model.getFoods().findWhere({ id: self._tree.getFoodId() });
+            var template = _.template(FoodParent.Template.getPostNoteViewForAdmin());
+            self.$el.append(template({
+                header: "Post Note",
+                name: food.getName() + " " + self._tree.getName(),
+            }));
+            self.setElement($('#wrapper-post-note'));
+            self.setVisible();
+            self.resize();
+            FoodParent.Controller.checkIsLoggedIn(function (response) {
+                // Create a new note.
+                self._note = new FoodParent.Note({ type: FoodParent.NoteType.IMAGE, tree: self._tree.getId(), person: parseInt(response.id), comment: "", picture: "", rate: 0, date: moment(new Date()).format(FoodParent.Setting.getDateTimeFormat()) });
+                var parent = FoodParent.Model.getPersons().findWhere({ id: parseInt(response.id) });
+                // Fill out name of the author
+                self.$('.input-contact').html(parent.getName());
+                // Render note info
+                self.renderNoteInfo();
+                // Register file upload event listner
+                self.addFileUploadEventListener();
+            }, function (response) {
+                new FoodParent.ResetPopupViewCommand().execute();
+                Backbone.history.loadUrl(Backbone.history.fragment);
+            }, function () {
+                FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+            });
+            return self;
+        };
         PostNoteViewForAdmin.TAG = "PostNoteViewForAdmin - ";
         return PostNoteViewForAdmin;
     })(FoodParent.PostNoteView);
@@ -55558,6 +55569,8 @@ var FoodParent;
             self.bDebug = true;
             self.events = {
                 "click .evt-close": "_mouseClick",
+                "click .evt-submit": "_submitNote",
+                "click .image-group img": "_applyCoverPicture",
             };
             self.delegateEvents();
         }
@@ -55602,9 +55615,45 @@ var FoodParent;
             _super.call(this, options);
             var self = this;
             self.bDebug = true;
-            self.events = {};
+            self.events = {
+                "click .evt-close": "_mouseClick",
+                "click .evt-submit": "_submitNote",
+                "click .image-group img": "_applyCoverPicture",
+            };
             self.delegateEvents();
         }
+        PostNoteViewForParent.prototype.render = function (args) {
+            _super.prototype.render.call(this);
+            var self = this;
+            if (self.bDebug)
+                console.log(PostNoteViewForParent.TAG + "render()");
+            var food = FoodParent.Model.getFoods().findWhere({ id: self._tree.getFoodId() });
+            var template = _.template(FoodParent.Template.getPostNoteViewForParent());
+            self.$el.append(template({
+                header: "Post Note",
+                name: food.getName() + " " + self._tree.getName(),
+            }));
+            self.setElement($('#wrapper-post-note'));
+            self.setVisible();
+            self.resize();
+            FoodParent.Controller.checkIsLoggedIn(function (response) {
+                // Create a new note.
+                self._note = new FoodParent.Note({ type: FoodParent.NoteType.IMAGE, tree: self._tree.getId(), person: parseInt(response.id), comment: "", picture: "", rate: 0, date: moment(new Date()).format(FoodParent.Setting.getDateTimeFormat()) });
+                var parent = FoodParent.Model.getPersons().findWhere({ id: parseInt(response.id) });
+                // Fill out name of the author
+                self.$('.input-contact').html(parent.getName());
+                // Render note info
+                self.renderNoteInfo();
+                // Register file upload event listner
+                self.addFileUploadEventListener();
+            }, function (response) {
+                new FoodParent.ResetPopupViewCommand().execute();
+                Backbone.history.loadUrl(Backbone.history.fragment);
+            }, function () {
+                FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+            });
+            return self;
+        };
         PostNoteViewForParent.TAG = "PostNoteViewForParent - ";
         return PostNoteViewForParent;
     })(FoodParent.PostNoteView);

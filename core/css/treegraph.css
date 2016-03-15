@@ -18,11 +18,9 @@
         height: 40%;
         background-color: #5e4e51;
         overflow-y: auto;
-        display: flex;
-        justify-content: flex-start;
-        align-items: flex-start;
     }
     #wrapper-treedetail .content-tree-basicinfo {
+        -webkit-flex-grow: 1;
         flex-grow: 1;
         height: 100%;
         overflow-y: auto;
@@ -30,6 +28,7 @@
     }
 
     #wrapper-treedetail .content-tree-recentactivities {
+        -webkit-flex-grow: 1;
         flex-grow: 1;
         height: 100%;
         overflow-y: auto;
@@ -37,6 +36,7 @@
     }
 
     #wrapper-treedetail .content-tree-recentcomments {
+        -webkit-flex-grow: 1;
         flex-grow: 1;
         height: 100%;
         overflow-y: auto;
@@ -143,6 +143,11 @@
         padding: 0 6px 0 6px;
         font-size: medium;
         font-weight: 400;
+        max-height: 50%;
+        -ms-text-overflow: ellipsis;
+        -o-text-overflow: ellipsis;
+        text-overflow: ellipsis;
+        overflow: hidden;
     }
     #wrapper-tooltip .date {
         font-size: small;
@@ -280,16 +285,15 @@
 
 
 @media only screen and (orientation: portrait) {
-    
-}
-@media only screen and (max-height: 480px) and (orientation: portrait) {
-    #wrapper-date-select .wrapper-date-select-item {
-        display: none;
+    #wrapper-treedetail {
+        display: block;
     }
     #wrapper-treedetail .content-tree-recentactivities {
         display: none;
     }
-    #wrapper-treedetail .content-tree-recentcomments {
+}
+@media only screen and (max-height: 480px) and (orientation: portrait) {
+    #wrapper-date-select .wrapper-date-select-item {
         display: none;
     }
 }
@@ -297,21 +301,9 @@
     #wrapper-date-select .wrapper-date-select-item {
         display: none;
     }
-    #wrapper-treedetail .content-tree-recentactivities {
-        display: none;
-    }
-    #wrapper-treedetail .content-tree-recentcomments {
-        display: none;
-    }
 }
 @media only screen and (min-height: 569px) and (max-height: 627px) and (orientation: portrait) {
     #wrapper-date-select .wrapper-date-select-item {
-        display: none;
-    }
-    #wrapper-treedetail .content-tree-recentactivities {
-        display: none;
-    }
-    #wrapper-treedetail .content-tree-recentcomments {
         display: none;
     }
 }
@@ -319,41 +311,38 @@
     #wrapper-date-select .wrapper-date-select-item {
         display: none;
     }
-    #wrapper-treedetail .content-tree-recentactivities {
-        display: none;
-    }
-    #wrapper-treedetail .content-tree-recentcomments {
-        display: none;
-    }
 }
 @media only screen and (min-height: 737px) and (max-height: 960px) and (orientation: portrait) {
     #wrapper-date-select .wrapper-date-select-item {
         display: none;
     }
-    #wrapper-treedetail .content-tree-recentactivities {
-        display: none;
-    }
-    #wrapper-treedetail .content-tree-recentcomments {
-        display: none;
-    }
 }
 
 @media only screen and (max-width: 767px) and (orientation: portrait) {
-    
+
 }
 
 @media only screen and (min-width: 768px) and (orientation: portrait) {
-    
+
 }
 
 @media only screen and (orientation: landscape) {
-    
+    #wrapper-treedetail {
+        width: 100%;
+        height: 40%;
+        background-color: #5e4e51;
+        overflow-y: auto;
+        display: -webkit-flex;
+        display: flex;
+        justify-content: flex-start;
+        align-items: flex-start;
+    }
 }
 @media only screen and (max-width: 480px) and (orientation: landscape) {
-    #wrapper-treedetail .content-tree-recentactivities {
-        display: none;
+    #wrapper-treedetail {
+        display: block;
     }
-    #wrapper-treedetail .content-tree-recentcomments {
+    #wrapper-treedetail .content-tree-recentactivities {
         display: none;
     }
 }
