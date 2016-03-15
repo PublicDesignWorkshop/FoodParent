@@ -43130,11 +43130,9 @@ var FoodParent;
                     }
                     break;
                 case VIEW_STATUS.POST_NOTE:
-                    if (el.hasClass('button-close')) {
-                        new RemoveAlertViewCommand({ delay: FoodParent.Setting.getRemovePopupDuration() }).execute();
-                        if (FoodParent.View.getDetailTreeView()) {
-                            FoodParent.View.getDetailTreeView().refreshTreeInfo();
-                        }
+                    if (el.hasClass('evt-close')) {
+                        new FoodParent.RemovePopupViewCommand({ delay: FoodParent.Setting.getRemovePopupDuration() }).execute();
+                        new FoodParent.RefreshCurrentViewCommand().execute();
                     }
                     break;
                 case VIEW_STATUS.MANAGE_DONATIONS:
@@ -50429,7 +50427,53 @@ var FoodParent;
             template += '<i class="fa fa-remove"></i>';
             template += '</div>'; // end of top-right-button button-close
             template += '</div>'; // end of #wrapper-header
+            template += '<div class="info-group">';
+            template += '<div class="text-label center">Upload pictures, select a rating, enter a commment for \'<%= name %>\'.</div>';
+            template += '</div>'; // end of .info-group
             template += '<hr />';
+            template += '<div class="frame-flex-group">';
+            template += '<div id="content-image">';
+            template += '<input class="input-upload-picture fileupload" type="file" accept="image/*" capture="camera" />';
+            template += '<div class="wrapper-uploading-picture hidden">';
+            template += '<div class="uploading-picture">Uploading...</div>';
+            template += '</div>'; // end of .wrapper-uploading-picture
+            template += '<div class="info-group">';
+            template += '<div class="text-label"><i class="fa fa-caret-right"></i> Click a picture to set as a cover picture.</div>';
+            template += '</div>'; // end of .info-group
+            template += '<div class="image-group">';
+            template += '</div>'; // end of .image-group
+            template += '</div>'; // end of #content-image
+            template += '<div id="content-post">';
+            template += '<div class="info-header"><i class="fa fa-star-half-o fa-1x"></i> Raiting</div>';
+            //template +=                 '<div class="info-group">';
+            template += '<div class="input-rating"></div>';
+            template += '<div class="input-rating-slider"></div>';
+            //template +=             '</div>';   // end of .info-header
+            template += '<hr />';
+            template += '<div class="info-header"><i class="fa fa-comment fa-1x"></i> Comment</div>';
+            template += '<div class="info-group">';
+            template += '<div class="input-comment">&nbsp;</div>';
+            template += '</div>';
+            template += '<hr />';
+            template += '<div class="info-header"><i class="fa fa-calendar-o fa-1x"></i> Date</div>';
+            template += '<div class="info-group">';
+            template += '<input type="text" class="form-control input-date" />';
+            template += '</div>';
+            template += '<hr />';
+            template += '<div class="info-header"><i class="fa fa-user fa-1x"></i> Author</div>';
+            template += '<div class="info-group">';
+            template += '<input type="email" name="email" class="form-control input-contact" placeholder="e-mail address" autocomplete="on" />';
+            template += '<div class="text-label">*The <strong>e-mail address</strong> that you enter will be stored as a perspective parent. You can <strong>become a parent</strong> later using the same e-mail address.</div>';
+            template += '</div>';
+            template += '<hr />';
+            template += '<div class="info-button-group">';
+            template += '<div class="btn-brown btn-medium evt-submit">Submit</div>';
+            template += '</div>'; // end of .info-button-group
+            template += '<div class="info-button-group">';
+            template += '<div class="btn-brown btn-medium evt-close">Cancel</div>';
+            template += '</div>'; // end of .info-button-group
+            template += '</div>'; // end of #content-post
+            template += '</div>'; // end of .frame-flex-group
             template += '</div>'; // end of #wrapper-post-note
             return template;
             /*
@@ -55297,10 +55341,39 @@ var FoodParent;
         };
         PostNoteView.prototype.resize = function () {
             var self = this;
-            self.$('.image-group').css({ height: self.$('.image-wrapper').innerHeight() - 60 });
+        };
+        /**
+         * Event listener for uploading files
+         */
+        PostNoteView.prototype.addFileUploadEventListener = function () {
+            var self = this;
+            var food = FoodParent.Model.getFoods().findWhere({ id: self._tree.getFoodId() });
+            self.$('input[type=file]').off('change');
+            self.$('input[type=file]').on('change', function (event) {
+                self.$('.wrapper-input-upload-picture').addClass('hidden');
+                self.$('.wrapper-uploading-picture').removeClass('hidden');
+                var files = event.target.files;
+                if (files.length > 0) {
+                    FoodParent.Controller.uploadNotePictureFile(files[0], food.getName() + "_" + self._tree.getId(), function (fileName) {
+                        self._note.addPicture(fileName);
+                        // Success
+                        self.$('input[type=file]').val("");
+                        self.$('.wrapper-uploading-picture').addClass('hidden');
+                        self.$('.wrapper-input-upload-picture').removeClass('hidden');
+                        self.renderNoteImages();
+                    }, function () {
+                        // Error
+                        self.$('.wrapper-uploading-picture').addClass('hidden');
+                        self.$('.wrapper-input-upload-picture').removeClass('hidden');
+                        FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+                    });
+                }
+            });
         };
         PostNoteView.prototype.renderNoteInfo = function () {
             var self = this;
+            if (self.bDebug)
+                console.log(PostNoteView.TAG + "renderNoteInfo()");
             self.$('.input-rating').replaceWith('<div class="input-rating"></div>');
             self.$('.input-rating').html(Math.ceil(self._note.getRate()).toFixed(2) + " / " + FoodParent.Setting.getMaxRating().toFixed(2));
             self.$('.input-rating-slider').html("");
@@ -55483,7 +55556,9 @@ var FoodParent;
             _super.call(this, options);
             var self = this;
             self.bDebug = true;
-            self.events = {};
+            self.events = {
+                "click .evt-close": "_mouseClick",
+            };
             self.delegateEvents();
         }
         PostNoteViewForGuest.prototype.render = function (args) {
@@ -55494,11 +55569,19 @@ var FoodParent;
             var food = FoodParent.Model.getFoods().findWhere({ id: self._tree.getFoodId() });
             var template = _.template(FoodParent.Template.getPostNoteViewForGuest());
             self.$el.append(template({
-                header: "Post Note for " + food.getName() + " " + self._tree.getName(),
+                header: "Post Note",
+                name: food.getName() + " " + self._tree.getName(),
             }));
             self.setElement($('#wrapper-post-note'));
             self.setVisible();
             self.resize();
+            // Create a new note.
+            self._note = new FoodParent.Note({ type: FoodParent.NoteType.IMAGE, tree: self._tree.getId(), person: 0, comment: "", picture: "", rate: 0, date: moment(new Date()).format(FoodParent.Setting.getDateTimeFormat()) });
+            // Render note info
+            self.renderNoteInfo();
+            // Register file upload event listner
+            self.addFileUploadEventListener();
+            return self;
         };
         PostNoteViewForGuest.TAG = "PostNoteViewForGuest - ";
         return PostNoteViewForGuest;

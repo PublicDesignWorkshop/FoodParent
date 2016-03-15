@@ -398,11 +398,9 @@
                     }
                     break;
                 case VIEW_STATUS.POST_NOTE:
-                     if (el.hasClass('button-close')) {
-                        new RemoveAlertViewCommand({ delay: Setting.getRemovePopupDuration() }).execute();
-                        if (View.getDetailTreeView()) {
-                            (<DetailTreeGraphicView>View.getDetailTreeView()).refreshTreeInfo();
-                        }
+                    if (el.hasClass('evt-close')) {
+                        new RemovePopupViewCommand({ delay: Setting.getRemovePopupDuration() }).execute();
+                        new RefreshCurrentViewCommand().execute();
                     }
                     break;
                 case VIEW_STATUS.MANAGE_DONATIONS:

@@ -224,21 +224,7 @@
         font-size: large;
     }
 
-    .wrapper-note-info .input-rating {
-        font-size: xx-large;
-        font-weight: 700;
-        text-align: center;
-    }
-
-    .wrapper-note-info .input-rating-slider {
-        display: flex;
-        justify-content: space-around;
-        align-items: flex-start;
-    }
-
-    .wrapper-note-info .input-rating-slider li {
-        list-style-type: none;
-    }
+    
 
     .wrapper-note-info .input-date {
         font-size: large;
@@ -298,26 +284,8 @@
         padding: 0;
     }
 
-    .image-group {
-        display: flex;
-        justify-content: flex-start;
-        align-items: flex-start;
-        -ms-flex-wrap: wrap;
-        -webkit-flex-wrap: wrap;
-        flex-wrap: wrap;
-        overflow-y: auto;
-    }
+    
 
-    .image-group img {
-        width: 98%;
-        margin: 4px;
-        border: 8px solid #ffffff;
-        cursor: pointer;
-    }
-
-    .image-group img.selected {
-        border: 8px solid rgba(132, 167, 87, 1);
-    }
 
     
 }

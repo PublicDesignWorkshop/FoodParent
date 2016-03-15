@@ -110,11 +110,40 @@
 
         public resize(): any {
             var self: PostNoteView = this;
-            self.$('.image-group').css({ height: self.$('.image-wrapper').innerHeight() - 60 });
+        }
+        
+        /**
+         * Event listener for uploading files
+         */
+        protected addFileUploadEventListener(): void {
+            var self: PostNoteView = this;
+            var food: Food = Model.getFoods().findWhere({ id: self._tree.getFoodId() });
+            self.$('input[type=file]').off('change');
+            self.$('input[type=file]').on('change', function (event: Event) {
+                self.$('.wrapper-input-upload-picture').addClass('hidden');
+                self.$('.wrapper-uploading-picture').removeClass('hidden');
+                var files = (<any>event.target).files;
+                if (files.length > 0) {
+                    Controller.uploadNotePictureFile(files[0], food.getName() + "_" + self._tree.getId(), function (fileName: string) {
+                        self._note.addPicture(fileName);
+                        // Success
+                        self.$('input[type=file]').val("");
+                        self.$('.wrapper-uploading-picture').addClass('hidden');
+                        self.$('.wrapper-input-upload-picture').removeClass('hidden');
+                        self.renderNoteImages();
+                    }, function () {
+                        // Error
+                        self.$('.wrapper-uploading-picture').addClass('hidden');
+                        self.$('.wrapper-input-upload-picture').removeClass('hidden');
+                        EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
+                    });
+                }
+            });
         }
 
         public renderNoteInfo() {
             var self: PostNoteView = this;
+            if (self.bDebug) console.log(PostNoteView.TAG + "renderNoteInfo()");
             self.$('.input-rating').replaceWith('<div class="input-rating"></div>');
             self.$('.input-rating').html(Math.ceil(self._note.getRate()).toFixed(2) + " / " + Setting.getMaxRating().toFixed(2));
 
@@ -153,7 +182,7 @@
             });
         }
 
-        public renderNoteImages() {
+        private renderNoteImages() {
             var self: PostNoteView = this;
             var tag = '';
             $.each(self._note.getPictures(), function (index: number, filename: string) {

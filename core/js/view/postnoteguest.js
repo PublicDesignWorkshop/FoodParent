@@ -11,7 +11,9 @@ var FoodParent;
             _super.call(this, options);
             var self = this;
             self.bDebug = true;
-            self.events = {};
+            self.events = {
+                "click .evt-close": "_mouseClick",
+            };
             self.delegateEvents();
         }
         PostNoteViewForGuest.prototype.render = function (args) {
@@ -22,11 +24,19 @@ var FoodParent;
             var food = FoodParent.Model.getFoods().findWhere({ id: self._tree.getFoodId() });
             var template = _.template(FoodParent.Template.getPostNoteViewForGuest());
             self.$el.append(template({
-                header: "Post Note for " + food.getName() + " " + self._tree.getName(),
+                header: "Post Note",
+                name: food.getName() + " " + self._tree.getName(),
             }));
             self.setElement($('#wrapper-post-note'));
             self.setVisible();
             self.resize();
+            // Create a new note.
+            self._note = new FoodParent.Note({ type: FoodParent.NoteType.IMAGE, tree: self._tree.getId(), person: 0, comment: "", picture: "", rate: 0, date: moment(new Date()).format(FoodParent.Setting.getDateTimeFormat()) });
+            // Render note info
+            self.renderNoteInfo();
+            // Register file upload event listner
+            self.addFileUploadEventListener();
+            return self;
         };
         PostNoteViewForGuest.TAG = "PostNoteViewForGuest - ";
         return PostNoteViewForGuest;

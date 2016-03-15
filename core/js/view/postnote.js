@@ -112,10 +112,39 @@ var FoodParent;
         };
         PostNoteView.prototype.resize = function () {
             var self = this;
-            self.$('.image-group').css({ height: self.$('.image-wrapper').innerHeight() - 60 });
+        };
+        /**
+         * Event listener for uploading files
+         */
+        PostNoteView.prototype.addFileUploadEventListener = function () {
+            var self = this;
+            var food = FoodParent.Model.getFoods().findWhere({ id: self._tree.getFoodId() });
+            self.$('input[type=file]').off('change');
+            self.$('input[type=file]').on('change', function (event) {
+                self.$('.wrapper-input-upload-picture').addClass('hidden');
+                self.$('.wrapper-uploading-picture').removeClass('hidden');
+                var files = event.target.files;
+                if (files.length > 0) {
+                    FoodParent.Controller.uploadNotePictureFile(files[0], food.getName() + "_" + self._tree.getId(), function (fileName) {
+                        self._note.addPicture(fileName);
+                        // Success
+                        self.$('input[type=file]').val("");
+                        self.$('.wrapper-uploading-picture').addClass('hidden');
+                        self.$('.wrapper-input-upload-picture').removeClass('hidden');
+                        self.renderNoteImages();
+                    }, function () {
+                        // Error
+                        self.$('.wrapper-uploading-picture').addClass('hidden');
+                        self.$('.wrapper-input-upload-picture').removeClass('hidden');
+                        FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+                    });
+                }
+            });
         };
         PostNoteView.prototype.renderNoteInfo = function () {
             var self = this;
+            if (self.bDebug)
+                console.log(PostNoteView.TAG + "renderNoteInfo()");
             self.$('.input-rating').replaceWith('<div class="input-rating"></div>');
             self.$('.input-rating').html(Math.ceil(self._note.getRate()).toFixed(2) + " / " + FoodParent.Setting.getMaxRating().toFixed(2));
             self.$('.input-rating-slider').html("");

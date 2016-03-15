@@ -151,8 +151,6 @@
 
     .wrapper-input-upload-picture, .wrapper-uploading-picture {
         width: 100%;
-        background-color: rgba(94, 78, 81, 1);
-        padding: 3px;
         height: 43px;
         display: inline-block;
     }
@@ -166,25 +164,30 @@
         text-align: center;
         content: 'Upload Picture';
         display: inline-block;
-        color: rgba(255, 255, 255, 0.85);
-        background-color: rgba(94, 78, 81, 1);
-        border: 2px solid rgba(255, 255, 255, 0.85);
-        padding: 5px 8px;
-        -webkit-user-select: none;
+        background-color: rgba(94, 78, 81, 0.9);
+        border-radius: 1px;
+        color: rgba(255, 255, 255, 0.9);
+        font-weight: 700;
+        cursor: pointer;
         -moz-user-select: none;
         -ms-user-select: none;
+        -webkit-user-select: none;
         user-select: none;
+        pointer-events: fill;
         cursor: pointer;
-        font-size: medium;
+        font-size: large;
         font-weight: 700;
+        border-color: rgba(255, 255, 255, 0.9);
+        border-width: 2px;
+        border-style: solid;
+        padding: 4px 8px;
     }
     input.fileupload:hover::before {
-        color: #84a757;
-        border-color: #84a757;
-    }
-    input.fileupload:active::before {
-        text-shadow: 2px 2px 1px #403537;
-        box-shadow: inset 0 0 2px 2px #403537;
+        color: rgba(255, 255, 255, 1);
+        border-style: solid;
+        border-color: rgba(94, 78, 81, 1);
+        text-shadow: -1px -1px 1px rgba(0, 0, 0, 0.5);
+        box-shadow: inset 0 0 1px 1px rgba(0, 0, 0, 0.5);
     }
 
     .uploading-picture {
