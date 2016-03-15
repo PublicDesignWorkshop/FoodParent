@@ -532,7 +532,7 @@
             Controller.pushXHR(xhr1);
         }
 
-        public static processSignup(contact: string, name: string, neighborhood: string, success?: any, error?: any) {
+        public static processSignup(contact: string, name: string, neighborhood: string, success?: any, fail?: any, error?: any) {
             var xhr1: JQueryXHR = $.ajax({
                 url: Setting.getPhpDir() + "signup.php",
                 type: "POST",
@@ -543,17 +543,15 @@
                 },
                 cache: false,
                 dataType: "json",
-                success: function (data, textStatus, jqXHR) {
+                success: function (response, textStatus, jqXHR) {
                     Controller.removeXHR(xhr1);
-                    console.log(data);
-                    if (typeof data.error === "undefined") {
+                    if (parseInt(response.code) == 400) {
                         if (success) {
-                            success(data);
-                            //success(data.files[0].replace(Setting.getRelativeFileUploadPath(), ""));
+                            success(response);
                         }
                     } else {
-                        if (error) {
-                            error(data);
+                        if (fail) {
+                            fail(response);
                         }
                     }
                 },

@@ -8,7 +8,7 @@
         $contact = filter_var($contact, FILTER_VALIDATE_EMAIL);
         if (!filter_var($contact, FILTER_VALIDATE_EMAIL)) {
             $params = array(
-                "error" => 803
+                "code" => 803
             );
             echo json_encode($params);
             return;
@@ -31,7 +31,7 @@
                 
                 if ($auth == 1 || $auth == "1" || $auth == 2 || $auth == "2") {
                     $params = array(
-                        "error" => 804
+                        "code" => 804
                     );
                     echo json_encode($params);
                 } else {
@@ -75,11 +75,12 @@
                                     "id" => $_SESSION['user_id'],
                                     "contact" => $_SESSION['contact'],
                                     "auth" => $_SESSION['user_auth'],
+                                    "code" => 400,
                                 );
                                 echo json_encode($params);
                             } else {
                                 $params = array(
-                                    "error" => 805
+                                    "code" => 805
                                 );
                                 echo json_encode($params);
                             }
@@ -128,18 +129,19 @@
                                 "id" => $_SESSION['user_id'],
                                 "contact" => $_SESSION['contact'],
                                 "auth" => $_SESSION['user_auth'],
+                                "code" => 400,
                             );
                             echo json_encode($params);
                         } else {
                             $params = array(
-                                "error" => 805
+                                "code" => 805
                             );
                             echo json_encode($params);
                         }
                     }
                 } catch(PDOException $e) {
                     $params = array(
-                        "error" => 404
+                        "code" => 404
                     );
                     echo json_encode($params);
                 }
@@ -150,7 +152,7 @@
     } else {
         // The correct POST variables were not sent to this page.
         $params = array(
-            "error" => 404
+            "code" => 404
         );
         echo json_encode($params);
     }
