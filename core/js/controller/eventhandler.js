@@ -531,15 +531,26 @@ var FoodParent;
                         });
                     }
                     else if (el.hasClass('evt-signup')) {
-                        console.log("boohoo");
+                        console.log("signup button works");
                         if (FoodParent.View.getViewStatus() != VIEW_STATUS.SIGNUP) {
                             new FoodParent.RenderSignUpViewCommand({ el: FoodParent.Setting.getPopWrapperElement() }).execute();
                         }
                     }
                     break;
                 case VIEW_STATUS.SIGNUP:
-                    if (el.hasClass('signup-cancel') || el.hasClass('button-close')) {
-                        new RemoveAlertViewCommand({ delay: FoodParent.Setting.getRemovePopupDuration() }).execute();
+                    if (el.hasClass('evt-close')) {
+                        new FoodParent.RemovePopupViewCommand({ delay: FoodParent.Setting.getRemovePopupDuration() }).execute();
+                        new FoodParent.RefreshCurrentViewCommand().execute();
+                    }
+                    else if (el.hasClass('evt-submit')) {
+                        FoodParent.Controller.processSignup(options.contact, options.name, options.neighborhood, function (response) {
+                            new FoodParent.ResetPopupViewCommand().execute();
+                            Backbone.history.loadUrl(Backbone.history.fragment);
+                        }, function (response) {
+                            new FoodParent.RenderMessageViewCommand({ el: FoodParent.Setting.getMessageWrapperElement(), message: FoodParent.Setting.getErrorMessage(response.code), undoable: false }).execute();
+                        }, function (response) {
+                            EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
+                        });
                     }
                     break;
                 case VIEW_STATUS.ADOPT_TREE:

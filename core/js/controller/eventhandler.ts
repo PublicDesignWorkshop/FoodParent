@@ -469,15 +469,25 @@
                             EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
                         });
                     } else if (el.hasClass('evt-signup')) {
-                        console.log("boohoo");
+                        console.log("signup button works");
                         if (View.getViewStatus() != VIEW_STATUS.SIGNUP) {
                             new RenderSignUpViewCommand({ el: Setting.getPopWrapperElement() }).execute();
                         }
                     }
                     break;
                 case VIEW_STATUS.SIGNUP:
-                    if (el.hasClass('signup-cancel') || el.hasClass('button-close')) {
-                        new RemoveAlertViewCommand({ delay: Setting.getRemovePopupDuration() }).execute();
+                    if (el.hasClass('evt-close')) {
+                        new RemovePopupViewCommand({ delay: Setting.getRemovePopupDuration() }).execute();
+                        new RefreshCurrentViewCommand().execute();
+                    } else if (el.hasClass('evt-submit')) {
+                        Controller.processSignup(options.contact, options.name, options.neighborhood, function (response) {
+                            new ResetPopupViewCommand().execute();
+                            Backbone.history.loadUrl(Backbone.history.fragment);
+                        }, function (response) {
+                            new RenderMessageViewCommand({ el: Setting.getMessageWrapperElement(), message: Setting.getErrorMessage(response.code), undoable: false }).execute();
+                        }, function (response) {
+                            EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
+                        });
                     }
                     break;
                 case VIEW_STATUS.ADOPT_TREE:
