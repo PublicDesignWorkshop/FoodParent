@@ -496,7 +496,7 @@ var FoodParent;
             });
             Controller.pushXHR(xhr1);
         };
-        Controller.processSignup = function (contact, name, neighborhood, success, error) {
+        Controller.processSignup = function (contact, name, neighborhood, success, fail, error) {
             var xhr1 = $.ajax({
                 url: FoodParent.Setting.getPhpDir() + "signup.php",
                 type: "POST",
@@ -507,17 +507,16 @@ var FoodParent;
                 },
                 cache: false,
                 dataType: "json",
-                success: function (data, textStatus, jqXHR) {
+                success: function (response, textStatus, jqXHR) {
                     Controller.removeXHR(xhr1);
-                    console.log(data);
-                    if (typeof data.error === "undefined") {
+                    if (parseInt(response.code) == 400) {
                         if (success) {
-                            success(data);
+                            success(response);
                         }
                     }
                     else {
-                        if (error) {
-                            error(data);
+                        if (fail) {
+                            fail(response);
                         }
                     }
                 },
