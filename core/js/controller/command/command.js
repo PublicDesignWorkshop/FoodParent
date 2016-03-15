@@ -247,10 +247,11 @@ var FoodParent;
             var self = this;
             self._el = args.el;
             self._tree = args.tree;
+            self._credential = args.credential;
         }
         RenderPostNoteViewCommand.prototype.execute = function () {
             var self = this;
-            var view = FoodParent.PostNoteViewFactory.create(self._el, self._tree).render();
+            var view = FoodParent.PostNoteViewFactory.create(self._el, self._tree, self._credential).render();
             FoodParent.View.addPopupView(view);
             FoodParent.View.setViewStatus(FoodParent.VIEW_STATUS.POST_NOTE);
         };

@@ -377,8 +377,19 @@ var FoodParent;
                     }
                     else if (el.hasClass('evt-post')) {
                         var tree = FoodParent.Model.getTrees().findWhere({ id: parseInt(options.tree) });
-                        console.log(tree);
-                        new FoodParent.RenderPostNoteViewCommand({ el: FoodParent.Setting.getPopWrapperElement(), tree: tree }).execute();
+                        FoodParent.Controller.checkIsLoggedIn(function () {
+                            FoodParent.Controller.checkIsAdmin(function () {
+                                new FoodParent.RenderPostNoteViewCommand({ el: FoodParent.Setting.getPopWrapperElement(), tree: tree, credential: CREDENTIAL_MODE.ADMIN }).execute();
+                            }, function () {
+                                new FoodParent.RenderPostNoteViewCommand({ el: FoodParent.Setting.getPopWrapperElement(), tree: tree, credential: CREDENTIAL_MODE.PARENT }).execute();
+                            }, function () {
+                                EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
+                            });
+                        }, function () {
+                            new FoodParent.RenderPostNoteViewCommand({ el: FoodParent.Setting.getPopWrapperElement(), tree: tree, credential: CREDENTIAL_MODE.GUEST }).execute();
+                        }, function () {
+                            EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
+                        });
                     }
                     break;
                 case VIEW_STATUS.TREES_TABLE:

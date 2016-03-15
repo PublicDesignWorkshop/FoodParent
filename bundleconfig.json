@@ -92,8 +92,10 @@
       "core/js/view/treegraphicviewadmin.js",
 
       // View - Note
-      "core/js/view/noteview.js",
-      "core/js/view/postview.js",
+      "core/js/view/postnote.js",
+      "core/js/view/postnoteadmin.js",
+      "core/js/view/postnoteguest.js",
+      "core/js/view/postnoteparent.js",
 
 
 

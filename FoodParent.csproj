@@ -273,10 +273,12 @@
     <TypeScriptCompile Include="core\js\view\mtreesview.ts" />
     <TypeScriptCompile Include="core\js\view\mtreeview.ts" />
     <TypeScriptCompile Include="core\js\view\navview.ts" />
-    <TypeScriptCompile Include="core\js\view\noteview.ts" />
+    <TypeScriptCompile Include="core\js\view\postnote.ts" />
     <TypeScriptCompile Include="core\js\view\passwordview.ts" />
     <TypeScriptCompile Include="core\js\view\popupview.ts" />
-    <TypeScriptCompile Include="core\js\view\postview.ts" />
+    <TypeScriptCompile Include="core\js\view\postnoteadmin.ts" />
+    <TypeScriptCompile Include="core\js\view\postnoteguest.ts" />
+    <TypeScriptCompile Include="core\js\view\postnoteparent.ts" />
     <TypeScriptCompile Include="core\js\view\template.ts" />
     <TypeScriptCompile Include="core\js\view\treegraphicview.ts" />
     <TypeScriptCompile Include="core\js\view\treegraphicviewadmin.ts" />

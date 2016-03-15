@@ -322,8 +322,24 @@
                         new NavigateCommand({ hash: 'tree', id: options.tree }).execute();
                     } else if (el.hasClass('evt-post')) {
                         var tree: Tree = Model.getTrees().findWhere({ id: parseInt(options.tree) });
-                        console.log(tree);
-                        new RenderPostNoteViewCommand({ el: Setting.getPopWrapperElement(), tree: tree }).execute();
+                        Controller.checkIsLoggedIn(function () {
+                            Controller.checkIsAdmin(function () {
+                                new RenderPostNoteViewCommand({ el: Setting.getPopWrapperElement(), tree: tree, credential: CREDENTIAL_MODE.ADMIN }).execute();
+                            }, function () {
+                                new RenderPostNoteViewCommand({ el: Setting.getPopWrapperElement(), tree: tree, credential: CREDENTIAL_MODE.PARENT }).execute();
+                            }, function () {
+                                EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
+                            });
+                        }, function () {
+                            new RenderPostNoteViewCommand({ el: Setting.getPopWrapperElement(), tree: tree, credential: CREDENTIAL_MODE.GUEST }).execute();
+                        }, function () {
+                            EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
+                        });
+
+
+
+                        
+                        
                     }
                     break;
                 case VIEW_STATUS.TREES_TABLE:

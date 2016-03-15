@@ -1,18 +1,39 @@
 ﻿module FoodParent {
+    export class PostNoteViewFactory {
+        private static _instance: PostNoteViewFactory = new PostNoteViewFactory();
+        private baseUrl: string;
+        constructor(args?: any) {
+            if (PostNoteViewFactory._instance) {
+                throw new Error("Error: Instantiation failed: Use PostNoteViewFactory.getInstance() instead of new.");
+            }
+            PostNoteViewFactory._instance = this;
+        }
+        public static getInstance(): PostNoteViewFactory {
+            return PostNoteViewFactory._instance;
+        }
+        public static create(el: JQuery, tree: Tree, credential: CREDENTIAL_MODE): PostNoteView {
+            var view: PostNoteView;
+            if (credential == CREDENTIAL_MODE.GUEST) {
+                view = new PostNoteViewForGuest({ el: el });
+            } else if (credential == CREDENTIAL_MODE.PARENT) {
+                view = new PostNoteViewForParent({ el: el });
+            } else if (credential == CREDENTIAL_MODE.ADMIN) {
+                view = new PostNoteViewForAdmin({ el: el });
+            }
+            view.setTree(tree);
+            return view;
+        }
+    }
+
     export class PostNoteView extends PopupView {
-        private static TAG: string = "PostNoteView - ";
-        private _tree: Tree;
-        private _note: Note;
-        private bProcessing: boolean = false;
+        protected static TAG: string = "PostNoteView - ";
+        protected _tree: Tree;
+        protected _note: Note;
         constructor(options?: Backbone.ViewOptions<Backbone.Model>) {
             super(options);
             var self: PostNoteView = this;
             self.bDebug = true;
             self.events = <any>{
-                "click .alert-confirm": "_mouseClick",
-                "click .top-right-button": "_mouseClick",
-                "click .image-group img": "_selectCoverImage",
-                "click .create-note": "_createNote",
             };
             self.delegateEvents();
         }
@@ -21,15 +42,15 @@
             self._tree = tree;
         }
         public render(args?: any): any {
-            if (this.bRendered) {
-                this.update(args);
-                return;
-            }
-            this.bRendered = true;
-            /////
+            super.render();
             var self: PostNoteView = this;
             if (self.bDebug) console.log(PostNoteView.TAG + "render()");
 
+
+
+
+
+            /*
             Controller.checkLogin(function (response1) {
                 var bLogin: boolean = false;
                 if (response1.result == true || response1.result == 'true') {   // Logged in
@@ -85,7 +106,7 @@
                 EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
             });
 
-            
+            */
             return self;
         }
 
@@ -100,7 +121,7 @@
             self.$('.input-rating').html(Math.ceil(self._note.getRate()).toFixed(2) + " / " + Setting.getMaxRating().toFixed(2));
 
             self.$('.input-rating-slider').html("");
-            var rate = rating(self.$('.input-rating-slider')[0], (self._note.getRate() + 1).toFixed(2), Setting.getMaxRating()+1, function (rate) {
+            var rate = rating(self.$('.input-rating-slider')[0], (self._note.getRate() + 1).toFixed(2), Setting.getMaxRating() + 1, function (rate) {
                 self._note.setRate(rate - 1);
                 self.renderNoteInfo();
             });

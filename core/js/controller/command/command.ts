@@ -259,14 +259,16 @@
     export class RenderPostNoteViewCommand implements Command {
         private _el: JQuery;
         private _tree: Tree;
+        private _credential: CREDENTIAL_MODE;
         constructor(args?: any) {
             var self: RenderPostNoteViewCommand = this;
             self._el = args.el;
             self._tree = args.tree;
+            self._credential = args.credential;
         }
         public execute(): any {
             var self: RenderPostNoteViewCommand = this;
-            var view: PopupView = PostNoteViewFactory.create(self._el, self._tree).render();
+            var view: PopupView = PostNoteViewFactory.create(self._el, self._tree, self._credential).render();
             View.addPopupView(view);
             View.setViewStatus(VIEW_STATUS.POST_NOTE);
         }
