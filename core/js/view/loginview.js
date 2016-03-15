@@ -78,7 +78,7 @@ var FoodParent;
         };
         LogInView.prototype._loginSubmit = function (event) {
             var self = this;
-            if ($('input[type="checkbox"][name="manager"]').prop('checked') == true) {
+            if (self.$('input[type="checkbox"][name="manager"]').prop('checked') == true) {
                 if (!isValidEmailAddress(self.$('.input-contact').val())) {
                     new FoodParent.RenderMessageViewCommand({ el: FoodParent.Setting.getMessageWrapperElement(), message: "Please put a valid <strong><i>e-mail address.", undoable: false }).execute();
                 }
@@ -86,15 +86,15 @@ var FoodParent;
                     new FoodParent.RenderMessageViewCommand({ el: FoodParent.Setting.getMessageWrapperElement(), message: "Please put a <strong>password</strong>, or uncheck <strong>manager option</strong>.", undoable: false }).execute();
                 }
                 else {
-                    FoodParent.EventHandler.handleMouseClick(self.$('.evt-submit'), self, { contact: $('.input-contact').val().trim(), password: $('.input-password').val().trim() });
+                    FoodParent.EventHandler.handleMouseClick(self.$('.evt-submit'), self, { contact: self.$('.input-contact').val().trim(), password: self.$('.input-password').val().trim() });
                 }
             }
             else {
-                if (!isValidEmailAddress($('.input-contact').val())) {
+                if (!isValidEmailAddress(self.$('.input-contact').val())) {
                     new FoodParent.RenderMessageViewCommand({ el: FoodParent.Setting.getMessageWrapperElement(), message: "Please put a valid <strong><i>e-mail address.", undoable: false }).execute();
                 }
                 else {
-                    FoodParent.EventHandler.handleMouseClick(self.$('.evt-submit'), self, { contact: $('.input-contact').val().trim(), password: $('.input-contact').val().trim() });
+                    FoodParent.EventHandler.handleMouseClick(self.$('.evt-submit'), self, { contact: self.$('.input-contact').val().trim(), password: self.$('.input-contact').val().trim() });
                 }
             }
         };

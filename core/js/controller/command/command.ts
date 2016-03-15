@@ -143,6 +143,7 @@
                 var view: TreeView = TreeViewFractory.create(self._el, self._id, self._credential).render();
                 View.addChild(view);
                 View.setTreeView(view);
+                console.log(View.getTreeView());
             }
         }
         public undo(): any {
@@ -237,23 +238,23 @@
         public undo(): any {}
     }
 
-    export class RenderImageNoteViewCommand implements Command {
+    export class RenderEditNoteViewCommand implements Command {
         private _el: JQuery;
         private _note: Note;
+        private _credential: CREDENTIAL_MODE;
         constructor(args?: any) {
-            var self: RenderImageNoteViewCommand = this;
+            var self: RenderEditNoteViewCommand = this;
             self._el = args.el;
             self._note = args.note;
+            self._credential = args.credential;
         }
         public execute(): any {
-            var self: RenderImageNoteViewCommand = this;
-            var view: PopupView = ImageNoteViewFactory.create(self._el, self._note).render();
+            var self: RenderEditNoteViewCommand = this;
+            var view: PopupView = EditNoteViewFactory.create(self._el, self._note, self._credential).render();
             View.addPopupView(view);
-            View.setViewStatus(VIEW_STATUS.IMAGENOTE_TREE);
+            View.setViewStatus(VIEW_STATUS.EDIT_NOTE);
         }
-        public undo(): any {
-
-        }
+        public undo(): any { }
     }
 
     export class RenderPostNoteViewCommand implements Command {
@@ -291,22 +292,9 @@
             var self: RenderAlertViewCommand = this;
             var view: PopupView = AlertViewFractory.create(self._el, self._errorMode, self._customMessage).render();
             View.addPopupView(view);
-            switch (self._errorMode) {
-                case ERROR_MODE.GEO_PERMISSION_ERROR:
-                    View.setViewStatus(VIEW_STATUS.GEO_ERROR);
-                    break;
-                case ERROR_MODE.SEVER_CONNECTION_ERROR:
-                    View.setViewStatus(VIEW_STATUS.NETWORK_ERROR);
-                    break;
-                case ERROR_MODE.SEVER_RESPONSE_ERROR:
-                    View.setViewStatus(VIEW_STATUS.SERVER_RESPONSE_ERROR);
-                    break;
-            }
-            
+            View.setViewStatus(VIEW_STATUS.ERROR);
         }
-        public undo(): any {
-
-        }
+        public undo(): any { }
     }
     
     
@@ -376,7 +364,7 @@
                     }
                 } else if (View.getViewStatus() == VIEW_STATUS.TREE) {
                     if (View.getTreeView()) {
-                        //View.getTreeView().renderMenu();
+                        View.getTreeView().update();
                     }
                 } else if (View.getViewStatus() == VIEW_STATUS.MANAGE_ADOPTION) {
                     if (FoodParent.View.getPopupView()) {

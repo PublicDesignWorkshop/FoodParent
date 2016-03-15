@@ -97,6 +97,11 @@
       "core/js/view/postnoteguest.js",
       "core/js/view/postnoteparent.js",
 
+      "core/js/view/editnote.js",
+      "core/js/view/editnoteguest.js",
+      "core/js/view/editnoteparent.js",
+      "core/js/view/editnoteadmin.js",
+
 
 
       "core/js/view/mtreesview.js",

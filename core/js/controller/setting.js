@@ -116,7 +116,7 @@ var FoodParent;
             return 5;
         };
         Setting.getLargeNumRecentActivitiesShown = function () {
-            return 10;
+            return 20;
         };
         Setting.getNoDataText = function () {
             return "No Data";

@@ -7,6 +7,8 @@
             self.bDebug = true;
             self.events = <any>{
                 "click .btn-date": "_applyDatePreset",
+                "click .evt-chart": "_showPostFromChart",
+                "click .evt-note": "_showPostFromList",
             };
             self.delegateEvents();
         }
@@ -45,6 +47,7 @@
                 self.renderFlagInfo(self._tree.getFlags());
                 self.renderOwnershipInfo(ownership);
                 self.renderRecentComments(self._tree);
+                self.renderRecentActivities(self._tree);
             }, function () {
                 EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
             });

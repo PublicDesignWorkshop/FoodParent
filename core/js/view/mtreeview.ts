@@ -245,6 +245,7 @@
                                 return;
                             }
                             self._note = Model.getNotes().findWhere({ id: tooltip.id });
+                            console.log(self._note);
                             if (self._note) {
                                 var template = _.template(Template.getToolTipTemplate());
                                 var data = {

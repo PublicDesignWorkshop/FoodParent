@@ -137,6 +137,7 @@ var FoodParent;
                 var view = FoodParent.TreeViewFractory.create(self._el, self._id, self._credential).render();
                 FoodParent.View.addChild(view);
                 FoodParent.View.setTreeView(view);
+                console.log(FoodParent.View.getTreeView());
             }
         };
         RenderTreeViewCommand.prototype.undo = function () {
@@ -225,23 +226,23 @@ var FoodParent;
         return RenderUnadoptTreeViewCommand;
     })();
     FoodParent.RenderUnadoptTreeViewCommand = RenderUnadoptTreeViewCommand;
-    var RenderImageNoteViewCommand = (function () {
-        function RenderImageNoteViewCommand(args) {
+    var RenderEditNoteViewCommand = (function () {
+        function RenderEditNoteViewCommand(args) {
             var self = this;
             self._el = args.el;
             self._note = args.note;
+            self._credential = args.credential;
         }
-        RenderImageNoteViewCommand.prototype.execute = function () {
+        RenderEditNoteViewCommand.prototype.execute = function () {
             var self = this;
-            var view = FoodParent.ImageNoteViewFactory.create(self._el, self._note).render();
+            var view = FoodParent.EditNoteViewFactory.create(self._el, self._note, self._credential).render();
             FoodParent.View.addPopupView(view);
-            FoodParent.View.setViewStatus(FoodParent.VIEW_STATUS.IMAGENOTE_TREE);
+            FoodParent.View.setViewStatus(FoodParent.VIEW_STATUS.EDIT_NOTE);
         };
-        RenderImageNoteViewCommand.prototype.undo = function () {
-        };
-        return RenderImageNoteViewCommand;
+        RenderEditNoteViewCommand.prototype.undo = function () { };
+        return RenderEditNoteViewCommand;
     })();
-    FoodParent.RenderImageNoteViewCommand = RenderImageNoteViewCommand;
+    FoodParent.RenderEditNoteViewCommand = RenderEditNoteViewCommand;
     var RenderPostNoteViewCommand = (function () {
         function RenderPostNoteViewCommand(args) {
             var self = this;
@@ -272,20 +273,9 @@ var FoodParent;
             var self = this;
             var view = FoodParent.AlertViewFractory.create(self._el, self._errorMode, self._customMessage).render();
             FoodParent.View.addPopupView(view);
-            switch (self._errorMode) {
-                case FoodParent.ERROR_MODE.GEO_PERMISSION_ERROR:
-                    FoodParent.View.setViewStatus(FoodParent.VIEW_STATUS.GEO_ERROR);
-                    break;
-                case FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR:
-                    FoodParent.View.setViewStatus(FoodParent.VIEW_STATUS.NETWORK_ERROR);
-                    break;
-                case FoodParent.ERROR_MODE.SEVER_RESPONSE_ERROR:
-                    FoodParent.View.setViewStatus(FoodParent.VIEW_STATUS.SERVER_RESPONSE_ERROR);
-                    break;
-            }
+            FoodParent.View.setViewStatus(FoodParent.VIEW_STATUS.ERROR);
         };
-        RenderAlertViewCommand.prototype.undo = function () {
-        };
+        RenderAlertViewCommand.prototype.undo = function () { };
         return RenderAlertViewCommand;
     })();
     FoodParent.RenderAlertViewCommand = RenderAlertViewCommand;
@@ -358,6 +348,7 @@ var FoodParent;
                 }
                 else if (FoodParent.View.getViewStatus() == FoodParent.VIEW_STATUS.TREE) {
                     if (FoodParent.View.getTreeView()) {
+                        FoodParent.View.getTreeView().update();
                     }
                 }
                 else if (FoodParent.View.getViewStatus() == FoodParent.VIEW_STATUS.MANAGE_ADOPTION) {

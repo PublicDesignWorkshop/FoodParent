@@ -294,18 +294,6 @@
             return template;
         }
 
-        public static getAlertViewTemplate(): string {
-            var template = '';
-            template += '<div id="wrapper-alert">';
-            template +=     '<div class="outer-frame">';
-            template +=         '<div class="inner-frame">';
-            template +=             '<%= content %>';
-            template +=         '</div>';
-            template +=     '</div>';
-            template += '</div>';
-            return template;
-        }
-
         public static getConfirmViewTemplate(): string {
             var template = '';
             template += '<div id="wrapper-confirm" class="frame-pop">';
@@ -330,6 +318,32 @@
             template +=         '<div class="info-button-group">';
             template +=             '<div class="btn-brown btn-medium evt-close">Cancel</div>';
             template +=         '</div>';   // end of .info-button-group
+            template +=     '</div>';
+            template += '</div>';
+            return template;
+        }
+
+        public static getAlertViewTemplate(): string {
+            var template = '';
+            template += '<div id="wrapper-confirm" class="frame-pop">';
+            template +=     '<div id="frame-confirm">';
+
+            template +=         '<div id="content-header">';
+            template +=             '<div class="text-header"><%= header %></div>';
+            template +=             '<div class="btn-close evt-close">';
+            template +=                 '<i class="fa fa-remove"></i>';
+            template +=             '</div>';   // end of top-right-button button-close
+            template +=         '</div>';   // end of #wrapper-header
+
+            template +=         '<div class="info-group">';
+            template +=             '<div class="text-label"><%= message %></div>';
+            template +=         '</div>';   // end of .info-group
+            template +=         '<hr />';
+
+            template +=         '<div class="info-button-group">';
+            template +=             '<div class="btn-brown btn-medium evt-close">Confirm</div>';
+            template +=         '</div>';   // end of .info-button-group
+
             template +=     '</div>';
             template += '</div>';
             return template;
@@ -985,13 +999,13 @@
             template +=         '<% if (person != undefined) { %>';
 
             template += '<% if (person.getName() != "") { %>';
-            template += '<div class="item-activity btn-comment" data-target="<%= note.getId() %>"><i class="fa fa-caret-right fa-1x"></i> <div><span class="treeinfocomment">"<%= note.getComment() %>"</span> by <i><%= person.getName() %></i> (<%= note.getFormattedDate() %>)</div></div>';
+            template += '<div class="item-activity btn-comment evt-note" data-target="<%= note.getId() %>"><i class="fa fa-caret-right fa-1x"></i> <div><span class="treeinfocomment">"<%= note.getComment() %>"</span> by <i><%= person.getName() %></i> (<%= note.getFormattedDate() %>)</div></div>';
             template += '<% } else { %>';
-            template += '<div class="item-activity btn-comment" data-target="<%= note.getId() %>"><i class="fa fa-caret-right fa-1x"></i> <div><span class="treeinfocomment">"<%= note.getComment() %>"</span> by <i><%= person.getContact() %></i> (<%= note.getFormattedDate() %>)</div></div>';
+            template += '<div class="item-activity btn-comment evt-note" data-target="<%= note.getId() %>"><i class="fa fa-caret-right fa-1x"></i> <div><span class="treeinfocomment">"<%= note.getComment() %>"</span> by <i><%= person.getContact() %></i> (<%= note.getFormattedDate() %>)</div></div>';
             template += '<% } %>';
             
             template +=         '<% } else { %>';
-            template +=             '<div class="item-activity btn-comment" data-target="<%= note.getId() %>"><i class="fa fa-caret-right fa-1x"></i> <div><span class="treeinfocomment">"<%= note.getComment() %>"</span> (<%= note.getFormattedDate() %>)</div></div>';
+            template +=             '<div class="item-activity btn-comment evt-note" data-target="<%= note.getId() %>"><i class="fa fa-caret-right fa-1x"></i> <div><span class="treeinfocomment">"<%= note.getComment() %>"</span> (<%= note.getFormattedDate() %>)</div></div>';
             template +=         '<% } %>';
             template +=     '<% } %>';
             template += '<% }); %>';
@@ -1544,7 +1558,7 @@
             template += '<div id="wrapper-tree">';
             template +=     '<div id="wrapper-graph">';
 
-            template +=         '<div id="wrapper-chart">';
+            template +=         '<div id="wrapper-chart" class="evt-chart">';
             template +=         '</div>';   // end of #wrapper-chart
             template +=         '<div id="wrapper-tooltip" class="hidden">';
             template +=         '</div>';
@@ -1843,10 +1857,8 @@
 
             template +=         '<div id="content-post">';
             template +=             '<div class="info-header"><i class="fa fa-star-half-o fa-1x"></i> Raiting</div>';
-            //template +=                 '<div class="info-group">';
-            template +=                     '<div class="input-rating"></div>';
-            template +=                     '<div class="input-rating-slider"></div>';
-            //template +=             '</div>';   // end of .info-header
+            template +=             '<div class="input-rating"></div>';
+            template +=             '<div class="input-rating-slider"></div>';
 
             template +=             '<hr />';
             template +=             '<div class="info-header"><i class="fa fa-comment fa-1x"></i> Comment</div>';
@@ -1880,76 +1892,6 @@
             template += '</div>';   // end of #wrapper-post-note
 
             return template;
-
-            /*
-            template += '<div id="wrapper-note">';
-            template += '<div class="outer-frame">';
-            template += '<div class="inner-frame">';
-            template += '<div class="wrapper-post-note-content">';
-
-            template += '<div class="image-wrapper">';
-
-
-            template += '<div class="wrapper-input-upload-picture">';
-            template += '<input class="input-upload-picture fileupload" type="file" accept="image/*" capture="camera" />';
-            template += '</div>';
-            template += '<div class="wrapper-uploading-picture hidden">';
-            template += '<div class="uploading-picture">Uploading...</div>';
-            template += '</div>';
-            template += '<div class="info-header"><i class="fa fa-image"></i> Select Cover Picture</div>';
-            template += '<div class="image-group"></div>';
-
-            template += '</div>';   // end of .image-wrapper
-
-
-            template += '<div class="wrapper-note-info">';
-
-            template += '<div class="name"><%= name %></div>';
-
-            template += '<div class="hr"><hr /></div>';
-            template += '<div class="info-header"><i class="fa fa-star-half-o"></i> Rating</div>';
-            template += '<div class="info-group">';
-            template += '<div class="input-rating"></div>';
-            template += '<div class="input-rating-slider"></div>';
-            template += '</div>';
-
-            template += '<div class="hr"><hr /></div>';
-            template += '<div class="info-header"><i class="fa fa-comment"></i> Comment</div>';
-            template += '<div class="info-group">';
-            template += '<div class="input-comment">&nbsp;</div>';
-            template += '</div>';
-
-            template += '<div class="hr"><hr /></div>';
-            template += '<div class="info-header"><i class="fa fa-calendar-o"></i> Date</div>';
-            template += '<div class="info-group">';
-            template += '<input type="text" class="form-control input-date" />';
-            template += '</div>';
-
-            template += '<div class="hr"><hr /></div>';
-            template += '<div class="info-header"><i class="fa fa-user"></i> Author\'s E-mail Address</div>';
-            template += '<div class="info-group">';
-            template += '<input type="email" name="email" class="form-control input-author" placeholder="e-mail address" autocomplete="on"/>';
-            template += '<div class="button-description2">* The <strong>e-mail address</strong> that you enter will be stored as a perspective foodparent. You can <strong>become a parent</strong> using the same e-mail address that you provide.</div>';
-            template += '</div>';
-
-            template += '<div class="hr"><hr /></div>';
-            template += '<div class="info-button-group">';
-            template += '<div class="button-outer-frame2 button3"><div class="button-inner-frame2 create-note"><i class="fa fa-save"></i> Save</div></div>';
-            template += '</div>';
-
-            template += '</div>';   // .wrapper-note-info
-
-            template += '</div>';   // end of .wrapper-post-note-content
-
-            template += '</div>';   // end of .inner-frame
-            template += '<div class="top-right-button button-close">';
-            template += '<i class="fa fa-remove fa-2x"></i>';
-            template += '</div>';   // end of top-right-button button-close
-            template += '</div>';   // end of .outer-frame
-            template += '</div>';   // end of #wrapper-note
-
-            return template;
-            */
         }
 
         public static getPostNoteViewForGuest(): string {
@@ -1987,10 +1929,8 @@
 
             template +=         '<div id="content-post">';
             template +=             '<div class="info-header"><i class="fa fa-star-half-o fa-1x"></i> Raiting</div>';
-            //template +=                 '<div class="info-group">';
-            template +=                     '<div class="input-rating"></div>';
-            template +=                     '<div class="input-rating-slider"></div>';
-            //template +=             '</div>';   // end of .info-header
+            template +=             '<div class="input-rating"></div>';
+            template +=             '<div class="input-rating-slider"></div>';
 
             template +=             '<hr />';
             template +=             '<div class="info-header"><i class="fa fa-comment fa-1x"></i> Comment</div>';
@@ -2029,6 +1969,167 @@
 
         public static getPostNoteViewForAdmin(): string {
             return Template.getPostNoteViewForParent();
+        }
+
+        public static getEditNoteViewForGuest(): string {
+            var template = '';
+            template += '<div id="wrapper-post-note" class="frame-pop">';
+
+            template +=     '<div id="content-header">';
+            template +=         '<div class="btn-post evt-prev">';
+            template +=             '<i class="fa fa-arrow-left"></i>';
+            template +=         '</div>';   // end of top-right-button button-close
+            template +=         '<div class="btn-post evt-next">';
+            template +=             '<i class="fa fa-arrow-right"></i>';
+            template +=         '</div>';   // end of top-right-button button-close
+            template +=         '<div class="text-header text-header2"><%= header %></div>';
+            template +=         '<div class="btn-close evt-close">';
+            template +=             '<i class="fa fa-remove"></i>';
+            template +=         '</div>';   // end of top-right-button button-close
+            template +=     '</div>';   // end of #wrapper-header
+
+            template +=     '<div class="info-group">';
+            template +=         '<div class="text-label center">Note for \'<%= name %>\' on <span class="text-note-date"></span>.</div>';
+            template +=     '</div>';   // end of .info-group
+
+            template +=     '<hr />';
+
+            template +=     '<div class="frame-flex-group">';
+            template +=         '<div id="content-image">';
+            /*
+            template +=             '<input class="input-upload-picture fileupload" type="file" accept="image/*" capture="camera" />';
+            template +=             '<div class="wrapper-uploading-picture hidden">';
+            template +=                 '<div class="uploading-picture">Uploading...</div>';
+            template +=             '</div>';   // end of .wrapper-uploading-picture
+
+            template +=             '<div class="info-group">';
+            template +=                 '<div class="text-label"><i class="fa fa-caret-right"></i> Click a picture to set as a cover picture.</div>';
+            template +=             '</div>';   // end of .info-group
+            */
+            template +=             '<div class="image-group">';
+            template +=             '</div>';   // end of .image-group
+
+            template +=         '</div>';   // end of #content-image
+
+            template +=         '<div id="content-post">';
+            template +=             '<div class="info-header"><i class="fa fa-star-half-o fa-1x"></i> Raiting</div>';
+            template +=             '<div class="input-rating"></div>';
+            template +=             '<div class="input-rating-slider"></div>';
+
+            template +=             '<hr />';
+            template +=             '<div class="info-header"><i class="fa fa-comment fa-1x"></i> Comment</div>';
+            template +=             '<div class="info-group">';
+            template +=                 '<div class="input-comment">&nbsp;</div>';
+            template +=             '</div>';
+
+            template +=             '<hr />';
+            template +=             '<div class="info-header"><i class="fa fa-calendar-o fa-1x"></i> Date</div>';
+            template +=             '<div class="info-group">';
+            template +=                 '<input type="text" class="form-control input-date" disabled />';
+            template +=             '</div>';
+
+            template +=             '<hr />';
+            template +=             '<div class="info-header"><i class="fa fa-user fa-1x"></i> Author</div>';
+            template +=             '<div class="info-group">';
+            template +=                 '<div class="input-contact">&nbsp;</div>';
+            template +=             '</div>';
+            /*
+            template +=             '<hr />';
+            template +=             '<div class="info-button-group">';
+            template +=                 '<div class="btn-brown btn-medium evt-submit">Save</div>';
+            template +=             '</div>';   // end of .info-button-group
+
+            template +=             '<div class="info-button-group">';
+            template +=                 '<div class="btn-brown btn-medium evt-close">Cancel</div>';
+            template +=             '</div>';   // end of .info-button-group
+            */
+            template +=         '</div>';   // end of #content-post
+            template +=     '</div>';   // end of .frame-flex-group
+            template += '</div>';   // end of #wrapper-post-note
+
+            return template;
+        }
+
+        public static getEditNoteViewForAdmin(): string {
+            var template = '';
+            template += '<div id="wrapper-post-note" class="frame-pop">';
+
+            template +=     '<div id="content-header">';
+            template +=         '<div class="btn-post evt-prev">';
+            template +=             '<i class="fa fa-arrow-left"></i>';
+            template +=         '</div>';   // end of top-right-button button-close
+            template +=         '<div class="btn-post evt-next">';
+            template +=             '<i class="fa fa-arrow-right"></i>';
+            template +=         '</div>';   // end of top-right-button button-close
+            template +=         '<div class="text-header text-header2"><%= header %></div>';
+            template +=         '<div class="btn-close evt-close">';
+            template +=             '<i class="fa fa-remove"></i>';
+            template +=         '</div>';   // end of top-right-button button-close
+            template +=     '</div>';   // end of #wrapper-header
+
+            template +=     '<div class="info-group">';
+            template +=         '<div class="text-label center">Note for \'<%= name %>\' on <span class="text-note-date"></span>.</div>';
+            template +=     '</div>';   // end of .info-group
+
+            template +=     '<hr />';
+
+            template +=     '<div class="frame-flex-group">';
+            template +=         '<div id="content-image">';
+            
+            template +=             '<input class="input-upload-picture fileupload" type="file" accept="image/*" capture="camera" />';
+            template +=             '<div class="wrapper-uploading-picture hidden">';
+            template +=                 '<div class="uploading-picture">Uploading...</div>';
+            template +=             '</div>';   // end of .wrapper-uploading-picture
+
+            template +=             '<div class="info-group">';
+            template +=                 '<div class="text-label"><i class="fa fa-caret-right"></i> Click a picture to set as a cover picture.</div>';
+            template +=             '</div>';   // end of .info-group
+            
+            template +=             '<div class="image-group">';
+            template +=             '</div>';   // end of .image-group
+
+            template +=         '</div>';   // end of #content-image
+
+            template +=         '<div id="content-post">';
+            template +=             '<div class="info-header"><i class="fa fa-star-half-o fa-1x"></i> Raiting</div>';
+            template +=             '<div class="input-rating"></div>';
+            template +=             '<div class="input-rating-slider"></div>';
+
+            template +=             '<hr />';
+            template +=             '<div class="info-header"><i class="fa fa-comment fa-1x"></i> Comment</div>';
+            template +=             '<div class="info-group">';
+            template +=                 '<div class="input-comment">&nbsp;</div>';
+            template +=             '</div>';
+
+            template +=             '<hr />';
+            template +=             '<div class="info-header"><i class="fa fa-calendar-o fa-1x"></i> Date</div>';
+            template +=             '<div class="info-group">';
+            template +=                 '<input type="text" class="form-control input-date" />';
+            template +=             '</div>';
+
+            template +=             '<hr />';
+            template +=             '<div class="info-header"><i class="fa fa-user fa-1x"></i> Author</div>';
+            template +=             '<div class="info-group">';
+            template +=                 '<div class="input-contact">&nbsp;</div>';
+            template +=             '</div>';
+            
+            template +=             '<hr />';
+            template +=             '<div class="info-group">';
+            template +=             '</div>';
+            template +=             '<div class="info-button-group delete-group">';
+            template +=                 '<div class="btn-brown btn-large evt-delete">Delete</div>';
+            template +=                 '<div class="text-label">*This action cannot be undone.</div>';
+            template +=             '</div>';   // end of .info-button-group
+            /*
+            template +=             '<div class="info-button-group">';
+            template +=                 '<div class="btn-brown btn-medium evt-close">Cancel</div>';
+            template +=             '</div>';   // end of .info-button-group
+            */
+            template +=         '</div>';   // end of #content-post
+            template +=     '</div>';   // end of .frame-flex-group
+            template += '</div>';   // end of #wrapper-post-note
+
+            return template;
         }
 
         public static getPostNoteViewTemplate2(): string {

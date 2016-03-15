@@ -247,13 +247,13 @@
         margin-left: 3px;
     }
     #wrapper-treedetail label:hover input[type="checkbox"] ~ i.fa {
-        color: #5e4e51;
+        color: #83a656;
     }
     #wrapper-treedetail label:hover {
-        color: #5e4e51;
+        color: #83a656;
     }
     #wrapper-treedetail label.active:hover {
-        color: #5e4e51;
+        color: #83a656;
     }
     #wrapper-treedetail .btn {
         padding: 2px 4px;
@@ -268,7 +268,6 @@
         font-weight: 400;
         display: -webkit-flex;
         display: flex;
-        cursor: pointer;
     }
     #wrapper-treedetail .item-activity i {
         padding: 2px 2px 0 0;
@@ -277,7 +276,13 @@
         font-weight: 500;
         line-height: 150%;
     }
-    
+    #wrapper-treedetail .btn-comment {
+        cursor: pointer;
+        border-radius: 2px;
+    }
+    #wrapper-treedetail .btn-comment:hover {
+        background-color: rgba(0, 0, 0, 0.1);
+    }
 }
 
 

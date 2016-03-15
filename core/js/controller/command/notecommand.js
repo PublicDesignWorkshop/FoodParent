@@ -320,8 +320,8 @@ var FoodParent;
         return CreateNote;
     })();
     FoodParent.CreateNote = CreateNote;
-    var DeleteNote = (function () {
-        function DeleteNote(args, success, error) {
+    var DeleteNoteCommand = (function () {
+        function DeleteNoteCommand(args, success, error) {
             var self = this;
             if (args != undefined && args.note != undefined) {
                 self._note = args.note;
@@ -333,7 +333,7 @@ var FoodParent;
                 self._error = error;
             }
         }
-        DeleteNote.prototype.execute = function () {
+        DeleteNoteCommand.prototype.execute = function () {
             var self = this;
             FoodParent.Model.getNotes().remove(self._note);
             self._note.destroy({
@@ -350,9 +350,8 @@ var FoodParent;
                 },
             });
         };
-        DeleteNote.prototype.undo = function () {
-        };
-        return DeleteNote;
+        DeleteNoteCommand.prototype.undo = function () { };
+        return DeleteNoteCommand;
     })();
-    FoodParent.DeleteNote = DeleteNote;
+    FoodParent.DeleteNoteCommand = DeleteNoteCommand;
 })(FoodParent || (FoodParent = {}));

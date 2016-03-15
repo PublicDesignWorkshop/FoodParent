@@ -117,7 +117,7 @@
             return 5;
         }
         public static getLargeNumRecentActivitiesShown(): number {
-            return 10;
+            return 20;
         }
         public static getNoDataText(): string {
             return "No Data";

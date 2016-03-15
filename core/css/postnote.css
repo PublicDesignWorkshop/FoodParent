@@ -22,6 +22,10 @@
     #wrapper-post-note #content-header .text-header {
         padding-left: 24px;
     }
+    #wrapper-post-note #content-header .text-header2 {
+        padding-left: 0;
+        padding-right: 24px;
+    }
     #wrapper-post-note .text-header {
         -webkit-flex-grow: 1;
         flex-grow: 1;
@@ -58,6 +62,8 @@
 
     #wrapper-post-note .text-label {
         padding: 2px 8px;
+        color: #5e4e51;
+        font-weight: 700;
     }
 
     #wrapper-post-note #content-image {
@@ -81,6 +87,7 @@
         max-width: 100%;
         margin: 4px 0;
         border: 8px solid rgba(255, 255, 255, 0.25);
+        cursor: pointer;
     }
     #wrapper-post-note .image-group img.selected {
         border: 8px solid rgba(132, 167, 87, 1);
@@ -109,6 +116,13 @@
         background-color: #eee;
         border: 1px solid #ccc;
         padding: 6px 12px;
+    }
+
+    #wrapper-post-note .btn-post{
+        cursor: pointer;
+    }
+    #wrapper-post-note .btn-post:first-child {
+        padding-right: 12px;
     }
 }
 

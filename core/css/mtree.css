@@ -104,34 +104,7 @@
         padding: 2px 8px;
     }
 
-    .content-tree-recentactivities .item-activity i {
-        padding: 2px 2px 0 0;
-    }
-
-    .content-tree-recentactivities .item-activity {
-        padding: 2px;
-        font-weight: 400;
-        display: flex;
-        font-size: small;
-        justify-content: flex-start;
-    }
-
-    .content-tree-recentactivities .item-activity div{
-        text-align: left;
-    }
-
-    .content-tree-recentactivities #list-activities {
-        padding: 8px 0 0 0;
-    }
-
-    .content-tree-recentcomments .item-activity div{
-        text-align: left;
-        width: 100%;
-    }
-
-    .content-tree-recentcomments #list-activities {
-        padding: 8px 0 0 0;
-    }
+    
 
     
 

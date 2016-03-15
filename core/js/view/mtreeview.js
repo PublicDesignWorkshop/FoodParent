@@ -144,6 +144,7 @@ var FoodParent;
                                 return;
                             }
                             self._note = FoodParent.Model.getNotes().findWhere({ id: tooltip.id });
+                            console.log(self._note);
                             if (self._note) {
                                 var template = _.template(FoodParent.Template.getToolTipTemplate());
                                 var data = {

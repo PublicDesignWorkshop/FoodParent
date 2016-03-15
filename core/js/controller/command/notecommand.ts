@@ -381,12 +381,12 @@
         }
     }
 
-    export class DeleteNote implements Command {
+    export class DeleteNoteCommand implements Command {
         private _success: Function;
         private _error: Function;
         private _note: Note;
         constructor(args?: any, success?: Function, error?: Function) {
-            var self: DeleteNote = this;
+            var self: DeleteNoteCommand = this;
             if (args != undefined && args.note != undefined) {
                 self._note = args.note;
             }
@@ -398,7 +398,7 @@
             }
         }
         public execute(): any {
-            var self: DeleteNote = this;
+            var self: DeleteNoteCommand = this;
             Model.getNotes().remove(self._note);
             self._note.destroy({
                     wait: true,
@@ -415,8 +415,6 @@
                 }
             );
         }
-        public undo(): any {
-            
-        }
+        public undo(): any { }
     }
 }

@@ -14,8 +14,9 @@
         NONE, HOME, CONFIRM,
         TREES, TREES_TABLE,
         TREE,
-        POST_NOTE,
-        PARENT_TREES, GEO_ERROR, NETWORK_ERROR, MANAGE_PEOPLE, MANAGE_ADOPTION, IMAGENOTE_TREE, MANAGE_DONATIONS, ADD_DONATION, DETAIL_DONATION, EDIT_DONATION, LOGIN, SERVER_RESPONSE_ERROR, SIGNUP, ADOPT_TREE, UNADOPT_TREE,
+        POST_NOTE, EDIT_NOTE,
+        ERROR,
+        PARENT_TREES, GEO_ERROR, NETWORK_ERROR, MANAGE_PEOPLE, MANAGE_ADOPTION, MANAGE_DONATIONS, ADD_DONATION, DETAIL_DONATION, EDIT_DONATION, LOGIN, SERVER_RESPONSE_ERROR, SIGNUP, ADOPT_TREE, UNADOPT_TREE,
         CHANGE_PASSWORD
     }
     export enum CREDENTIAL_MODE {
@@ -49,14 +50,11 @@
 
         public static handleKeyCode(code: number): void {
             var self: EventHandler = EventHandler._instance;
-            switch (View.getViewStatus()) {
-                case VIEW_STATUS.TREES:
-                    switch (code) {
-                        case 27:    // esc
-                            //View.getTreesView().removeTreeInfo();
-                            //View.getTreesView().closeMapFilter();
-                            break;
-                    }
+            switch (code) {
+                case 27:    // esc
+                    console.log("!");
+                    new RemovePopupViewCommand({ delay: Setting.getRemovePopupDuration() }).execute();
+                    new RefreshCurrentViewCommand().execute();
                     break;
             }
         }
@@ -182,8 +180,9 @@
             if (view instanceof NavView) {
                 if (el.hasClass('evt-title')) {
                     new ResetPopupViewCommand().execute();
-                    new NavigateCommand({ hash: 'trees', id: 0 }).execute();
-                    Backbone.history.loadUrl(Backbone.history.fragment);
+                    location.href = Setting.getBaseUrl() + "#trees/0";
+                    //new NavigateCommand({ hash: 'trees', id: 0 }).execute();
+                    //Backbone.history.loadUrl(Backbone.history.fragment);
                 } else if (el.hasClass('evt-trees')) {
                     if (View.getViewStatus() != VIEW_STATUS.TREES) {
                         new ResetPopupViewCommand().execute();
@@ -250,6 +249,12 @@
                     break;
                 case VIEW_STATUS.CONFIRM:
                     if (el.hasClass('evt-close') || el.hasClass('evt-submit')) {
+                        new RemovePopupViewCommand({ delay: Setting.getRemovePopupDuration() }).execute();
+                        new RefreshCurrentViewCommand().execute();
+                    }
+                    break;
+                case VIEW_STATUS.ERROR:
+                    if (el.hasClass('evt-close')) {
                         new RemovePopupViewCommand({ delay: Setting.getRemovePopupDuration() }).execute();
                         new RefreshCurrentViewCommand().execute();
                     }
@@ -357,10 +362,24 @@
                     }
                     break;
                 case VIEW_STATUS.TREE:
-                    if (el.hasClass('content-chart')) {
-                        if (options.note) {
-                            new RenderImageNoteViewCommand({ el: Setting.getPopWrapperElement(), note: options.note }).execute();
-                        }
+                    if (el.hasClass('evt-note') || el.hasClass('evt-chart')) {
+                        var note: Note = Model.getNotes().findWhere({ id: options.note });
+                        Controller.checkIsLoggedIn(function () {
+                            Controller.checkIsAdmin(function () {
+                                new RenderEditNoteViewCommand({ el: Setting.getPopWrapperElement(), note: note, credential: CREDENTIAL_MODE.ADMIN }).execute();
+                            }, function () {
+                                new RenderEditNoteViewCommand({ el: Setting.getPopWrapperElement(), note: note, credential: CREDENTIAL_MODE.PARENT }).execute();
+                            }, function () {
+                                EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
+                            });
+                        }, function () {
+                            new RenderEditNoteViewCommand({ el: Setting.getPopWrapperElement(), note: note, credential: CREDENTIAL_MODE.GUEST }).execute();
+                        }, function () {
+                            EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
+                        });
+                        //if (options.note) {
+                        //    new RenderImageNoteViewCommand({ el: Setting.getPopWrapperElement(), note: options.note }).execute();
+                        //}
                     } else if (el.hasClass('button-manage-adoption')) {
                         new RenderManageAdoptionViewCommand({ el: Setting.getPopWrapperElement(), tree: options.tree.getId() }).execute();
                     } else if (el.hasClass('button-new-note')) {
@@ -389,12 +408,21 @@
                         });
                     }
                     break;
-                case VIEW_STATUS.IMAGENOTE_TREE:
-                    if (el.hasClass('button-close')) {
-                        new RemoveAlertViewCommand({ delay: Setting.getRemovePopupDuration() }).execute();
-                        if (View.getDetailTreeView()) {
-                            (<DetailTreeGraphicView>View.getDetailTreeView()).refreshTreeInfo();
-                        }
+                case VIEW_STATUS.EDIT_NOTE:
+                    if (el.hasClass('evt-close')) {
+                        new RemovePopupViewCommand({ delay: Setting.getRemovePopupDuration() }).execute();
+                        new RefreshCurrentViewCommand().execute();
+                    } else if (el.hasClass('evt-delete')) {
+                        var note: Note = Model.getNotes().findWhere({ id: parseInt(options.note) });
+                        var tree: Tree = Model.getTrees().findWhere({ id: note.getTreeId() });
+                        var food: Food = Model.getFoods().findWhere({ id: tree.getFoodId() });
+                        EventHandler.handleNoteData(note, DATA_MODE.DELETE, {}, function () {
+                            EventHandler.handleDataChange("Note of <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has been deleted successfully.", true);
+                            new RemovePopupViewCommand({ delay: Setting.getRemovePopupDuration() }).execute();
+                            new RefreshCurrentViewCommand().execute();
+                        }, function () {
+                            EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
+                        });
                     }
                     break;
                 case VIEW_STATUS.POST_NOTE:
@@ -670,8 +698,7 @@
                     new CreateNote({ note: note }, success, error).execute();
                     break;
                 case DATA_MODE.DELETE:
-                    View.popViewStatus();
-                    var command: Command = new DeleteNote({ note: note }, success, error);
+                    var command: Command = new DeleteNoteCommand({ note: note }, success, error);
                     new RenderConfirmViewCommand({ el: Setting.getPopWrapperElement(), message: "Are you sure to delete this note?", command: command }).execute();
                     break;
             }

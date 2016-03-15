@@ -42,6 +42,7 @@ var FoodParent;
                     self.renderFlagInfo(self._tree.getFlags());
                     self.renderOwnershipInfo(ownership);
                     self.renderRecentComments(self._tree);
+                    self.renderRecentActivities(self._tree);
                 }, function () {
                     FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
                 });
@@ -50,6 +51,8 @@ var FoodParent;
             self.bDebug = true;
             self.events = {
                 "click .btn-date": "_applyDatePreset",
+                "click .evt-chart": "_showPostFromChart",
+                "click .evt-note": "_showPostFromList",
             };
             self.delegateEvents();
         }

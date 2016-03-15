@@ -1,6 +1,84 @@
-﻿
+﻿module FoodParent {
+    export class AlertView extends PopupView {
+        private static TAG: string = "AlertView - ";
+        private _errorMode: ERROR_MODE;
+        private _customMessage: string;
+        constructor(options?: Backbone.ViewOptions<Backbone.Model>) {
+            super(options);
+            var self: AlertView = this;
+            self.bDebug = true;
+            self.events = <any>{
+                "click .evt-close": "_mouseClick",
+            };
+            self.delegateEvents();
+        }
+        public setErrorMode(errorMode: ERROR_MODE): void {
+            var self: AlertView = this;
+            self._errorMode = errorMode;
+        }
+        public setCustomMessage(message: string): void {
+            var self: AlertView = this;
+            self._customMessage = message;
+        }
+        public render(args?: any): any {
+            super.render(args);
+            var self: AlertView = this;
+            if (self.bDebug) console.log(AlertView.TAG + "render()");
+            
+            var tag: string = "";
+            switch (self._errorMode) {
+                case ERROR_MODE.GEO_PERMISSION_ERROR:
+                    tag += "<p>The device cannot find its's location information.<br />Please turn Geolocation setting on & refresh the page.</p>"
+                    break;
+                case ERROR_MODE.SEVER_CONNECTION_ERROR:
+                    tag += "<p>There is a server connection error.<br/>If the issue keeps occuring,";
+                    tag += "<br/>please contact <a href='mailto:" + Setting.getDevContact() + "'>" + Setting.getDevContact() + "</a>.</p>";
+                    break;
+                case ERROR_MODE.SEVER_RESPONSE_ERROR:
+                    tag += "<p>" + self._customMessage;
+                    tag += "<br/>please contact <a href='mailto:" + Setting.getDevContact() + "'>" + Setting.getDevContact() + "</a>.</p>";
+                    break;
+            }
+            var template = _.template(Template.getAlertViewTemplate());
+            self.$el.append(template({
+                header: "Error!",
+                message: tag,
+            }));
+            self.setElement(self.$('#wrapper-confirm'));
+            self.setVisible();
 
-module FoodParent {
+            return self;
+        }
+        private _mouseClick(event: Event): void {
+            var self: AlertView = this;
+            EventHandler.handleMouseClick($(event.currentTarget), self);
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     export class ImageNoteViewFactory {
         private static _instance: ImageNoteViewFactory = new ImageNoteViewFactory();
@@ -401,100 +479,4 @@ module FoodParent {
             Setting.getPopWrapperElement().addClass('hidden');
         }
     }
-
-    export class AlertView extends PopupView {
-        private static TAG: string = "AlertView - ";
-        private _errorMode: ERROR_MODE;
-        private _customMessage: string;
-        constructor(options?: Backbone.ViewOptions<Backbone.Model>) {
-            super(options);
-            var self: AlertView = this;
-            self.bDebug = true;
-            //$(window).resize(_.debounce(that.customResize, Setting.getInstance().getResizeTimeout()));
-            self.events = <any>{
-                "click .alert-confirm": "_mouseClick",
-                "click .alert-cancel": "_mouseClick",
-            };
-            self.delegateEvents();
-        }
-        public setErrorMode(errorMode: ERROR_MODE): void {
-            var self: AlertView = this;
-            self._errorMode = errorMode;
-        }
-        public setCustomMessage(message: string): void {
-            var self: AlertView = this;
-            self._customMessage = message;
-        }
-        public render(args?: any): any {
-            if (this.bRendered) {
-                this.update(args);
-                return;
-            }
-            this.bRendered = true;
-            /////
-            var self: AlertView = this;
-            if (self.bDebug) console.log(AlertView.TAG + "render()");
-
-            var template = _.template(Template.getAlertViewTemplate());
-            var data: any;
-            var tag: string = "";
-            switch (self._errorMode) {
-                case ERROR_MODE.GEO_PERMISSION_ERROR:
-                    tag += "<p>The device cannot find its's location information.<br />Please turn Geolocation setting on & refresh the page.</p>"
-                    tag += "<div class='button-outer-frame button1'><div class='button-inner-frame alert-confirm'>Confirm</div></div>";
-                    break;
-                case ERROR_MODE.SEVER_CONNECTION_ERROR:
-                    tag += "<p>There is a server connection error.<br/>If the issue won't be solved by the refreshing page,";
-                    tag += "<br/>please contact <a href='mailto:" + Setting.getDevContact() + "'>" + Setting.getDevContact() + "</a>.</p>";
-                    tag += "<div class='button-outer-frame button1'><div class='button-inner-frame alert-confirm'>Confirm</div></div>";
-                    break;
-                case ERROR_MODE.SEVER_RESPONSE_ERROR:
-                    tag += "<p>" + self._customMessage;
-                    tag += "<br/>please contact <a href='mailto:" + Setting.getDevContact() + "'>" + Setting.getDevContact() + "</a>.</p>";
-                    tag += "<div class='button-outer-frame button1'><div class='button-inner-frame alert-confirm'>Confirm</div></div>";
-                    break;
-            }
-            data = {
-                content: tag,
-            }
-            self.$el.html(template(data));
-            self.setElement(self.$('#wrapper-alert'));
-
-            self.setVisible();
-
-            return self;
-        }
-
-        public update(args?: any): any {
-            if (!this.bRendered) {
-                this.render(args);
-                return;
-            }
-            /////
-            var self: AlertView = this;
-            if (self.bDebug) console.log(AlertView.TAG + "update()");
-            return self;
-        }
-        private _mouseEnter(event: Event): void {
-            var self: AlertView = this;
-            EventHandler.handleMouseEnter($(event.currentTarget), self);
-        }
-        private _mouseClick(event: Event): void {
-            var self: AlertView = this;
-            EventHandler.handleMouseClick($(event.currentTarget), self);
-        }
-
-        public setVisible(): void {
-            var self: AlertView = this;
-            Setting.getPopWrapperElement().removeClass('hidden');
-        }
-        public setInvisible(): void {
-            var self: AlertView = this;
-            Setting.getPopWrapperElement().addClass('hidden');
-        }
-    }
-
-    
-
-    
 }

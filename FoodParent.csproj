@@ -256,6 +256,10 @@
     <TypeScriptCompile Include="core\js\view\adoptview.ts" />
     <TypeScriptCompile Include="core\js\view\alertview.ts" />
     <TypeScriptCompile Include="core\js\view\confirmview.ts" />
+    <TypeScriptCompile Include="core\js\view\editnote.ts" />
+    <TypeScriptCompile Include="core\js\view\editnoteadmin.ts" />
+    <TypeScriptCompile Include="core\js\view\editnoteguest.ts" />
+    <TypeScriptCompile Include="core\js\view\editnoteparent.ts" />
     <TypeScriptCompile Include="core\js\view\gridformat\donationgridformat.ts" />
     <TypeScriptCompile Include="core\js\view\gridformat\locationgridformat.ts" />
     <TypeScriptCompile Include="core\js\view\loginview.ts" />
