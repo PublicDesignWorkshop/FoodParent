@@ -75,7 +75,7 @@
       "core/js/view/popupview.js",
       "core/js/view/alertview.js",
       "core/js/view/loginview.js",
-      "core/js/view/postview.js",
+
       "core/js/view/confirmview.js",
 
       // View - Trees
@@ -90,6 +90,10 @@
       "core/js/view/treegraphicviewguest.js",
       "core/js/view/treegraphicviewparent.js",
       "core/js/view/treegraphicviewadmin.js",
+
+      // View - Note
+      "core/js/view/noteview.js",
+      "core/js/view/postview.js",
 
 
 

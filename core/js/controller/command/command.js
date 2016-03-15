@@ -254,8 +254,7 @@ var FoodParent;
             FoodParent.View.addPopupView(view);
             FoodParent.View.setViewStatus(FoodParent.VIEW_STATUS.POST_NOTE);
         };
-        RenderPostNoteViewCommand.prototype.undo = function () {
-        };
+        RenderPostNoteViewCommand.prototype.undo = function () { };
         return RenderPostNoteViewCommand;
     })();
     FoodParent.RenderPostNoteViewCommand = RenderPostNoteViewCommand;

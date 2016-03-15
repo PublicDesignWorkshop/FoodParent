@@ -36,7 +36,7 @@
             var self: LogInView = this;
             if (self.bDebug) console.log(LogInView.TAG + "render()");
             var template = _.template(Template.getLogInViewTemplate());
-            self.$el.html(template({
+            self.$el.append(template({
                 header: 'Parent Sign-In',
             }));
             self.setElement($('#wrapper-login'));

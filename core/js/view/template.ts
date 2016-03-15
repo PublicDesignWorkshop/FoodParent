@@ -485,7 +485,7 @@
             template += '</div>';
 
             template += '<div class="hr"><hr /></div>';
-            template += '<div class="info-header"><i class="fa fa-leaf fa-1x"></i> Recent Comments</div>';
+            template += '<div class="info-header"><i class="fa fa-leaf fa-1x"></i> Recent Notes</div>';
             template += '<div id="list-activities" class="info-group">';
             template += '<div>&nbsp;</div>';
             template += '</div>';
@@ -573,7 +573,7 @@
             template += '</div>';
 
             template += '<div class="hr"><hr /></div>';
-            template += '<div class="info-header"><i class="fa fa-leaf fa-1x"></i> Recent Comments</div>';
+            template += '<div class="info-header"><i class="fa fa-leaf fa-1x"></i> Recent Notes</div>';
             template += '<div id="list-activities" class="info-group">';
             template += '<div>&nbsp;</div>';
             template += '</div>';
@@ -621,7 +621,7 @@
             template += '</div>';
 
             template += '<div class="hr"><hr /></div>';
-            template += '<div class="info-header"><i class="fa fa-leaf fa-1x"></i> Recent Comments</div>';
+            template += '<div class="info-header"><i class="fa fa-leaf fa-1x"></i> Recent Notes</div>';
             template += '<div id="list-comments" class="info-group">';
             template +=     '<div>&nbsp;</div>';
             template += '</div>';
@@ -670,7 +670,7 @@
             template += '</div>';
 
             template += '<div class="hr"><hr /></div>';
-            template += '<div class="info-header"><i class="fa fa-leaf fa-1x"></i> Recent Comments</div>';
+            template += '<div class="info-header"><i class="fa fa-leaf fa-1x"></i> Recent Notes</div>';
             template += '<div id="list-comments" class="info-group">';
             template +=     '<div>&nbsp;</div>';
             template += '</div>';
@@ -720,7 +720,7 @@
             template += '</div>';
 
             template += '<div class="hr"><hr /></div>';
-            template += '<div class="info-header"><i class="fa fa-leaf fa-1x"></i> Recent Comments</div>';
+            template += '<div class="info-header"><i class="fa fa-leaf fa-1x"></i> Recent Notes</div>';
             template += '<div id="list-comments" class="info-group">';
             template +=     '<div>&nbsp;</div>';
             template += '</div>';
@@ -798,7 +798,7 @@
             template += '</div>';
 
             template += '<div class="hr"><hr /></div>';
-            template += '<div class="info-header"><i class="fa fa-leaf fa-1x"></i> Recent Comments</div>';
+            template += '<div class="info-header"><i class="fa fa-leaf fa-1x"></i> Recent Notes</div>';
             template += '<div id="list-comments" class="info-group">';
             template +=     '<div>&nbsp;</div>';
             template += '</div>';
@@ -874,7 +874,7 @@
             template += '</div>';
 
             template += '<div class="hr"><hr /></div>';
-            template += '<div class="info-header"><i class="fa fa-leaf fa-1x"></i> Recent Comments</div>';
+            template += '<div class="info-header"><i class="fa fa-leaf fa-1x"></i> Recent Notes</div>';
             template += '<div id="list-comments" class="info-group">';
             template +=     '<div>&nbsp;</div>';
             template += '</div>';
@@ -904,7 +904,7 @@
             template += '</div>';
 
             template += '<div class="hr"><hr /></div>';
-            template += '<div class="info-header"><i class="fa fa-leaf fa-1x"></i> Recent Comments</div>';
+            template += '<div class="info-header"><i class="fa fa-leaf fa-1x"></i> Recent Notes</div>';
             template += '<div id="list-activities" class="info-group">';
             template += '<div>&nbsp;</div>';
             template += '</div>';
@@ -938,7 +938,7 @@
             template += '</div>';
 
             template += '<div class="hr"><hr /></div>';
-            template += '<div class="info-header"><i class="fa fa-leaf fa-1x"></i> Recent Comments</div>';
+            template += '<div class="info-header"><i class="fa fa-leaf fa-1x"></i> Recent Notes</div>';
             template += '<div id="list-activities" class="info-group">';
             template += '<div>&nbsp;</div>';
             template += '</div>';
@@ -1511,7 +1511,7 @@
             template += '</div>';   // end of .content-tree-info
 
             template += '<div class="content-tree-recentcomments">';
-            template += '<div class="info-header"><i class="fa fa-comments fa-1x"></i> Recent Comments</div>';
+            template += '<div class="info-header"><i class="fa fa-comments fa-1x"></i> Recent Notes</div>';
             template += '<div id="list-comments" class="info-group">';
             template += '</div>';
             template += '</div>';   // end of .content-tree-recentcomments
@@ -1571,7 +1571,7 @@
             template +=         '</div>';   // end of .content-tree-info
 
             template +=         '<div class="content-tree-recentcomments">';
-            template +=             '<div class="text-header"><i class="fa fa-comments fa-1x"></i> Recent Comments</div>';
+            template +=             '<div class="text-header"><i class="fa fa-comments fa-1x"></i> Recent Notes</div>';
             template +=             '<div id="list-comments" class="info-group">';
             template +=             '</div>';   // end of #list-comments
             template +=         '</div>';   // end of .content-tree-recentcomments

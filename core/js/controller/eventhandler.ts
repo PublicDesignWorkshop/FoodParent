@@ -14,7 +14,8 @@
         NONE, HOME, CONFIRM,
         TREES, TREES_TABLE,
         TREE,
-        PARENT_TREES, GEO_ERROR, NETWORK_ERROR, MANAGE_PEOPLE, MANAGE_ADOPTION, IMAGENOTE_TREE, POST_NOTE, MANAGE_DONATIONS, ADD_DONATION, DETAIL_DONATION, EDIT_DONATION, LOGIN, SERVER_RESPONSE_ERROR, SIGNUP, ADOPT_TREE, UNADOPT_TREE,
+        POST_NOTE,
+        PARENT_TREES, GEO_ERROR, NETWORK_ERROR, MANAGE_PEOPLE, MANAGE_ADOPTION, IMAGENOTE_TREE, MANAGE_DONATIONS, ADD_DONATION, DETAIL_DONATION, EDIT_DONATION, LOGIN, SERVER_RESPONSE_ERROR, SIGNUP, ADOPT_TREE, UNADOPT_TREE,
         CHANGE_PASSWORD
     }
     export enum CREDENTIAL_MODE {
@@ -323,6 +324,10 @@
                         });
                     } else if (el.hasClass('evt-detail')) {
                         new NavigateCommand({ hash: 'tree', id: options.tree }).execute();
+                    } else if (el.hasClass('evt-post')) {
+                        var tree: Tree = Model.getTrees().findWhere({ id: parseInt(options.tree) });
+                        console.log(tree);
+                        new RenderPostNoteViewCommand({ el: Setting.getPopWrapperElement(), tree: tree }).execute();
                     }
                     break;
                 case VIEW_STATUS.TREES_TABLE:

@@ -36,13 +36,13 @@ var FoodParent;
         VIEW_STATUS[VIEW_STATUS["TREES"] = 3] = "TREES";
         VIEW_STATUS[VIEW_STATUS["TREES_TABLE"] = 4] = "TREES_TABLE";
         VIEW_STATUS[VIEW_STATUS["TREE"] = 5] = "TREE";
-        VIEW_STATUS[VIEW_STATUS["PARENT_TREES"] = 6] = "PARENT_TREES";
-        VIEW_STATUS[VIEW_STATUS["GEO_ERROR"] = 7] = "GEO_ERROR";
-        VIEW_STATUS[VIEW_STATUS["NETWORK_ERROR"] = 8] = "NETWORK_ERROR";
-        VIEW_STATUS[VIEW_STATUS["MANAGE_PEOPLE"] = 9] = "MANAGE_PEOPLE";
-        VIEW_STATUS[VIEW_STATUS["MANAGE_ADOPTION"] = 10] = "MANAGE_ADOPTION";
-        VIEW_STATUS[VIEW_STATUS["IMAGENOTE_TREE"] = 11] = "IMAGENOTE_TREE";
-        VIEW_STATUS[VIEW_STATUS["POST_NOTE"] = 12] = "POST_NOTE";
+        VIEW_STATUS[VIEW_STATUS["POST_NOTE"] = 6] = "POST_NOTE";
+        VIEW_STATUS[VIEW_STATUS["PARENT_TREES"] = 7] = "PARENT_TREES";
+        VIEW_STATUS[VIEW_STATUS["GEO_ERROR"] = 8] = "GEO_ERROR";
+        VIEW_STATUS[VIEW_STATUS["NETWORK_ERROR"] = 9] = "NETWORK_ERROR";
+        VIEW_STATUS[VIEW_STATUS["MANAGE_PEOPLE"] = 10] = "MANAGE_PEOPLE";
+        VIEW_STATUS[VIEW_STATUS["MANAGE_ADOPTION"] = 11] = "MANAGE_ADOPTION";
+        VIEW_STATUS[VIEW_STATUS["IMAGENOTE_TREE"] = 12] = "IMAGENOTE_TREE";
         VIEW_STATUS[VIEW_STATUS["MANAGE_DONATIONS"] = 13] = "MANAGE_DONATIONS";
         VIEW_STATUS[VIEW_STATUS["ADD_DONATION"] = 14] = "ADD_DONATION";
         VIEW_STATUS[VIEW_STATUS["DETAIL_DONATION"] = 15] = "DETAIL_DONATION";
@@ -379,6 +379,11 @@ var FoodParent;
                     }
                     else if (el.hasClass('evt-detail')) {
                         new FoodParent.NavigateCommand({ hash: 'tree', id: options.tree }).execute();
+                    }
+                    else if (el.hasClass('evt-post')) {
+                        var tree = FoodParent.Model.getTrees().findWhere({ id: parseInt(options.tree) });
+                        console.log(tree);
+                        new FoodParent.RenderPostNoteViewCommand({ el: FoodParent.Setting.getPopWrapperElement(), tree: tree }).execute();
                     }
                     break;
                 case VIEW_STATUS.TREES_TABLE:

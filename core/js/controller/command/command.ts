@@ -270,9 +270,7 @@
             View.addPopupView(view);
             View.setViewStatus(VIEW_STATUS.POST_NOTE);
         }
-        public undo(): any {
-
-        }
+        public undo(): any { }
     }
 
     export class RenderAlertViewCommand implements Command {
