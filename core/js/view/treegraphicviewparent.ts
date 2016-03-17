@@ -9,9 +9,58 @@
                 "click .btn-date": "_applyDatePreset",
                 "click .evt-chart": "_showPostFromChart",
                 "click .evt-note": "_showPostFromList",
+                "click .btn-action": "_mouseClick",
             };
             self.delegateEvents();
         }
+        public render(args?: any): any {
+            super.render(args);
+            var self: TreeGraphicViewForParent = this;
+            if (self.bDebug) console.log(TreeGraphicViewForParent.TAG + "render()");
+            var template = _.template(Template.getTreeGraphicViewTemplateForParent());
+            self.$el.html(template({}));
+            self.setElement(self.$('#wrapper-tree'));
+
+            Controller.fetchAllTrees(function () {
+                self.renderChartDatePicker();
+                self.renderTreeInfo();
+                self.updateAdoptionButton();
+            }, function () {
+                EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
+            });
+            return self;
+        }
+        public update(args?: any): any {
+            super.update(args);
+            var self: TreeGraphicViewForParent = this;
+            // Render tree chart
+            self.renderTreeChart(self._tree, self._startDate, self._endDate);
+            self.updateAdoptionButton();
+        }
+
+        public updateAdoptionButton = () => {
+            var self: TreeGraphicViewForParent = this;
+            Controller.checkIsLoggedIn(function (response) {
+                var adopt: Adopt = Model.getAdopts().findWhere({ tree: self._tree.getId(), parent: parseInt(response.id) });
+                var food: Food = Model.getFoods().findWhere({ id: self._tree.getFoodId() });
+                var ownership: Ownership = Model.getOwnerships().findWhere({ id: self._tree.getOwnershipId() });
+                if (adopt) {
+                    self.$('.btn-adoption').removeClass('evt-adopt');
+                    self.$('.btn-adoption').addClass('evt-unadopt');
+                    self.$('.btn-adoption').html('<i class="fa fa-user-times fa-1x"></i> Unadopt Tree');
+                } else {
+                    self.$('.btn-adoption').removeClass('evt-unadopt');
+                    self.$('.btn-adoption').addClass('evt-adopt');
+                    self.$('.btn-adoption').html('<i class="fa fa-user-plus fa-1x"></i> Adopt Tree');
+                }
+            }, function (response) {
+                // Handled as refreshing the page if it's not logged in
+                new RenderMessageViewCommand({ el: Setting.getMessageWrapperElement(), message: Setting.getErrorMessage(response.code), undoable: false }).execute();
+            }, function () {
+                EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
+            });
+        }
+
         public renderTreeInfo = () => {
             var self: TreeGraphicViewForParent = this;
             self._tree = Model.getTrees().findWhere({ id: self._id });

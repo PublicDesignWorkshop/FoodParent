@@ -11,8 +11,25 @@
                 "click .evt-note": "_showPostFromList",
                 "click .flag-radio": "_updateFlag",
                 "click .ownership-radio": "_updateOwnership",
+                "click .btn-action": "_mouseClick",
             };
             self.delegateEvents();
+        }
+        public render(args?: any): any {
+            super.render(args);
+            var self: TreeGraphicViewForAdmin = this;
+            if (self.bDebug) console.log(TreeGraphicViewForAdmin.TAG + "render()");
+            var template = _.template(Template.getTreeGraphicViewTemplateForAdmin());
+            self.$el.html(template({}));
+            self.setElement(self.$('#wrapper-tree'));
+
+            Controller.fetchAllTrees(function () {
+                self.renderChartDatePicker();
+                self.renderTreeInfo();
+            }, function () {
+                EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
+            });
+            return self;
         }
         public renderTreeInfo = (tree?: Tree) => {
             var self: TreeGraphicViewForAdmin = this;

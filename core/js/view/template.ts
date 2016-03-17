@@ -1553,7 +1553,7 @@
             return template;
         }
 
-        public static getTreeGraphicViewTemplate(): string {
+        public static getTreeGraphicViewTemplateForGuest(): string {
             var template = '';
             template += '<div id="wrapper-tree">';
             template +=     '<div id="wrapper-graph">';
@@ -1564,6 +1564,116 @@
             template +=         '</div>';
 
             template +=         '<div id="content-treemenu">';
+            template +=             '<div class="info-button-group">';
+            template +=                 '<div class="btn-brown btn-small left btn-action evt-map"><i class="fa fa-map-marker fa-1x"></i> Back To Map</div>';
+            template +=                 '<div class="btn-brown btn-small left btn-action evt-post"><i class="fa fa-comment fa-1x"></i> New Post</div>';
+            template +=             '</div>';   // end of .info-button-group
+            template +=         '</div>';   // end of #content-treeinfo
+
+            template +=         '<div id="wrapper-date-select">';
+            template +=             '<div class="wrapper-date-preset">';
+            template +=                 '<div class="btn-brown btn-small btn-date 2years">2 Year</div>';
+            template +=                 '<div class="btn-brown btn-small btn-date 1years">1 Year</div>';
+            template +=                 '<div class="btn-brown btn-small btn-date 6months">6 months</div>';
+            template +=                 '<div class="btn-brown btn-small btn-date 3months">3 months</div>';
+            template +=                 '<div class="btn-brown btn-small btn-date 1month">1 month</div>';
+            template +=             '</div>';
+            template +=             '<div class="wrapper-date-select-item"><input type="text" class="form-control tree-graph-start" /></div>';
+            template +=             '<div class="wrapper-date-select-item"><span class="date-select-label">~</span><input type="text" class="form-control tree-graph-end" /></div>';
+            template +=         '</div>';
+
+            template +=     '</div>';   // end of #wrapper-graph
+
+            template +=     '<div id="wrapper-treedetail">';
+            template +=         '<div class="content-tree-basicinfo">';
+            template +=         '</div>';   // end of .content-tree-info
+
+            template +=         '<div class="content-tree-recentcomments">';
+            template +=             '<div class="text-header"><i class="fa fa-comments fa-1x"></i> Recent Notes</div>';
+            template +=             '<div id="list-comments" class="info-group">';
+            template +=             '</div>';   // end of #list-comments
+            template +=         '</div>';   // end of .content-tree-recentcomments
+
+            template +=         '<div class="content-tree-recentactivities">';
+            template +=             '<div class="text-header"><i class="fa fa-leaf fa-1x"></i> Recent Changes</div>';
+            template +=             '<div id="list-activities" class="info-group">';
+            template +=             '</div>';   // end of #list-activities
+            template +=         '</div>';   // end of .content-tree-recentactivities
+            template +=     '</div>';   // end of #wrapper-treeinfo
+
+            template += '</div>';   // end of #wrapper-tree
+            return template;
+        }
+
+        public static getTreeGraphicViewTemplateForParent(): string {
+            var template = '';
+            template += '<div id="wrapper-tree">';
+            template +=     '<div id="wrapper-graph">';
+
+            template +=         '<div id="wrapper-chart" class="evt-chart">';
+            template +=         '</div>';   // end of #wrapper-chart
+            template +=         '<div id="wrapper-tooltip" class="hidden">';
+            template +=         '</div>';
+
+            template +=         '<div id="content-treemenu">';
+            template +=             '<div class="info-button-group">';
+            template +=                 '<div class="btn-brown btn-small left btn-action evt-map"><i class="fa fa-map-marker fa-1x"></i> Back To Map</div>';
+            template +=                 '<div class="btn-brown btn-small left btn-action evt-post"><i class="fa fa-comment fa-1x"></i> New Post</div>';
+            template +=                 '<div class="btn-brown btn-small left btn-action btn-adoption evt-adopt"><i class="fa fa-user-plus fa-1x"></i> Adopt Tree</div>';
+            template +=             '</div>';   // end of .info-button-group
+            template +=         '</div>';   // end of #content-treeinfo
+
+            template +=         '<div id="wrapper-date-select">';
+            template +=             '<div class="wrapper-date-preset">';
+            template +=                 '<div class="btn-brown btn-small btn-date 2years">2 Year</div>';
+            template +=                 '<div class="btn-brown btn-small btn-date 1years">1 Year</div>';
+            template +=                 '<div class="btn-brown btn-small btn-date 6months">6 months</div>';
+            template +=                 '<div class="btn-brown btn-small btn-date 3months">3 months</div>';
+            template +=                 '<div class="btn-brown btn-small btn-date 1month">1 month</div>';
+            template +=             '</div>';
+            template +=             '<div class="wrapper-date-select-item"><input type="text" class="form-control tree-graph-start" /></div>';
+            template +=             '<div class="wrapper-date-select-item"><span class="date-select-label">~</span><input type="text" class="form-control tree-graph-end" /></div>';
+            template +=         '</div>';
+
+            template +=     '</div>';   // end of #wrapper-graph
+
+            template +=     '<div id="wrapper-treedetail">';
+            template +=         '<div class="content-tree-basicinfo">';
+            template +=         '</div>';   // end of .content-tree-info
+
+            template +=         '<div class="content-tree-recentcomments">';
+            template +=             '<div class="text-header"><i class="fa fa-comments fa-1x"></i> Recent Notes</div>';
+            template +=             '<div id="list-comments" class="info-group">';
+            template +=             '</div>';   // end of #list-comments
+            template +=         '</div>';   // end of .content-tree-recentcomments
+
+            template +=         '<div class="content-tree-recentactivities">';
+            template +=             '<div class="text-header"><i class="fa fa-leaf fa-1x"></i> Recent Changes</div>';
+            template +=             '<div id="list-activities" class="info-group">';
+            template +=             '</div>';   // end of #list-activities
+            template +=         '</div>';   // end of .content-tree-recentactivities
+            template +=     '</div>';   // end of #wrapper-treeinfo
+
+            template += '</div>';   // end of #wrapper-tree
+            return template;
+        }
+
+        public static getTreeGraphicViewTemplateForAdmin(): string {
+            var template = '';
+            template += '<div id="wrapper-tree">';
+            template +=     '<div id="wrapper-graph">';
+
+            template +=         '<div id="wrapper-chart" class="evt-chart">';
+            template +=         '</div>';   // end of #wrapper-chart
+            template +=         '<div id="wrapper-tooltip" class="hidden">';
+            template +=         '</div>';
+
+            template +=         '<div id="content-treemenu">';
+            template +=             '<div class="info-button-group">';
+            template +=                 '<div class="btn-brown btn-small left btn-action evt-map"><i class="fa fa-map-marker fa-1x"></i> Back To Map</div>';
+            template +=                 '<div class="btn-brown btn-small left btn-action evt-post"><i class="fa fa-comment fa-1x"></i> New Post</div>';
+            template +=                 '<div class="btn-brown btn-small left btn-action btn-adoption evt-manage-adoption"><i class="fa fa-users fa-1x"></i> Adopt Tree</div>';
+            template +=             '</div>';   // end of .info-button-group
             template +=         '</div>';   // end of #content-treeinfo
 
             template +=         '<div id="wrapper-date-select">';

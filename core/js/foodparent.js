@@ -42891,7 +42891,8 @@ var FoodParent;
             if (view instanceof FoodParent.NavView) {
                 if (el.hasClass('evt-title')) {
                     new FoodParent.ResetPopupViewCommand().execute();
-                    location.href = FoodParent.Setting.getBaseUrl() + "#trees/0";
+                    //location.href = Setting.getBaseUrl() + "#trees/0";
+                    new FoodParent.NavigateCommand({ hash: 'trees', id: 0 }).execute();
                 }
                 else if (el.hasClass('evt-trees')) {
                     if (FoodParent.View.getViewStatus() != VIEW_STATUS.TREES) {
@@ -43133,6 +43134,46 @@ var FoodParent;
                         }, function (response) {
                             EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
                         });
+                    }
+                    else if (el.hasClass('evt-map')) {
+                        FoodParent.Router.getInstance().navigate("trees/" + options.tree, { trigger: true, replace: true });
+                    }
+                    else if (el.hasClass('evt-post')) {
+                        var tree = FoodParent.Model.getTrees().findWhere({ id: parseInt(options.tree) });
+                        FoodParent.Controller.checkIsLoggedIn(function () {
+                            FoodParent.Controller.checkIsAdmin(function () {
+                                new FoodParent.RenderPostNoteViewCommand({ el: FoodParent.Setting.getPopWrapperElement(), tree: tree, credential: CREDENTIAL_MODE.ADMIN }).execute();
+                            }, function () {
+                                new FoodParent.RenderPostNoteViewCommand({ el: FoodParent.Setting.getPopWrapperElement(), tree: tree, credential: CREDENTIAL_MODE.PARENT }).execute();
+                            }, function () {
+                                EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
+                            });
+                        }, function () {
+                            new FoodParent.RenderPostNoteViewCommand({ el: FoodParent.Setting.getPopWrapperElement(), tree: tree, credential: CREDENTIAL_MODE.GUEST }).execute();
+                        }, function () {
+                            EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
+                        });
+                    }
+                    else if (el.hasClass('evt-adopt')) {
+                        FoodParent.Controller.checkIsLoggedIn(function (response) {
+                            new FoodParent.RenderAdoptTreeViewCommand({ el: FoodParent.Setting.getPopWrapperElement(), tree: options.tree }).execute();
+                        }, function (response) {
+                            new FoodParent.RenderMessageViewCommand({ el: FoodParent.Setting.getMessageWrapperElement(), message: FoodParent.Setting.getErrorMessage(response.code), undoable: false }).execute();
+                        }, function () {
+                            EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
+                        });
+                    }
+                    else if (el.hasClass('evt-unadopt')) {
+                        FoodParent.Controller.checkIsLoggedIn(function (response) {
+                            new FoodParent.RenderUnadoptTreeViewCommand({ el: FoodParent.Setting.getPopWrapperElement(), tree: options.tree }).execute();
+                        }, function (response) {
+                            new FoodParent.RenderMessageViewCommand({ el: FoodParent.Setting.getMessageWrapperElement(), message: FoodParent.Setting.getErrorMessage(response.code), undoable: false }).execute();
+                        }, function () {
+                            EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
+                        });
+                    }
+                    else if (el.hasClass('evt-manage-adoption')) {
+                        new FoodParent.RenderManageAdoptionViewCommand({ el: FoodParent.Setting.getPopWrapperElement(), tree: options.tree }).execute();
                     }
                     break;
                 case VIEW_STATUS.EDIT_NOTE:
@@ -50260,7 +50301,7 @@ var FoodParent;
             template += '</div>'; // end of #wrapper-mtree
             return template;
         };
-        Template.getTreeGraphicViewTemplate = function () {
+        Template.getTreeGraphicViewTemplateForGuest = function () {
             var template = '';
             template += '<div id="wrapper-tree">';
             template += '<div id="wrapper-graph">';
@@ -50269,6 +50310,98 @@ var FoodParent;
             template += '<div id="wrapper-tooltip" class="hidden">';
             template += '</div>';
             template += '<div id="content-treemenu">';
+            template += '<div class="info-button-group">';
+            template += '<div class="btn-brown btn-small left btn-action evt-map"><i class="fa fa-map-marker fa-1x"></i> Back To Map</div>';
+            template += '<div class="btn-brown btn-small left btn-action evt-post"><i class="fa fa-comment fa-1x"></i> New Post</div>';
+            template += '</div>'; // end of .info-button-group
+            template += '</div>'; // end of #content-treeinfo
+            template += '<div id="wrapper-date-select">';
+            template += '<div class="wrapper-date-preset">';
+            template += '<div class="btn-brown btn-small btn-date 2years">2 Year</div>';
+            template += '<div class="btn-brown btn-small btn-date 1years">1 Year</div>';
+            template += '<div class="btn-brown btn-small btn-date 6months">6 months</div>';
+            template += '<div class="btn-brown btn-small btn-date 3months">3 months</div>';
+            template += '<div class="btn-brown btn-small btn-date 1month">1 month</div>';
+            template += '</div>';
+            template += '<div class="wrapper-date-select-item"><input type="text" class="form-control tree-graph-start" /></div>';
+            template += '<div class="wrapper-date-select-item"><span class="date-select-label">~</span><input type="text" class="form-control tree-graph-end" /></div>';
+            template += '</div>';
+            template += '</div>'; // end of #wrapper-graph
+            template += '<div id="wrapper-treedetail">';
+            template += '<div class="content-tree-basicinfo">';
+            template += '</div>'; // end of .content-tree-info
+            template += '<div class="content-tree-recentcomments">';
+            template += '<div class="text-header"><i class="fa fa-comments fa-1x"></i> Recent Notes</div>';
+            template += '<div id="list-comments" class="info-group">';
+            template += '</div>'; // end of #list-comments
+            template += '</div>'; // end of .content-tree-recentcomments
+            template += '<div class="content-tree-recentactivities">';
+            template += '<div class="text-header"><i class="fa fa-leaf fa-1x"></i> Recent Changes</div>';
+            template += '<div id="list-activities" class="info-group">';
+            template += '</div>'; // end of #list-activities
+            template += '</div>'; // end of .content-tree-recentactivities
+            template += '</div>'; // end of #wrapper-treeinfo
+            template += '</div>'; // end of #wrapper-tree
+            return template;
+        };
+        Template.getTreeGraphicViewTemplateForParent = function () {
+            var template = '';
+            template += '<div id="wrapper-tree">';
+            template += '<div id="wrapper-graph">';
+            template += '<div id="wrapper-chart" class="evt-chart">';
+            template += '</div>'; // end of #wrapper-chart
+            template += '<div id="wrapper-tooltip" class="hidden">';
+            template += '</div>';
+            template += '<div id="content-treemenu">';
+            template += '<div class="info-button-group">';
+            template += '<div class="btn-brown btn-small left btn-action evt-map"><i class="fa fa-map-marker fa-1x"></i> Back To Map</div>';
+            template += '<div class="btn-brown btn-small left btn-action evt-post"><i class="fa fa-comment fa-1x"></i> New Post</div>';
+            template += '<div class="btn-brown btn-small left btn-action btn-adoption evt-adopt"><i class="fa fa-user-plus fa-1x"></i> Adopt Tree</div>';
+            template += '</div>'; // end of .info-button-group
+            template += '</div>'; // end of #content-treeinfo
+            template += '<div id="wrapper-date-select">';
+            template += '<div class="wrapper-date-preset">';
+            template += '<div class="btn-brown btn-small btn-date 2years">2 Year</div>';
+            template += '<div class="btn-brown btn-small btn-date 1years">1 Year</div>';
+            template += '<div class="btn-brown btn-small btn-date 6months">6 months</div>';
+            template += '<div class="btn-brown btn-small btn-date 3months">3 months</div>';
+            template += '<div class="btn-brown btn-small btn-date 1month">1 month</div>';
+            template += '</div>';
+            template += '<div class="wrapper-date-select-item"><input type="text" class="form-control tree-graph-start" /></div>';
+            template += '<div class="wrapper-date-select-item"><span class="date-select-label">~</span><input type="text" class="form-control tree-graph-end" /></div>';
+            template += '</div>';
+            template += '</div>'; // end of #wrapper-graph
+            template += '<div id="wrapper-treedetail">';
+            template += '<div class="content-tree-basicinfo">';
+            template += '</div>'; // end of .content-tree-info
+            template += '<div class="content-tree-recentcomments">';
+            template += '<div class="text-header"><i class="fa fa-comments fa-1x"></i> Recent Notes</div>';
+            template += '<div id="list-comments" class="info-group">';
+            template += '</div>'; // end of #list-comments
+            template += '</div>'; // end of .content-tree-recentcomments
+            template += '<div class="content-tree-recentactivities">';
+            template += '<div class="text-header"><i class="fa fa-leaf fa-1x"></i> Recent Changes</div>';
+            template += '<div id="list-activities" class="info-group">';
+            template += '</div>'; // end of #list-activities
+            template += '</div>'; // end of .content-tree-recentactivities
+            template += '</div>'; // end of #wrapper-treeinfo
+            template += '</div>'; // end of #wrapper-tree
+            return template;
+        };
+        Template.getTreeGraphicViewTemplateForAdmin = function () {
+            var template = '';
+            template += '<div id="wrapper-tree">';
+            template += '<div id="wrapper-graph">';
+            template += '<div id="wrapper-chart" class="evt-chart">';
+            template += '</div>'; // end of #wrapper-chart
+            template += '<div id="wrapper-tooltip" class="hidden">';
+            template += '</div>';
+            template += '<div id="content-treemenu">';
+            template += '<div class="info-button-group">';
+            template += '<div class="btn-brown btn-small left btn-action evt-map"><i class="fa fa-map-marker fa-1x"></i> Back To Map</div>';
+            template += '<div class="btn-brown btn-small left btn-action evt-post"><i class="fa fa-comment fa-1x"></i> New Post</div>';
+            template += '<div class="btn-brown btn-small left btn-action btn-adoption evt-manage-adoption"><i class="fa fa-users fa-1x"></i> Adopt Tree</div>';
+            template += '</div>'; // end of .info-button-group
             template += '</div>'; // end of #content-treeinfo
             template += '<div id="wrapper-date-select">';
             template += '<div class="wrapper-date-preset">';
@@ -55103,17 +55236,19 @@ var FoodParent;
         TreeGraphicView.prototype.render = function (args) {
             _super.prototype.render.call(this, args);
             var self = this;
-            if (self.bDebug)
-                console.log(TreeGraphicView.TAG + "render()");
-            var template = _.template(FoodParent.Template.getTreeGraphicViewTemplate());
-            self.$el.html(template({}));
+            /*
+            if (self.bDebug) console.log(TreeGraphicView.TAG + "render()");
+            var template = _.template(Template.getTreeGraphicViewTemplate());
+            self.$el.html(template({ }));
             self.setElement(self.$('#wrapper-tree'));
-            FoodParent.Controller.fetchAllTrees(function () {
+
+            Controller.fetchAllTrees(function () {
                 self.renderChartDatePicker();
                 self.renderTreeInfo();
             }, function () {
-                FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+                EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
             });
+            */
             return self;
         };
         TreeGraphicView.prototype.update = function (args) {
@@ -55410,6 +55545,10 @@ var FoodParent;
                 });
             }
         };
+        TreeGraphicView.prototype._mouseClick = function (event) {
+            var self = this;
+            FoodParent.EventHandler.handleMouseClick($(event.currentTarget), self, { tree: self._tree.getId() });
+        };
         TreeGraphicView.TAG = "TreeGraphicView - ";
         return TreeGraphicView;
     })(TreeView);
@@ -55471,9 +55610,26 @@ var FoodParent;
                 "click .btn-date": "_applyDatePreset",
                 "click .evt-chart": "_showPostFromChart",
                 "click .evt-note": "_showPostFromList",
+                "click .btn-action": "_mouseClick",
             };
             self.delegateEvents();
         }
+        TreeGraphicViewForGuest.prototype.render = function (args) {
+            _super.prototype.render.call(this, args);
+            var self = this;
+            if (self.bDebug)
+                console.log(TreeGraphicViewForGuest.TAG + "render()");
+            var template = _.template(FoodParent.Template.getTreeGraphicViewTemplateForGuest());
+            self.$el.html(template({}));
+            self.setElement(self.$('#wrapper-tree'));
+            FoodParent.Controller.fetchAllTrees(function () {
+                self.renderChartDatePicker();
+                self.renderTreeInfo();
+            }, function () {
+                FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+            });
+            return self;
+        };
         TreeGraphicViewForGuest.TAG = "TreeGraphicViewForGuest - ";
         return TreeGraphicViewForGuest;
     })(FoodParent.TreeGraphicView);
@@ -55492,6 +55648,29 @@ var FoodParent;
         function TreeGraphicViewForParent(options) {
             var _this = this;
             _super.call(this, options);
+            this.updateAdoptionButton = function () {
+                var self = _this;
+                FoodParent.Controller.checkIsLoggedIn(function (response) {
+                    var adopt = FoodParent.Model.getAdopts().findWhere({ tree: self._tree.getId(), parent: parseInt(response.id) });
+                    var food = FoodParent.Model.getFoods().findWhere({ id: self._tree.getFoodId() });
+                    var ownership = FoodParent.Model.getOwnerships().findWhere({ id: self._tree.getOwnershipId() });
+                    if (adopt) {
+                        self.$('.btn-adoption').removeClass('evt-adopt');
+                        self.$('.btn-adoption').addClass('evt-unadopt');
+                        self.$('.btn-adoption').html('<i class="fa fa-user-times fa-1x"></i> Unadopt Tree');
+                    }
+                    else {
+                        self.$('.btn-adoption').removeClass('evt-unadopt');
+                        self.$('.btn-adoption').addClass('evt-adopt');
+                        self.$('.btn-adoption').html('<i class="fa fa-user-plus fa-1x"></i> Adopt Tree');
+                    }
+                }, function (response) {
+                    // Handled as refreshing the page if it's not logged in
+                    new FoodParent.RenderMessageViewCommand({ el: FoodParent.Setting.getMessageWrapperElement(), message: FoodParent.Setting.getErrorMessage(response.code), undoable: false }).execute();
+                }, function () {
+                    FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+                });
+            };
             this.renderTreeInfo = function () {
                 var self = _this;
                 self._tree = FoodParent.Model.getTrees().findWhere({ id: self._id });
@@ -55535,9 +55714,34 @@ var FoodParent;
                 "click .btn-date": "_applyDatePreset",
                 "click .evt-chart": "_showPostFromChart",
                 "click .evt-note": "_showPostFromList",
+                "click .btn-action": "_mouseClick",
             };
             self.delegateEvents();
         }
+        TreeGraphicViewForParent.prototype.render = function (args) {
+            _super.prototype.render.call(this, args);
+            var self = this;
+            if (self.bDebug)
+                console.log(TreeGraphicViewForParent.TAG + "render()");
+            var template = _.template(FoodParent.Template.getTreeGraphicViewTemplateForParent());
+            self.$el.html(template({}));
+            self.setElement(self.$('#wrapper-tree'));
+            FoodParent.Controller.fetchAllTrees(function () {
+                self.renderChartDatePicker();
+                self.renderTreeInfo();
+                self.updateAdoptionButton();
+            }, function () {
+                FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+            });
+            return self;
+        };
+        TreeGraphicViewForParent.prototype.update = function (args) {
+            _super.prototype.update.call(this, args);
+            var self = this;
+            // Render tree chart
+            self.renderTreeChart(self._tree, self._startDate, self._endDate);
+            self.updateAdoptionButton();
+        };
         TreeGraphicViewForParent.TAG = "TreeGraphicViewForGuest - ";
         return TreeGraphicViewForParent;
     })(FoodParent.TreeGraphicView);
@@ -55688,9 +55892,26 @@ var FoodParent;
                 "click .evt-note": "_showPostFromList",
                 "click .flag-radio": "_updateFlag",
                 "click .ownership-radio": "_updateOwnership",
+                "click .btn-action": "_mouseClick",
             };
             self.delegateEvents();
         }
+        TreeGraphicViewForAdmin.prototype.render = function (args) {
+            _super.prototype.render.call(this, args);
+            var self = this;
+            if (self.bDebug)
+                console.log(TreeGraphicViewForAdmin.TAG + "render()");
+            var template = _.template(FoodParent.Template.getTreeGraphicViewTemplateForAdmin());
+            self.$el.html(template({}));
+            self.setElement(self.$('#wrapper-tree'));
+            FoodParent.Controller.fetchAllTrees(function () {
+                self.renderChartDatePicker();
+                self.renderTreeInfo();
+            }, function () {
+                FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+            });
+            return self;
+        };
         TreeGraphicViewForAdmin.TAG = "TreeGraphicViewForGuest - ";
         return TreeGraphicViewForAdmin;
     })(FoodParent.TreeGraphicView);

@@ -53,9 +53,26 @@ var FoodParent;
                 "click .btn-date": "_applyDatePreset",
                 "click .evt-chart": "_showPostFromChart",
                 "click .evt-note": "_showPostFromList",
+                "click .btn-action": "_mouseClick",
             };
             self.delegateEvents();
         }
+        TreeGraphicViewForGuest.prototype.render = function (args) {
+            _super.prototype.render.call(this, args);
+            var self = this;
+            if (self.bDebug)
+                console.log(TreeGraphicViewForGuest.TAG + "render()");
+            var template = _.template(FoodParent.Template.getTreeGraphicViewTemplateForGuest());
+            self.$el.html(template({}));
+            self.setElement(self.$('#wrapper-tree'));
+            FoodParent.Controller.fetchAllTrees(function () {
+                self.renderChartDatePicker();
+                self.renderTreeInfo();
+            }, function () {
+                FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+            });
+            return self;
+        };
         TreeGraphicViewForGuest.TAG = "TreeGraphicViewForGuest - ";
         return TreeGraphicViewForGuest;
     })(FoodParent.TreeGraphicView);

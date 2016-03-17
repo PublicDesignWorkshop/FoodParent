@@ -14121,6 +14121,7 @@ button.close {
 
 }
 @media all {
+    /*
     #wrapper-mtree {
         width: 100%;
         height: 100%;
@@ -14378,7 +14379,7 @@ button.close {
         margin: 0;
         padding: 0;
     }
-
+    */
     
 
 
@@ -16107,8 +16108,9 @@ button.close {
     #content-treemenu {
         position: absolute;
         top: 52px;
-        left: 0;
+        left: 8px;
         padding: 8px;
+        z-index: 5;
     }
 
     #wrapper-date-select {
@@ -16117,12 +16119,14 @@ button.close {
         right: 0;
         padding: 8px;
         color: #5e4e51;
+        display: -webkit-flex;
         display: flex;
         justify-content: flex-end;
         align-items: flex-start;
     }
     #wrapper-date-select .wrapper-date-select-item {
         flex-grow: 1;
+        display: -webkit-flex;
         display: flex;
         justify-content: space-between;
         align-items: flex-start;
@@ -16149,6 +16153,7 @@ button.close {
         text-align: center;
     }
     #wrapper-date-select .wrapper-date-preset {
+        display: -webkit-flex;
         display: flex;
         justify-content: flex-start;
         align-items: flex-start;
@@ -16357,6 +16362,9 @@ button.close {
     #wrapper-treedetail .content-tree-recentactivities {
         display: none;
     }
+    #wrapper-date-select .wrapper-date-preset {
+        display: block;
+    }
 }
 @media only screen and (max-height: 480px) and (orientation: portrait) {
     #wrapper-date-select .wrapper-date-select-item {
@@ -16411,6 +16419,9 @@ button.close {
     #wrapper-treedetail .content-tree-recentactivities {
         display: none;
     }
+    #wrapper-date-select .wrapper-date-select-item {
+        display: none;
+    }
 }
 @media only screen and (min-width: 481px) and (max-width: 568px) and (orientation: landscape) {
     #wrapper-treedetail .content-tree-basicinfo {
@@ -16420,6 +16431,9 @@ button.close {
         max-width: 50%;
     }
     #wrapper-treedetail .content-tree-recentactivities {
+        display: none;
+    }
+    #wrapper-date-select .wrapper-date-select-item {
         display: none;
     }
 }
@@ -16434,6 +16448,9 @@ button.close {
     #wrapper-treedetail .content-tree-recentactivities {
         display: none;
     }
+    #wrapper-date-select .wrapper-date-select-item {
+        display: none;
+    }
 }
 
 @media only screen and (min-width: 668px) and (max-width: 736px) and (orientation: landscape) {
@@ -16444,6 +16461,9 @@ button.close {
         max-width: 50%;
     }
     #wrapper-treedetail .content-tree-recentactivities {
+        display: none;
+    }
+    #wrapper-date-select .wrapper-date-select-item {
         display: none;
     }
 }

@@ -204,17 +204,19 @@ var FoodParent;
         TreeGraphicView.prototype.render = function (args) {
             _super.prototype.render.call(this, args);
             var self = this;
-            if (self.bDebug)
-                console.log(TreeGraphicView.TAG + "render()");
-            var template = _.template(FoodParent.Template.getTreeGraphicViewTemplate());
-            self.$el.html(template({}));
+            /*
+            if (self.bDebug) console.log(TreeGraphicView.TAG + "render()");
+            var template = _.template(Template.getTreeGraphicViewTemplate());
+            self.$el.html(template({ }));
             self.setElement(self.$('#wrapper-tree'));
-            FoodParent.Controller.fetchAllTrees(function () {
+
+            Controller.fetchAllTrees(function () {
                 self.renderChartDatePicker();
                 self.renderTreeInfo();
             }, function () {
-                FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+                EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
             });
+            */
             return self;
         };
         TreeGraphicView.prototype.update = function (args) {
@@ -510,6 +512,10 @@ var FoodParent;
                     FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
                 });
             }
+        };
+        TreeGraphicView.prototype._mouseClick = function (event) {
+            var self = this;
+            FoodParent.EventHandler.handleMouseClick($(event.currentTarget), self, { tree: self._tree.getId() });
         };
         TreeGraphicView.TAG = "TreeGraphicView - ";
         return TreeGraphicView;

@@ -180,8 +180,8 @@
             if (view instanceof NavView) {
                 if (el.hasClass('evt-title')) {
                     new ResetPopupViewCommand().execute();
-                    location.href = Setting.getBaseUrl() + "#trees/0";
-                    //new NavigateCommand({ hash: 'trees', id: 0 }).execute();
+                    //location.href = Setting.getBaseUrl() + "#trees/0";
+                    new NavigateCommand({ hash: 'trees', id: 0 }).execute();
                     //Backbone.history.loadUrl(Backbone.history.fragment);
                 } else if (el.hasClass('evt-trees')) {
                     if (View.getViewStatus() != VIEW_STATUS.TREES) {
@@ -340,11 +340,6 @@
                         }, function () {
                             EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
                         });
-
-
-
-                        
-                        
                     }
                     break;
                 case VIEW_STATUS.TREES_TABLE:
@@ -377,9 +372,6 @@
                         }, function () {
                             EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
                         });
-                        //if (options.note) {
-                        //    new RenderImageNoteViewCommand({ el: Setting.getPopWrapperElement(), note: options.note }).execute();
-                        //}
                     } else if (el.hasClass('button-manage-adoption')) {
                         new RenderManageAdoptionViewCommand({ el: Setting.getPopWrapperElement(), tree: options.tree.getId() }).execute();
                     } else if (el.hasClass('button-new-note')) {
@@ -406,6 +398,41 @@
                         }, function (response) {
                             EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
                         });
+                    } else if (el.hasClass('evt-map')) {
+                        FoodParent.Router.getInstance().navigate("trees/" + options.tree, { trigger: true, replace: true });
+                    } else if (el.hasClass('evt-post')) {
+                        var tree: Tree = Model.getTrees().findWhere({ id: parseInt(options.tree) });
+                        Controller.checkIsLoggedIn(function () {
+                            Controller.checkIsAdmin(function () {
+                                new RenderPostNoteViewCommand({ el: Setting.getPopWrapperElement(), tree: tree, credential: CREDENTIAL_MODE.ADMIN }).execute();
+                            }, function () {
+                                new RenderPostNoteViewCommand({ el: Setting.getPopWrapperElement(), tree: tree, credential: CREDENTIAL_MODE.PARENT }).execute();
+                            }, function () {
+                                EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
+                            });
+                        }, function () {
+                            new RenderPostNoteViewCommand({ el: Setting.getPopWrapperElement(), tree: tree, credential: CREDENTIAL_MODE.GUEST }).execute();
+                        }, function () {
+                            EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
+                        });
+                    } else if (el.hasClass('evt-adopt')) {
+                        Controller.checkIsLoggedIn(function (response) {
+                            new RenderAdoptTreeViewCommand({ el: Setting.getPopWrapperElement(), tree: options.tree }).execute();
+                        }, function (response) {
+                            new RenderMessageViewCommand({ el: Setting.getMessageWrapperElement(), message: Setting.getErrorMessage(response.code), undoable: false }).execute();
+                        }, function () {
+                            EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
+                        });
+                    } else if (el.hasClass('evt-unadopt')) {
+                        Controller.checkIsLoggedIn(function (response) {
+                            new RenderUnadoptTreeViewCommand({ el: Setting.getPopWrapperElement(), tree: options.tree }).execute();
+                        }, function (response) {
+                            new RenderMessageViewCommand({ el: Setting.getMessageWrapperElement(), message: Setting.getErrorMessage(response.code), undoable: false }).execute();
+                        }, function () {
+                            EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
+                        });
+                    } else if (el.hasClass('evt-manage-adoption')) {
+                        new RenderManageAdoptionViewCommand({ el: Setting.getPopWrapperElement(), tree: options.tree }).execute();
                     }
                     break;
                 case VIEW_STATUS.EDIT_NOTE:

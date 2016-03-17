@@ -142,9 +142,26 @@ var FoodParent;
                 "click .evt-note": "_showPostFromList",
                 "click .flag-radio": "_updateFlag",
                 "click .ownership-radio": "_updateOwnership",
+                "click .btn-action": "_mouseClick",
             };
             self.delegateEvents();
         }
+        TreeGraphicViewForAdmin.prototype.render = function (args) {
+            _super.prototype.render.call(this, args);
+            var self = this;
+            if (self.bDebug)
+                console.log(TreeGraphicViewForAdmin.TAG + "render()");
+            var template = _.template(FoodParent.Template.getTreeGraphicViewTemplateForAdmin());
+            self.$el.html(template({}));
+            self.setElement(self.$('#wrapper-tree'));
+            FoodParent.Controller.fetchAllTrees(function () {
+                self.renderChartDatePicker();
+                self.renderTreeInfo();
+            }, function () {
+                FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+            });
+            return self;
+        };
         TreeGraphicViewForAdmin.TAG = "TreeGraphicViewForGuest - ";
         return TreeGraphicViewForAdmin;
     })(FoodParent.TreeGraphicView);

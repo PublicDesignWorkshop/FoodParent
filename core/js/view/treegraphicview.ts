@@ -52,6 +52,7 @@
         public render(args?: any): any {
             super.render(args);
             var self: TreeGraphicView = this;
+            /*
             if (self.bDebug) console.log(TreeGraphicView.TAG + "render()");
             var template = _.template(Template.getTreeGraphicViewTemplate());
             self.$el.html(template({ }));
@@ -63,6 +64,7 @@
             }, function () {
                 EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
             });
+            */
             return self;
         }
         public update(args?: any): any {
@@ -498,6 +500,10 @@
                     EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
                 });
             }
+        }
+        private _mouseClick(event: Event): void {
+            var self: TreeGraphicView = this;
+            EventHandler.handleMouseClick($(event.currentTarget), self, { tree: self._tree.getId() });
         }
     }
 }

@@ -9,10 +9,26 @@
                 "click .btn-date": "_applyDatePreset",
                 "click .evt-chart": "_showPostFromChart",
                 "click .evt-note": "_showPostFromList",
+                "click .btn-action": "_mouseClick",
             };
             self.delegateEvents();
         }
+        public render(args?: any): any {
+            super.render(args);
+            var self: TreeGraphicViewForGuest = this;
+            if (self.bDebug) console.log(TreeGraphicViewForGuest.TAG + "render()");
+            var template = _.template(Template.getTreeGraphicViewTemplateForGuest());
+            self.$el.html(template({}));
+            self.setElement(self.$('#wrapper-tree'));
 
+            Controller.fetchAllTrees(function () {
+                self.renderChartDatePicker();
+                self.renderTreeInfo();
+            }, function () {
+                EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
+            });
+            return self;
+        }
         public renderTreeInfo = () => {
             var self: TreeGraphicViewForGuest = this;
             self._tree = Model.getTrees().findWhere({ id: self._id });
