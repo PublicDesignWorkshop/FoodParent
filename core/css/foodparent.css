@@ -13919,6 +13919,7 @@ button.close {
     }
 }
 @media all {
+    /*
     #wrapper-pop .outer-frame {
         background-color: rgba(212, 208, 207, 0.6);
         padding: 6px;
@@ -13986,6 +13987,7 @@ button.close {
     .view-description {
         margin: 4px 0;
     }
+    */
 }
 
 
