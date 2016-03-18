@@ -14011,9 +14011,10 @@ button.close {
 @media only screen and (min-width: 1281px) and (max-width: 1920px) and (orientation: landscape) {
 
 }
-@media all {
 
-    
+/*
+
+@media all {
 
     #wrapper-food-search {
         
@@ -14120,6 +14121,8 @@ button.close {
 @media only screen and (min-width: 1281px) and (max-width: 1920px) and (orientation: landscape) {
 
 }
+
+*/
 @media all {
     /*
     #wrapper-mtree {
