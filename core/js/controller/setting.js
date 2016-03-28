@@ -75,12 +75,12 @@ var FoodParent;
             return 12;
         };
         Setting.getTileMapAddress = function () {
-            return 'http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png';
+            return '//{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png';
             //return 'http://{s}.tile.stamen.com/watercolor/{z}/{x}/{y}.jpg'
             //return 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
         };
         Setting.getReverseGeoCodingAddress = function (coordinate) {
-            return 'http://nominatim.openstreetmap.org/reverse?format=json&lat=' + coordinate.lat + '&lon=' + coordinate.lng + '&zoom=18&addressdetails=1';
+            return '//nominatim.openstreetmap.org/reverse?format=json&lat=' + coordinate.lat + '&lon=' + coordinate.lng + '&zoom=18&addressdetails=1';
         };
         Setting.getMapMinZoomLevel = function () {
             return 5;
