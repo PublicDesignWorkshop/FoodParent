@@ -75,7 +75,7 @@ var FoodParent;
             return 12;
         };
         Setting.getTileMapAddress = function () {
-            return '//{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png';
+            return '//cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png';
             //return 'http://{s}.tile.stamen.com/watercolor/{z}/{x}/{y}.jpg'
             //return 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
         };
