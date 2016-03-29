@@ -124,6 +124,9 @@
             template +=       '<div class="btn-map-zoom-out">';
             template +=         '<div class="icon-map-zoom-out"><i class="fa fa-search-minus"></i></div>';
             template +=         '</div>';
+            template +=         '<div class="btn-add-tree btn-action evt-add-tree">';
+            template +=             '<div class="icon-add-tree"><i class="fa fa-plus"></i></div>';
+            template +=         '</div>';
             template +=         '<div class="btn-location btn-action evt-location">';
             template +=             '<div class="icon-location"><i class="fa fa-location-arrow"></i></div>';
             template +=         '</div>';
@@ -165,6 +168,9 @@
             template +=   '</div>';
             template +=   '<div class="btn-map-zoom-out">';
             template +=     '<div class="icon-map-zoom-out"><i class="fa fa-search-minus"></i></div>';
+            template +=   '</div>';
+            template +=   '<div class="btn-add-tree btn-action evt-add-tree">';
+            template +=     '<div class="icon-add-tree"><i class="fa fa-plus"></i></div>';
             template +=   '</div>';
             template +=   '<div class="btn-location btn-action evt-location">';
             template +=     '<div class="icon-location"><i class="fa fa-location-arrow"></i></div>';

@@ -203,6 +203,18 @@
             self.updateMarkers(trees);
         }
 
+        protected _mouseClick(event: Event): void {
+            var self: TreesMapViewForParent = this;
+            if ($(event.currentTarget).hasClass('evt-add-tree')) {
+                var tree: Tree = new Tree({ lat: self._map.getCenter().lat, lng: self._map.getCenter().lng, food: 1, type: 0, flag: 0, owner: 0, ownership: 1, description: "", address: "" });
+                EventHandler.handleMouseClick($(event.currentTarget), self, { tree: tree });
+            } else if (self._selectedMarker != undefined) {
+                EventHandler.handleMouseClick($(event.currentTarget), self, { marker: self._selectedMarker, tree: self._selectedMarker.options.id });
+            } else {
+                EventHandler.handleMouseClick($(event.currentTarget), self, { marker: self._selectedMarker });
+            }
+        }
+
         
     }
 }

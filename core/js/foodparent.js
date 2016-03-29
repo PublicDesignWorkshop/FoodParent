@@ -48168,6 +48168,9 @@ var FoodParent;
             template += '<div class="btn-map-zoom-out">';
             template += '<div class="icon-map-zoom-out"><i class="fa fa-search-minus"></i></div>';
             template += '</div>';
+            template += '<div class="btn-add-tree btn-action evt-add-tree">';
+            template += '<div class="icon-add-tree"><i class="fa fa-plus"></i></div>';
+            template += '</div>';
             template += '<div class="btn-location btn-action evt-location">';
             template += '<div class="icon-location"><i class="fa fa-location-arrow"></i></div>';
             template += '</div>';
@@ -48206,6 +48209,9 @@ var FoodParent;
             template += '</div>';
             template += '<div class="btn-map-zoom-out">';
             template += '<div class="icon-map-zoom-out"><i class="fa fa-search-minus"></i></div>';
+            template += '</div>';
+            template += '<div class="btn-add-tree btn-action evt-add-tree">';
+            template += '<div class="icon-add-tree"><i class="fa fa-plus"></i></div>';
             template += '</div>';
             template += '<div class="btn-location btn-action evt-location">';
             template += '<div class="icon-location"><i class="fa fa-location-arrow"></i></div>';
@@ -53157,6 +53163,19 @@ var FoodParent;
                 console.log(TreesMapViewForGuest.TAG + "update()");
             return self;
         };
+        TreesMapViewForGuest.prototype._mouseClick = function (event) {
+            var self = this;
+            if ($(event.currentTarget).hasClass('evt-add-tree')) {
+                var tree = new FoodParent.Tree({ lat: self._map.getCenter().lat, lng: self._map.getCenter().lng, food: 1, type: 0, flag: 0, owner: 0, ownership: 1, description: "", address: "" });
+                FoodParent.EventHandler.handleMouseClick($(event.currentTarget), self, { tree: tree });
+            }
+            else if (self._selectedMarker != undefined) {
+                FoodParent.EventHandler.handleMouseClick($(event.currentTarget), self, { marker: self._selectedMarker, tree: self._selectedMarker.options.id });
+            }
+            else {
+                FoodParent.EventHandler.handleMouseClick($(event.currentTarget), self, { marker: self._selectedMarker });
+            }
+        };
         TreesMapViewForGuest.TAG = "TreesMapViewForGuest - ";
         return TreesMapViewForGuest;
     })(FoodParent.TreesMapView);
@@ -53368,6 +53387,19 @@ var FoodParent;
             }
             // Update markers
             self.updateMarkers(trees);
+        };
+        TreesMapViewForParent.prototype._mouseClick = function (event) {
+            var self = this;
+            if ($(event.currentTarget).hasClass('evt-add-tree')) {
+                var tree = new FoodParent.Tree({ lat: self._map.getCenter().lat, lng: self._map.getCenter().lng, food: 1, type: 0, flag: 0, owner: 0, ownership: 1, description: "", address: "" });
+                FoodParent.EventHandler.handleMouseClick($(event.currentTarget), self, { tree: tree });
+            }
+            else if (self._selectedMarker != undefined) {
+                FoodParent.EventHandler.handleMouseClick($(event.currentTarget), self, { marker: self._selectedMarker, tree: self._selectedMarker.options.id });
+            }
+            else {
+                FoodParent.EventHandler.handleMouseClick($(event.currentTarget), self, { marker: self._selectedMarker });
+            }
         };
         TreesMapViewForParent.TAG = "TreesMapViewForParent - ";
         return TreesMapViewForParent;
