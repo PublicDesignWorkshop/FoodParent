@@ -76,12 +76,12 @@
             return 12;
         }
         public static getTileMapAddress(): string {
-            return 'http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png';
+            return '//cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png';
             //return 'http://{s}.tile.stamen.com/watercolor/{z}/{x}/{y}.jpg'
             //return 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
         }
         public static getReverseGeoCodingAddress(coordinate: L.LatLng): string {
-            return 'http://nominatim.openstreetmap.org/reverse?format=json&lat=' + coordinate.lat + '&lon=' + coordinate.lng + '&zoom=18&addressdetails=1';
+            return '//nominatim.openstreetmap.org/reverse?format=json&lat=' + coordinate.lat + '&lon=' + coordinate.lng + '&zoom=18&addressdetails=1';
         }
         public static getMapMinZoomLevel(): number {
             return 5;
