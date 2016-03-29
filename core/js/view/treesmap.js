@@ -472,6 +472,12 @@ var FoodParent;
                 self.openMapFilter();
             }
         };
+        TreesMapView.prototype._zoomIn = function (event) {
+            this._map.zoomIn();
+        };
+        TreesMapView.prototype._zoomOut = function (event) {
+            this._map.zoomOut();
+        };
         TreesMapView.prototype._searchFood = function (event) {
             var self = this;
             if (self._timeout1) {

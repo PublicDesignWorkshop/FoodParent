@@ -254,6 +254,8 @@ var FoodParent;
             self.events = {
                 "click .evt-close": "removeTreeInfo",
                 "click .btn-mapfilter": "_toggleMapFilter",
+                "click .btn-map-zoom-in": "_zoomIn",
+                "click .btn-map-zoom-out": "_zoomOut",
                 "click .evt-marker-lock": "_toggleMarkerLock",
                 "click .btn-filter": "_clickFilter",
                 "keydown #wrapper-food-search": "_searchFood",

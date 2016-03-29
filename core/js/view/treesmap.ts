@@ -454,6 +454,7 @@
                 self.openMapFilter();
             }
         }
+        // MISSING TYPESCRIPT VERSIONS OF _zoomIn and _zoomOut
 
         public closeMapFilter = () => {
             var self: TreesMapView = this;

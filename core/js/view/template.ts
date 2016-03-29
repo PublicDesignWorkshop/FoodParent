@@ -117,15 +117,15 @@
             template += '<div id="wrapper-mapfilter">';
             template +=     '<div id="content-mapfilter">';
             template +=     '</div>';
-            template +=     '<div id="wrapper-btn-mapfilter">';
-            template +=         '<div class="btn-mapfilter">';
-            template +=             '<div class="icon-mapfilter-status"><i class="fa fa-filter"></i></div>';
-            template +=             '<div class="text-mapfilter-status">off</div>';
+            template +=     '<div id="wrapper-btn-map">';
+            template +=       '<div class="btn-map-zoom-in">';
+            template +=         '<div class="icon-map-zoom-in"><i class="fa fa-search-plus"></i></div>';
+            template +=       '</div>';
+            template +=       '<div class="btn-map-zoom-out">';
+            template +=         '<div class="icon-map-zoom-out"><i class="fa fa-search-minus"></i></div>';
             template +=         '</div>';
             template +=         '<div class="btn-location btn-action evt-location">';
             template +=             '<div class="icon-location"><i class="fa fa-location-arrow"></i></div>';
-            template +=         '</div>';
-            template +=         '<div class="deco-mapfilter">';
             template +=         '</div>';
             template +=     '</div>';   // end of #wrapper-treeinfo
             template += '</div>';   // end of #wrapper-mapfilter
@@ -153,18 +153,23 @@
             template += '</div>';   // end of #content-map
 
             template += '<div id="wrapper-mapfilter">';
-            template +=     '<div id="content-mapfilter">';
-            template +=     '</div>';
-            template +=     '<div id="wrapper-btn-mapfilter">';
-            template +=         '<div class="btn-mapfilter">';
-            template +=             '<div class="icon-mapfilter-status"><i class="fa fa-filter"></i></div>';
-            template +=             '<div class="text-mapfilter-status">off</div>';
-            template +=         '</div>';
-            template +=         '<div class="btn-location btn-action evt-location">';
-            template +=             '<div class="icon-location"><i class="fa fa-location-arrow"></i></div>';
-            template +=         '</div>';
-            template +=         '<div class="deco-mapfilter">';
-            template +=         '</div>';
+            template +=   '<div id="content-mapfilter">';
+            template += '</div>';
+            template += '<div id="wrapper-btn-map">';
+            template +=   '<div class="btn-mapfilter">';
+            template +=     '<div class="icon-mapfilter-status"><i class="fa fa-filter"></i></div>';
+            template +=     '<div class="text-mapfilter-status">off</div>';
+            template +=   '</div>';
+            template +=   '<div class="btn-map-zoom-in">';
+            template +=     '<div class="icon-map-zoom-in"><i class="fa fa-search-plus"></i></div>';
+            template +=   '</div>';
+            template +=   '<div class="btn-map-zoom-out">';
+            template +=     '<div class="icon-map-zoom-out"><i class="fa fa-search-minus"></i></div>';
+            template +=   '</div>';
+            template +=   '<div class="btn-location btn-action evt-location">';
+            template +=     '<div class="icon-location"><i class="fa fa-location-arrow"></i></div>';
+            template +=   '</div>';
+
             template +=     '</div>';   // end of #wrapper-treeinfo
             template += '</div>';   // end of #wrapper-mapfilter
 
@@ -189,26 +194,30 @@
             var template = '';
             template += '<div id="content-map">';
             template += '</div>';   // end of #content-map
-
+ 
             template += '<div id="wrapper-mapfilter">';
-            template +=     '<div id="content-mapfilter">';
-            template +=     '</div>';
-            template +=     '<div id="wrapper-btn-mapfilter">';
-            template +=         '<div class="btn-mapfilter">';
-            template +=             '<div class="icon-mapfilter-status"><i class="fa fa-filter"></i></div>';
-            template +=             '<div class="text-mapfilter-status">off</div>';
-            template +=         '</div>';
-            template +=         '<div class="btn-location btn-action evt-location">';
-            template +=             '<div class="icon-location"><i class="fa fa-location-arrow"></i></div>';
-            template +=         '</div>';
-            template +=         '<div class="btn-add-tree btn-action evt-add-tree">';
-            template +=             '<div class="icon-add-tree"><i class="fa fa-plus"></i></div>';
-            template +=         '</div>';
-            template +=         '<div class="btn-tree-table btn-action evt-tree-table">';
-            template +=             '<div class="icon-tree-table"><i class="fa fa-th-list"></i></div>';
-            template +=         '</div>';
-            template +=         '<div class="deco-mapfilter">';
-            template +=         '</div>';
+            template +=   '<div id="content-mapfilter">';
+            template += '</div>';
+            template += '<div id="wrapper-btn-map">';
+            template +=   '<div class="btn-mapfilter">';
+            template +=     '<div class="icon-mapfilter-status"><i class="fa fa-filter"></i></div>';
+            template +=     '<div class="text-mapfilter-status">off</div>';
+            template +=   '</div>';
+            template +=   '<div class="btn-map-zoom-in">';
+            template +=     '<div class="icon-map-zoom-in"><i class="fa fa-search-plus"></i></div>';
+            template +=   '</div>';
+            template +=   '<div class="btn-map-zoom-out">';
+            template +=     '<div class="icon-map-zoom-out"><i class="fa fa-search-minus"></i></div>';
+            template +=   '</div>';
+            template +=   '<div class="btn-location btn-action evt-location">';
+            template +=     '<div class="icon-location"><i class="fa fa-location-arrow"></i></div>';
+            template +=   '</div>';
+            template +=   '<div class="btn-add-tree btn-action evt-add-tree">';
+            template +=     '<div class="icon-add-tree"><i class="fa fa-plus"></i></div>';
+            template +=   '</div>';
+            template +=   '<div class="btn-tree-table btn-action evt-tree-table">';
+            template +=     '<div class="icon-tree-table"><i class="fa fa-th-list"></i></div>';
+            template +=   '</div>';
             template +=     '</div>';   // end of #wrapper-treeinfo
             template += '</div>';   // end of #wrapper-mapfilter
 
