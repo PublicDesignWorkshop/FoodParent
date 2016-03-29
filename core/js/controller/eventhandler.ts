@@ -548,7 +548,8 @@
                     } else if (el.hasClass('evt-logout')) {
                         Controller.processLogout(function () {
                             new ResetPopupViewCommand().execute();
-                            Backbone.history.loadUrl(Backbone.history.fragment);
+                            //Backbone.history.loadUrl(Backbone.history.fragment);
+                            new NavigateCommand({ hash: 'trees', id: 0 }).execute();
                         }, function () {
                             EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
                         });

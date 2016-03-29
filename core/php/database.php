@@ -9,9 +9,9 @@
       # }
 	
 	  class database extends dbpass {
-        public $host = "cj.db";
-        public $username = "cj";
+        public $host = "localhost";
+        public $username = "root";
         public $port = 3306;
-        public $db_name = "tree_parent";
+        public $db_name = "foodparent";
 	  }
 ?>
