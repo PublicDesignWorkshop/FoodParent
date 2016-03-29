@@ -338,6 +338,7 @@ var FoodParent;
                 var self = _this;
                 self._map.closePopup();
             };
+            // MISSING TYPESCRIPT VERSIONS OF _zoomIn and _zoomOut
             this.closeMapFilter = function () {
                 var self = _this;
                 self.$('#wrapper-mapfilter').animate({ left: -260 }, FoodParent.Setting.getFilterAnimDuration());
@@ -471,12 +472,6 @@ var FoodParent;
             else {
                 self.openMapFilter();
             }
-        };
-        TreesMapView.prototype._zoomIn = function (event) {
-            this._map.zoomIn();
-        };
-        TreesMapView.prototype._zoomOut = function (event) {
-            this._map.zoomOut();
         };
         TreesMapView.prototype._searchFood = function (event) {
             var self = this;

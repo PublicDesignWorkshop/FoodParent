@@ -62,7 +62,7 @@
         public static handleNavigate(viewStatus: VIEW_STATUS, option?: any): void {
             var self: EventHandler = EventHandler._instance;
             Controller.abortAllXHR();
-            Pace.restart();
+            //Pace.restart();
             //new RemoveAlertViewCommand().execute();
             //if (View.getViewStatus() != viewStatus) {
                 new RemoveChildViewCommand({ parent: View }).execute();
