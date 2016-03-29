@@ -282,8 +282,8 @@ var FoodParent;
             var template = _.template(FoodParent.Template.getTreesMapViewTemplateForAdmin());
             self.$el.html(template({}));
             self.$('#checkbox-mytrees').bootstrapToggle({
-                on: 'My Trees (On)',
-                off: 'My Trees (Off)'
+                on: '(On)',
+                off: '(Off)'
             });
             FoodParent.Controller.updateGeoLocation(self.renderMap, self.renderMapError);
             return self;

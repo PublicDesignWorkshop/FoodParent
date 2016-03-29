@@ -623,7 +623,7 @@
             return Router._instance;
         }
         home() {
-            EventHandler.handleNavigate(VIEW_STATUS.HOME);
+            EventHandler.handleNavigate(VIEW_STATUS.TREES, { id: 0 });
         }
         trees(id: number) {
             EventHandler.handleNavigate(VIEW_STATUS.TREES, { id: id });

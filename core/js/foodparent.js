@@ -41712,7 +41712,7 @@ var FoodParent;
             return Router._instance;
         };
         Router.prototype.home = function () {
-            FoodParent.EventHandler.handleNavigate(FoodParent.VIEW_STATUS.HOME);
+            FoodParent.EventHandler.handleNavigate(FoodParent.VIEW_STATUS.TREES, { id: 0 });
         };
         Router.prototype.trees = function (id) {
             FoodParent.EventHandler.handleNavigate(FoodParent.VIEW_STATUS.TREES, { id: id });
@@ -48156,21 +48156,20 @@ var FoodParent;
         Template.getTreesMapViewTemplateForGuest = function () {
             var template = '';
             template += '<div id="content-map">';
-            template += '</div>';   // end of #content-map
-
+            template += '</div>'; // end of #content-map
             template += '<div id="wrapper-mapfilter">';
-            template +=     '<div id="content-mapfilter">';
-            template +=     '</div>';
-            template +=     '<div id="wrapper-btn-map">';
-            template +=       '<div class="btn-map-zoom-in">';
-            template +=         '<div class="icon-map-zoom-in"><i class="fa fa-search-plus"></i></div>';
-            template +=       '</div>';
-            template +=       '<div class="btn-map-zoom-out">';
-            template +=         '<div class="icon-map-zoom-out"><i class="fa fa-search-minus"></i></div>';
-            template +=         '</div>';
-            template +=         '<div class="btn-location btn-action evt-location">';
-            template +=             '<div class="icon-location"><i class="fa fa-location-arrow"></i></div>';
-            template +=         '</div>';
+            template += '<div id="content-mapfilter">';
+            template += '</div>';
+            template += '<div id="wrapper-btn-map">';
+            template += '<div class="btn-map-zoom-in">';
+            template += '<div class="icon-map-zoom-in"><i class="fa fa-search-plus"></i></div>';
+            template += '</div>';
+            template += '<div class="btn-map-zoom-out">';
+            template += '<div class="icon-map-zoom-out"><i class="fa fa-search-minus"></i></div>';
+            template += '</div>';
+            template += '<div class="btn-location btn-action evt-location">';
+            template += '<div class="icon-location"><i class="fa fa-location-arrow"></i></div>';
+            template += '</div>';
             template += '</div>'; // end of #wrapper-treeinfo
             template += '</div>'; // end of #wrapper-mapfilter
             template += '<div id="wrapper-treeinfo" class="hidden">';
@@ -48192,25 +48191,24 @@ var FoodParent;
         Template.getTreesMapViewTemplateForParent = function () {
             var template = '';
             template += '<div id="content-map">';
-            template += '</div>';   // end of #content-map
-
+            template += '</div>'; // end of #content-map
             template += '<div id="wrapper-mapfilter">';
-            template +=   '<div id="content-mapfilter">';
+            template += '<div id="content-mapfilter">';
             template += '</div>';
             template += '<div id="wrapper-btn-map">';
-            template +=   '<div class="btn-mapfilter">';
-            template +=     '<div class="icon-mapfilter-status"><i class="fa fa-filter"></i></div>';
-            template +=     '<div class="text-mapfilter-status">off</div>';
-            template +=   '</div>';
-            template +=   '<div class="btn-map-zoom-in">';
-            template +=     '<div class="icon-map-zoom-in"><i class="fa fa-search-plus"></i></div>';
-            template +=   '</div>';
-            template +=   '<div class="btn-map-zoom-out">';
-            template +=     '<div class="icon-map-zoom-out"><i class="fa fa-search-minus"></i></div>';
-            template +=   '</div>';
-            template +=   '<div class="btn-location btn-action evt-location">';
-            template +=     '<div class="icon-location"><i class="fa fa-location-arrow"></i></div>';
-            template +=   '</div>';
+            template += '<div class="btn-mapfilter">';
+            template += '<div class="icon-mapfilter-status"><i class="fa fa-filter"></i></div>';
+            template += '<div class="text-mapfilter-status">off</div>';
+            template += '</div>';
+            template += '<div class="btn-map-zoom-in">';
+            template += '<div class="icon-map-zoom-in"><i class="fa fa-search-plus"></i></div>';
+            template += '</div>';
+            template += '<div class="btn-map-zoom-out">';
+            template += '<div class="icon-map-zoom-out"><i class="fa fa-search-minus"></i></div>';
+            template += '</div>';
+            template += '<div class="btn-location btn-action evt-location">';
+            template += '<div class="icon-location"><i class="fa fa-location-arrow"></i></div>';
+            template += '</div>';
             template += '</div>'; // end of #wrapper-treeinfo
             template += '</div>'; // end of #wrapper-mapfilter
             template += '<div id="wrapper-treeinfo" class="hidden">';
@@ -48233,31 +48231,30 @@ var FoodParent;
         Template.getTreesMapViewTemplateForAdmin = function () {
             var template = '';
             template += '<div id="content-map">';
-            template += '</div>';   // end of #content-map
-
+            template += '</div>'; // end of #content-map
             template += '<div id="wrapper-mapfilter">';
-            template +=   '<div id="content-mapfilter">';
+            template += '<div id="content-mapfilter">';
             template += '</div>';
             template += '<div id="wrapper-btn-map">';
-            template +=   '<div class="btn-mapfilter">';
-            template +=     '<div class="icon-mapfilter-status"><i class="fa fa-filter"></i></div>';
-            template +=     '<div class="text-mapfilter-status">off</div>';
-            template +=   '</div>';
-            template +=   '<div class="btn-map-zoom-in">';
-            template +=     '<div class="icon-map-zoom-in"><i class="fa fa-search-plus"></i></div>';
-            template +=   '</div>';
-            template +=   '<div class="btn-map-zoom-out">';
-            template +=     '<div class="icon-map-zoom-out"><i class="fa fa-search-minus"></i></div>';
-            template +=   '</div>';
-            template +=   '<div class="btn-location btn-action evt-location">';
-            template +=     '<div class="icon-location"><i class="fa fa-location-arrow"></i></div>';
-            template +=   '</div>';
-            template +=   '<div class="btn-add-tree btn-action evt-add-tree">';
-            template +=     '<div class="icon-add-tree"><i class="fa fa-plus"></i></div>';
-            template +=   '</div>';
-            template +=   '<div class="btn-tree-table btn-action evt-tree-table">';
-            template +=     '<div class="icon-tree-table"><i class="fa fa-th-list"></i></div>';
-            template +=   '</div>';
+            template += '<div class="btn-mapfilter">';
+            template += '<div class="icon-mapfilter-status"><i class="fa fa-filter"></i></div>';
+            template += '<div class="text-mapfilter-status">off</div>';
+            template += '</div>';
+            template += '<div class="btn-map-zoom-in">';
+            template += '<div class="icon-map-zoom-in"><i class="fa fa-search-plus"></i></div>';
+            template += '</div>';
+            template += '<div class="btn-map-zoom-out">';
+            template += '<div class="icon-map-zoom-out"><i class="fa fa-search-minus"></i></div>';
+            template += '</div>';
+            template += '<div class="btn-location btn-action evt-location">';
+            template += '<div class="icon-location"><i class="fa fa-location-arrow"></i></div>';
+            template += '</div>';
+            template += '<div class="btn-add-tree btn-action evt-add-tree">';
+            template += '<div class="icon-add-tree"><i class="fa fa-plus"></i></div>';
+            template += '</div>';
+            template += '<div class="btn-tree-table btn-action evt-tree-table">';
+            template += '<div class="icon-tree-table"><i class="fa fa-th-list"></i></div>';
+            template += '</div>';
             template += '</div>'; // end of #wrapper-treeinfo
             template += '</div>'; // end of #wrapper-mapfilter
             template += '<div id="wrapper-treeinfo" class="hidden">';
@@ -52384,6 +52381,7 @@ var FoodParent;
                 var self = _this;
                 self._map.closePopup();
             };
+            // MISSING TYPESCRIPT VERSIONS OF _zoomIn and _zoomOut
             this.closeMapFilter = function () {
                 var self = _this;
                 self.$('#wrapper-mapfilter').animate({ left: -260 }, FoodParent.Setting.getFilterAnimDuration());
@@ -52517,12 +52515,6 @@ var FoodParent;
             else {
                 self.openMapFilter();
             }
-        };
-        TreesMapView.prototype._zoomIn = function (event) {
-            this._map.zoomIn();
-        };
-        TreesMapView.prototype._zoomOut = function (event) {
-            this._map.zoomOut();
         };
         TreesMapView.prototype._searchFood = function (event) {
             var self = this;
@@ -53666,8 +53658,8 @@ var FoodParent;
             var template = _.template(FoodParent.Template.getTreesMapViewTemplateForAdmin());
             self.$el.html(template({}));
             self.$('#checkbox-mytrees').bootstrapToggle({
-                on: 'My Trees (On)',
-                off: 'My Trees (Off)'
+                on: '(On)',
+                off: '(Off)'
             });
             FoodParent.Controller.updateGeoLocation(self.renderMap, self.renderMapError);
             return self;
