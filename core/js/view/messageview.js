@@ -72,7 +72,7 @@ var FoodParent;
             */
             var template;
             if (self._undoable) {
-                template = _.template(FoodParent.Template.getMessageUndoableViewTemplate());
+                template = _.template("");
             }
             else {
                 template = _.template(FoodParent.Template.getMessageViewTemplate());
@@ -88,7 +88,7 @@ var FoodParent;
             }
             self._timer = setTimeout(function () {
                 self.setInvisible();
-            }, 5000);
+            }, 500);
             return self;
         };
         MessageView.prototype.update = function (args) {

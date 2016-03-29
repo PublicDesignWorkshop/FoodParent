@@ -41053,7 +41053,7 @@ var FoodParent;
             return "No Data";
         };
         Setting.getMaxRating = function () {
-            return 10;
+            return 5;
         };
         Setting.getResizeTimeout = function () {
             return 50;
@@ -51135,7 +51135,7 @@ var FoodParent;
             */
             var template;
             if (self._undoable) {
-                template = _.template(FoodParent.Template.getMessageUndoableViewTemplate());
+                template = _.template("");
             }
             else {
                 template = _.template(FoodParent.Template.getMessageViewTemplate());
@@ -51151,7 +51151,7 @@ var FoodParent;
             }
             self._timer = setTimeout(function () {
                 self.setInvisible();
-            }, 5000);
+            }, 500);
             return self;
         };
         MessageView.prototype.update = function (args) {
@@ -54258,7 +54258,7 @@ var FoodParent;
                     }, {
                         scaleOverride: true,
                         scaleSteps: 1,
-                        scaleStepWidth: 10,
+                        scaleStepWidth: 5,
                         scaleStartValue: 0,
                         pointDotRadius: 3,
                         pointDotStrokeWidth: 2,
