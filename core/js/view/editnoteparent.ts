@@ -68,7 +68,7 @@
                     var rate = rating(self.$('.input-rating-slider')[0], (self._note.getRate() + 1).toFixed(2), Setting.getMaxRating() + 1, function (rate) {
                         if (Math.ceil(self._note.getRate()) != (rate - 1)) {
                             EventHandler.handleNoteData(self._note, DATA_MODE.UPDATE_RATING, { rate: (rate - 1) }, function () {
-                                EventHandler.handleDataChange("Rating of <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has changed successfully.", true);
+                                EventHandler.handleDataChange("Rating of <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> was changed successfully.", true);
                                 self.renderNoteInfo();
                             }, function () {
                                 EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
@@ -95,7 +95,7 @@
                             var comment: string = self.$('.input-comment').val();
                             if (self._note.getComment().trim() != comment.trim()) {
                                 EventHandler.handleNoteData(self._note, DATA_MODE.UPDATE_COMMENT, { comment: comment }, function () {
-                                    EventHandler.handleDataChange("Comment of <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has changed successfully.", true);
+                                    EventHandler.handleDataChange("Comment of <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> was changed successfully.", true);
                                     self.renderNoteInfo();
                                 }, function () {
                                     EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
@@ -120,7 +120,7 @@
                     onClose: function () {
                         if (bAuthor) {
                             EventHandler.handleNoteData(self._note, DATA_MODE.UPDATE_DATE, { date: moment(this.get()).hour(moment(new Date()).hour()).format(Setting.getDateTimeFormat()) }, function () {
-                                EventHandler.handleDataChange("Date of this <strong><i>Note</i></strong> has changed successfully.", true);
+                                EventHandler.handleDataChange("Date of this <strong><i>Note</i></strong> was changed successfully.", true);
                                 self.renderNoteInfo();
                             }, function () {
                                 EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
@@ -165,7 +165,7 @@
                     var food: Food = Model.getFoods().findWhere({ id: tree.getFoodId() });
                     if (cover != 0) {
                         EventHandler.handleNoteData(self._note, DATA_MODE.UPDATE_COVER, { cover: cover }, function () {
-                            EventHandler.handleDataChange("Cover picture of <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has changed successfully.", true);
+                            EventHandler.handleDataChange("Cover picture of <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> was changed successfully.", true);
                             self.renderImageNote();
                         }, function () {
                             EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);

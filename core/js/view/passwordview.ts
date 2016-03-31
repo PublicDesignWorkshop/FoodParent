@@ -103,7 +103,7 @@
                 } else if (self.$('.input-password').val().trim() == self.$('.input-password2').val().trim()) {
                     Controller.changePassword(self._person.getId(), self.$('.input-password').val().trim(), function (response) {
                         if (response.result == "true" || response.result == true) {
-                            new RenderMessageViewCommand({ el: Setting.getMessageWrapperElement(), message: "The <strong>password</strong> has changed successfully.", undoable: false }).execute();
+                            new RenderMessageViewCommand({ el: Setting.getMessageWrapperElement(), message: "The <strong>password</strong> was changed successfully.", undoable: false }).execute();
                             new RemoveAlertViewCommand({ delay: Setting.getRemovePopupDuration() }).execute();
                             self.bProcessing = false;
                             Backbone.history.loadUrl(Backbone.history.fragment);

@@ -43440,7 +43440,7 @@ var FoodParent;
                         person: 0,
                         //comment: "Ownership has changed from '" + Model.getOwnerships().findWhere({ id: self._previousOwnership }).getName()
                         //+ "' to '" + Model.getOwnerships().findWhere({ id: self._ownership }).getName() + "'",
-                        comment: "Ownership has changed as '" + FoodParent.Model.getOwnerships().findWhere({ id: self._ownership }).getName() + "'",
+                        comment: "Ownership changed to '" + FoodParent.Model.getOwnerships().findWhere({ id: self._ownership }).getName() + "'",
                         picture: "",
                         rate: -1,
                         date: moment(new Date()).format(FoodParent.Setting.getDateTimeFormat()),
@@ -43532,7 +43532,7 @@ var FoodParent;
                             type: FoodParent.NoteType.INFO,
                             tree: self._tree.getId(),
                             person: 0,
-                            comment: "Location has changed as '" + '@ ' + self._location.lat.toFixed(4) + ", " + self._location.lng.toFixed(4) + "'",
+                            comment: "Location changed to '" + '@ ' + self._location.lat.toFixed(4) + ", " + self._location.lng.toFixed(4) + "'",
                             picture: "",
                             rate: -1,
                             date: moment(new Date()).format(FoodParent.Setting.getDateTimeFormat()),
@@ -43627,7 +43627,7 @@ var FoodParent;
                         person: 0,
                         //comment: "Food type has changed from '" + Model.getFoods().findWhere({ id: self._previousFood }).getName()
                         //+ "' to '" + Model.getFoods().findWhere({ id: self._food }).getName() + "'",
-                        comment: "Food type has changed as '" + FoodParent.Model.getFoods().findWhere({ id: self._food }).getName() + "'",
+                        comment: "Tree type changed to '" + FoodParent.Model.getFoods().findWhere({ id: self._food }).getName() + "'",
                         picture: "",
                         rate: -1,
                         date: moment(new Date()).format(FoodParent.Setting.getDateTimeFormat()),
@@ -49391,7 +49391,7 @@ var FoodParent;
             template += '<div id="content-treemenu">';
             template += '<div class="info-button-group">';
             template += '<div class="btn-brown btn-small left btn-action evt-map"><i class="fa fa-map-marker fa-1x"></i> Back To Map</div>';
-            template += '<div class="btn-brown btn-small left btn-action evt-post"><i class="fa fa-comment fa-1x"></i> New Post</div>';
+            template += '<div class="btn-brown btn-small left btn-action evt-post"><i class="fa fa-comment fa-1x"></i> Add Note</div>';
             template += '</div>'; // end of .info-button-group
             template += '</div>'; // end of #content-treeinfo
             template += '<div id="wrapper-date-select">';
@@ -49434,7 +49434,7 @@ var FoodParent;
             template += '<div id="content-treemenu">';
             template += '<div class="info-button-group">';
             template += '<div class="btn-brown btn-small left btn-action evt-map"><i class="fa fa-map-marker fa-1x"></i> Back To Map</div>';
-            template += '<div class="btn-brown btn-small left btn-action evt-post"><i class="fa fa-comment fa-1x"></i> New Post</div>';
+            template += '<div class="btn-brown btn-small left btn-action evt-post"><i class="fa fa-comment fa-1x"></i> Add Note</div>';
             template += '<div class="btn-brown btn-small left btn-action btn-adoption evt-adopt"><i class="fa fa-user-plus fa-1x"></i> Adopt Tree</div>';
             template += '</div>'; // end of .info-button-group
             template += '</div>'; // end of #content-treeinfo
@@ -49478,7 +49478,7 @@ var FoodParent;
             template += '<div id="content-treemenu">';
             template += '<div class="info-button-group">';
             template += '<div class="btn-brown btn-small left btn-action evt-map"><i class="fa fa-map-marker fa-1x"></i> Back To Map</div>';
-            template += '<div class="btn-brown btn-small left btn-action evt-post"><i class="fa fa-comment fa-1x"></i> New Post</div>';
+            template += '<div class="btn-brown btn-small left btn-action evt-post"><i class="fa fa-comment fa-1x"></i> Add Note</div>';
             template += '<div class="btn-brown btn-small left btn-action btn-adoption evt-manage-adoption"><i class="fa fa-users fa-1x"></i> Adopt Tree</div>';
             template += '</div>'; // end of .info-button-group
             template += '</div>'; // end of #content-treeinfo
@@ -49711,7 +49711,7 @@ var FoodParent;
             template += '</div>'; // end of .image-group
             template += '</div>'; // end of #content-image
             template += '<div id="content-post">';
-            template += '<div class="info-header"><i class="fa fa-star-half-o fa-1x"></i> Raiting</div>';
+            template += '<div class="info-header"><i class="fa fa-star-half-o fa-1x"></i> Rating</div>';
             template += '<div class="input-rating"></div>';
             template += '<div class="input-rating-slider"></div>';
             template += '<hr />';
@@ -49767,7 +49767,7 @@ var FoodParent;
             template += '</div>'; // end of .image-group
             template += '</div>'; // end of #content-image
             template += '<div id="content-post">';
-            template += '<div class="info-header"><i class="fa fa-star-half-o fa-1x"></i> Raiting</div>';
+            template += '<div class="info-header"><i class="fa fa-star-half-o fa-1x"></i> Rating</div>';
             template += '<div class="input-rating"></div>';
             template += '<div class="input-rating-slider"></div>';
             template += '<hr />';
@@ -49836,7 +49836,7 @@ var FoodParent;
             template += '</div>'; // end of .image-group
             template += '</div>'; // end of #content-image
             template += '<div id="content-post">';
-            template += '<div class="info-header"><i class="fa fa-star-half-o fa-1x"></i> Raiting</div>';
+            template += '<div class="info-header"><i class="fa fa-star-half-o fa-1x"></i> Rating</div>';
             template += '<div class="input-rating"></div>';
             template += '<div class="input-rating-slider"></div>';
             template += '<hr />';
@@ -49901,7 +49901,7 @@ var FoodParent;
             template += '</div>'; // end of .image-group
             template += '</div>'; // end of #content-image
             template += '<div id="content-post">';
-            template += '<div class="info-header"><i class="fa fa-star-half-o fa-1x"></i> Raiting</div>';
+            template += '<div class="info-header"><i class="fa fa-star-half-o fa-1x"></i> Rating</div>';
             template += '<div class="input-rating"></div>';
             template += '<div class="input-rating-slider"></div>';
             template += '<hr />';
@@ -50248,11 +50248,11 @@ var FoodParent;
             template += '<hr />';
             template += '<div id="content-login">';
             template += '<div class="info-group">';
-            template += '<div class="text-label"><i class="fa fa-caret-right"></i> <i>Account: </i><strong><%= contact %></strong></div>';
+            template += '<div class="text-label">Email:<strong><%= contact %></strong></div>';
             template += '</div>'; // end of .info-group
             template += '<hr />';
             template += '<div class="info-group">';
-            template += '<div class="text-label"><i class="fa fa-caret-right"></i> Information</div>';
+            template += '<div class="text-label">Information:</div>';
             template += '</div>'; // end of .info-group
             template += '<div class="info-group">';
             template += '<input type="text" class="form-control input-name" placeholder="first & last name" />';
@@ -53691,8 +53691,8 @@ var FoodParent;
             var template = _.template(FoodParent.Template.getTreesMapViewTemplateForAdmin());
             self.$el.html(template({}));
             self.$('#checkbox-mytrees').bootstrapToggle({
-                on: '(On)',
-                off: '(Off)'
+                on: 'My Trees (On)',
+                off: 'My Trees (Off)'
             });
             FoodParent.Controller.updateGeoLocation(self.renderMap, self.renderMapError);
             return self;

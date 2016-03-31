@@ -371,7 +371,7 @@ var FoodParent;
                 close: 'Close',
                 onClose: function () {
                     FoodParent.EventHandler.handleDonationData(self._donation, FoodParent.DATA_MODE.UPDATE_DATE, { date: moment(this.get()).startOf('day').format(FoodParent.Setting.getDateTimeFormat()) }, function () {
-                        FoodParent.EventHandler.handleDataChange("Date of this <strong><i>Donation</i></strong> has changed successfully.", true);
+                        FoodParent.EventHandler.handleDataChange("Date of this <strong><i>Donation</i></strong> was changed successfully.", true);
                         self.renderDonationInfo();
                     }, function () {
                         FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
@@ -529,7 +529,7 @@ var FoodParent;
             var place = FoodParent.Model.getPlaces().findWhere({ id: self._donation.getPlaceId() });
             if (cover != 0) {
                 FoodParent.EventHandler.handleDonationData(self._donation, FoodParent.DATA_MODE.UPDATE_COVER, { cover: cover }, function () {
-                    FoodParent.EventHandler.handleDataChange("Cover picture of <strong><i>" + place.getName() + "</i></strong> has changed successfully.", true);
+                    FoodParent.EventHandler.handleDataChange("Cover picture of <strong><i>" + place.getName() + "</i></strong> was changed successfully.", true);
                     self.renderDonationImages();
                 }, function () {
                     FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);

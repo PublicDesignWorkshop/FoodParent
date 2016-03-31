@@ -370,7 +370,7 @@
                     EventHandler.handleTreeData(tree, DATA_MODE.UPDATE_LOCATION, { marker: marker, location: marker.getLatLng() }, function () {
                         var food: Food = Model.getFoods().findWhere({ id: tree.getFoodId() });
                         self.renderRecentComments(tree);
-                        EventHandler.handleDataChange("Location of <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has changed successfully.", true);
+                        EventHandler.handleDataChange("Location of <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> was changed successfully.", true);
                         self.renderTreeInfo(tree);
                     }, function () {
                         EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
@@ -883,7 +883,7 @@
             if (tree.getDescription().trim() != description.trim()) {
                 EventHandler.handleTreeData(tree, DATA_MODE.UPDATE_DESCRIPTION, { description: description }, function () {
                     var food: Food = Model.getFoods().findWhere({ id: tree.getFoodId() });
-                    EventHandler.handleDataChange("Description of <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has changed successfully.", true);
+                    EventHandler.handleDataChange("Description of <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> was changed successfully.", true);
                     self.renderTreeInfo(tree);
                 }, function () {
                     EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
@@ -898,7 +898,7 @@
             if (tree.getFoodId() != selected) {
                 EventHandler.handleTreeData(tree, DATA_MODE.UPDATE_FOODTYPE, { food: selected }, function () {
                     var food: Food = Model.getFoods().findWhere({ id: tree.getFoodId() });
-                    EventHandler.handleDataChange("Food type of <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has changed successfully.", true);
+                    EventHandler.handleDataChange("Food type of <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> was changed successfully.", true);
                     self._selectedMarker.label._container.innerHTML = food.getName() + " " + tree.getName();
                     self._selectedMarker.setIcon(MarkerFractory.getIcon(food));
                     self.renderTreeInfo(tree);
@@ -917,7 +917,7 @@
                 if (self._selectedMarker != undefined && self._selectedMarker.options.id != undefined) {
                     EventHandler.handleTreeData(tree, DATA_MODE.UPDATE_LOCATION, { marker: self._selectedMarker, location: location }, function () {
                         var food: Food = Model.getFoods().findWhere({ id: tree.getFoodId() });
-                        EventHandler.handleDataChange("Location of <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has changed successfully.", true);
+                        EventHandler.handleDataChange("Location of <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> was changed successfully.", true);
                         // Move marker to desired location & update info panel
                         self._selectedMarker.setLatLng(tree.getLocation());
                         self._map.setView(tree.getLocation());
@@ -940,7 +940,7 @@
                     EventHandler.handleTreeData(tree, DATA_MODE.UPDATE_FLAG, { flag: flag, addmode: true }, function () {
                         var food: Food = Model.getFoods().findWhere({ id: tree.getFoodId() });
                         self.renderFlagInfo(tree.getFlags());
-                        EventHandler.handleDataChange("Status of <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has changed successfully.", true);
+                        EventHandler.handleDataChange("Status of <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> was changed successfully.", true);
                         self._applyFilter();
                     }, function () {
                         EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
@@ -949,7 +949,7 @@
                     EventHandler.handleTreeData(tree, DATA_MODE.UPDATE_FLAG, { flag: flag, addmode: false }, function () {
                         var food: Food = Model.getFoods().findWhere({ id: tree.getFoodId() });
                         self.renderFlagInfo(tree.getFlags());
-                        EventHandler.handleDataChange("Status of <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has changed successfully.", true);
+                        EventHandler.handleDataChange("Status of <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> was changed successfully.", true);
                         self._applyFilter();
                     }, function () {
                         EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
@@ -967,7 +967,7 @@
                     var food: Food = Model.getFoods().findWhere({ id: tree.getFoodId() });
                     var ownership: Ownership = Model.getOwnerships().findWhere({ id: tree.getOwnershipId() });
                     self.renderOwnershipInfo(ownership);
-                    EventHandler.handleDataChange("Ownership of <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has changed successfully.", true);
+                    EventHandler.handleDataChange("Ownership of <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> was changed successfully.", true);
                 }, function () {
                     EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
                 });

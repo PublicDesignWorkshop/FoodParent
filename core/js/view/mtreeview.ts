@@ -372,7 +372,7 @@
                                     EventHandler.handleTreeData(tree, DATA_MODE.UPDATE_DESCRIPTION, { description: description }, function () {
                                         var food: Food = Model.getFoods().findWhere({ id: tree.getFoodId() });
                                         self.renderRecentActivities(tree);
-                                        EventHandler.handleDataChange("Description of <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has changed successfully.", true);
+                                        EventHandler.handleDataChange("Description of <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> was changed successfully.", true);
                                         self.renderTreeInfo(tree);
                                     }, function () {
                                         EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
@@ -397,7 +397,7 @@
                                 if (tree.getFoodId() != selected) {
                                     EventHandler.handleTreeData(tree, DATA_MODE.UPDATE_FOODTYPE, { food: selected }, function () {
                                         var food: Food = Model.getFoods().findWhere({ id: tree.getFoodId() });
-                                        EventHandler.handleDataChange("Food type of <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has changed successfully.", true);
+                                        EventHandler.handleDataChange("Food type of <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> was changed successfully.", true);
                                         self.renderTreeInfo(tree);
                                     }, function () {
                                         EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
@@ -418,7 +418,7 @@
                                 if (location.lat != self._tree.getLat()) {
                                     FoodParent.EventHandler.handleTreeData(tree, FoodParent.DATA_MODE.UPDATE_LOCATION, { location: location }, function () {
                                         var food: FoodParent.Food = FoodParent.Model.getFoods().findWhere({ id: tree.getFoodId() });
-                                        FoodParent.EventHandler.handleDataChange("Location of <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has changed successfully.", true);
+                                        FoodParent.EventHandler.handleDataChange("Location of <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> was changed successfully.", true);
                                         self.renderTreeInfo(tree);
                                     }, function () {
                                         FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
@@ -438,7 +438,7 @@
                                 if (location.lng != self._tree.getLng()) {
                                     FoodParent.EventHandler.handleTreeData(tree, FoodParent.DATA_MODE.UPDATE_LOCATION, { location: location }, function () {
                                         var food: FoodParent.Food = FoodParent.Model.getFoods().findWhere({ id: tree.getFoodId() });
-                                        FoodParent.EventHandler.handleDataChange("Location of <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has changed successfully.", true);
+                                        FoodParent.EventHandler.handleDataChange("Location of <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> was changed successfully.", true);
                                         self.renderTreeInfo(tree);
                                     }, function () {
                                         FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
@@ -578,7 +578,7 @@
                             var food: Food = Model.getFoods().findWhere({ id: self._tree.getFoodId() });
                             self.renderFlagInfo(self._tree.getFlags());
                             self.renderRecentActivities(self._tree);
-                            EventHandler.handleDataChange("Status of <strong><i>" + food.getName() + " " + self._tree.getName() + "</i></strong> has changed successfully.", true);
+                            EventHandler.handleDataChange("Status of <strong><i>" + food.getName() + " " + self._tree.getName() + "</i></strong> was changed successfully.", true);
                         }, function () {
                             EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
                         });
@@ -587,7 +587,7 @@
                             var food: Food = Model.getFoods().findWhere({ id: self._tree.getFoodId() });
                             self.renderFlagInfo(self._tree.getFlags());
                             self.renderRecentActivities(self._tree);
-                            EventHandler.handleDataChange("Status of <strong><i>" + food.getName() + " " + self._tree.getName() + "</i></strong> has changed successfully.", true);
+                            EventHandler.handleDataChange("Status of <strong><i>" + food.getName() + " " + self._tree.getName() + "</i></strong> was changed successfully.", true);
                         }, function () {
                             EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
                         });
@@ -606,7 +606,7 @@
                         var ownership: Ownership = Model.getOwnerships().findWhere({ id: self._tree.getOwnershipId() });
                         self.renderOwnershipInfo(ownership);
                         self.renderRecentActivities(self._tree);
-                        EventHandler.handleDataChange("Ownership of <strong><i>" + food.getName() + " " + self._tree.getName() + "</i></strong> has changed successfully.", true);
+                        EventHandler.handleDataChange("Ownership of <strong><i>" + food.getName() + " " + self._tree.getName() + "</i></strong> was changed successfully.", true);
                     }, function () {
                         EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
                     });

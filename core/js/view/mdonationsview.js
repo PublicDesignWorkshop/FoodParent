@@ -215,7 +215,7 @@ var FoodParent;
                                 EventHandler.handleTreeData(tree, DATA_MODE.UPDATE_LOCATION, { marker: self._selectedMarker, location: location }, function () {
                                     var food: Food = Model.getFoods().findWhere({ id: tree.getFoodId() });
                                     self.renderRecentActivities(tree);
-                                    EventHandler.handleDataChange("Location of <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has changed successfully.", true);
+                                    EventHandler.handleDataChange("Location of <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> was changed successfully.", true);
                                     // Move marker to desired location & update info panel
                                     self._selectedMarker.setLatLng(tree.getLocation());
                                     self._map.setView(tree.getLocation());

@@ -241,7 +241,7 @@ var FoodParent;
             template += '<div class="item-nav text-title evt-title">FoodParent</div>';
             template += '<div class="item-nav evt-trees">TREES</div>';
             template += '<div class="deco-login"><div></div></div>';
-            template += '<div class="item-nav text-login evt-login">PARENT IN</div>';
+            template += '<div class="item-nav text-login evt-login">LOGIN</div>';
             return template;
         };
         Template.getNavViewTemplateForParent = function () {
@@ -1333,7 +1333,7 @@ var FoodParent;
             template += '<div id="content-treemenu">';
             template += '<div class="info-button-group">';
             template += '<div class="btn-brown btn-small left btn-action evt-map"><i class="fa fa-map-marker fa-1x"></i> Back To Map</div>';
-            template += '<div class="btn-brown btn-small left btn-action evt-post"><i class="fa fa-comment fa-1x"></i> New Post</div>';
+            template += '<div class="btn-brown btn-small left btn-action evt-post"><i class="fa fa-comment fa-1x"></i> Add Note</div>';
             template += '</div>'; // end of .info-button-group
             template += '</div>'; // end of #content-treeinfo
             template += '<div id="wrapper-date-select">';
@@ -1376,7 +1376,7 @@ var FoodParent;
             template += '<div id="content-treemenu">';
             template += '<div class="info-button-group">';
             template += '<div class="btn-brown btn-small left btn-action evt-map"><i class="fa fa-map-marker fa-1x"></i> Back To Map</div>';
-            template += '<div class="btn-brown btn-small left btn-action evt-post"><i class="fa fa-comment fa-1x"></i> New Post</div>';
+            template += '<div class="btn-brown btn-small left btn-action evt-post"><i class="fa fa-comment fa-1x"></i> Add Note</div>';
             template += '<div class="btn-brown btn-small left btn-action btn-adoption evt-adopt"><i class="fa fa-user-plus fa-1x"></i> Adopt Tree</div>';
             template += '</div>'; // end of .info-button-group
             template += '</div>'; // end of #content-treeinfo
@@ -1420,7 +1420,7 @@ var FoodParent;
             template += '<div id="content-treemenu">';
             template += '<div class="info-button-group">';
             template += '<div class="btn-brown btn-small left btn-action evt-map"><i class="fa fa-map-marker fa-1x"></i> Back To Map</div>';
-            template += '<div class="btn-brown btn-small left btn-action evt-post"><i class="fa fa-comment fa-1x"></i> New Post</div>';
+            template += '<div class="btn-brown btn-small left btn-action evt-post"><i class="fa fa-comment fa-1x"></i> Add Note</div>';
             template += '<div class="btn-brown btn-small left btn-action btn-adoption evt-manage-adoption"><i class="fa fa-users fa-1x"></i> Adopt Tree</div>';
             template += '</div>'; // end of .info-button-group
             template += '</div>'; // end of #content-treeinfo
@@ -1653,7 +1653,7 @@ var FoodParent;
             template += '</div>'; // end of .image-group
             template += '</div>'; // end of #content-image
             template += '<div id="content-post">';
-            template += '<div class="info-header"><i class="fa fa-star-half-o fa-1x"></i> Raiting</div>';
+            template += '<div class="info-header"><i class="fa fa-star-half-o fa-1x"></i> Rating</div>';
             template += '<div class="input-rating"></div>';
             template += '<div class="input-rating-slider"></div>';
             template += '<hr />';
@@ -1709,7 +1709,7 @@ var FoodParent;
             template += '</div>'; // end of .image-group
             template += '</div>'; // end of #content-image
             template += '<div id="content-post">';
-            template += '<div class="info-header"><i class="fa fa-star-half-o fa-1x"></i> Raiting</div>';
+            template += '<div class="info-header"><i class="fa fa-star-half-o fa-1x"></i> Rating</div>';
             template += '<div class="input-rating"></div>';
             template += '<div class="input-rating-slider"></div>';
             template += '<hr />';
@@ -1778,7 +1778,7 @@ var FoodParent;
             template += '</div>'; // end of .image-group
             template += '</div>'; // end of #content-image
             template += '<div id="content-post">';
-            template += '<div class="info-header"><i class="fa fa-star-half-o fa-1x"></i> Raiting</div>';
+            template += '<div class="info-header"><i class="fa fa-star-half-o fa-1x"></i> Rating</div>';
             template += '<div class="input-rating"></div>';
             template += '<div class="input-rating-slider"></div>';
             template += '<hr />';
@@ -1843,7 +1843,7 @@ var FoodParent;
             template += '</div>'; // end of .image-group
             template += '</div>'; // end of #content-image
             template += '<div id="content-post">';
-            template += '<div class="info-header"><i class="fa fa-star-half-o fa-1x"></i> Raiting</div>';
+            template += '<div class="info-header"><i class="fa fa-star-half-o fa-1x"></i> Rating</div>';
             template += '<div class="input-rating"></div>';
             template += '<div class="input-rating-slider"></div>';
             template += '<hr />';
@@ -2190,11 +2190,11 @@ var FoodParent;
             template += '<hr />';
             template += '<div id="content-login">';
             template += '<div class="info-group">';
-            template += '<div class="text-label"><i class="fa fa-caret-right"></i> <i>Account: </i><strong><%= contact %></strong></div>';
+            template += '<div class="text-label">Email: <strong><%= contact %></strong></div>';
             template += '</div>'; // end of .info-group
             template += '<hr />';
             template += '<div class="info-group">';
-            template += '<div class="text-label"><i class="fa fa-caret-right"></i> Information</div>';
+            template += '<div class="text-label">Information:</div>';
             template += '</div>'; // end of .info-group
             template += '<div class="info-group">';
             template += '<input type="text" class="form-control input-name" placeholder="first & last name" />';
