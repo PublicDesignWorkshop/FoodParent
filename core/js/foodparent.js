@@ -41101,13 +41101,13 @@ var FoodParent;
                     return "Please put a <strong>valid e-mail address</strong>.";
                     break;
                 case 804:
-                    return "The <strong>e-mail address</strong> that you entered <strong>already exists</strong>.<br>Please selecting <strong>'PARENT IN'</strong> menu to sign in.";
+                    return "The <strong>e-mail address</strong> that you entered <strong>already exists</strong>.<br>Please selecting <strong>'LOGIN'</strong> menu to sign in.";
                     break;
                 case 805:
                     return "You have entered an <strong>incorrect username or password</strong>.";
                     break;
                 case 901:
-                    return "You need to sign in first by selecting <strong>'PARENT IN'</strong> menu.";
+                    return "You need to sign in first by selecting <strong>'LOGIN'</strong> menu.";
                     break;
                 case 902:
                     return "You need to sign in as <strong>admin</strong> to perform this action.";
@@ -48299,7 +48299,7 @@ var FoodParent;
             template += '<div class="item-nav text-title evt-title">FoodParent</div>';
             template += '<div class="item-nav evt-trees">TREES</div>';
             template += '<div class="deco-login"><div></div></div>';
-            template += '<div class="item-nav text-login evt-login">PARENT IN</div>';
+            template += '<div class="item-nav text-login evt-login">LOGIN</div>';
             return template;
         };
         Template.getNavViewTemplateForParent = function () {
