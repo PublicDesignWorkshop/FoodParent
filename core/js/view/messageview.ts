@@ -69,7 +69,7 @@
             */
             var template: any;
             if (self._undoable) {
-                template = _.template(Template.getMessageUndoableViewTemplate());
+                template = _.template("");
             } else {
                 template = _.template(Template.getMessageViewTemplate());
             }
@@ -85,7 +85,7 @@
             }
             self._timer = setTimeout(function () {
                 self.setInvisible();
-            }, 5000);
+            }, 500);
 
             return self;
         }

@@ -515,7 +515,7 @@
             self._applyFilter();
         }
 
-        private _resetFilter(event: Event): void {
+        private _resetFilter(event?: Event): void {
             var self: TreesMapView = this;
             // Set the status of right corner button based on filter on / off status
             self.$('.filter-owner-all').addClass('active');

@@ -36,8 +36,8 @@
             var template = _.template(Template.getTreesMapViewTemplateForAdmin());
             self.$el.html(template({}));
             self.$('#checkbox-mytrees').bootstrapToggle({
-                on: 'My Trees (On)',
-                off: 'My Trees (Off)'
+                on: '(On)',
+                off: '(Off)'
             });
             Controller.updateGeoLocation(self.renderMap, self.renderMapError);
             return self;

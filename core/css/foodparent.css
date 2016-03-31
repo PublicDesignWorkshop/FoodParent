@@ -13919,6 +13919,7 @@ button.close {
     }
 }
 @media all {
+    /*
     #wrapper-pop .outer-frame {
         background-color: rgba(212, 208, 207, 0.6);
         padding: 6px;
@@ -13986,6 +13987,7 @@ button.close {
     .view-description {
         margin: 4px 0;
     }
+    */
 }
 
 
@@ -15663,7 +15665,7 @@ button.close {
         text-align: left;
         padding: 2px 4px;
     }
-    #wrapper-btn-map > div {
+    #wrapper-mapfilter > div > div {
         width: 48px;
         height: 48px;
         padding-top: 2px;
@@ -15679,7 +15681,6 @@ button.close {
     #wrapper-btn-map > div:last-child {
         border-bottom: 2px solid rgba(255, 255, 255, 1);
     }
-
     #wrapper-mapfilter i {
         padding-top: 4px;
         font-size: x-large;
@@ -15689,8 +15690,6 @@ button.close {
         color: #84a756;
         text-shadow: -1px -1px 1px rgba(0, 0, 0, 0.25);
     }
-
-    
     #wrapper-mapfilter .btn-tree-table {
         width: 48px;
         height: 48px;
@@ -15853,6 +15852,7 @@ button.close {
         max-width: 480px;
     }
 }
+
 @media all {
     
     /*
@@ -16152,7 +16152,7 @@ button.close {
         width: 100%;
         height: 100%;
         overflow: hidden;
-        padding: 60px 20px 10px 0;
+        padding: 120px 20px 10px 10px;
         pointer-events: none;
     }
     #wrapper-tree #content-chart {

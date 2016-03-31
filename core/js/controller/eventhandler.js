@@ -101,7 +101,7 @@ var FoodParent;
         EventHandler.handleNavigate = function (viewStatus, option) {
             var self = EventHandler._instance;
             FoodParent.Controller.abortAllXHR();
-            Pace.restart();
+            //Pace.restart();
             //new RemoveAlertViewCommand().execute();
             //if (View.getViewStatus() != viewStatus) {
             new FoodParent.RemoveChildViewCommand({ parent: FoodParent.View }).execute();
@@ -620,7 +620,8 @@ var FoodParent;
                     else if (el.hasClass('evt-logout')) {
                         FoodParent.Controller.processLogout(function () {
                             new FoodParent.ResetPopupViewCommand().execute();
-                            Backbone.history.loadUrl(Backbone.history.fragment);
+                            //Backbone.history.loadUrl(Backbone.history.fragment);
+                            new FoodParent.NavigateCommand({ hash: 'trees', id: 0 }).execute();
                         }, function () {
                             EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
                         });

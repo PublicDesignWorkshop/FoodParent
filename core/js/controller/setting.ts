@@ -123,7 +123,7 @@
             return "No Data";
         }
         public static getMaxRating(): number {
-            return 10
+            return 5
         }
 
         public static getResizeTimeout(): number {

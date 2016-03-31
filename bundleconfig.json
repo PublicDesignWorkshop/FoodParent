@@ -28,7 +28,7 @@
       // text-fill
       "core/lib/jquery-textfill/jquery.textfill.js",
 
-      "core/lib/pace/pace.js",
+      //"core/lib/pace/pace.js",
       //"core/lib/howler/howler.js",
       // Leaflet
       "core/lib/leaflet/leaflet-src.js",

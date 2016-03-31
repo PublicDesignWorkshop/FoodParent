@@ -589,7 +589,7 @@ var FoodParent;
             return Router._instance;
         };
         Router.prototype.home = function () {
-            FoodParent.EventHandler.handleNavigate(FoodParent.VIEW_STATUS.HOME);
+            FoodParent.EventHandler.handleNavigate(FoodParent.VIEW_STATUS.TREES, { id: 0 });
         };
         Router.prototype.trees = function (id) {
             FoodParent.EventHandler.handleNavigate(FoodParent.VIEW_STATUS.TREES, { id: id });

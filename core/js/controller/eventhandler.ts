@@ -62,7 +62,7 @@
         public static handleNavigate(viewStatus: VIEW_STATUS, option?: any): void {
             var self: EventHandler = EventHandler._instance;
             Controller.abortAllXHR();
-            Pace.restart();
+            //Pace.restart();
             //new RemoveAlertViewCommand().execute();
             //if (View.getViewStatus() != viewStatus) {
                 new RemoveChildViewCommand({ parent: View }).execute();
@@ -548,7 +548,8 @@
                     } else if (el.hasClass('evt-logout')) {
                         Controller.processLogout(function () {
                             new ResetPopupViewCommand().execute();
-                            Backbone.history.loadUrl(Backbone.history.fragment);
+                            //Backbone.history.loadUrl(Backbone.history.fragment);
+                            new NavigateCommand({ hash: 'trees', id: 0 }).execute();
                         }, function () {
                             EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
                         });

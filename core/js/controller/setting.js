@@ -122,7 +122,7 @@ var FoodParent;
             return "No Data";
         };
         Setting.getMaxRating = function () {
-            return 10;
+            return 5;
         };
         Setting.getResizeTimeout = function () {
             return 50;

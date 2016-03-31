@@ -177,7 +177,7 @@
                     }, {
                         scaleOverride: true,
                         scaleSteps: 1,
-                        scaleStepWidth: 10,
+                        scaleStepWidth: 5,
                         scaleStartValue: 0,
                         pointDotRadius: 3,
                         pointDotStrokeWidth: 2,

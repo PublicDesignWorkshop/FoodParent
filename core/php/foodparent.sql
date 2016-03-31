@@ -91,10 +91,8 @@ CREATE TABLE IF NOT EXISTS `flag` (
 
 INSERT INTO `flag` (`id`, `name`) VALUES
 (1, 'dead'),
-(2, 'cut down'),
-(3, 'verfied'),
-(4, 'hidden'),
-(5, 'growing');
+(2, 'verified'),
+(3, 'hidden');
 
 -- --------------------------------------------------------
 
