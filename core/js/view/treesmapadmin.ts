@@ -58,7 +58,6 @@
                 self.$('#content-mapfilter').html(template({
                     header: 'Filter List',
                     flags: Model.getFlags(),
-                    ownerships: Model.getOwnerships(),
                 }));
             }, function () {
                 EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
@@ -164,7 +163,7 @@
                     if (self._selectedMarker) {
                         var adopt: Adopt = Model.getAdopts().findWhere({ tree: self._selectedMarker.options.id, parent: parseInt(response.id) });
                         var food: Food = Model.getFoods().findWhere({ id: tree.getFoodId() });
-                        var ownership: Ownership = Model.getOwnerships().findWhere({ id: tree.getOwnershipId() });
+                        var ownership = tree.getOwnershipId();
                         if (adopt) {
                             var template = _.template(Template.getAdoptedTreeInfoTemplateForAdmin());
                         } else {
@@ -176,7 +175,6 @@
                             lat: tree.getLat().toFixed(4),
                             lng: tree.getLng().toFixed(4),
                             flags: Model.getFlags(),
-                            ownerships: Model.getOwnerships(),
                             description: tree.getDescription(),
                             persons: tree.getParents(),
                         }));

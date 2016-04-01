@@ -141,26 +141,6 @@ CREATE TABLE IF NOT EXISTS `note` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `ownership`
---
-
-CREATE TABLE IF NOT EXISTS `ownership` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(16) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=3 ;
-
---
--- Dumping data for table `ownership`
---
-
-INSERT INTO `ownership` (`id`, `name`) VALUES
-(1, 'public'),
-(2, 'private');
-
--- --------------------------------------------------------
-
---
 -- Table structure for table `person`
 --
 
@@ -220,7 +200,7 @@ CREATE TABLE IF NOT EXISTS `tree` (
   `owner` int(11) NOT NULL,
   `description` varchar(128) NOT NULL,
   `address` varchar(128) NOT NULL,
-  `ownership` int(11) NOT NULL,
+  `public` tinyint(1) DEFAULT NULL,
   `updated` datetime NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;

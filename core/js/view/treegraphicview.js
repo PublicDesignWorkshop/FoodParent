@@ -309,7 +309,7 @@ var FoodParent;
             FoodParent.Controller.checkIsAdmin(function (response) {
                 $.each(self.$('.ownership-radio'), function (index, item) {
                     if (ownership != undefined) {
-                        if (parseInt($(item).attr('data-target')) == ownership.getId()) {
+                        if (parseInt($(item).attr('data-target')) == ownership) {
                             $(item).addClass('active');
                             $(item).find('input').prop({ 'checked': 'checked' });
                         }
@@ -317,16 +317,12 @@ var FoodParent;
                             $(item).removeClass('active');
                             $(item).find('input').prop({ 'checked': '' });
                         }
-                        if (parseInt($(item).attr('data-target')) == 0) {
-                            $(this).attr('disabled', 'disabled');
-                            $(item).addClass('disabled');
-                        }
                     }
                 });
             }, function (response) {
                 $.each(self.$('.ownership-radio'), function (index, item) {
                     if (ownership != undefined) {
-                        if (parseInt($(item).attr('data-target')) == ownership.getId()) {
+                        if (parseInt($(item).attr('data-target')) == ownership) {
                             $(item).addClass('active');
                             $(item).find('input').prop({ 'checked': 'checked' });
                         }
@@ -335,10 +331,8 @@ var FoodParent;
                             $(item).find('input').prop({ 'checked': '' });
                             $(item).addClass('hidden');
                         }
-                        if (parseInt($(item).attr('data-target')) == 0) {
-                            $(this).attr('disabled', 'disabled');
-                            $(item).addClass('disabled');
-                        }
+                        $(this).attr('disabled', 'disabled');
+                        $(item).addClass('disabled');
                         $(item).css({ 'pointer-events': 'none' });
                     }
                 });
@@ -376,7 +370,6 @@ var FoodParent;
                     size: FoodParent.Setting.getLargeNumRecentActivitiesShown(),
                     coordinate: '@ ' + tree.getLat().toFixed(4) + ", " + tree.getLng().toFixed(4),
                     flags: FoodParent.Model.getFlags(),
-                    ownerships: FoodParent.Model.getOwnerships(),
                 };
                 self.$('#list-activities').html(template(data));
             }, function () {

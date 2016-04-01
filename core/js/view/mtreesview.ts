@@ -165,14 +165,12 @@ module FoodParent {
                         foods: Model.getFoods(),
                         userid: parseInt(data.id),
                         flags: Model.getFlags(),
-                        ownerships: Model.getOwnerships(),
                     }));
                 } else if (data.result == false || data.result == 'false') {   // Not logged in
                     var template = _.template(Template.getTreeFilterListTemplate2());
                     self.$('#filter-list').html(template({
                         foods: Model.getFoods(),
                         flags: Model.getFlags(),
-                        ownerships: Model.getOwnerships(),
                     }));
                 }
             }, function () {
@@ -400,7 +398,6 @@ module FoodParent {
                     self.$('#filter-list').html(template({
                         foods: Model.getFoods(),
                         flags: Model.getFlags(),
-                        ownerships: Model.getOwnerships(),
                         userid: parseInt(data.id),
                     }));
                 } else if (data.result == false || data.result == 'false') {   // Not logged in
@@ -460,7 +457,6 @@ module FoodParent {
                                 lat: tree.getLat().toFixed(4),
                                 lng: tree.getLng().toFixed(4),
                                 flags: Model.getFlags(),
-                                ownerships: Model.getOwnerships(),
                                 description: tree.getDescription(),
                                 persons: tree.getParents(),
                             }
@@ -474,7 +470,6 @@ module FoodParent {
                                     lat: tree.getLat().toFixed(4),
                                     lng: tree.getLng().toFixed(4),
                                     flags: Model.getFlags(),
-                                    ownerships: Model.getOwnerships(),
                                     description: tree.getDescription(),
                                     persons: tree.getParents(),
                                 }
@@ -492,7 +487,6 @@ module FoodParent {
                                         lat: tree.getLat().toFixed(4),
                                         lng: tree.getLng().toFixed(4),
                                         flags: Model.getFlags(),
-                                        ownerships: Model.getOwnerships(),
                                         description: tree.getDescription(),
                                         persons: tree.getParents(),
                                     }
@@ -505,7 +499,6 @@ module FoodParent {
                                         lat: tree.getLat().toFixed(4),
                                         lng: tree.getLng().toFixed(4),
                                         flags: Model.getFlags(),
-                                        ownerships: Model.getOwnerships(),
                                         description: tree.getDescription(),
                                         persons: tree.getParents(),
                                     }
@@ -687,33 +680,27 @@ module FoodParent {
                 if (data.result == true || data.result == 'true') {   // Already logged in
                     $.each(self.$('.ownership-radio'), function (index: number, item: JQuery) {
                         if (ownership != undefined) {
-                            if (parseInt($(item).attr('data-target')) == ownership.getId()) {
+                            if (parseInt($(item).attr('data-target')) == ownership) {
                                 $(item).addClass('active');
                                 $(item).find('input').prop({ 'checked': 'checked' });
                             } else {
                                 $(item).removeClass('active');
                                 $(item).find('input').prop({ 'checked': '' });
-                            }
-                            if (parseInt($(item).attr('data-target')) == 0) {
-                                $(this).attr('disabled', 'disabled');
-                                $(item).addClass('disabled');
                             }
                         }
                     });
                 } else if (data.result == false || data.result == 'false') {   // Not logged in
                     $.each(self.$('.ownership-radio'), function (index: number, item: JQuery) {
                         if (ownership != undefined) {
-                            if (parseInt($(item).attr('data-target')) == ownership.getId()) {
+                            if (parseInt($(item).attr('data-target')) == ownership) {
                                 $(item).addClass('active');
                                 $(item).find('input').prop({ 'checked': 'checked' });
                             } else {
                                 $(item).removeClass('active');
                                 $(item).find('input').prop({ 'checked': '' });
                             }
-                            if (parseInt($(item).attr('data-target')) == 0) {
-                                $(this).attr('disabled', 'disabled');
-                                $(item).addClass('disabled');
-                            }
+                            $(this).attr('disabled', 'disabled');
+                            $(item).addClass('disabled');
                             $(item).css({ 'pointer-events': 'none' });
                         }
                     });
@@ -786,7 +773,6 @@ module FoodParent {
                    size: Setting.getNumRecentActivitiesShown(),
                    coordinate: '@ ' + tree.getLat().toFixed(4) + ", " + tree.getLng().toFixed(4),
                    flags: Model.getFlags(),
-                   ownerships: Model.getOwnerships(),
                }
                self.$('#list-activities').html(template(data));
            }, function () {

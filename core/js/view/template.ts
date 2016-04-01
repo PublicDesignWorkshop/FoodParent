@@ -503,13 +503,23 @@
             template += '<div class="info-header"><i class="fa fa-home fa-1x"></i> Ownership</div>';
             template += '<div class="info-group">';
             template += '<div data-toggle="buttons">';
-            template += '<% _.each(ownerships.models, function (ownership) { %>';
-            template +=     '<label class="btn ownership-radio" data-target="<%= ownership.getId() %>">';
-            template +=     '<input type="radio" name="ownership">';
+            // template += '<% _.each(ownerships.models, function (ownership) { %>';
+            // template +=     '<label class="btn ownership-radio" data-target="<%= ownership.getId() %>">';
+            template += '<label class="btn ownership-radio" data-target="1">';
+            template += '<input type="radio" name="ownership">';
+            template += '<i class="fa fa-circle-o fa-1x"></i>';
+            template += '<i class="fa fa-check-circle-o fa-1x"></i>';
+            template += ' Public</label>';
+            template += '<label class="btn ownership-radio" data-target="0">';
+            template += '<input type="radio" name="ownership">';
+            template += '<i class="fa fa-circle-o fa-1x"></i>';
+            template += '<i class="fa fa-check-circle-o fa-1x"></i>';
+            template += ' Private</label>';
+            /* template +=     '<input type="radio" name="ownership">';
             template +=     '<i class="fa fa-circle-o fa-1x"></i>';
             template +=     '<i class="fa fa-check-circle-o fa-1x"></i>';
             template +=     ' <%= ownership.getName() %></label>';
-            template += '<% }); %>';
+            template += '<% }); %>'; */
             template += '</div>';
             template += '</div>';
 
@@ -562,13 +572,23 @@
 
             template += '<div class="info-group">';
             template +=     '<div data-toggle="buttons"><i class="fa fa-home"></i> ';
-            template +=     '<% _.each(ownerships.models, function (ownership) { %>';
-            template +=         '<label class="btn ownership-radio" data-target="<%= ownership.getId() %>">';
-            template +=         '<input type="radio" name="ownership">';
+            //template +=     '<% _.each(ownerships.models, function (ownership) { %>';
+            //template +=         '<label class="btn ownership-radio" data-target="<%= ownership.getId() %>">';
+            template += '<label class="btn ownership-radio" data-target="1">';
+            template += '<input type="radio" name="ownership">';
+            template += '<i class="fa fa-circle-o fa-1x"></i>';
+            template += '<i class="fa fa-check-circle-o fa-1x"></i>';
+            template += ' Public</label>';
+            template += '<label class="btn ownership-radio" data-target="0">';
+            template += '<input type="radio" name="ownership">';
+            template += '<i class="fa fa-circle-o fa-1x"></i>';
+            template += '<i class="fa fa-check-circle-o fa-1x"></i>';
+            template += ' Private</label>';
+            /* template +=         '<input type="radio" name="ownership">';
             template +=         '<i class="fa fa-circle-o fa-1x"></i>';
             template +=         '<i class="fa fa-check-circle-o fa-1x"></i>';
             template +=         ' <%= ownership.getName() %></label>';
-            template +=     '<% }); %>';
+            template +=     '<% }); %>'; */
             template +=     '</div>';
             template += '</div>';
             return template;
@@ -816,13 +836,23 @@
             template += '<div class="info-header"><i class="fa fa-home fa-1x"></i> Ownership</div>';
             template += '<div class="info-group">';
             template +=     '<div data-toggle="buttons">';
-            template +=     '<% _.each(ownerships.models, function (ownership) { %>';
-            template +=         '<label class="btn ownership-radio" data-target="<%= ownership.getId() %>">';
-            template +=         '<input type="radio" name="ownership">';
+            // template +=     '<% _.each(ownerships.models, function (ownership) { %>';
+            //template +=         '<label class="btn ownership-radio" data-target="<%= ownership.getId() %>">';
+            template += '<label class="btn ownership-radio" data-target="1">';
+            template += '<input type="radio" name="ownership">';
+            template += '<i class="fa fa-circle-o fa-1x"></i>';
+            template += '<i class="fa fa-check-circle-o fa-1x"></i>';
+            template += ' Public</label>';
+            template += '<label class="btn ownership-radio" data-target="0">';
+            template += '<input type="radio" name="ownership">';
+            template += '<i class="fa fa-circle-o fa-1x"></i>';
+            template += '<i class="fa fa-check-circle-o fa-1x"></i>';
+            template += ' Private</label>';
+            /* template +=         '<input type="radio" name="ownership">';
             template +=         '<i class="fa fa-circle-o fa-1x"></i>';
             template +=         '<i class="fa fa-check-circle-o fa-1x"></i>';
             template +=         ' <%= ownership.getName() %></label>';
-            template +=     '<% }); %>';
+            template +=     '<% }); %>'; */
             template +=     '</div>';
             template += '</div>';
 
@@ -892,13 +922,23 @@
             template += '<div class="info-header"><i class="fa fa-home fa-1x"></i> Ownership</div>';
             template += '<div class="info-group">';
             template +=     '<div data-toggle="buttons">';
-            template +=     '<% _.each(ownerships.models, function (ownership) { %>';
-            template +=         '<label class="btn ownership-radio" data-target="<%= ownership.getId() %>">';
-            template +=         '<input type="radio" name="ownership">';
+            //template +=     '<% _.each(ownerships.models, function (ownership) { %>';
+            //template +=         '<label class="btn ownership-radio" data-target="<%= ownership.getId() %>">';
+            template += '<label class="btn ownership-radio" data-target="1">';
+            template += '<input type="radio" name="ownership">';
+            template += '<i class="fa fa-circle-o fa-1x"></i>';
+            template += '<i class="fa fa-check-circle-o fa-1x"></i>';
+            template += ' Public</label>';
+            template += '<label class="btn ownership-radio" data-target="0">';
+            template += '<input type="radio" name="ownership">';
+            template += '<i class="fa fa-circle-o fa-1x"></i>';
+            template += '<i class="fa fa-check-circle-o fa-1x"></i>';
+            template += ' Private</label>';
+            /* template +=         '<input type="radio" name="ownership">';
             template +=         '<i class="fa fa-circle-o fa-1x"></i>';
             template +=         '<i class="fa fa-check-circle-o fa-1x"></i>';
             template +=         ' <%= ownership.getName() %></label>';
-            template +=     '<% }); %>';
+            template +=     '<% }); %>'; */
             template +=     '</div>';
             template += '</div>';
 
@@ -1042,9 +1082,10 @@
             template +=     '<div class="text-label"><i class="fa fa-caret-right"></i> Owndership</div>';
             template +=     '<div class="btn-green btn-small btn-filter filter-owner-all active">All Ownerships</div>';
             template +=     '<div class="info-button-group">';
-            template +=         '<% _.each(ownerships.models, function (ownership) { %>';
-            template +=             '<div class="btn-green btn-small btn-filter filter-owner-item" data-id="<%= ownership.getId() %>"><%= ownership.getName() %></div>';
-            template +=         '<% }); %>';
+
+            template +=             '<div class="btn-green btn-small btn-filter filter-owner-item" data-id="1">Public</div>';
+            template +=             '<div class="btn-green btn-small btn-filter filter-owner-item" data-id="0">Private</div>';
+
             template +=     '</div>';
             template +=     '<hr />';
             template +=     '<div class="text-label"><i class="fa fa-caret-right"></i> Status</div>';
@@ -1131,17 +1172,22 @@
             template += ' Onwership Type (show all / hide)</label>';
             template += '</div>';
 
-            template += '<% _.each(ownerships.models, function (ownership) { %>';
 
             template += '<div data-toggle="buttons">';
             template += '<label class="btn filter-checkbox filter-ownership active list-hiearchy2">';
-            template += '<input type="checkbox" name="<%= ownership.getId() %>" checked>';
+            template += '<input type="checkbox" name="1" checked>';
             template += '<i class="fa fa-square-o fa-1x"></i>';
             template += '<i class="fa fa-check-square-o fa-1x"></i>';
-            template += ' <%= ownership.getName() %></label>';
+            template += ' Public</label>';
+            template += '</div>';
+            template += '<div data-toggle="buttons">';
+            template += '<label class="btn filter-checkbox filter-ownership active list-hiearchy2">';
+            template += '<input type="checkbox" name="0" checked>';
+            template += '<i class="fa fa-square-o fa-1x"></i>';
+            template += '<i class="fa fa-check-square-o fa-1x"></i>';
+            template += ' Private</label>';
             template += '</div>';
 
-            template += '<% }); %>';
 
 
 
@@ -1243,17 +1289,22 @@
             template += ' Onwership Type (show all / hide)</label>';
             template += '</div>';
 
-            template += '<% _.each(ownerships.models, function (ownership) { %>';
 
             template += '<div data-toggle="buttons">';
             template += '<label class="btn filter-checkbox filter-ownership active list-hiearchy2">';
-            template += '<input type="checkbox" name="<%= ownership.getId() %>" checked>';
+            template += '<input type="checkbox" name="1" checked>';
             template += '<i class="fa fa-square-o fa-1x"></i>';
             template += '<i class="fa fa-check-square-o fa-1x"></i>';
-            template += ' <%= ownership.getName() %></label>';
+            template += ' Public</label>';
+            template += '</div>';
+            template += '<div data-toggle="buttons">';
+            template += '<label class="btn filter-checkbox filter-ownership active list-hiearchy2">';
+            template += '<input type="checkbox" name="0" checked>';
+            template += '<i class="fa fa-square-o fa-1x"></i>';
+            template += '<i class="fa fa-check-square-o fa-1x"></i>';
+            template += ' Private</label>';
             template += '</div>';
 
-            template += '<% }); %>';
 
 
             template += '<hr />';

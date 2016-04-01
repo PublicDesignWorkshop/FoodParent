@@ -433,7 +433,6 @@
                     size: Setting.getNumRecentActivitiesShown(),
                     coordinate: '@ ' + tree.getLat().toFixed(4) + ", " + tree.getLng().toFixed(4),
                     flags: Model.getFlags(),
-                    ownerships: Model.getOwnerships(),
                 }
                 self.$('#list-comments').html(template(data));
             }, function () {
@@ -796,23 +795,19 @@
             Controller.checkIsAdmin(function (response) {
                 $.each(self.$('.ownership-radio'), function (index: number, item: JQuery) {
                     if (ownership != undefined) {
-                        if (parseInt($(item).attr('data-target')) == ownership.getId()) {
+                        if (parseInt($(item).attr('data-target')) == ownership) {
                             $(item).addClass('active');
                             $(item).find('input').prop({ 'checked': 'checked' });
                         } else {
                             $(item).removeClass('active');
                             $(item).find('input').prop({ 'checked': '' });
                         }
-                        if (parseInt($(item).attr('data-target')) == 0) {
-                            $(this).attr('disabled', 'disabled');
-                            $(item).addClass('disabled');
-                        }
                     }
                 });
             }, function (response) {
                 $.each(self.$('.ownership-radio'), function (index: number, item: JQuery) {
                     if (ownership != undefined) {
-                        if (parseInt($(item).attr('data-target')) == ownership.getId()) {
+                        if (parseInt($(item).attr('data-target')) == ownership) {
                             $(item).addClass('active');
                             $(item).find('input').prop({ 'checked': 'checked' });
                         } else {
@@ -820,10 +815,8 @@
                             $(item).find('input').prop({ 'checked': '' });
                             $(item).addClass('hidden');
                         }
-                        if (parseInt($(item).attr('data-target')) == 0) {
-                            $(this).attr('disabled', 'disabled');
-                            $(item).addClass('disabled');
-                        }
+                        $(this).attr('disabled', 'disabled');
+                        $(item).addClass('disabled');
                         $(item).css({ 'pointer-events': 'none' });
                     }
                 });
@@ -965,7 +958,7 @@
             if (tree.getOwnershipId() != ownership) {
                 EventHandler.handleTreeData(tree, DATA_MODE.UPDATE_OWNERSHIP, { ownership: ownership }, function () {
                     var food: Food = Model.getFoods().findWhere({ id: tree.getFoodId() });
-                    var ownership: Ownership = Model.getOwnerships().findWhere({ id: tree.getOwnershipId() });
+                    var ownership = tree.getOwnershipId();
                     self.renderOwnershipInfo(ownership);
                     EventHandler.handleDataChange("Ownership of <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> was changed successfully.", true);
                 }, function () {

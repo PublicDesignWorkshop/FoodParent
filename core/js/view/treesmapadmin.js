@@ -18,7 +18,6 @@ var FoodParent;
                     self.$('#content-mapfilter').html(template({
                         header: 'Filter List',
                         flags: FoodParent.Model.getFlags(),
-                        ownerships: FoodParent.Model.getOwnerships(),
                     }));
                 }, function () {
                     FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
@@ -119,7 +118,7 @@ var FoodParent;
                         if (self._selectedMarker) {
                             var adopt = FoodParent.Model.getAdopts().findWhere({ tree: self._selectedMarker.options.id, parent: parseInt(response.id) });
                             var food = FoodParent.Model.getFoods().findWhere({ id: tree.getFoodId() });
-                            var ownership = FoodParent.Model.getOwnerships().findWhere({ id: tree.getOwnershipId() });
+                            var ownership = tree.getOwnershipId();
                             if (adopt) {
                                 var template = _.template(FoodParent.Template.getAdoptedTreeInfoTemplateForAdmin());
                             }
@@ -132,7 +131,6 @@ var FoodParent;
                                 lat: tree.getLat().toFixed(4),
                                 lng: tree.getLng().toFixed(4),
                                 flags: FoodParent.Model.getFlags(),
-                                ownerships: FoodParent.Model.getOwnerships(),
                                 description: tree.getDescription(),
                                 persons: tree.getParents(),
                             }));

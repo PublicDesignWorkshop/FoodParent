@@ -18,7 +18,6 @@ var FoodParent;
                     self.$('#content-mapfilter').html(template({
                         header: 'Filter List',
                         flags: FoodParent.Model.getFlags(),
-                        ownerships: FoodParent.Model.getOwnerships(),
                     }));
                 }, function () {
                     FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);

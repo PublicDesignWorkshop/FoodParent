@@ -96,7 +96,6 @@ module FoodParent {
             var data = {
                 header: "Filter List",
                 flags: Model.getFlags(),
-                ownerships: Model.getOwnerships(),
             }
             self.$('.tree-filter').html(template(data));
             // Apply filter

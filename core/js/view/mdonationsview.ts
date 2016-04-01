@@ -538,7 +538,6 @@ module FoodParent {
                     size: Setting.getNumRecentActivitiesShown(),
                     coordinate: '@ ' + tree.getLat().toFixed(4) + ", " + tree.getLng().toFixed(4),
                     flags: Model.getFlags(),
-                    ownerships: Model.getOwnerships(),
                 }
                 self.$('#list-activities').html(template(data));
             }, function () {
@@ -668,7 +667,6 @@ module FoodParent {
                         foods: Model.getFoods(),
                         userid: parseInt(response.id),
                         flags: Model.getFlags(),
-                        ownerships: Model.getOwnerships(),
                     }
                     self.$('#filter-list').html(template(data));
                 }

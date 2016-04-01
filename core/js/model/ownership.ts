@@ -32,12 +32,4 @@
             return this.get('name');
         }
     }
-    export class Ownerships extends Backbone.Collection<Ownership> {
-        url: string = "ownerships.php";
-        constructor(models?: Ownership[], options?: any) {
-            super(models, options);
-            this.url = Setting.getPhpDir() + this.url;
-            this.model = Ownership;
-        }
-    }
 }

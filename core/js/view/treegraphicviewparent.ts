@@ -43,7 +43,7 @@
             Controller.checkIsLoggedIn(function (response) {
                 var adopt: Adopt = Model.getAdopts().findWhere({ tree: self._tree.getId(), parent: parseInt(response.id) });
                 var food: Food = Model.getFoods().findWhere({ id: self._tree.getFoodId() });
-                var ownership: Ownership = Model.getOwnerships().findWhere({ id: self._tree.getOwnershipId() });
+                var ownership = self._tree.getOwnershipId();
                 if (adopt) {
                     self.$('.btn-adoption').removeClass('evt-adopt');
                     self.$('.btn-adoption').addClass('evt-unadopt');
@@ -66,7 +66,7 @@
             self._tree = Model.getTrees().findWhere({ id: self._id });
             Controller.fetchAllFlagsAndOwners(function () {
                 var food: Food = Model.getFoods().findWhere({ id: self._tree.getFoodId() });
-                var ownership: Ownership = Model.getOwnerships().findWhere({ id: self._tree.getOwnershipId() });
+                var ownership = self._tree.getOwnershipId();
 
                 var template = _.template(Template.getTreeBasicInfoTemplateForGuest());
                 self.$('.content-tree-basicinfo').html(template({
@@ -75,7 +75,6 @@
                     lat: self._tree.getLat().toFixed(4),
                     lng: self._tree.getLng().toFixed(4),
                     flags: Model.getFlags(),
-                    ownerships: Model.getOwnerships(),
                     description: self._tree.getDescription(),
                     parents: self._tree.getParents(),
                 }));

@@ -121,7 +121,7 @@ var FoodParent;
             var self = this;
             self._previousOwnership = self._tree.getOwnershipId();
             self._tree.save({
-                'ownership': self._ownership,
+                'public': self._ownership,
             }, {
                 wait: true,
                 success: function (tree, response) {
@@ -131,7 +131,7 @@ var FoodParent;
                         person: 0,
                         //comment: "Ownership has changed from '" + Model.getOwnerships().findWhere({ id: self._previousOwnership }).getName()
                         //+ "' to '" + Model.getOwnerships().findWhere({ id: self._ownership }).getName() + "'",
-                        comment: "Ownership changed to '" + FoodParent.Model.getOwnerships().findWhere({ id: self._ownership }).getName() + "'",
+                        comment: "Ownership changed to '" + (self._ownership ? "public" : "private")  + "'",
                         picture: "",
                         rate: -1,
                         date: moment(new Date()).format(FoodParent.Setting.getDateTimeFormat()),

@@ -60,7 +60,6 @@ var FoodParent;
                 var data = {
                     header: "Filter List",
                     flags: FoodParent.Model.getFlags(),
-                    ownerships: FoodParent.Model.getOwnerships(),
                 };
                 self.$('.tree-filter').html(template(data));
                 // Apply filter

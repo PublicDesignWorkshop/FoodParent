@@ -302,7 +302,6 @@
                         lat: tree.getLat().toFixed(4),
                         lng: tree.getLng().toFixed(4),
                         flags: Model.getFlags(),
-                        ownerships: Model.getOwnerships(),
                         description: tree.getDescription(),
                         persons: tree.getParents(),
                     }
@@ -538,7 +537,6 @@
                     size: Setting.getLargeNumRecentActivitiesShown(),
                     coordinate: '@ ' + tree.getLat().toFixed(4) + ", " + tree.getLng().toFixed(4),
                     flags: Model.getFlags(),
-                    ownerships: Model.getOwnerships(),
                 }
                 self.$('#list-activities').html(template(data));
             }, function () {
@@ -559,7 +557,6 @@
                     size: Setting.getLargeNumRecentActivitiesShown(),
                     coordinate: '@ ' + tree.getLat().toFixed(4) + ", " + tree.getLng().toFixed(4),
                     flags: Model.getFlags(),
-                    ownerships: Model.getOwnerships(),
                 }
                 self.$('#list-comments').html(template(data));
             }, function () {

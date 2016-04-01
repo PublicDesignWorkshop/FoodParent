@@ -125,7 +125,6 @@ var FoodParent;
                             foods: FoodParent.Model.getFoods(),
                             userid: parseInt(data.id),
                             flags: FoodParent.Model.getFlags(),
-                            ownerships: FoodParent.Model.getOwnerships(),
                         }));
                     }
                     else if (data.result == false || data.result == 'false') {
@@ -133,7 +132,6 @@ var FoodParent;
                         self.$('#filter-list').html(template({
                             foods: FoodParent.Model.getFoods(),
                             flags: FoodParent.Model.getFlags(),
-                            ownerships: FoodParent.Model.getOwnerships(),
                         }));
                     }
                 }, function () {
@@ -293,7 +291,6 @@ var FoodParent;
                         self.$('#filter-list').html(template({
                             foods: FoodParent.Model.getFoods(),
                             flags: FoodParent.Model.getFlags(),
-                            ownerships: FoodParent.Model.getOwnerships(),
                             userid: parseInt(data.id),
                         }));
                     }
@@ -346,7 +343,6 @@ var FoodParent;
                                     lat: tree.getLat().toFixed(4),
                                     lng: tree.getLng().toFixed(4),
                                     flags: FoodParent.Model.getFlags(),
-                                    ownerships: FoodParent.Model.getOwnerships(),
                                     description: tree.getDescription(),
                                     persons: tree.getParents(),
                                 };
@@ -361,7 +357,6 @@ var FoodParent;
                                         lat: tree.getLat().toFixed(4),
                                         lng: tree.getLng().toFixed(4),
                                         flags: FoodParent.Model.getFlags(),
-                                        ownerships: FoodParent.Model.getOwnerships(),
                                         description: tree.getDescription(),
                                         persons: tree.getParents(),
                                     };
@@ -380,7 +375,6 @@ var FoodParent;
                                             lat: tree.getLat().toFixed(4),
                                             lng: tree.getLng().toFixed(4),
                                             flags: FoodParent.Model.getFlags(),
-                                            ownerships: FoodParent.Model.getOwnerships(),
                                             description: tree.getDescription(),
                                             persons: tree.getParents(),
                                         };
@@ -394,7 +388,6 @@ var FoodParent;
                                             lat: tree.getLat().toFixed(4),
                                             lng: tree.getLng().toFixed(4),
                                             flags: FoodParent.Model.getFlags(),
-                                            ownerships: FoodParent.Model.getOwnerships(),
                                             description: tree.getDescription(),
                                             persons: tree.getParents(),
                                         };
@@ -815,17 +808,13 @@ var FoodParent;
                 if (data.result == true || data.result == 'true') {
                     $.each(self.$('.ownership-radio'), function (index, item) {
                         if (ownership != undefined) {
-                            if (parseInt($(item).attr('data-target')) == ownership.getId()) {
+                            if (parseInt($(item).attr('data-target')) == ownership) {
                                 $(item).addClass('active');
                                 $(item).find('input').prop({ 'checked': 'checked' });
                             }
                             else {
                                 $(item).removeClass('active');
                                 $(item).find('input').prop({ 'checked': '' });
-                            }
-                            if (parseInt($(item).attr('data-target')) == 0) {
-                                $(this).attr('disabled', 'disabled');
-                                $(item).addClass('disabled');
                             }
                         }
                     });
@@ -833,7 +822,7 @@ var FoodParent;
                 else if (data.result == false || data.result == 'false') {
                     $.each(self.$('.ownership-radio'), function (index, item) {
                         if (ownership != undefined) {
-                            if (parseInt($(item).attr('data-target')) == ownership.getId()) {
+                            if (parseInt($(item).attr('data-target')) == ownership) {
                                 $(item).addClass('active');
                                 $(item).find('input').prop({ 'checked': 'checked' });
                             }
@@ -841,10 +830,8 @@ var FoodParent;
                                 $(item).removeClass('active');
                                 $(item).find('input').prop({ 'checked': '' });
                             }
-                            if (parseInt($(item).attr('data-target')) == 0) {
-                                $(this).attr('disabled', 'disabled');
-                                $(item).addClass('disabled');
-                            }
+                            $(this).attr('disabled', 'disabled');
+                            $(item).addClass('disabled');
                             $(item).css({ 'pointer-events': 'none' });
                         }
                     });
@@ -918,7 +905,6 @@ var FoodParent;
                     size: FoodParent.Setting.getNumRecentActivitiesShown(),
                     coordinate: '@ ' + tree.getLat().toFixed(4) + ", " + tree.getLng().toFixed(4),
                     flags: FoodParent.Model.getFlags(),
-                    ownerships: FoodParent.Model.getOwnerships(),
                 };
                 self.$('#list-activities').html(template(data));
             }, function () {

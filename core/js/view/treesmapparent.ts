@@ -55,7 +55,6 @@
                 self.$('#content-mapfilter').html(template({
                     header: 'Filter List',
                     flags: Model.getFlags(),
-                    ownerships: Model.getOwnerships(),
                 }));
             }, function () {
                 EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);

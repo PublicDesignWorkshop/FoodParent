@@ -298,23 +298,19 @@
             Controller.checkIsAdmin(function (response) {
                 $.each(self.$('.ownership-radio'), function (index: number, item: JQuery) {
                     if (ownership != undefined) {
-                        if (parseInt($(item).attr('data-target')) == ownership.getId()) {
+                        if (parseInt($(item).attr('data-target')) == ownership) {
                             $(item).addClass('active');
                             $(item).find('input').prop({ 'checked': 'checked' });
                         } else {
                             $(item).removeClass('active');
                             $(item).find('input').prop({ 'checked': '' });
                         }
-                        if (parseInt($(item).attr('data-target')) == 0) {
-                            $(this).attr('disabled', 'disabled');
-                            $(item).addClass('disabled');
-                        }
                     }
                 });
             }, function (response) {
                 $.each(self.$('.ownership-radio'), function (index: number, item: JQuery) {
                     if (ownership != undefined) {
-                        if (parseInt($(item).attr('data-target')) == ownership.getId()) {
+                        if (parseInt($(item).attr('data-target')) == ownership) {
                             $(item).addClass('active');
                             $(item).find('input').prop({ 'checked': 'checked' });
                         } else {
@@ -322,10 +318,8 @@
                             $(item).find('input').prop({ 'checked': '' });
                             $(item).addClass('hidden');
                         }
-                        if (parseInt($(item).attr('data-target')) == 0) {
-                            $(this).attr('disabled', 'disabled');
-                            $(item).addClass('disabled');
-                        }
+                        $(this).attr('disabled', 'disabled');
+                        $(item).addClass('disabled');
                         $(item).css({ 'pointer-events': 'none' });
                     }
                 });
@@ -365,7 +359,6 @@
                     size: Setting.getLargeNumRecentActivitiesShown(),
                     coordinate: '@ ' + tree.getLat().toFixed(4) + ", " + tree.getLng().toFixed(4),
                     flags: Model.getFlags(),
-                    ownerships: Model.getOwnerships(),
                 }
                 self.$('#list-activities').html(template(data));
             }, function () {

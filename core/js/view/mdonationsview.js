@@ -449,7 +449,6 @@ var FoodParent;
                             foods: FoodParent.Model.getFoods(),
                             userid: parseInt(response.id),
                             flags: FoodParent.Model.getFlags(),
-                            ownerships: FoodParent.Model.getOwnerships(),
                         };
                         self.$('#filter-list').html(template(data));
                     }
@@ -603,7 +602,6 @@ var FoodParent;
                     size: FoodParent.Setting.getNumRecentActivitiesShown(),
                     coordinate: '@ ' + tree.getLat().toFixed(4) + ", " + tree.getLng().toFixed(4),
                     flags: FoodParent.Model.getFlags(),
-                    ownerships: FoodParent.Model.getOwnerships(),
                 };
                 self.$('#list-activities').html(template(data));
             }, function () {

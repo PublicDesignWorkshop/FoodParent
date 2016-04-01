@@ -22,7 +22,7 @@ var FoodParent;
                 "type": 0,
                 "flag": 0,
                 "owner": 0,
-                "ownership": 0,
+                "public": 0,
                 "description": "",
                 "updated": moment(new Date()).format(FoodParent.Setting.getDateTimeFormat()),
             };
@@ -59,7 +59,7 @@ var FoodParent;
             response.food = parseInt(response.food);
             response.type = parseInt(response.type);
             response.owner = parseInt(response.owner);
-            response.ownership = parseInt(response.ownership);
+            response.public = parseInt(response.public);
             response.updated = moment(response.updated).format(FoodParent.Setting.getDateTimeFormat());
             response.flags = Array();
             if (response.flag != "") {
@@ -128,7 +128,7 @@ var FoodParent;
         }
         */
         Tree.prototype.getOwnershipId = function () {
-            return Math.floor(this.get('ownership'));
+            return Math.floor(this.get('public'));
         };
         Tree.prototype.getName = function () {
             var self = this;

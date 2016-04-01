@@ -193,7 +193,6 @@ var FoodParent;
                             lat: tree.getLat().toFixed(4),
                             lng: tree.getLng().toFixed(4),
                             flags: FoodParent.Model.getFlags(),
-                            ownerships: FoodParent.Model.getOwnerships(),
                             description: tree.getDescription(),
                             persons: tree.getParents(),
                         };
@@ -524,7 +523,6 @@ var FoodParent;
                     size: FoodParent.Setting.getLargeNumRecentActivitiesShown(),
                     coordinate: '@ ' + tree.getLat().toFixed(4) + ", " + tree.getLng().toFixed(4),
                     flags: FoodParent.Model.getFlags(),
-                    ownerships: FoodParent.Model.getOwnerships(),
                 };
                 self.$('#list-activities').html(template(data));
             }, function () {
@@ -544,7 +542,6 @@ var FoodParent;
                     size: FoodParent.Setting.getLargeNumRecentActivitiesShown(),
                     coordinate: '@ ' + tree.getLat().toFixed(4) + ", " + tree.getLng().toFixed(4),
                     flags: FoodParent.Model.getFlags(),
-                    ownerships: FoodParent.Model.getOwnerships(),
                 };
                 self.$('#list-comments').html(template(data));
             }, function () {
