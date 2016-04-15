@@ -134,7 +134,8 @@ CREATE TABLE IF NOT EXISTS `note` (
   `comment` text NOT NULL,
   `picture` varchar(512) NOT NULL,
   `rate` float NOT NULL,
-  `date` datetime NOT NULL,
+  `quantity` int(11) DEFAULT NULL,
+  `date` date NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
