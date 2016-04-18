@@ -53,6 +53,15 @@
             }
             return null;
         }
+        public getAmount(): number {
+            if (this.get('amount') != 0) {
+                return this.get('amount');
+            }
+            return 0;
+        }
+        public setAmount(amount: number): void {
+            this.set('amount', amount);
+        }
         public getComment(): string {
             if (this.get('comment') != "") {
                 return this.get('comment');

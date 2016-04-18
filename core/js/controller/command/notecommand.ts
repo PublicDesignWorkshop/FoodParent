@@ -63,6 +63,71 @@
         }
     }
 
+
+    
+    export class UpdateNoteAmount implements Command {
+        private _amount: string;
+        private _previousAmount: number;
+        private _success: Function;
+        private _error: Function;
+        private _note: Note;
+        constructor(args?: any, success?: Function, error?: Function) {
+            var self: UpdateNoteAmount = this;
+            if (args != undefined && args.note != undefined && args.amount != undefined) {
+                self._note = args.note;
+                self._amount = args.amount;
+            }
+            if (success) {
+                self._success = success;
+            }
+            if (error) {
+                self._error = error;
+            }
+        }
+        public execute(): any {
+            var self: UpdateNoteAmount = this;
+            self._previousAmount = self._note.getAmount();
+            self._note.save(
+                {
+                    'amount': self._amount,
+                },
+                {
+                    wait: true,
+                    success: function (note: Note, response: any) {
+                        if (self._success) {
+                            self._success();
+                        }
+                    },
+                    error: function (error, response) {
+                        if (self._error) {
+                            self._error();
+                        }
+                    },
+                }
+            );
+        }
+        public undo(): any {
+            var self: UpdateNoteAmount = this;
+            self._note.save(
+                {
+                    'amount': self._previousAmount,
+                },
+                {
+                    wait: true,
+                    success: function (note: Note, response: any) {
+                        if (self._success) {
+                            self._success();
+                        }
+                    },
+                    error: function (error, response) {
+                        if (self._error) {
+                            self._error();
+                        }
+                    },
+                }
+            );
+        }
+    }
     
 
     export class UpdateNoteRating implements Command {
