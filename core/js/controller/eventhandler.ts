@@ -9,6 +9,7 @@
         UPDATE_NAME, UPDATE_ADDRESS, UPDATE_CONTACT, UPDATE_NEIGHBORHOOD, UPDATE_AUTH,
         UPDATE_COMMENT, UPDATE_RATING, UPDATE_COVER, UPDATE_DATE, ADD_PICTURE,
         ADD_DONATION_TREE, REMOVE_DONATION_TREE, UPDATE_DONATION_AMOUNT,
+        UPDATE_NOTE_AMOUNT
     }
     export enum VIEW_STATUS {
         NONE, HOME, CONFIRM,
@@ -709,6 +710,9 @@
             switch (dataMode) {
                 case DATA_MODE.UPDATE_COMMENT:
                     self._lastCommand = new UpdateNoteComment({ note: note, comment: args.comment }, success, error);
+                    break;
+                case DATA_MODE.UPDATE_NOTE_AMOUNT:
+                    self._lastCommand = new FoodParent.UpdateNoteAmount({ note: note, amount: args.amount }, success, error);
                     break;
                 case DATA_MODE.UPDATE_RATING:
                     self._lastCommand = new UpdateNoteRating({ note: note, rate: args.rate }, success, error);

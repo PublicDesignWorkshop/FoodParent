@@ -9216,33 +9216,33 @@ return jQuery;
  * to offer multiple easing options
  *
  * TERMS OF USE - jQuery Easing
- * 
- * Open source under the BSD License. 
- * 
+ *
+ * Open source under the BSD License.
+ *
  * Copyright © 2008 George McGinley Smith
  * All rights reserved.
- * 
- * Redistribution and use in source and binary forms, with or without modification, 
+ *
+ * Redistribution and use in source and binary forms, with or without modification,
  * are permitted provided that the following conditions are met:
- * 
- * Redistributions of source code must retain the above copyright notice, this list of 
+ *
+ * Redistributions of source code must retain the above copyright notice, this list of
  * conditions and the following disclaimer.
- * Redistributions in binary form must reproduce the above copyright notice, this list 
- * of conditions and the following disclaimer in the documentation and/or other materials 
+ * Redistributions in binary form must reproduce the above copyright notice, this list
+ * of conditions and the following disclaimer in the documentation and/or other materials
  * provided with the distribution.
- * 
- * Neither the name of the author nor the names of contributors may be used to endorse 
+ *
+ * Neither the name of the author nor the names of contributors may be used to endorse
  * or promote products derived from this software without specific prior written permission.
- * 
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY 
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY
  * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
  *  COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
  *  EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE
- *  GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED 
+ *  GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED
  * AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
- *  NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED 
- * OF THE POSSIBILITY OF SUCH DAMAGE. 
+ *  NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
 */
 
@@ -9358,7 +9358,7 @@ jQuery.extend( jQuery.easing,
 		return c*((t=t/d-1)*t*((s+1)*t + s) + 1) + b;
 	},
 	easeInOutBack: function (x, t, b, c, d, s) {
-		if (s == undefined) s = 1.70158; 
+		if (s == undefined) s = 1.70158;
 		if ((t/=d/2) < 1) return c/2*(t*t*(((s*=(1.525))+1)*t - s)) + b;
 		return c/2*((t-=2)*t*(((s*=(1.525))+1)*t + s) + 2) + b;
 	},
@@ -9385,33 +9385,33 @@ jQuery.extend( jQuery.easing,
 /*
  *
  * TERMS OF USE - EASING EQUATIONS
- * 
- * Open source under the BSD License. 
- * 
+ *
+ * Open source under the BSD License.
+ *
  * Copyright © 2001 Robert Penner
  * All rights reserved.
- * 
- * Redistribution and use in source and binary forms, with or without modification, 
+ *
+ * Redistribution and use in source and binary forms, with or without modification,
  * are permitted provided that the following conditions are met:
- * 
- * Redistributions of source code must retain the above copyright notice, this list of 
+ *
+ * Redistributions of source code must retain the above copyright notice, this list of
  * conditions and the following disclaimer.
- * Redistributions in binary form must reproduce the above copyright notice, this list 
- * of conditions and the following disclaimer in the documentation and/or other materials 
+ * Redistributions in binary form must reproduce the above copyright notice, this list
+ * of conditions and the following disclaimer in the documentation and/or other materials
  * provided with the distribution.
- * 
- * Neither the name of the author nor the names of contributors may be used to endorse 
+ *
+ * Neither the name of the author nor the names of contributors may be used to endorse
  * or promote products derived from this software without specific prior written permission.
- * 
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY 
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY
  * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
  *  COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
  *  EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE
- *  GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED 
+ *  GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED
  * AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
- *  NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED 
- * OF THE POSSIBILITY OF SUCH DAMAGE. 
+ *  NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  */
 //     Underscore.js 1.7.0
@@ -19851,10 +19851,10 @@ var Body = Backgrid.Body = Backbone.View.extend({
     var i = this.collection.indexOf(model);
     var j = this.columns.indexOf(column);
     var cell, renderable, editable, m, n;
-    
+
     // return if model being edited in a different grid
     if (j === -1) return this;
-    
+
     this.rows[i].cells[j].exitEditMode();
 
     if (command.moveUp() || command.moveDown() || command.moveLeft() ||
@@ -23720,7 +23720,7 @@ if (typeof jQuery === 'undefined') {
           that.$button
             .addClass('bs-invalid')
             .focus();
-          
+
           that.$element.on({
             'focus.bs.select': function () {
               that.$button.focus();
@@ -23737,7 +23737,7 @@ if (typeof jQuery === 'undefined') {
               that.$element.off('rendered.bs.select');
             }
           });
-          
+
         });
       }
 
@@ -24367,12 +24367,12 @@ if (typeof jQuery === 'undefined') {
     },
 
     tabIndex: function () {
-      if (this.$element.data('tabindex') !== this.$element.attr('tabindex') && 
+      if (this.$element.data('tabindex') !== this.$element.attr('tabindex') &&
         (this.$element.attr('tabindex') !== -98 && this.$element.attr('tabindex') !== '-98')) {
         this.$element.data('tabindex', this.$element.attr('tabindex'));
         this.$button.attr('tabindex', this.$element.data('tabindex'));
       }
-      
+
       this.$element.attr('tabindex', -98);
     },
 
@@ -25034,7 +25034,7 @@ if (typeof jQuery === 'undefined') {
 	$.fn.btsListFilter = function(inputEl, opts) {
 
 		'use strict';
-		
+
 		var self = this,
 			searchlist$ = $(this),
 			inputEl$ = $(inputEl),
@@ -25065,7 +25065,7 @@ if (typeof jQuery === 'undefined') {
 				//val = val.replace(new RegExp("^[.]$|[\[\]|()*]",'g'),'');
 				//val = val.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
 				val = val && val.replace(new RegExp("[({[^.$*+?\\\]})]","g"),'');
-				
+
 				var text = $(item).text(),
 					i = opts.initial?'^':'',
 					regSearch = new RegExp(i + val, opts.casesensitive?'':'i');
@@ -25074,7 +25074,7 @@ if (typeof jQuery === 'undefined') {
 			cancelNode: function() {
 				return '<span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>';
 			}
-		}, opts);	
+		}, opts);
 
 		function tmpl(str, data) {
 			return str.replace(/\{ *([\w_]+) *\}/g, function (str, key) {
@@ -25104,7 +25104,7 @@ if (typeof jQuery === 'undefined') {
 
 			inputEl$.after( cancelEl$ );
 			inputEl$.parents('.form-group').addClass('has-feedback');
-			
+
 			if(!inputEl$.prev().is('.control-label'))
 				cancelEl$.css({top: 0})
 
@@ -25112,7 +25112,7 @@ if (typeof jQuery === 'undefined') {
 		}
 
 		inputEl$.on(opts.eventKey, debouncer(function(e) {
-			
+
 			var val = $(this).val();
 
 			if(opts.itemEl)
@@ -25140,7 +25140,7 @@ if (typeof jQuery === 'undefined') {
 				{
 					contains.hide();
 					containsNot.hide();
-					
+
 					if(callReq)
 					{
 						if($.isFunction(callReq.abort))
@@ -25148,13 +25148,13 @@ if (typeof jQuery === 'undefined') {
 						else if($.isFunction(callReq.stop))
 							callReq.stop();
 					}
-					
+
 					callReq = opts.sourceData.call(self, val, function(data) {
 						callReq = null;
 						contains.hide();
 						containsNot.hide();
 						searchlist$.find('.'+opts.itemClassTmp).remove();
-						
+
 
 						if(!data || data.length===0)
 							$( opts.emptyNode.call(self) ).addClass(opts.itemClassTmp).appendTo(searchlist$);
@@ -25162,10 +25162,10 @@ if (typeof jQuery === 'undefined') {
 							for(var i in data)
 								$( opts.sourceNode.call(self, data[i]) ).addClass(opts.itemClassTmp).appendTo(searchlist$);
 					});
-				} 
+				}
 				else {
                     searchlist$.find('.'+opts.itemClassTmp).remove();
-                    
+
                     if(contains.length===0)
 						$( opts.emptyNode.call(self) ).addClass(opts.itemClassTmp).appendTo(searchlist$);
 				}
@@ -26136,25 +26136,25 @@ var skipLabels;
 			if (reflow){
 				this.reflow();
 			}
-			
+
 			if (this.options.animation && !reflow){
 				var animation = new Chart.Animation();
 				animation.numSteps = this.options.animationSteps;
 				animation.easing = this.options.animationEasing;
-				
+
 				// render function
 				animation.render = function(chartInstance, animationObject) {
 					var easingFunction = helpers.easingEffects[animationObject.easing];
 					var stepDecimal = animationObject.currentStep / animationObject.numSteps;
 					var easeDecimal = easingFunction(stepDecimal);
-					
+
 					chartInstance.draw(easeDecimal, stepDecimal, animationObject.currentStep);
 				};
-				
+
 				// user events
 				animation.onAnimationProgress = this.options.onAnimationProgress;
 				animation.onAnimationComplete = this.options.onAnimationComplete;
-				
+
 				Chart.animationService.addAnimation(this, animation);
 			}
 			else{
@@ -26590,11 +26590,11 @@ var skipLabels;
 		numSteps: 60, // default number of steps
 		easing: "", // the easing to use for this animation
 		render: null, // render function used by the animation service
-		
-		onAnimationProgress: null, // user specified callback to fire on each step of the animation 
+
+		onAnimationProgress: null, // user specified callback to fire on each step of the animation
 		onAnimationComplete: null, // user specified callback to fire when the animation finishes
 	});
-	
+
 	Chart.Tooltip = Chart.Element.extend({
 		draw : function(){
 
@@ -27037,7 +27037,7 @@ var skipLabels;
 				        ctx.fillText(label, 0, 0);
 				        ctx.restore();
 				    }
-				    
+
 				},this);
 
 			}
@@ -27345,7 +27345,7 @@ var skipLabels;
 					return;
 				}
 			}
-			
+
 			this.animations.push({
 				chartInstance: chartInstance,
 				animationObject: animationObject
@@ -27361,7 +27361,7 @@ var skipLabels;
 			var index = helpers.findNextWhere(this.animations, function(animationWrapper) {
 				return animationWrapper.chartInstance === chartInstance;
 			});
-			
+
 			if (index)
 			{
 				this.animations.splice(index, 1);
@@ -27391,9 +27391,9 @@ var skipLabels;
 				if(this.animations[i].animationObject.currentStep > this.animations[i].animationObject.numSteps){
 					this.animations[i].animationObject.currentStep = this.animations[i].animationObject.numSteps;
 				}
-				
+
 				this.animations[i].animationObject.render(this.animations[i].chartInstance, this.animations[i].animationObject);
-				
+
 				// Check if executed the last frame.
 				if (this.animations[i].animationObject.currentStep == this.animations[i].animationObject.numSteps){
 					// Call onAnimationComplete
@@ -27640,7 +27640,7 @@ var skipLabels;
 				            activePoint.strokeColor = activePoint.highlightStroke;
 				        });
 				    }
-					
+
 					this.showTooltip(activePoints);
 				});
 			}
@@ -27705,7 +27705,7 @@ var skipLabels;
 				            highlightStroke: dataset.pointHighlightStroke || dataset.pointStrokeColor
 				        }));
 				    }
-					
+
 				},this);
 
 				this.buildScale(data.labels);
@@ -27760,7 +27760,7 @@ var skipLabels;
 				});
 				return values;
 			};
-			
+
 			var scaleOptions = {
 				templateString : this.options.scaleLabel,
 				height : this.chart.height,
@@ -28030,7 +28030,7 @@ var skipLabels;
 
   /**
    * rating
-   * 
+   *
    * @description The rating component.
    * @param {HTMLElement} el The HTMl element to build the rating widget on
    * @param {Number} currentRating The current rating value
@@ -28039,10 +28039,10 @@ var skipLabels;
    * @return {Object} Some public methods
    */
   function rating(el, currentRating, maxRating, callback) {
-    
+
     /**
      * stars
-     * 
+     *
      * @description The collection of stars in the rating.
      * @type {Array}
      */
@@ -28066,7 +28066,7 @@ var skipLabels;
           } else {
               star.classList.add('c-rating__item');
           }
-        
+
         star.setAttribute('data-index', i);
         if (i < currentRating) { star.classList.add('is-active'); }
         el.appendChild(star);
@@ -35172,7 +35172,7 @@ L.Popup = L.Class.extend({
 		L.DomEvent.disableScrollPropagation(this._contentNode);
 		L.DomEvent.on(wrapper, 'contextmenu', L.DomEvent.stopPropagation);
 
-		
+
 	},
 
 	_updateContent: function () {
@@ -36237,7 +36237,7 @@ L.Path = (L.Path.SVG && !window.L_PREFER_CANVAS) || !L.Browser.canvas ? L.Path :
 		}
 
 		this._requestUpdate();
-		
+
 		this.fire('remove');
 		this._map = null;
 	},
@@ -39291,7 +39291,7 @@ L.Control.Attribution = L.Control.extend({
 				this.addAttribution(map._layers[i].getAttribution());
 			}
 		}
-		
+
 		map
 		    .on('layeradd', this._onLayerAdd, this)
 		    .on('layerremove', this._onLayerRemove, this);
@@ -41072,14 +41072,14 @@ var FoodParent;
         Server Error Code
 
         404: Connection Error
-        
+
         604: Missing name field
         605: Missing neiborhood field
 
         803: Not Valid Email Address
         804: User existing Error
         805: Wrong Login Parameters
-        
+
         901: Not Logged In Error
 
 
@@ -41875,7 +41875,7 @@ var FoodParent;
             /*
             if (viewStatus == VIEW_STATUS.HOME) {
                 //new MovePaceBarToTop().execute();
-               
+
             } else if (viewStatus == VIEW_STATUS.TREES) {
                 Controller.checkAdmin(function (response) {
                     if (response.result == false || response.result == 'false') {   // Not admin && in table view
@@ -49584,6 +49584,12 @@ var FoodParent;
             template += '<div class="input-rating-slider"></div>';
             template += '</div>';
             template += '<div class="hr"><hr /></div>';
+            template += '<div class="info-header"><i class="fa fa-shopping-basket"></i> Amount picked</div>';
+            template += '<div class="info-group">';
+            template += '<div class="input-amount"><%= amount %></div>';
+            template += '</div>';
+
+            template += '<div class="hr"><hr /></div>';
             template += '<div class="info-header"><i class="fa fa-comment"></i> Comment</div>';
             template += '<div class="info-group">';
             template += '<div class="input-comment"><%= comment %></div>';
@@ -49635,6 +49641,12 @@ var FoodParent;
             template += '<div class="input-rating-slider"></div>';
             template += '</div>';
             template += '<div class="hr"><hr /></div>';
+            template += '<div class="info-header"><i class="fa fa-shopping-basket"></i> Amount picked</div>';
+            template += '<div class="info-group">';
+            template += '<div class="input-amount"><%= amount %></div>';
+            template += '</div>';
+
+            template += '<div class="hr"><hr /></div>';
             template += '<div class="info-header"><i class="fa fa-comment"></i> Comment</div>';
             template += '<div class="info-group">';
             template += '<div class="text-comment"><%= comment %></div>';
@@ -49651,59 +49663,6 @@ var FoodParent;
             template += '</div>';
             template += '</div>';
             template += '</div>'; // end of .wrapper-note-content
-            template += '</div>'; // end of .inner-frame
-            template += '<div class="top-right-button button-close">';
-            template += '<i class="fa fa-remove fa-2x"></i>';
-            template += '</div>'; // end of top-right-button button-close
-            template += '</div>'; // end of .outer-frame
-            template += '</div>'; // end of #wrapper-note
-            return template;
-        };
-        Template.getPostNoteViewTemplate = function () {
-            var template = '';
-            template += '<div id="wrapper-note">';
-            template += '<div class="outer-frame">';
-            template += '<div class="inner-frame">';
-            template += '<div class="wrapper-post-note-content">';
-            template += '<div class="image-wrapper">';
-            template += '<div class="wrapper-input-upload-picture">';
-            template += '<input class="input-upload-picture fileupload" type="file" accept="image/*" capture="camera" />';
-            template += '</div>';
-            template += '<div class="wrapper-uploading-picture hidden">';
-            template += '<div class="uploading-picture">Uploading...</div>';
-            template += '</div>';
-            template += '<div class="info-header"><i class="fa fa-image"></i> Select Cover Picture</div>';
-            template += '<div class="image-group"></div>';
-            template += '</div>'; // end of .image-wrapper
-            template += '<div class="wrapper-note-info">';
-            template += '<div class="name"><%= name %></div>';
-            template += '<div class="hr"><hr /></div>';
-            template += '<div class="info-header"><i class="fa fa-star-half-o"></i> Rating</div>';
-            template += '<div class="info-group">';
-            template += '<div class="input-rating"></div>';
-            template += '<div class="input-rating-slider"></div>';
-            template += '</div>';
-            template += '<div class="hr"><hr /></div>';
-            template += '<div class="info-header"><i class="fa fa-comment"></i> Comment</div>';
-            template += '<div class="info-group">';
-            template += '<div class="input-comment">&nbsp;</div>';
-            template += '</div>';
-            template += '<div class="hr"><hr /></div>';
-            template += '<div class="info-header"><i class="fa fa-calendar-o"></i> Date</div>';
-            template += '<div class="info-group">';
-            template += '<input type="text" class="form-control input-date" />';
-            template += '</div>';
-            template += '<div class="hr"><hr /></div>';
-            template += '<div class="info-header"><i class="fa fa-user"></i> Author</div>';
-            template += '<div class="info-group">';
-            template += '<div class="input-author"><%= author %></div>';
-            template += '</div>';
-            template += '<div class="hr"><hr /></div>';
-            template += '<div class="info-button-group">';
-            template += '<div class="button-outer-frame2 button3"><div class="button-inner-frame2 create-note"><i class="fa fa-save"></i> Save</div></div>';
-            template += '</div>';
-            template += '</div>'; // .wrapper-note-info
-            template += '</div>'; // end of .wrapper-post-note-content
             template += '</div>'; // end of .inner-frame
             template += '<div class="top-right-button button-close">';
             template += '<i class="fa fa-remove fa-2x"></i>';
@@ -49741,10 +49700,16 @@ var FoodParent;
             template += '<div class="info-header"><i class="fa fa-star-half-o fa-1x"></i> Rating</div>';
             template += '<div class="input-rating"></div>';
             template += '<div class="input-rating-slider"></div>';
+            template += '<div class="hr"><hr /></div>';
+            template += '<div class="info-header"><i class="fa fa-shopping-basket"></i> Amount picked</div>';
+            template += '<div class="info-group">';
+            template += '<div class="input-amount">0</div>';
+            template += '</div>';
+
             template += '<hr />';
             template += '<div class="info-header"><i class="fa fa-comment fa-1x"></i> Comment</div>';
             template += '<div class="info-group">';
-            template += '<div class="input-comment">&nbsp;</div>';
+            template += '<div class="input-comment"></div>';
             template += '</div>';
             template += '<hr />';
             template += '<div class="info-header"><i class="fa fa-calendar-o fa-1x"></i> Date</div>';
@@ -49797,10 +49762,16 @@ var FoodParent;
             template += '<div class="info-header"><i class="fa fa-star-half-o fa-1x"></i> Rating</div>';
             template += '<div class="input-rating"></div>';
             template += '<div class="input-rating-slider"></div>';
+            template += '<div class="hr"><hr /></div>';
+            template += '<div class="info-header"><i class="fa fa-shopping-basket"></i> Amount picked</div>';
+            template += '<div class="info-group">';
+            template += '<div class="input-amount">0</div>';
+            template += '</div>';
+
             template += '<hr />';
             template += '<div class="info-header"><i class="fa fa-comment fa-1x"></i> Comment</div>';
             template += '<div class="info-group">';
-            template += '<div class="input-comment">&nbsp;</div>';
+            template += '<div class="input-comment"></div>';
             template += '</div>';
             template += '<hr />';
             template += '<div class="info-header"><i class="fa fa-calendar-o fa-1x"></i> Date</div>';
@@ -49866,10 +49837,16 @@ var FoodParent;
             template += '<div class="info-header"><i class="fa fa-star-half-o fa-1x"></i> Rating</div>';
             template += '<div class="input-rating"></div>';
             template += '<div class="input-rating-slider"></div>';
+            template += '<div class="hr"><hr /></div>';
+            template += '<div class="info-header"><i class="fa fa-shopping-basket"></i> Amount picked</div>';
+            template += '<div class="info-group">';
+            template += '<div class="input-amount">0</div>';
+            template += '</div>';
+
             template += '<hr />';
             template += '<div class="info-header"><i class="fa fa-comment fa-1x"></i> Comment</div>';
             template += '<div class="info-group">';
-            template += '<div class="input-comment">&nbsp;</div>';
+            template += '<div class="input-comment"></div>';
             template += '</div>';
             template += '<hr />';
             template += '<div class="info-header"><i class="fa fa-calendar-o fa-1x"></i> Date</div>';
@@ -49931,10 +49908,16 @@ var FoodParent;
             template += '<div class="info-header"><i class="fa fa-star-half-o fa-1x"></i> Rating</div>';
             template += '<div class="input-rating"></div>';
             template += '<div class="input-rating-slider"></div>';
+            template += '<div class="hr"><hr /></div>';
+            template += '<div class="info-header"><i class="fa fa-shopping-basket"></i> Amount picked</div>';
+            template += '<div class="info-group">';
+            template += '<div class="input-amount">0</div>';
+            template += '</div>';
+
             template += '<hr />';
             template += '<div class="info-header"><i class="fa fa-comment fa-1x"></i> Comment</div>';
             template += '<div class="info-group">';
-            template += '<div class="input-comment">&nbsp;</div>';
+            template += '<div class="input-comment"></div>';
             template += '</div>';
             template += '<hr />';
             template += '<div class="info-header"><i class="fa fa-calendar-o fa-1x"></i> Date</div>';
@@ -49961,60 +49944,6 @@ var FoodParent;
             template += '</div>'; // end of #content-post
             template += '</div>'; // end of .frame-flex-group
             template += '</div>'; // end of #wrapper-post-note
-            return template;
-        };
-        Template.getPostNoteViewTemplate2 = function () {
-            var template = '';
-            template += '<div id="wrapper-note">';
-            template += '<div class="outer-frame">';
-            template += '<div class="inner-frame">';
-            template += '<div class="wrapper-post-note-content">';
-            template += '<div class="image-wrapper">';
-            template += '<div class="wrapper-input-upload-picture">';
-            template += '<input class="input-upload-picture fileupload" type="file" accept="image/*" capture="camera" />';
-            template += '</div>';
-            template += '<div class="wrapper-uploading-picture hidden">';
-            template += '<div class="uploading-picture">Uploading...</div>';
-            template += '</div>';
-            template += '<div class="info-header"><i class="fa fa-image"></i> Select Cover Picture</div>';
-            template += '<div class="image-group"></div>';
-            template += '</div>'; // end of .image-wrapper
-            template += '<div class="wrapper-note-info">';
-            template += '<div class="name"><%= name %></div>';
-            template += '<div class="hr"><hr /></div>';
-            template += '<div class="info-header"><i class="fa fa-star-half-o"></i> Rating</div>';
-            template += '<div class="info-group">';
-            template += '<div class="input-rating"></div>';
-            template += '<div class="input-rating-slider"></div>';
-            template += '</div>';
-            template += '<div class="hr"><hr /></div>';
-            template += '<div class="info-header"><i class="fa fa-comment"></i> Comment</div>';
-            template += '<div class="info-group">';
-            template += '<div class="input-comment">&nbsp;</div>';
-            template += '</div>';
-            template += '<div class="hr"><hr /></div>';
-            template += '<div class="info-header"><i class="fa fa-calendar-o"></i> Date</div>';
-            template += '<div class="info-group">';
-            template += '<input type="text" class="form-control input-date" />';
-            template += '</div>';
-            template += '<div class="hr"><hr /></div>';
-            template += '<div class="info-header"><i class="fa fa-user"></i> Author\'s E-mail Address</div>';
-            template += '<div class="info-group">';
-            template += '<input type="email" name="email" class="form-control input-author" placeholder="e-mail address" autocomplete="on"/>';
-            template += '<div class="button-description2">* The <strong>e-mail address</strong> that you enter will be stored as a perspective foodparent. You can <strong>become a parent</strong> using the same e-mail address that you provide.</div>';
-            template += '</div>';
-            template += '<div class="hr"><hr /></div>';
-            template += '<div class="info-button-group">';
-            template += '<div class="button-outer-frame2 button3"><div class="button-inner-frame2 create-note"><i class="fa fa-save"></i> Save</div></div>';
-            template += '</div>';
-            template += '</div>'; // .wrapper-note-info
-            template += '</div>'; // end of .wrapper-post-note-content
-            template += '</div>'; // end of .inner-frame
-            template += '<div class="top-right-button button-close">';
-            template += '<i class="fa fa-remove fa-2x"></i>';
-            template += '</div>'; // end of top-right-button button-close
-            template += '</div>'; // end of .outer-frame
-            template += '</div>'; // end of #wrapper-note
             return template;
         };
         Template.getManageDonationsTableViewTemplate = function () {
@@ -50183,13 +50112,8 @@ var FoodParent;
             template += '<div class="input-rating-slider"></div>';
             template += '</div>';
 
-            
+
             */
-            template += '<div class="hr"><hr /></div>';
-            template += '<div class="info-header"><i class="fa fa-ambulance"></i> Amount</div>';
-            template += '<div class="info-group">';
-            template += '<div class="input-amount"><%= amount %> lbs.</div>';
-            template += '</div>';
             template += '<div class="hr"><hr /></div>';
             template += '<div class="info-header"><i class="fa fa-ambulance"></i> Trees</div>';
             template += '<div class="info-group">';
@@ -50418,7 +50342,7 @@ var FoodParent;
             template += '<div class="info-group">';
             template += '<input type="text" class="form-control input-neighborhood" placeholder="name of place near you (street, park)"/>';
             template += '</div>';
-            
+
             template += '<div class="hr"><hr /></div>';
 
             template += '<div class="info-button-group">';
@@ -51406,6 +51330,13 @@ var FoodParent;
                     if (response2.result == true || response2.result == 'true') {
                         self._bAuthor = true;
                     }
+                    var origAmount = self._note.getAmount();
+                    var amountLabel = (origAmount / 454).toFixed(1) + " lbs. (";
+                    if (origAmount > 10000) {
+                      amountLabel += (origAmount / 1000).toFixed(1) + " kg)";
+                    } else {
+                      amountLabel += origAmount + " grams)";
+                    }
                     if (self._bAuthor) {
                         if (person != undefined) {
                             var template = _.template(FoodParent.Template.getImageNoteViewTemplate());
@@ -51414,6 +51345,7 @@ var FoodParent;
                                 image: FoodParent.Setting.getBlankImagePath(),
                                 value: self._note.getRate(),
                                 comment: self._note.getComment(),
+                                amount: origAmount,
                                 date: self._note.getFormattedHourTime(),
                                 author: person.getName(),
                             };
@@ -51426,6 +51358,7 @@ var FoodParent;
                                 image: FoodParent.Setting.getBlankImagePath(),
                                 value: self._note.getRate(),
                                 comment: self._note.getComment(),
+                                amount: amount,
                                 date: self._note.getFormattedHourTime(),
                                 author: "Unknown",
                             };
@@ -51444,6 +51377,7 @@ var FoodParent;
                                 image: FoodParent.Setting.getBlankImagePath(),
                                 value: self._note.getRate(),
                                 comment: self._note.getComment(),
+                                amount: amount,
                                 date: self._note.getFormattedDate(),
                                 author: person.getName(),
                             };
@@ -51456,6 +51390,7 @@ var FoodParent;
                                 image: FoodParent.Setting.getBlankImagePath(),
                                 value: self._note.getRate(),
                                 comment: self._note.getComment(),
+                                amount: amount,
                                 date: self._note.getFormattedDate(),
                                 author: "Unknown",
                             };
@@ -51521,6 +51456,40 @@ var FoodParent;
                     }
                 });
                 self.$('.input-date').pickadate('picker').set('select', self._note.getFormattedDate(), { format: 'dd mmm yyyy' });
+
+                self.$('.input-amount').replaceWith('<div class="input-amount"></div>');
+                var origAmount = self._note.getAmount();
+                var amountLabel = (origAmount / 454).toFixed(1) + " lbs. (";
+                if (origAmount > 10000) {
+                  amountLabel += (origAmount / 1000).toFixed(1) + " kg)";
+                } else {
+                  amountLabel += origAmount + " grams)";
+                }
+                self.$('.input-amount').html(amountLabel);
+                self.$('.input-amount').on('click', function (event) {
+                  $(this).replaceWith("<input type='number' min=0 class='input-amount form-control' value=" + self._note.getAmount() + "></input><select class='amount-unit'><option value='1'>grams</option><option value='454'>lbs.</option><option value='1000'>kg</option></select>");
+                  self.$('.input-amount').focus();
+                  self.$('.input-amount').on('focusout', function (event) {
+                    self.$('.amount-unit').remove();
+                    var amount = self.$('.input-amount').val();
+                    var unit = parseInt(self.$('.amount-unit').val());
+                    amount *= unit;
+                    if (self._note.getAmount() != amount) {
+                      FoodParent.EventHandler.handleNoteData(self._note, FoodParent.DATA_MODE.UPDATE_NOTE_AMOUNT, { amount: amount }, function () {
+                        FoodParent.EventHandler.handleDataChange("Pick amount for <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> was changed successfully.", true);
+                        self.renderImageNote();
+                      }, function () {
+                          FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+                      });
+                    }
+                    else {
+                        self.renderImageNote();
+                    }
+                    self._note.setAmount(amount);
+                    self.renderNoteInfo();
+                  });
+                });
+
                 self.$('.input-comment').replaceWith('<div class="input-comment"></div>');
                 self.$('.input-comment').html(htmlDecode(self._note.getComment()));
                 self.$('.input-comment').on('click', function (event) {
@@ -51935,7 +51904,7 @@ var FoodParent;
             self.setElement($('#wrapper-signup'));
             /*
             var place: Place = Model.getPlaces().findWhere({ id: self._donation.getPlaceId() });
-            
+
             self.renderDonationInfo();
             */
             self.setVisible();
@@ -54327,10 +54296,18 @@ var FoodParent;
                             self._note = FoodParent.Model.getNotes().findWhere({ id: tooltip.id });
                             if (self._note) {
                                 var template = _.template(FoodParent.Template.getToolTipTemplate());
+                                var amount = self._note.getAmount();
+                                var amountLabel = (amount / 454).toFixed(1) + " lbs. (";
+                                if (amount > 10000) {
+                                  amountLabel += (amount / 1000).toFixed(1) + " kg)";
+                                } else {
+                                  amountLabel += amount + " grams)";
+                                }
                                 var data = {
                                     image: FoodParent.Setting.getBlankImagePath(),
                                     value: self._note.getRate().toFixed(2) + " / " + FoodParent.Setting.getMaxRating().toFixed(2),
                                     comment: htmlDecode(self._note.getComment()),
+                                    amount: amountLabel,
                                     date: tooltip.label,
                                 };
                                 self.$('#wrapper-tooltip').html(template(data));
@@ -54902,7 +54879,7 @@ var FoodParent;
                     }));
                     // Render address either from the reverse geo-coding server or stored address
                     self.$('.input-address').replaceWith('<div class="input-address"></div>');
-                    if (self._tree.getAddress().trim() == '') {
+                    if (self._tree.getAddress() == '') {
                         FoodParent.GeoLocation.reverseGeocoding(self._tree.getLocation(), function (data) {
                             self.$(".input-address").html(data.road + ", " + data.county + ", " + data.state + ", " + data.country + ", " + data.postcode);
                         }, function () {
@@ -55138,6 +55115,38 @@ var FoodParent;
                 self._note.setRate(rate - 1);
                 self.renderNoteInfo();
             });
+
+            self.$('.input-amount').replaceWith('<div class="input-amount"></div>');
+            var origAmount = self._note.getAmount();
+            var amountLabel = (origAmount / 454).toFixed(1) + " lbs. (";
+            if (origAmount > 10000) {
+              amountLabel += (origAmount / 1000).toFixed(1) + " kg)";
+            } else {
+              amountLabel += origAmount + " grams)";
+            }
+            self.$('.input-amount').html(amountLabel);
+            self.$('.input-amount').on('click', function (event) {
+              $(this).replaceWith("<input type='number' min=0 class='input-amount form-control' value=" + self._note.getAmount() + "></input><select class='amount-unit'><option value='1'>grams</option><option value='454'>lbs.</option><option value='1000'>kg</option></select>");
+              self.$('.input-amount').focus();
+              self.$('.input-amount').on('focusout', function (event) {
+                self.$('.amount-unit').remove();
+                var amount = self.$('.input-amount').val();
+                var unit = parseInt(self.$('.amount-unit').val());
+                amount *= unit;
+                if (self._note.getAmount() != amount) {
+                    FoodParent.EventHandler.handleNoteData(self._note, FoodParent.DATA_MODE.UPDATE_NOTE_AMOUNT, { amount: amount }, function () {                                FoodParent.EventHandler.handleDataChange("Pick amount for <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> was changed successfully.", true);                                self.renderImageNote();
+                    }, function () {
+                            FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+                        });
+                }
+                else {
+                    self.renderNoteInfo();
+                }
+                self._note.setAmount(amount);
+                self.renderNoteInfo();
+              });
+            });
+
             self.$('.input-comment').replaceWith('<div class="input-comment"></div>');
             self.$('.input-comment').html(htmlDecode(self._note.getComment()));
             self.$('.input-comment').on('click', function (event) {
@@ -55692,6 +55701,38 @@ var FoodParent;
                     }
                 });
                 self.$('.input-date').pickadate('picker').set('select', self._note.getFormattedDate(), { format: 'dd mmm yyyy' });
+                self.$('.input-amount').replaceWith('<div class="input-amount"></div>');
+                var origAmount = self._note.getAmount();
+                var amountLabel = (origAmount / 454).toFixed(1) + " lbs. (";
+                if (origAmount > 10000) {
+                  amountLabel += (origAmount / 1000).toFixed(1) + " kg)";
+                } else {
+                  amountLabel += origAmount + " grams)";
+                }
+                self.$('.input-amount').html(amountLabel);
+                self.$('.input-amount').on('click', function (event) {
+                  $(this).replaceWith("<input type='number' min=0 class='input-amount form-control' value=" + self._note.getAmount() + "></input><select class='amount-unit'><option value='1'>grams</option><option value='454'>lbs.</option><option value='1000'>kg</option></select>");
+                  self.$('.input-amount').focus();
+                  self.$('.input-amount').on('focusout', function (event) {
+                    self.$('.amount-unit').remove();
+                    var amount = self.$('.input-amount').val();
+                    var unit = parseInt(self.$('.amount-unit').val());
+                    amount *= unit;
+                    if (self._note.getAmount() != amount) {
+                        FoodParent.EventHandler.handleNoteData(self._note, FoodParent.DATA_MODE.UPDATE_NOTE_AMOUNT, { amount: amount }, function () {
+                                FoodParent.EventHandler.handleDataChange("Pick amount for <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> was changed successfully.", true);
+                                self.renderImageNote();
+                        }, function () {
+                                FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+                            });
+                    }
+                    else {
+                        self.renderImageNote();
+                    }
+                    self._note.setAmount(amount);
+                    self.renderNoteInfo();
+                  });
+                });
                 self.$('.input-comment').replaceWith('<div class="input-comment"></div>');
                 self.$('.input-comment').html(htmlDecode(self._note.getComment()));
                 self.$('.input-comment').on('click', function (event) {
@@ -55787,6 +55828,16 @@ var FoodParent;
             var rate = rating(self.$('.input-rating-slider')[0], (self._note.getRate() + 1).toFixed(2), FoodParent.Setting.getMaxRating() + 1, function (rate) {
                 self.renderNoteInfo();
             });
+            self.$('.input-amount').replaceWith('<div class="input-amount"></div>');
+                var origAmount = self._note.getAmount();
+                var amountLabel = (origAmount / 454).toFixed(1) + " lbs. (";
+                if (origAmount > 10000) {
+                  amountLabel += (origAmount / 1000).toFixed(1) + " kg)";
+                } else {
+                  amountLabel += origAmount + " grams)";
+                }
+                self.$('.input-amount').html(amountLabel);
+
             self.$('.input-comment').replaceWith('<div class="input-comment"></div>');
             self.$('.input-comment').html(htmlDecode(self._note.getComment()));
             var today = new Date();
@@ -55901,9 +55952,41 @@ var FoodParent;
                         self.renderNoteInfo();
                     });
                 }
+                self.$('.input-amount').replaceWith('<div class="input-amount"></div>');
+                var origAmount = self._note.getAmount();
+                var amountLabel = (origAmount / 454).toFixed(1) + " lbs. (";
+                if (origAmount > 10000) {
+                  amountLabel += (origAmount / 1000).toFixed(1) + " kg)";
+                } else {
+                  amountLabel += origAmount + " grams)";
+                }
+                self.$('.input-amount').html(amountLabel);
+                if (bAuthor) {
+                self.$('.input-amount').on('click', function (event) {
+                  $(this).replaceWith("<input type='number' min=0 class='input-amount form-control' value=" + self._note.getAmount() + "></input><select class='amount-unit'><option value='1'>grams</option><option value='454'>lbs.</option><option value='1000'>kg</option></select>");
+                  self.$('.input-amount').focus();
+                  self.$('.input-amount').on('focusout', function (event) {
+                    self.$('.amount-unit').remove();
+                    var amount = self.$('.input-amount').val();
+                    var unit = parseInt(self.$('.amount-unit').val());
+                    amount *= unit;
+                    if (self._note.getAmount() != amount) {
+                        FoodParent.EventHandler.handleNoteData(self._note, FoodParent.DATA_MODE.UPDATE_NOTE_AMOUNT, { amount: amount }, function () {
+                                FoodParent.EventHandler.handleDataChange("Pick amount for <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> was changed successfully.", true);
+                                self.renderImageNote();
+                        }, function () {
+                                FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+                            });
+                    }
+                    else {
+                        self.renderImageNote();
+                    }
+                    self._note.setAmount(amount);
+                    self.renderNoteInfo();
+                  });
+                });
                 self.$('.input-comment').replaceWith('<div class="input-comment"></div>');
                 self.$('.input-comment').html(htmlDecode(self._note.getComment()));
-                if (bAuthor) {
                     self.$('.input-comment').on('click', function (event) {
                         $(this).replaceWith("<textarea rows='5' class='input-comment form-control'>" + self._note.getComment() + "</textarea>");
                         self.$('.input-comment').focus();
@@ -56086,6 +56169,38 @@ var FoodParent;
                     self.renderNoteInfo();
                 }
             });
+            self.$('.input-amount').replaceWith('<div class="input-amount"></div>');
+                var origAmount = self._note.getAmount();
+                var amountLabel = (origAmount / 454).toFixed(1) + " lbs. (";
+                if (origAmount > 10000) {
+                  amountLabel += (origAmount / 1000).toFixed(1) + " kg)";
+                } else {
+                  amountLabel += origAmount + " grams)";
+                }
+                self.$('.input-amount').html(amountLabel);
+                self.$('.input-amount').on('click', function (event) {
+                  $(this).replaceWith("<input type='number' min=0 class='input-amount form-control' value=" + self._note.getAmount() + "></input><select class='amount-unit'><option value='1'>grams</option><option value='454'>lbs.</option><option value='1000'>kg</option></select>");
+                  self.$('.input-amount').focus();
+                  self.$('.input-amount').on('focusout', function (event) {
+                    self.$('.amount-unit').remove();
+                    var amount = self.$('.input-amount').val();
+                    var unit = parseInt(self.$('.amount-unit').val());
+                    amount *= unit;
+                    if (self._note.getAmount() != amount) {
+                        FoodParent.EventHandler.handleNoteData(self._note, FoodParent.DATA_MODE.UPDATE_NOTE_AMOUNT, { amount: amount }, function () {
+                                FoodParent.EventHandler.handleDataChange("Pick amount for <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> was changed successfully.", true);
+                                self.renderImageNote();
+                        }, function () {
+                                FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+                            });
+                    }
+                    else {
+                        self.renderImageNote();
+                    }
+                    self._note.setAmount(amount);
+                    self.renderNoteInfo();
+                  });
+                });
             self.$('.input-comment').replaceWith('<div class="input-comment"></div>');
             self.$('.input-comment').html(htmlDecode(self._note.getComment()));
             self.$('.input-comment').on('click', function (event) {
@@ -57489,10 +57604,18 @@ var FoodParent;
                             console.log(self._note);
                             if (self._note) {
                                 var template = _.template(FoodParent.Template.getToolTipTemplate());
+                                var origAmount = self._note.getAmount();
+                                var amountLabel = (origAmount / 454).toFixed(1) + " lbs. (";
+                                if (origAmount > 10000) {
+                                  amountLabel += (origAmount / 1000).toFixed(1) + " kg)";
+                                } else {
+                                  amountLabel += origAmount + " grams)";
+                                }
                                 var data = {
                                     image: FoodParent.Setting.getBlankImagePath(),
                                     value: self._note.getRate().toFixed(2) + " / " + FoodParent.Setting.getMaxRating().toFixed(2),
                                     comment: htmlDecode(self._note.getComment()),
+                                    amount: amountLabel,
                                     date: tooltip.label,
                                 };
                                 self.$('#wrapper-tooltip').html(template(data));
@@ -58509,7 +58632,7 @@ var FoodParent;
                             }
                         */
                         //} else {
-                        //    
+                        //
                         //}
                     });
                 });
@@ -61537,6 +61660,15 @@ var FoodParent;
                 return Math.floor(this.id);
             }
             return null;
+        };
+        Note.prototype.getAmount = function () {
+            if (this.get('amount')) {
+                return this.get('amount');
+            }
+            return 0;
+        };
+        Note.prototype.setAmount = function (amount) {
+            this.set('amount', amount);
         };
         Note.prototype.getComment = function () {
             if (this.get('comment') != "") {

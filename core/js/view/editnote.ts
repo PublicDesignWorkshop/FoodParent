@@ -35,7 +35,7 @@
             var self: EditNoteView = this;
             self.bDebug = true;
             self.events = <any>{
-                
+
             };
             self.delegateEvents();
         }
@@ -52,92 +52,6 @@
             super.render(args);
             var self: EditNoteView = this;
             if (self.bDebug) console.log(EditNoteView.TAG + "render()");
-
-            /*
-            var tree: Tree = Model.getTrees().findWhere({ id: self._note.getTreeId() });
-            var food: Food = Model.getFoods().findWhere({ id: tree.getFoodId() });
-            var person: Person = Model.getPersons().findWhere({ id: self._note.getPersonId() });
-
-            Controller.checkLogin(function (response1) {
-                var bLogin: boolean = false;
-                self._bAuthor = false;
-                if (response1.result == true || response1.result == 'true') {   // Logged in
-                    bLogin = true;
-                }
-                if (bLogin && parseInt(response1.id) == self._note.getPersonId()) {
-                    self._bAuthor = true;
-                }
-
-                Controller.checkAdmin(function (response2) {
-                    if (response2.result == true || response2.result == 'true') {   // admin
-                        self._bAuthor = true;
-                    }
-                    if (self._bAuthor) {
-                        if (person != undefined) {
-                            var template = _.template(Template.getImageNoteViewTemplate());
-                            var data = {
-                                name: food.getName() + " " + tree.getName(),
-                                image: Setting.getBlankImagePath(),
-                                value: self._note.getRate(),
-                                comment: self._note.getComment(),
-                                date: self._note.getFormattedHourTime(),
-                                author: person.getName(),
-                            }
-                            $('#wrapper-pop').html(template(data));
-                        } else {
-                            var template = _.template(Template.getImageNoteViewTemplate());
-                            var data = {
-                                name: food.getName() + " " + tree.getName(),
-                                image: Setting.getBlankImagePath(),
-                                value: self._note.getRate(),
-                                comment: self._note.getComment(),
-                                date: self._note.getFormattedHourTime(),
-                                author: "Unknown",
-                            }
-                            $('#wrapper-pop').html(template(data));
-                        }
-                        self.setElement($('#wrapper-note'));
-                        self.renderImageNote();
-                        self.setVisible();
-                        self.resize();
-                    } else {
-                        var template = _.template(Template.getImageNoteViewTemplate2());
-                        if (person != undefined) {
-                            var data = {
-                                name: food.getName() + " " + tree.getName(),
-                                image: Setting.getBlankImagePath(),
-                                value: self._note.getRate(),
-                                comment: self._note.getComment(),
-                                date: self._note.getFormattedDate(),
-                                author: person.getName(),
-                            }
-                            $('#wrapper-pop').html(template(data));
-                            self.setElement($('#wrapper-note'));
-                        } else {
-                            var data = {
-                                name: food.getName() + " " + tree.getName(),
-                                image: Setting.getBlankImagePath(),
-                                value: self._note.getRate(),
-                                comment: self._note.getComment(),
-                                date: self._note.getFormattedDate(),
-                                author: "Unknown",
-                            }
-                            $('#wrapper-pop').html(template(data));
-                            self.setElement($('#wrapper-note'));
-                        }
-
-
-                        self.renderImageNote();
-                        self.setVisible();
-                        self.resize();
-                    }
-                }, function () {
-                    FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
-                });
-            }, function (response1) {
-                EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
-            });
-            */
             return self;
         }
         public renderNoteInfo() { }
@@ -232,7 +146,7 @@
                             self.$('.wrapper-input-upload-picture').removeClass('hidden');
                             self.renderNoteImages();
                         });
-                        
+
                         //self._note.addPicture(fileName);
                     }, function () {
                         // Error
@@ -262,25 +176,6 @@
             var self: EditNoteView = this;
             EventHandler.handleMouseClick($(event.currentTarget), self, { note: self._note.getId() });
         }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
         public renderImageNote() {
             var self: ImageNoteView = this;
@@ -328,11 +223,40 @@
                     }
                 });
                 self.$('.input-date').pickadate('picker').set('select', self._note.getFormattedDate(), { format: 'dd mmm yyyy' })
-
+                self.$('.input-amount').replaceWith('<div class="input-amount"></div>');
+                var origAmount = self._note.getAmount();
+                var amountLabel = (origAmount / 454).toFixed(1) + " lbs. (";
+                if (origAmount > 10000) {
+                  amountLabel += (origAmount / 1000).toFixed(1) + " kg)";
+                } else {
+                  amountLabel += origAmount + " grams)";
+                }
+                self.$('.input-amount').html(amountLabel);
+                self.$('.input-amount').on('click', function (event) {
+                  $(this).replaceWith("<input type='number' min=0 class='input-amount form-control' value=" + self._note.getAmount() + "></input><select class='amount-unit'><option value='1'>grams</option><option value='454'>lbs.</option><option value='1000'>kg</option></select>");
+                  self.$('.input-amount').focus();
+                  self.$('.input-amount').on('focusout', function (event) {
+                    self.$('.amount-unit').remove();
+                    var amount = self.$('.input-amount').val();
+                    var unit = parseInt(self.$('.amount-unit').val());
+                    amount *= unit;
+                    if (self._note.getAmount() != amount) {
+                      FoodParent.EventHandler.handleNoteData(self._note, FoodParent.DATA_MODE.UPDATE_NOTE_AMOUNT, { amount: amount }, function () {
+                        FoodParent.EventHandler.handleDataChange("Pick amount for <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> was changed successfully.", true);
+                        self.renderNoteInfo();
+                      }, function () {
+                          FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
+                      });
+                    }
+                    else {
+                        self.renderNoteInfo();
+                    }
+                    self._note.setAmount(amount);
+                    self.renderNoteInfo();
+                  });
+                });
                 self.$('.input-comment').replaceWith('<div class="input-comment"></div>');
                 self.$('.input-comment').html(htmlDecode(self._note.getComment()));
-
-
                 self.$('.input-comment').on('click', function (event) {
                     //$(this).replaceWith("<input type='text' class='input-comment form-control' value='" + htmlEncode($(this).text()) + "' />");
                     $(this).replaceWith("<textarea rows='5' class='input-comment form-control'>" + self._note.getComment() + "</textarea>");
@@ -358,14 +282,14 @@
 
             if (self._bAuthor) {
                 // Event listener for uploading a file.
-                
+
             }
         }
-        
-        
 
-        
 
-        
+
+
+
+
     }
 }

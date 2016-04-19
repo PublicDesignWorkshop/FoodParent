@@ -27,6 +27,7 @@ var FoodParent;
         DATA_MODE[DATA_MODE["ADD_DONATION_TREE"] = 18] = "ADD_DONATION_TREE";
         DATA_MODE[DATA_MODE["REMOVE_DONATION_TREE"] = 19] = "REMOVE_DONATION_TREE";
         DATA_MODE[DATA_MODE["UPDATE_DONATION_AMOUNT"] = 20] = "UPDATE_DONATION_AMOUNT";
+        DATA_MODE[DATA_MODE["UPDATE_NOTE_AMOUNT"] = 20] = "UPDATE_NOTE_AMOUNT";
     })(FoodParent.DATA_MODE || (FoodParent.DATA_MODE = {}));
     var DATA_MODE = FoodParent.DATA_MODE;
     (function (VIEW_STATUS) {
@@ -781,6 +782,9 @@ var FoodParent;
             switch (dataMode) {
                 case DATA_MODE.UPDATE_COMMENT:
                     self._lastCommand = new FoodParent.UpdateNoteComment({ note: note, comment: args.comment }, success, error);
+                    break;
+                case DATA_MODE.UPDATE_NOTE_AMOUNT:
+                    self._lastCommand = new FoodParent.UpdateNoteAmount({ note: note, amount: args.amount }, success, error);
                     break;
                 case DATA_MODE.UPDATE_RATING:
                     self._lastCommand = new FoodParent.UpdateNoteRating({ note: note, rate: args.rate }, success, error);

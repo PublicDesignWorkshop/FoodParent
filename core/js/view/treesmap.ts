@@ -221,7 +221,7 @@
                             marker._resetZIndex();
                             $(marker.label._container).removeClass('active');
                             self.$('#wrapper-treeinfo').addClass('hidden');
-                            self._selectedMarker = null;    
+                            self._selectedMarker = null;
                             Router.getInstance().navigate("trees/0", { trigger: false, replace: true });
                         });
                     }
@@ -453,7 +453,12 @@
                 self.openMapFilter();
             }
         }
-        // MISSING TYPESCRIPT VERSIONS OF _zoomIn and _zoomOut
+        private _zoomIn = () => {
+            this._map.zoomIn();
+        }
+        private _zoomOut = () => {
+            this._map.zoomOut();
+        }
 
         public closeMapFilter = () => {
             var self: TreesMapView = this;
@@ -565,7 +570,7 @@
                     self.$('.filter-owner-item').addClass('active');
                 }
             }
-            
+
             // Adoption filter
             if ($(event.currentTarget).hasClass('filter-adopt-item')) {
                 if ($(event.currentTarget).hasClass('active')) {

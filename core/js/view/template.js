@@ -1554,6 +1554,11 @@ var FoodParent;
             template += '<div class="input-rating-slider"></div>';
             template += '</div>';
             template += '<div class="hr"><hr /></div>';
+            template += '<div class="info-header"><i class="fa fa-shopping-basket"></i> Amount picked</div>';
+            template += '<div class="info-group">';
+            template += '<div class="input-amount"><%= amount %></div>';
+            template += '</div>';
+            template += '<div class="hr"><hr /></div>';
             template += '<div class="info-header"><i class="fa fa-comment"></i> Comment</div>';
             template += '<div class="info-group">';
             template += '<div class="input-comment"><%= comment %></div>';
@@ -1605,6 +1610,11 @@ var FoodParent;
             template += '<div class="input-rating-slider"></div>';
             template += '</div>';
             template += '<div class="hr"><hr /></div>';
+            template += '<div class="info-header"><i class="fa fa-shopping-basket"></i> Amount picked</div>';
+            template += '<div class="info-group">';
+            template += '<div class="input-amount"><%= amount %></div>';
+            template += '</div>';
+            template += '<div class="hr"><hr /></div>';
             template += '<div class="info-header"><i class="fa fa-comment"></i> Comment</div>';
             template += '<div class="info-group">';
             template += '<div class="text-comment"><%= comment %></div>';
@@ -1621,59 +1631,6 @@ var FoodParent;
             template += '</div>';
             template += '</div>';
             template += '</div>'; // end of .wrapper-note-content
-            template += '</div>'; // end of .inner-frame
-            template += '<div class="top-right-button button-close">';
-            template += '<i class="fa fa-remove fa-2x"></i>';
-            template += '</div>'; // end of top-right-button button-close
-            template += '</div>'; // end of .outer-frame
-            template += '</div>'; // end of #wrapper-note
-            return template;
-        };
-        Template.getPostNoteViewTemplate = function () {
-            var template = '';
-            template += '<div id="wrapper-note">';
-            template += '<div class="outer-frame">';
-            template += '<div class="inner-frame">';
-            template += '<div class="wrapper-post-note-content">';
-            template += '<div class="image-wrapper">';
-            template += '<div class="wrapper-input-upload-picture">';
-            template += '<input class="input-upload-picture fileupload" type="file" accept="image/*" capture="camera" />';
-            template += '</div>';
-            template += '<div class="wrapper-uploading-picture hidden">';
-            template += '<div class="uploading-picture">Uploading...</div>';
-            template += '</div>';
-            template += '<div class="info-header"><i class="fa fa-image"></i> Select Cover Picture</div>';
-            template += '<div class="image-group"></div>';
-            template += '</div>'; // end of .image-wrapper
-            template += '<div class="wrapper-note-info">';
-            template += '<div class="name"><%= name %></div>';
-            template += '<div class="hr"><hr /></div>';
-            template += '<div class="info-header"><i class="fa fa-star-half-o"></i> Rating</div>';
-            template += '<div class="info-group">';
-            template += '<div class="input-rating"></div>';
-            template += '<div class="input-rating-slider"></div>';
-            template += '</div>';
-            template += '<div class="hr"><hr /></div>';
-            template += '<div class="info-header"><i class="fa fa-comment"></i> Comment</div>';
-            template += '<div class="info-group">';
-            template += '<div class="input-comment">&nbsp;</div>';
-            template += '</div>';
-            template += '<div class="hr"><hr /></div>';
-            template += '<div class="info-header"><i class="fa fa-calendar-o"></i> Date</div>';
-            template += '<div class="info-group">';
-            template += '<input type="text" class="form-control input-date" />';
-            template += '</div>';
-            template += '<div class="hr"><hr /></div>';
-            template += '<div class="info-header"><i class="fa fa-user"></i> Author</div>';
-            template += '<div class="info-group">';
-            template += '<div class="input-author"><%= author %></div>';
-            template += '</div>';
-            template += '<div class="hr"><hr /></div>';
-            template += '<div class="info-button-group">';
-            template += '<div class="button-outer-frame2 button3"><div class="button-inner-frame2 create-note"><i class="fa fa-save"></i> Save</div></div>';
-            template += '</div>';
-            template += '</div>'; // .wrapper-note-info
-            template += '</div>'; // end of .wrapper-post-note-content
             template += '</div>'; // end of .inner-frame
             template += '<div class="top-right-button button-close">';
             template += '<i class="fa fa-remove fa-2x"></i>';
@@ -1712,9 +1669,14 @@ var FoodParent;
             template += '<div class="input-rating"></div>';
             template += '<div class="input-rating-slider"></div>';
             template += '<hr />';
+            template += '<div class="info-header"><i class="fa fa-shopping-basket"></i> Amount picked</div>';
+            template += '<div class="info-group">';
+            template += '<div class="input-amount">0</div>';
+            template += '</div>';
+            template += '<hr />';
             template += '<div class="info-header"><i class="fa fa-comment fa-1x"></i> Comment</div>';
             template += '<div class="info-group">';
-            template += '<div class="input-comment">&nbsp;</div>';
+            template += '<div class="input-comment"></div>';
             template += '</div>';
             template += '<hr />';
             template += '<div class="info-header"><i class="fa fa-calendar-o fa-1x"></i> Date</div>';
@@ -1768,9 +1730,14 @@ var FoodParent;
             template += '<div class="input-rating"></div>';
             template += '<div class="input-rating-slider"></div>';
             template += '<hr />';
+            template += '<div class="info-header"><i class="fa fa-shopping-basket"></i> Amount picked</div>';
+            template += '<div class="info-group">';
+            template += '<div class="input-amount">0</div>';
+            template += '</div>';
+            template += '<hr />';
             template += '<div class="info-header"><i class="fa fa-comment fa-1x"></i> Comment</div>';
             template += '<div class="info-group">';
-            template += '<div class="input-comment">&nbsp;</div>';
+            template += '<div class="input-comment"></div>';
             template += '</div>';
             template += '<hr />';
             template += '<div class="info-header"><i class="fa fa-calendar-o fa-1x"></i> Date</div>';
@@ -1837,9 +1804,14 @@ var FoodParent;
             template += '<div class="input-rating"></div>';
             template += '<div class="input-rating-slider"></div>';
             template += '<hr />';
+            template += '<div class="info-header"><i class="fa fa-shopping-basket"></i> Amount picked</div>';
+            template += '<div class="info-group">';
+            template += '<div class="input-amount">0</div>';
+            template += '</div>';
+            template += '<hr />';
             template += '<div class="info-header"><i class="fa fa-comment fa-1x"></i> Comment</div>';
             template += '<div class="info-group">';
-            template += '<div class="input-comment">&nbsp;</div>';
+            template += '<div class="input-comment"></div>';
             template += '</div>';
             template += '<hr />';
             template += '<div class="info-header"><i class="fa fa-calendar-o fa-1x"></i> Date</div>';
@@ -1902,9 +1874,14 @@ var FoodParent;
             template += '<div class="input-rating"></div>';
             template += '<div class="input-rating-slider"></div>';
             template += '<hr />';
+            template += '<div class="info-header"><i class="fa fa-shopping-basket"></i> Amount picked</div>';
+            template += '<div class="info-group">';
+            template += '<div class="input-amount">0</div>';
+            template += '</div>';
+            template += '<hr />';
             template += '<div class="info-header"><i class="fa fa-comment fa-1x"></i> Comment</div>';
             template += '<div class="info-group">';
-            template += '<div class="input-comment">&nbsp;</div>';
+            template += '<div class="input-comment"></div>';
             template += '</div>';
             template += '<hr />';
             template += '<div class="info-header"><i class="fa fa-calendar-o fa-1x"></i> Date</div>';
@@ -1931,60 +1908,6 @@ var FoodParent;
             template += '</div>'; // end of #content-post
             template += '</div>'; // end of .frame-flex-group
             template += '</div>'; // end of #wrapper-post-note
-            return template;
-        };
-        Template.getPostNoteViewTemplate2 = function () {
-            var template = '';
-            template += '<div id="wrapper-note">';
-            template += '<div class="outer-frame">';
-            template += '<div class="inner-frame">';
-            template += '<div class="wrapper-post-note-content">';
-            template += '<div class="image-wrapper">';
-            template += '<div class="wrapper-input-upload-picture">';
-            template += '<input class="input-upload-picture fileupload" type="file" accept="image/*" capture="camera" />';
-            template += '</div>';
-            template += '<div class="wrapper-uploading-picture hidden">';
-            template += '<div class="uploading-picture">Uploading...</div>';
-            template += '</div>';
-            template += '<div class="info-header"><i class="fa fa-image"></i> Select Cover Picture</div>';
-            template += '<div class="image-group"></div>';
-            template += '</div>'; // end of .image-wrapper
-            template += '<div class="wrapper-note-info">';
-            template += '<div class="name"><%= name %></div>';
-            template += '<div class="hr"><hr /></div>';
-            template += '<div class="info-header"><i class="fa fa-star-half-o"></i> Rating</div>';
-            template += '<div class="info-group">';
-            template += '<div class="input-rating"></div>';
-            template += '<div class="input-rating-slider"></div>';
-            template += '</div>';
-            template += '<div class="hr"><hr /></div>';
-            template += '<div class="info-header"><i class="fa fa-comment"></i> Comment</div>';
-            template += '<div class="info-group">';
-            template += '<div class="input-comment">&nbsp;</div>';
-            template += '</div>';
-            template += '<div class="hr"><hr /></div>';
-            template += '<div class="info-header"><i class="fa fa-calendar-o"></i> Date</div>';
-            template += '<div class="info-group">';
-            template += '<input type="text" class="form-control input-date" />';
-            template += '</div>';
-            template += '<div class="hr"><hr /></div>';
-            template += '<div class="info-header"><i class="fa fa-user"></i> Author\'s E-mail Address</div>';
-            template += '<div class="info-group">';
-            template += '<input type="email" name="email" class="form-control input-author" placeholder="e-mail address" autocomplete="on"/>';
-            template += '<div class="button-description2">* The <strong>e-mail address</strong> that you enter will be stored as a perspective foodparent. You can <strong>become a parent</strong> using the same e-mail address that you provide.</div>';
-            template += '</div>';
-            template += '<div class="hr"><hr /></div>';
-            template += '<div class="info-button-group">';
-            template += '<div class="button-outer-frame2 button3"><div class="button-inner-frame2 create-note"><i class="fa fa-save"></i> Save</div></div>';
-            template += '</div>';
-            template += '</div>'; // .wrapper-note-info
-            template += '</div>'; // end of .wrapper-post-note-content
-            template += '</div>'; // end of .inner-frame
-            template += '<div class="top-right-button button-close">';
-            template += '<i class="fa fa-remove fa-2x"></i>';
-            template += '</div>'; // end of top-right-button button-close
-            template += '</div>'; // end of .outer-frame
-            template += '</div>'; // end of #wrapper-note
             return template;
         };
         Template.getManageDonationsTableViewTemplate = function () {
@@ -2153,7 +2076,7 @@ var FoodParent;
             template += '<div class="input-rating-slider"></div>';
             template += '</div>';
 
-            
+
             */
             template += '<div class="hr"><hr /></div>';
             template += '<div class="info-header"><i class="fa fa-ambulance"></i> Amount</div>';
@@ -2388,7 +2311,7 @@ var FoodParent;
             template += '<div class="info-group">';
             template += '<input type="text" class="form-control input-neighborhood" placeholder="name of place near you (street, park)"/>';
             template += '</div>';
-            
+
             template += '<div class="hr"><hr /></div>';
 
             template += '<div class="info-button-group">';
