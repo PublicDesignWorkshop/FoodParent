@@ -237,9 +237,9 @@ var FoodParent;
                   $(this).replaceWith("<input type='number' min=0 class='input-amount form-control' value=" + self._note.getAmount() + "></input><select class='amount-unit'><option value='1'>grams</option><option value='454'>lbs.</option><option value='1000'>kg</option></select>");
                   self.$('.input-amount').focus();
                   self.$('.input-amount').on('focusout', function (event) {
-                    self.$('.amount-unit').remove();
                     var amount = self.$('.input-amount').val();
                     var unit = parseInt(self.$('.amount-unit').val());
+                    self.$('.amount-unit').remove();
                     amount *= unit;
                     if (self._note.getAmount() != amount) {
                       FoodParent.EventHandler.handleNoteData(self._note, FoodParent.DATA_MODE.UPDATE_NOTE_AMOUNT, { amount: amount }, function () {
