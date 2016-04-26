@@ -15,7 +15,7 @@ var FoodParent;
                 FoodParent.Controller.checkIsLoggedIn(function (response) {
                     var adopt = FoodParent.Model.getAdopts().findWhere({ tree: self._tree.getId(), parent: parseInt(response.id) });
                     var food = FoodParent.Model.getFoods().findWhere({ id: self._tree.getFoodId() });
-                    var ownership = FoodParent.Model.getOwnerships().findWhere({ id: self._tree.getOwnershipId() });
+                    var ownership = self._tree.getOwnershipId();
                     if (adopt) {
                         self.$('.btn-adoption').removeClass('evt-adopt');
                         self.$('.btn-adoption').addClass('evt-unadopt');
@@ -38,7 +38,7 @@ var FoodParent;
                 self._tree = FoodParent.Model.getTrees().findWhere({ id: self._id });
                 FoodParent.Controller.fetchAllFlagsAndOwners(function () {
                     var food = FoodParent.Model.getFoods().findWhere({ id: self._tree.getFoodId() });
-                    var ownership = FoodParent.Model.getOwnerships().findWhere({ id: self._tree.getOwnershipId() });
+                    var ownership = self._tree.getOwnershipId();
                     var template = _.template(FoodParent.Template.getTreeBasicInfoTemplateForGuest());
                     self.$('.content-tree-basicinfo').html(template({
                         foodname: food.getName(),
@@ -46,7 +46,6 @@ var FoodParent;
                         lat: self._tree.getLat().toFixed(4),
                         lng: self._tree.getLng().toFixed(4),
                         flags: FoodParent.Model.getFlags(),
-                        ownerships: FoodParent.Model.getOwnerships(),
                         description: self._tree.getDescription(),
                         parents: self._tree.getParents(),
                     }));

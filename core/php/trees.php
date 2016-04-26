@@ -102,7 +102,7 @@
                 $sql = "SELECT * FROM `tree` WHERE (`lat` BETWEEN ".$params["south"]." AND ".$params["north"].") AND (`lng` BETWEEN ".$params["west"]." AND ".$params["east"]." AND `ownership` = '1')";
             }
             */
-            $sql = "SELECT * FROM `tree` WHERE (`ownership` = 1)";
+            $sql = "SELECT * FROM `tree` WHERE (`public` = true)";
         
         
             try {

@@ -18,7 +18,6 @@ var FoodParent;
                     self.$('#content-mapfilter').html(template({
                         header: 'Filter List',
                         flags: FoodParent.Model.getFlags(),
-                        ownerships: FoodParent.Model.getOwnerships(),
                     }));
                 }, function () {
                     FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
@@ -48,7 +47,7 @@ var FoodParent;
                 }
                 FoodParent.Controller.fetchAllFlagsAndOwners(function () {
                     var food = FoodParent.Model.getFoods().findWhere({ id: tree.getFoodId() });
-                    var ownership = FoodParent.Model.getOwnerships().findWhere({ id: tree.getOwnershipId() });
+                    var ownership = tree.getOwnershipId();
                     var template = _.template(FoodParent.Template.getTreeInfoTemplateForGuest());
                     var data = {
                         foodname: food.getName(),

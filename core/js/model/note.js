@@ -67,6 +67,15 @@ var FoodParent;
             }
             return null;
         };
+        Note.prototype.getAmount = function () {
+            if (this.get('amount') != 0) {
+                return this.get('amount');
+            }
+            return 0;
+        };
+        Note.prototype.setAmount = function (amount) {
+            this.set('amount', amount);
+        };
         Note.prototype.getComment = function () {
             if (this.get('comment') != "") {
                 return this.get('comment');

@@ -50,20 +50,17 @@ var FoodParent;
             var xhr3 = FoodParent.Model.fetchAllAdopts();
             var xhr4 = FoodParent.Model.fetchAllPersons();
             var xhr5 = FoodParent.Model.fetchAllFlags();
-            var xhr6 = FoodParent.Model.fetchAllOwnerships();
             Controller.pushXHR(xhr1);
             Controller.pushXHR(xhr2);
             Controller.pushXHR(xhr3);
             Controller.pushXHR(xhr4);
             Controller.pushXHR(xhr5);
-            Controller.pushXHR(xhr6);
             $.when(xhr1, xhr2, xhr3, xhr4).then(function () {
                 Controller.removeXHR(xhr1);
                 Controller.removeXHR(xhr2);
                 Controller.removeXHR(xhr3);
                 Controller.removeXHR(xhr4);
                 Controller.removeXHR(xhr5);
-                Controller.removeXHR(xhr6);
                 FoodParent.Model.getTrees().updateParents();
                 if (success) {
                     success();
@@ -74,7 +71,6 @@ var FoodParent;
                 Controller.removeXHR(xhr3);
                 Controller.removeXHR(xhr4);
                 Controller.removeXHR(xhr5);
-                Controller.removeXHR(xhr6);
                 if (error) {
                     error(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
                 }
@@ -82,18 +78,14 @@ var FoodParent;
         };
         Controller.fetchAllFlagsAndOwners = function (success, error) {
             var xhr1 = FoodParent.Model.fetchAllFlags();
-            var xhr2 = FoodParent.Model.fetchAllOwnerships();
             Controller.pushXHR(xhr1);
-            Controller.pushXHR(xhr2);
-            $.when(xhr1, xhr2).then(function () {
+            $.when(xhr1).then(function () {
                 Controller.removeXHR(xhr1);
-                Controller.removeXHR(xhr2);
                 if (success) {
                     success();
                 }
             }, function () {
                 Controller.removeXHR(xhr1);
-                Controller.removeXHR(xhr2);
                 if (error) {
                     error(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
                 }

@@ -105,7 +105,7 @@ var FoodParent;
                 else if (self.$('.input-password').val().trim() == self.$('.input-password2').val().trim()) {
                     FoodParent.Controller.changePassword(self._person.getId(), self.$('.input-password').val().trim(), function (response) {
                         if (response.result == "true" || response.result == true) {
-                            new FoodParent.RenderMessageViewCommand({ el: FoodParent.Setting.getMessageWrapperElement(), message: "The <strong>password</strong> has changed successfully.", undoable: false }).execute();
+                            new FoodParent.RenderMessageViewCommand({ el: FoodParent.Setting.getMessageWrapperElement(), message: "The <strong>password</strong> was changed successfully.", undoable: false }).execute();
                             new RemoveAlertViewCommand({ delay: FoodParent.Setting.getRemovePopupDuration() }).execute();
                             self.bProcessing = false;
                             Backbone.history.loadUrl(Backbone.history.fragment);

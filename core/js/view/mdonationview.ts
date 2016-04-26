@@ -391,7 +391,7 @@
                 close: 'Close',
                 onClose: function () {
                     EventHandler.handleDonationData(self._donation, DATA_MODE.UPDATE_DATE, { date: moment(this.get()).startOf('day').format(Setting.getDateTimeFormat()) }, function () {
-                        EventHandler.handleDataChange("Date of this <strong><i>Donation</i></strong> has changed successfully.", true);
+                        EventHandler.handleDataChange("Date of this <strong><i>Donation</i></strong> was changed successfully.", true);
                         self.renderDonationInfo();
                     }, function () {
                         EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
@@ -557,7 +557,7 @@
             var place: Place = Model.getPlaces().findWhere({ id: self._donation.getPlaceId() });
             if (cover != 0) {
                 EventHandler.handleDonationData(self._donation, DATA_MODE.UPDATE_COVER, { cover: cover }, function () {
-                    EventHandler.handleDataChange("Cover picture of <strong><i>" + place.getName() + "</i></strong> has changed successfully.", true);
+                    EventHandler.handleDataChange("Cover picture of <strong><i>" + place.getName() + "</i></strong> was changed successfully.", true);
                     self.renderDonationImages();
                 }, function () {
                     EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);

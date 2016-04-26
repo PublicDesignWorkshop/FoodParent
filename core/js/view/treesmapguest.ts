@@ -50,7 +50,6 @@
                 self.$('#content-mapfilter').html(template({
                     header: 'Filter List',
                     flags: Model.getFlags(),
-                    ownerships: Model.getOwnerships(),
                 }));
             }, function () {
                 EventHandler.handleError(ERROR_MODE.SEVER_CONNECTION_ERROR);
@@ -83,7 +82,7 @@
             }
             Controller.fetchAllFlagsAndOwners(function () {
                 var food: Food = Model.getFoods().findWhere({ id: tree.getFoodId() });
-                var ownership: Ownership = Model.getOwnerships().findWhere({ id: tree.getOwnershipId() });
+                var ownership = tree.getOwnershipId();
                 var template = _.template(Template.getTreeInfoTemplateForGuest());
                 var data = {
                     foodname: food.getName(),

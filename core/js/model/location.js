@@ -70,7 +70,7 @@ var FoodParent;
             return this.get('flag');
         };
         Place.prototype.getOwnershipId = function () {
-            return Math.floor(this.get('ownership'));
+            return Math.floor(this.get('public'));
         };
         Place.prototype.getName = function () {
             return this.get('name');

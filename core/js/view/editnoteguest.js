@@ -60,6 +60,15 @@ var FoodParent;
             var rate = rating(self.$('.input-rating-slider')[0], (self._note.getRate() + 1).toFixed(2), FoodParent.Setting.getMaxRating() + 1, function (rate) {
                 self.renderNoteInfo();
             });
+            self.$('.input-amount').replaceWith('<div class="input-amount"></div>');
+            var origAmount = self._note.getAmount();
+            var amountLabel = (origAmount / 454).toFixed(1) + " lbs. (";
+            if (origAmount > 10000) {
+              amountLabel += (origAmount / 1000).toFixed(1) + " kg)";
+            } else {
+              amountLabel += origAmount + " grams)";
+            }
+            self.$('.input-amount').html(amountLabel);
             self.$('.input-comment').replaceWith('<div class="input-comment"></div>');
             self.$('.input-comment').html(htmlDecode(self._note.getComment()));
             var today = new Date();

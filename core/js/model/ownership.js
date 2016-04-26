@@ -41,15 +41,4 @@ var FoodParent;
         return Ownership;
     })(Backbone.Model);
     FoodParent.Ownership = Ownership;
-    var Ownerships = (function (_super) {
-        __extends(Ownerships, _super);
-        function Ownerships(models, options) {
-            _super.call(this, models, options);
-            this.url = "ownerships.php";
-            this.url = FoodParent.Setting.getPhpDir() + this.url;
-            this.model = Ownership;
-        }
-        return Ownerships;
-    })(Backbone.Collection);
-    FoodParent.Ownerships = Ownerships;
 })(FoodParent || (FoodParent = {}));

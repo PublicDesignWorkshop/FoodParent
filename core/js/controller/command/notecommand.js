@@ -54,6 +54,62 @@ var FoodParent;
         return UpdateNoteComment;
     })();
     FoodParent.UpdateNoteComment = UpdateNoteComment;
+
+    var UpdateNoteAmount = (function () {
+        function UpdateNoteAmount(args, success, error) {
+            var self = this;
+            if (args != undefined && args.note != undefined && args.amount != undefined) {
+                self._note = args.note;
+                self._amount = args.amount;
+            }
+            if (success) {
+                self._success = success;
+            }
+            if (error) {
+                self._error = error;
+            }
+        }
+        UpdateNoteAmount.prototype.execute = function () {
+            var self = this;
+            self._previousAmount = self._note.getAmount();
+            self._note.save({
+                'amount': self._amount,
+            }, {
+                wait: true,
+                success: function (note, response) {
+                    if (self._success) {
+                        self._success();
+                    }
+                },
+                error: function (error, response) {
+                    if (self._error) {
+                        self._error();
+                    }
+                },
+            });
+        };
+        UpdateNoteAmount.prototype.undo = function () {
+            var self = this;
+            self._note.save({
+                'amount': self._previousAmount,
+            }, {
+                wait: true,
+                success: function (note, response) {
+                    if (self._success) {
+                        self._success();
+                    }
+                },
+                error: function (error, response) {
+                    if (self._error) {
+                        self._error();
+                    }
+                },
+            });
+        };
+        return UpdateNoteAmount;
+    })();
+    FoodParent.UpdateNoteAmount = UpdateNoteAmount;
+
     var UpdateNoteRating = (function () {
         function UpdateNoteRating(args, success, error) {
             var self = this;

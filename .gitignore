@@ -190,3 +190,6 @@ ModelManifest.xml
 
 # Don't include database password
 core/php/dbpass.php
+
+# Don't include uploaded photos
+content/picture/*

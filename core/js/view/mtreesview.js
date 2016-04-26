@@ -125,7 +125,6 @@ var FoodParent;
                             foods: FoodParent.Model.getFoods(),
                             userid: parseInt(data.id),
                             flags: FoodParent.Model.getFlags(),
-                            ownerships: FoodParent.Model.getOwnerships(),
                         }));
                     }
                     else if (data.result == false || data.result == 'false') {
@@ -133,7 +132,6 @@ var FoodParent;
                         self.$('#filter-list').html(template({
                             foods: FoodParent.Model.getFoods(),
                             flags: FoodParent.Model.getFlags(),
-                            ownerships: FoodParent.Model.getOwnerships(),
                         }));
                     }
                 }, function () {
@@ -293,7 +291,6 @@ var FoodParent;
                         self.$('#filter-list').html(template({
                             foods: FoodParent.Model.getFoods(),
                             flags: FoodParent.Model.getFlags(),
-                            ownerships: FoodParent.Model.getOwnerships(),
                             userid: parseInt(data.id),
                         }));
                     }
@@ -346,7 +343,6 @@ var FoodParent;
                                     lat: tree.getLat().toFixed(4),
                                     lng: tree.getLng().toFixed(4),
                                     flags: FoodParent.Model.getFlags(),
-                                    ownerships: FoodParent.Model.getOwnerships(),
                                     description: tree.getDescription(),
                                     persons: tree.getParents(),
                                 };
@@ -361,7 +357,6 @@ var FoodParent;
                                         lat: tree.getLat().toFixed(4),
                                         lng: tree.getLng().toFixed(4),
                                         flags: FoodParent.Model.getFlags(),
-                                        ownerships: FoodParent.Model.getOwnerships(),
                                         description: tree.getDescription(),
                                         persons: tree.getParents(),
                                     };
@@ -380,7 +375,6 @@ var FoodParent;
                                             lat: tree.getLat().toFixed(4),
                                             lng: tree.getLng().toFixed(4),
                                             flags: FoodParent.Model.getFlags(),
-                                            ownerships: FoodParent.Model.getOwnerships(),
                                             description: tree.getDescription(),
                                             persons: tree.getParents(),
                                         };
@@ -394,7 +388,6 @@ var FoodParent;
                                             lat: tree.getLat().toFixed(4),
                                             lng: tree.getLng().toFixed(4),
                                             flags: FoodParent.Model.getFlags(),
-                                            ownerships: FoodParent.Model.getOwnerships(),
                                             description: tree.getDescription(),
                                             persons: tree.getParents(),
                                         };
@@ -465,7 +458,7 @@ var FoodParent;
                                             FoodParent.EventHandler.handleTreeData(tree, FoodParent.DATA_MODE.UPDATE_DESCRIPTION, { description: description }, function () {
                                                 var food = FoodParent.Model.getFoods().findWhere({ id: tree.getFoodId() });
                                                 self.renderRecentActivities(tree);
-                                                FoodParent.EventHandler.handleDataChange("Description of <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has changed successfully.", true);
+                                                FoodParent.EventHandler.handleDataChange("Description of <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> was changed successfully.", true);
                                                 self.renderTreeInfo(tree);
                                             }, function () {
                                                 FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
@@ -489,7 +482,7 @@ var FoodParent;
                                         if (tree.getFoodId() != selected) {
                                             FoodParent.EventHandler.handleTreeData(tree, FoodParent.DATA_MODE.UPDATE_FOODTYPE, { food: selected }, function () {
                                                 var food = FoodParent.Model.getFoods().findWhere({ id: tree.getFoodId() });
-                                                FoodParent.EventHandler.handleDataChange("Food type of <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has changed successfully.", true);
+                                                FoodParent.EventHandler.handleDataChange("Food type of <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> was changed successfully.", true);
                                                 self._selectedMarker.label._container.innerHTML = food.getName() + " " + tree.getName();
                                                 self._selectedMarker.setIcon(FoodParent.MarkerFractory.getIcon(food));
                                                 self.renderTreeInfo(tree);
@@ -514,7 +507,7 @@ var FoodParent;
                                                 FoodParent.EventHandler.handleTreeData(tree, FoodParent.DATA_MODE.UPDATE_LOCATION, { marker: self._selectedMarker, location: location }, function () {
                                                     var food = FoodParent.Model.getFoods().findWhere({ id: tree.getFoodId() });
                                                     self.renderRecentActivities(tree);
-                                                    FoodParent.EventHandler.handleDataChange("Location of <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has changed successfully.", true);
+                                                    FoodParent.EventHandler.handleDataChange("Location of <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> was changed successfully.", true);
                                                     // Move marker to desired location & update info panel
                                                     self._selectedMarker.setLatLng(tree.getLocation());
                                                     self._map.setView(tree.getLocation());
@@ -541,7 +534,7 @@ var FoodParent;
                                                 FoodParent.EventHandler.handleTreeData(tree, FoodParent.DATA_MODE.UPDATE_LOCATION, { marker: self._selectedMarker, location: location }, function () {
                                                     var food = FoodParent.Model.getFoods().findWhere({ id: tree.getFoodId() });
                                                     self.renderRecentActivities(tree);
-                                                    FoodParent.EventHandler.handleDataChange("Location of <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has changed successfully.", true);
+                                                    FoodParent.EventHandler.handleDataChange("Location of <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> was changed successfully.", true);
                                                     // Move marker to desired location & update info panel
                                                     self._selectedMarker.setLatLng(tree.getLocation());
                                                     self._map.setView(tree.getLocation());
@@ -815,17 +808,13 @@ var FoodParent;
                 if (data.result == true || data.result == 'true') {
                     $.each(self.$('.ownership-radio'), function (index, item) {
                         if (ownership != undefined) {
-                            if (parseInt($(item).attr('data-target')) == ownership.getId()) {
+                            if (parseInt($(item).attr('data-target')) == ownership) {
                                 $(item).addClass('active');
                                 $(item).find('input').prop({ 'checked': 'checked' });
                             }
                             else {
                                 $(item).removeClass('active');
                                 $(item).find('input').prop({ 'checked': '' });
-                            }
-                            if (parseInt($(item).attr('data-target')) == 0) {
-                                $(this).attr('disabled', 'disabled');
-                                $(item).addClass('disabled');
                             }
                         }
                     });
@@ -833,7 +822,7 @@ var FoodParent;
                 else if (data.result == false || data.result == 'false') {
                     $.each(self.$('.ownership-radio'), function (index, item) {
                         if (ownership != undefined) {
-                            if (parseInt($(item).attr('data-target')) == ownership.getId()) {
+                            if (parseInt($(item).attr('data-target')) == ownership) {
                                 $(item).addClass('active');
                                 $(item).find('input').prop({ 'checked': 'checked' });
                             }
@@ -841,10 +830,8 @@ var FoodParent;
                                 $(item).removeClass('active');
                                 $(item).find('input').prop({ 'checked': '' });
                             }
-                            if (parseInt($(item).attr('data-target')) == 0) {
-                                $(this).attr('disabled', 'disabled');
-                                $(item).addClass('disabled');
-                            }
+                            $(this).attr('disabled', 'disabled');
+                            $(item).addClass('disabled');
                             $(item).css({ 'pointer-events': 'none' });
                         }
                     });
@@ -918,7 +905,6 @@ var FoodParent;
                     size: FoodParent.Setting.getNumRecentActivitiesShown(),
                     coordinate: '@ ' + tree.getLat().toFixed(4) + ", " + tree.getLng().toFixed(4),
                     flags: FoodParent.Model.getFlags(),
-                    ownerships: FoodParent.Model.getOwnerships(),
                 };
                 self.$('#list-activities').html(template(data));
             }, function () {
@@ -951,7 +937,7 @@ var FoodParent;
                     FoodParent.EventHandler.handleTreeData(tree, FoodParent.DATA_MODE.UPDATE_LOCATION, { marker: marker, location: marker.getLatLng() }, function () {
                         var food = FoodParent.Model.getFoods().findWhere({ id: tree.getFoodId() });
                         self.renderRecentActivities(tree);
-                        FoodParent.EventHandler.handleDataChange("Location of <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has changed successfully.", true);
+                        FoodParent.EventHandler.handleDataChange("Location of <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> was changed successfully.", true);
                         self.renderTreeInfo(tree);
                     }, function () {
                         FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
@@ -1099,7 +1085,7 @@ var FoodParent;
                             var food = FoodParent.Model.getFoods().findWhere({ id: tree.getFoodId() });
                             self.renderFlagInfo(tree.getFlags());
                             self.renderRecentActivities(tree);
-                            FoodParent.EventHandler.handleDataChange("Status of <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has changed successfully.", true);
+                            FoodParent.EventHandler.handleDataChange("Status of <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> was changed successfully.", true);
                             self._applyFilter();
                         }, function () {
                             FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
@@ -1110,7 +1096,7 @@ var FoodParent;
                             var food = FoodParent.Model.getFoods().findWhere({ id: tree.getFoodId() });
                             self.renderFlagInfo(tree.getFlags());
                             self.renderRecentActivities(tree);
-                            FoodParent.EventHandler.handleDataChange("Status of <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has changed successfully.", true);
+                            FoodParent.EventHandler.handleDataChange("Status of <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> was changed successfully.", true);
                             self._applyFilter();
                         }, function () {
                             FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
@@ -1137,7 +1123,7 @@ var FoodParent;
                             var ownership = FoodParent.Model.getOwnerships().findWhere({ id: tree.getOwnershipId() });
                             self.renderOwnershipInfo(ownership);
                             self.renderRecentActivities(tree);
-                            FoodParent.EventHandler.handleDataChange("Ownership of <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> has changed successfully.", true);
+                            FoodParent.EventHandler.handleDataChange("Ownership of <strong><i>" + food.getName() + " " + tree.getName() + "</i></strong> was changed successfully.", true);
                         }, function () {
                             FoodParent.EventHandler.handleError(FoodParent.ERROR_MODE.SEVER_CONNECTION_ERROR);
                         });

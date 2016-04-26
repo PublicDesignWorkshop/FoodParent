@@ -8,7 +8,6 @@
         private adopts: Adopts;
         private trees: Trees;
         private flags: Flags;
-        private ownerships: Ownerships;
         private notes: Notes;
         private persons: Persons;
         private places: Places;
@@ -56,13 +55,6 @@
                 self.flags = new Flags();
             }
             return self.flags;
-        }
-        public static getOwnerships(): Ownerships {
-            var self: Model = Model._instance;
-            if (self.ownerships == undefined) {
-                self.ownerships = new Ownerships();
-            }
-            return self.ownerships;
         }
         public static getNotes(): Notes {
             var self: Model = Model._instance;
@@ -284,27 +276,6 @@
                 },
                 success(collection?: any, response?: any, options?: any): void {
                     self.flags.sortByAscendingName();
-                    //console.log("success fetch with " + collection.models.length + " trees");
-                    //that.fetchFoods(that.foods.getUndetectedIds(that.trees.getFoodIds()));
-                },
-                error(collection?: any, jqxhr?: JQueryXHR, options?: any): void {
-                    console.log("error while fetching item data from the server");
-                }
-            });
-        }
-
-        public static fetchAllOwnerships(): JQueryXHR {
-            var self: Model = Model._instance;
-            if (self.ownerships == undefined) {
-                self.ownerships = new Ownerships();
-            }
-            return self.ownerships.fetch({
-                remove: true,	// if remove == false, it only adds new items, not removing old items.
-                processData: true,
-                data: {
-
-                },
-                success(collection?: any, response?: any, options?: any): void {
                     //console.log("success fetch with " + collection.models.length + " trees");
                     //that.fetchFoods(that.foods.getUndetectedIds(that.trees.getFoodIds()));
                 },
